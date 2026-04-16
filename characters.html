@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THREEFOLD — Characters</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400&family=Special+Elite&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="supabase.js"></script>
+<style>
+:root{--black:#0a0a0a;--deep:#111;--dark:#1a1a1a;--mid:#2e2e2e;--border:#3a3a3a;--muted:#666;--light:#999;--pale:#ccc;--white:#f0f0f0;--danger:#cc2200;--green:#1a6a3a;--mono:'Share Tech Mono',monospace;--display:'Barlow Condensed',sans-serif;--body:'Barlow',sans-serif;--elite:'Special Elite',cursive;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--pale);font-family:var(--body);font-weight:300;font-size:16px;line-height:1.7;min-height:100vh;overflow-x:hidden;padding-bottom:80px;}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.08) 2px,rgba(0,0,0,0.08) 4px);pointer-events:none;z-index:9999;}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,0.6) 100%);pointer-events:none;z-index:9998;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:500;height:56px;background:rgba(10,10,10,0.97);border-bottom:1px solid var(--border);padding:0 3rem;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(6px);}
+.nav-logo{cursor:pointer;}
+.nav-logo-name{font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:0.3em;color:var(--white);text-transform:uppercase;display:block;line-height:1.1;}
+.nav-logo-sub{font-family:var(--mono);font-size:9px;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;display:block;}
+.nav-back{font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);background:none;border:1px solid var(--border);padding:6px 16px;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block;}
+.nav-back:hover{border-color:var(--light);color:var(--pale);}
+
+/* VIEWS */
+.view{display:none;min-height:calc(100vh - 56px);padding-top:56px;}
+.view.active{display:block;}
+
+/* PAGE HEADER */
+.ph{padding:4rem 3rem 3rem;border-bottom:1px solid var(--border);position:relative;overflow:hidden;background-image:linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);background-size:60px 60px;}
+.ph-bgword{position:absolute;right:2rem;top:50%;transform:translateY(-50%);font-family:var(--display);font-weight:700;font-size:160px;line-height:1;color:transparent;-webkit-text-stroke:1px var(--border);pointer-events:none;user-select:none;letter-spacing:0.04em;}
+.ph-tag{font-family:var(--mono);font-size:9.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;}
+.ph h1{font-family:var(--display);font-weight:700;font-size:clamp(48px,7vw,88px);letter-spacing:0.05em;text-transform:uppercase;color:var(--white);line-height:.9;}
+.ph-desc{margin-top:1rem;font-size:15px;color:var(--light);max-width:560px;}
+
+/* WRAP */
+.wrap{max-width:960px;margin:0 auto;padding:3.5rem 3rem;}
+.stag{font-family:var(--mono);font-size:9.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:1rem;margin-bottom:2rem;}
+.stag::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* BUTTONS */
+.btn{font-family:var(--mono);font-size:10.5px;letter-spacing:0.2em;text-transform:uppercase;padding:12px 28px;border:1px solid;background:transparent;cursor:pointer;transition:all .22s;text-decoration:none;display:inline-block;}
+.btn-fill{border-color:var(--white);color:var(--white);}
+.btn-fill:hover{background:var(--white);color:var(--black);}
+.btn-ghost{border-color:var(--border);color:var(--light);}
+.btn-ghost:hover{border-color:var(--light);color:var(--pale);}
+.btn-danger{border-color:var(--danger);color:var(--danger);}
+.btn-danger:hover{background:var(--danger);color:var(--white);}
+.btn-sm{padding:7px 16px;font-size:9.5px;}
+.btn-xs{padding:4px 10px;font-size:8.5px;}
+.form-back{font-family:var(--mono);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:.5rem;margin-bottom:2.5rem;transition:color .2s;padding:0;}
+.form-back:hover{color:var(--pale);}
+
+/* HOME CHOICE CARDS */
+.choice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:1rem;}
+.choice-card{border:1px solid var(--border);background:var(--deep);padding:2.5rem 2rem;cursor:pointer;transition:border-color .25s,transform .25s;position:relative;display:flex;flex-direction:column;gap:1rem;}
+.choice-card:hover{border-color:var(--muted);transform:translateY(-3px);}
+.choice-num{font-family:var(--display);font-size:56px;font-weight:700;color:var(--border);line-height:1;letter-spacing:0.04em;transition:color .25s;}
+.choice-card:hover .choice-num{color:var(--mid);}
+.choice-card h2{font-family:var(--display);font-size:26px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--pale);}
+.choice-card p{font-size:14px;color:var(--muted);line-height:1.8;flex:1;}
+
+/* METHOD VIEW */
+.method-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
+.method-card{border:1px solid var(--border);background:var(--deep);padding:2.5rem;cursor:pointer;transition:border-color .25s,transform .25s;display:flex;flex-direction:column;gap:1rem;}
+.method-card:hover{border-color:var(--muted);transform:translateY(-3px);}
+.method-card h2{font-family:var(--display);font-size:28px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--white);}
+.method-card p{font-size:14px;color:var(--muted);line-height:1.8;}
+.method-features{list-style:none;display:flex;flex-direction:column;gap:.4rem;flex:1;}
+.method-features li{font-family:var(--mono);font-size:11px;letter-spacing:0.1em;color:var(--light);display:flex;align-items:center;gap:.5rem;}
+.method-features li::before{content:'◼';font-size:6px;color:var(--muted);}
+.method-card-footer{padding-top:1rem;border-top:1px solid var(--border);}
+
+/* TYPE VIEW */
+.type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;}
+.type-card{border:1px solid var(--border);padding:2.5rem 2rem;cursor:pointer;transition:border-color .25s,transform .25s;position:relative;overflow:hidden;}
+.type-card:hover{transform:translateY(-3px);}
+.type-card.foundation{background:rgba(42,30,80,0.15);}
+.type-card.foundation:hover{border-color:#534ab7;}
+.type-card.scp{background:rgba(80,20,20,0.15);}
+.type-card.scp:hover{border-color:#8a1a1a;}
+.type-card.unaffiliated{background:rgba(20,50,80,0.15);}
+.type-card.unaffiliated:hover{border-color:#1a3a7a;}
+.type-label{font-family:var(--display);font-size:26px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--white);margin-bottom:.75rem;display:block;}
+.type-card p{font-size:14px;color:var(--muted);line-height:1.8;}
+
+/* FORM ELEMENTS */
+.form-wrap{max-width:720px;margin:0 auto;padding:3rem;}
+.form-section-title{font-family:var(--mono);font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);padding-bottom:.75rem;border-bottom:1px solid var(--border);margin-bottom:1.5rem;margin-top:2.5rem;}
+.field{display:flex;flex-direction:column;gap:.4rem;margin-bottom:1.25rem;}
+.field label{font-family:var(--mono);font-size:9.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--light);}
+.req{color:var(--danger);}
+.field input,.field textarea,.field select{background:var(--deep);border:1px solid var(--border);color:var(--pale);font-family:var(--body);font-size:14px;padding:10px 14px;transition:border-color .2s;outline:none;width:100%;font-weight:300;}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--light);}
+.field textarea{resize:vertical;min-height:80px;line-height:1.7;}
+.field select option{background:var(--dark);}
+.field-hint{font-size:12px;color:var(--muted);}
+.two-field{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.three-field{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;}
+.form-msg{font-family:var(--mono);font-size:11px;letter-spacing:0.1em;color:var(--muted);display:none;margin-top:.75rem;}
+.form-msg.error{color:var(--danger);display:block;}
+.form-msg.ok{color:#4a9a5a;display:block;}
+.form-msg.loading{color:var(--muted);display:block;}
+.submit-row{margin-top:2.5rem;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;}
+
+/* IMAGE UPLOAD */
+.img-upload-area{border:1px dashed var(--border);padding:2rem;text-align:center;cursor:pointer;transition:border-color .2s;position:relative;}
+.img-upload-area:hover{border-color:var(--muted);}
+.img-upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.img-upload-label{font-family:var(--mono);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);}
+.img-preview{width:100%;max-height:200px;object-fit:contain;display:none;margin-top:1rem;border:1px solid var(--border);}
+
+/* SUB-DEPARTMENTS */
+.subdept-list{display:flex;flex-direction:column;gap:.5rem;margin-bottom:.75rem;}
+.subdept-item{display:flex;gap:.5rem;}
+.subdept-item input{flex:1;background:var(--deep);border:1px solid var(--border);color:var(--pale);font-family:var(--body);font-size:13px;padding:7px 12px;outline:none;}
+.subdept-item input:focus{border-color:var(--light);}
+.subdept-remove{background:none;border:1px solid var(--border);color:var(--muted);padding:0 10px;cursor:pointer;font-family:var(--mono);font-size:12px;transition:all .2s;}
+.subdept-remove:hover{border-color:var(--danger);color:var(--danger);}
+.add-link{font-family:var(--mono);font-size:9.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);background:none;border:none;cursor:pointer;padding:0;transition:color .2s;}
+.add-link:hover{color:var(--pale);}
+
+/* RICH TEXT FIELD */
+.rich-field{background:var(--deep);border:1px solid var(--border);min-height:120px;padding:12px 14px;outline:none;font-family:var(--body);font-size:14px;color:var(--pale);line-height:1.8;transition:border-color .2s;white-space:pre-wrap;}
+.rich-field:focus{border-color:var(--light);}
+.rich-field[data-placeholder]:empty::before{content:attr(data-placeholder);color:var(--muted);pointer-events:none;}
+
+/* RICH TOOLBAR */
+#rich-toolbar{position:fixed;bottom:0;left:0;right:0;z-index:800;background:rgba(15,15,15,0.98);border-top:1px solid var(--border);padding:8px 1.5rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap;transform:translateY(100%);transition:transform .25s;backdrop-filter:blur(8px);}
+#rich-toolbar.visible{transform:translateY(0);}
+.tb-group{display:flex;align-items:center;gap:4px;border-right:1px solid var(--border);padding-right:8px;margin-right:4px;}
+.tb-group:last-child{border-right:none;}
+.tb-btn{font-family:var(--mono);font-size:10px;letter-spacing:0.1em;background:var(--dark);border:1px solid var(--border);color:var(--light);padding:4px 10px;cursor:pointer;transition:all .2s;text-transform:uppercase;white-space:nowrap;}
+.tb-btn:hover{border-color:var(--light);color:var(--pale);}
+.tb-select{font-family:var(--mono);font-size:9.5px;background:var(--dark);border:1px solid var(--border);color:var(--pale);padding:4px 8px;cursor:pointer;outline:none;}
+.tb-select option{background:var(--dark);}
+.color-row{display:flex;gap:3px;align-items:center;}
+.cswatch{width:18px;height:18px;border:1px solid transparent;cursor:pointer;transition:transform .15s,border-color .15s;flex-shrink:0;}
+.cswatch:hover{transform:scale(1.2);border-color:var(--white);}
+.tb-label{font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);}
+
+/* ACS BAR */
+.acs-bar{border:1px solid var(--border);overflow:hidden;margin-bottom:2rem;font-family:var(--mono);}
+.acs-top{display:grid;grid-template-columns:2fr 2fr 1fr;border-bottom:1px solid var(--border);}
+.acs-item-num{padding:.85rem 1.25rem;font-size:13px;letter-spacing:0.08em;color:var(--pale);border-right:1px solid var(--border);background:#0a0a0a;}
+.acs-level-tag{padding:.85rem 1.25rem;font-size:11px;letter-spacing:0.08em;color:rgba(255,255,255,0.7);border-right:1px solid var(--border);transition:background .3s;background:#1a1a1a;}
+.acs-class-block{padding:.75rem 1rem;text-align:center;transition:background .3s;background:#1a1a1a;}
+.acs-class-header{display:block;font-size:7.5px;letter-spacing:0.25em;color:rgba(255,255,255,0.4);margin-bottom:3px;}
+.acs-class-value{display:block;font-size:17px;letter-spacing:0.1em;color:rgba(255,255,255,0.9);font-weight:400;}
+.acs-bottom{display:grid;grid-template-columns:1fr 1fr;}
+.acs-disruption{padding:.6rem 1.25rem;font-size:10px;letter-spacing:0.1em;color:rgba(255,255,255,0.5);border-right:1px solid rgba(255,255,255,0.06);transition:background .3s;background:#111;}
+.acs-risk{padding:.6rem 1.25rem;font-size:10px;letter-spacing:0.1em;color:rgba(255,255,255,0.5);transition:background .3s;background:#111;}
+.acs-meta-label{display:block;font-size:7.5px;letter-spacing:0.2em;opacity:.5;margin-bottom:2px;}
+.acs-meta-value{font-size:12px;letter-spacing:0.1em;color:rgba(255,255,255,0.8);}
+
+/* SECONDARY CLASS */
+.secondary-group{display:none;background:var(--deep);border:1px solid var(--border);padding:1rem 1.25rem;margin-top:-1rem;margin-bottom:1.25rem;}
+.secondary-group .field{margin-bottom:0;}
+.secondary-group .field+.field{margin-top:.75rem;}
+
+/* ADDENDUM */
+.addendum-list{display:flex;flex-direction:column;gap:1rem;margin-bottom:.75rem;}
+.addendum-item{border:1px solid var(--border);background:var(--deep);overflow:hidden;}
+.addendum-header{display:flex;align-items:center;gap:.5rem;padding:.6rem 1rem;background:rgba(255,255,255,0.02);border-bottom:1px solid var(--border);}
+.addendum-header input{flex:1;background:transparent;border:none;color:var(--pale);font-family:var(--mono);font-size:11px;letter-spacing:0.1em;outline:none;}
+.addendum-del{background:none;border:none;color:var(--muted);cursor:pointer;font-family:var(--mono);font-size:12px;padding:0 4px;transition:color .2s;}
+.addendum-del:hover{color:var(--danger);}
+.addendum-body{padding:.75rem 1rem;}
+
+/* SUCCESS VIEW */
+.success-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;padding:4rem 2rem;}
+.success-num{font-family:var(--display);font-size:100px;font-weight:700;letter-spacing:0.05em;color:var(--border);line-height:1;}
+.success-title{font-family:var(--display);font-size:44px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--white);margin-bottom:1rem;}
+.success-msg{font-size:15px;color:var(--light);max-width:460px;margin:0 auto 2.5rem;}
+
+/* TRACKER */
+.tracker-search{display:flex;gap:.75rem;align-items:stretch;margin-bottom:2.5rem;}
+.tracker-search input{flex:1;background:var(--deep);border:1px solid var(--border);color:var(--pale);font-family:var(--body);font-size:14px;padding:11px 14px;outline:none;}
+.tracker-search input:focus{border-color:var(--light);}
+.track-table{width:100%;border-collapse:collapse;}
+.track-table th{font-family:var(--mono);font-size:8.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);padding:.6rem 1rem;text-align:left;border-bottom:1px solid var(--border);}
+.track-table td{padding:.85rem 1rem;border-bottom:1px solid var(--dark);font-size:13px;color:var(--light);}
+.track-table tr:hover td{background:var(--deep);}
+.track-status{font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;padding:2px 8px;border:1px solid;}
+.ts-pending{border-color:var(--border);color:var(--muted);}
+.ts-review{border-color:#8a6a1a;color:#c89a2a;}
+.ts-approved{border-color:#3a7a4a;color:#4a9a5a;}
+.ts-denied{border-color:var(--danger);color:var(--danger);}
+.track-reason{font-size:12px;color:var(--muted);font-style:italic;margin-top:.25rem;}
+
+/* LISTING */
+.listing-filters{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:2rem;}
+.lf-btn{font-family:var(--mono);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--muted);padding:5px 14px;cursor:pointer;transition:all .2s;}
+.lf-btn:hover{border-color:var(--light);color:var(--pale);}
+.lf-btn.active{border-color:var(--pale);color:var(--pale);}
+.char-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.25rem;}
+.char-card{border:1px solid var(--border);border-left:3px solid var(--border);background:var(--deep);padding:1.5rem;cursor:pointer;transition:border-color .25s,transform .2s;position:relative;overflow:hidden;}
+.char-card:hover{transform:translateY(-2px);}
+.char-card-type-tag{font-family:var(--mono);font-size:8px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;}
+.char-card-name{font-family:var(--display);font-size:22px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:var(--white);margin-bottom:.4rem;line-height:1.1;}
+.char-card-meta{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem;}
+.char-badge{font-family:var(--mono);font-size:8px;letter-spacing:0.2em;text-transform:uppercase;padding:2px 8px;border:1px solid;}
+.char-card-sub{font-size:12px;color:var(--muted);}
+.char-gdoc-badge{font-family:var(--mono);font-size:8px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);border:1px solid var(--border);padding:2px 8px;display:inline-block;margin-top:.5rem;}
+
+/* CLEARANCE COLORS */
+.cl-0{border-left-color:#555!important;}.cl-0 .cl-badge{border-color:#555;color:#777;}
+.cl-1{border-left-color:#2a7a2a!important;}.cl-1 .cl-badge{border-color:#2a7a2a;color:#4a9a4a;}
+.cl-2{border-left-color:#2a3a8a!important;}.cl-2 .cl-badge{border-color:#2a3a8a;color:#4a5aaa;}
+.cl-3{border-left-color:#8a7a1a!important;}.cl-3 .cl-badge{border-color:#8a7a1a;color:#aaa03a;}
+.cl-4{border-left-color:#8a4a1a!important;}.cl-4 .cl-badge{border-color:#8a4a1a;color:#aa6a3a;}
+.cl-5{border-left-color:#8a1a1a!important;}.cl-5 .cl-badge{border-color:#8a1a1a;color:#aa3a3a;}
+.cl-6{border-left-color:#050505!important;animation:cl6card 5s infinite;}
+.cl-6 .cl-badge{border-color:#333;color:#666;}
+@keyframes cl6card{0%,85%,100%{filter:none;}87%{filter:brightness(2) hue-rotate(90deg);transform:translateX(-1px);}89%{filter:none;}92%{filter:brightness(.5) hue-rotate(180deg);transform:translateX(1px);}94%{filter:none;}}
+
+/* SCP COLORS */
+.scp-safe{border-left-color:#1a6a3a!important;}.scp-safe .cc-badge{border-color:#1a6a3a;color:#2a9a5a;}
+.scp-euclid{border-left-color:#6a5a1a!important;}.scp-euclid .cc-badge{border-color:#6a5a1a;color:#9a8a3a;}
+.scp-keter{border-left-color:#7a1a1a!important;}.scp-keter .cc-badge{border-color:#7a1a1a;color:#aa3a3a;}
+.scp-neutralized{border-left-color:#4a4a4a!important;}.scp-neutralized .cc-badge{border-color:#4a4a4a;color:#7a7a7a;}
+.scp-pending{border-left-color:#1a3a7a!important;}.scp-pending .cc-badge{border-color:#1a3a7a;color:#3a5aaa;}
+.scp-explained{border-left-color:#4a2a7a!important;}.scp-explained .cc-badge{border-color:#4a2a7a;color:#6a4aaa;}
+.scp-esoteric{border-left-color:#5a1a5a!important;}.scp-esoteric .cc-badge{border-color:#5a1a5a;color:#8a3a8a;}
+
+/* CHARACTER VIEW */
+.cv-wrap{max-width:800px;margin:0 auto;padding:3rem;}
+.cv-back{font-family:var(--mono);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:.5rem;margin-bottom:2rem;transition:color .2s;padding:0;}
+.cv-back:hover{color:var(--pale);}
+
+/* Foundation view */
+.cv-fnd-header{border:1px solid var(--border);background:var(--deep);padding:2rem;display:grid;grid-template-columns:160px 1fr;gap:2rem;margin-bottom:2rem;position:relative;}
+.cv-fnd-img{width:160px;height:160px;object-fit:cover;border:1px solid var(--border);display:none;}
+.cv-fnd-img-ph{width:160px;height:160px;border:1px solid var(--border);background:var(--dark);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;color:var(--muted);text-align:center;}
+.cv-fnd-name{font-family:var(--display);font-size:clamp(28px,5vw,52px);font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--white);line-height:.9;margin-bottom:.75rem;}
+.cv-fnd-role{font-family:var(--mono);font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:.75rem;}
+.cv-badges{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem;}
+.cv-badge{font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;padding:3px 10px;border:1px solid;}
+.cv-table{width:100%;border-collapse:collapse;font-size:13px;}
+.cv-table td{padding:.4rem .75rem;border-bottom:1px solid var(--dark);color:var(--light);}
+.cv-table td:first-child{font-family:var(--mono);font-size:9.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);width:35%;}
+.cv-section{margin-bottom:2rem;}
+.cv-section-title{font-family:var(--mono);font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);padding-bottom:.75rem;border-bottom:1px solid var(--border);margin-bottom:1.25rem;}
+.cv-rich{font-size:14px;color:var(--light);line-height:1.9;}
+
+/* SCP view */
+.cv-scp-doc{font-family:var(--body);}
+.scp-doc-section{border-left:2px solid var(--border);padding:1rem 1.5rem;margin-bottom:1.5rem;background:rgba(255,255,255,0.01);}
+.scp-doc-section-title{font-family:var(--mono);font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--pale);margin-bottom:.75rem;}
+
+/* SCP addendum collapsible */
+.cv-addendum{border:1px solid var(--border);margin-bottom:.75rem;background:var(--deep);}
+.cv-addendum-toggle{width:100%;background:none;border:none;padding:.75rem 1.25rem;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-family:var(--mono);font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--pale);transition:background .2s;}
+.cv-addendum-toggle:hover{background:rgba(255,255,255,0.03);}
+.cv-addendum-toggle::after{content:'▼';font-size:9px;color:var(--muted);transition:transform .2s;}
+.cv-addendum-toggle.open::after{transform:rotate(180deg);}
+.cv-addendum-body{padding:1rem 1.25rem;border-top:1px solid var(--border);display:none;font-size:14px;color:var(--light);line-height:1.9;}
+.cv-addendum-body.visible{display:block;}
+
+/* RICH TEXT EFFECTS */
+.char-redacted{background:var(--pale);color:transparent;cursor:pointer;padding:0 3px;border-radius:2px;transition:background .3s,color .3s;user-select:none;display:inline;}
+.char-redacted:hover,.char-redacted.revealed{background:transparent;color:var(--danger);}
+.char-glitch{position:relative;display:inline-block;animation:cglitch 3s infinite;}
+.char-glitch::before,.char-glitch::after{content:attr(data-text);position:absolute;top:0;left:0;}
+.char-glitch::before{animation:cgA 3s infinite;clip-path:polygon(0 18%,100% 18%,100% 42%,0 42%);color:#cc4444;}
+.char-glitch::after{animation:cgB 3s infinite;clip-path:polygon(0 62%,100% 62%,100% 80%,0 80%);color:#4444cc;}
+@keyframes cglitch{0%,85%,100%{transform:translate(0);}87%{transform:translate(-2px,1px);}89%{transform:translate(2px,-1px);}91%{transform:translate(0);}}
+@keyframes cgA{0%,84%,100%{transform:translate(0);opacity:0;}86%{transform:translate(-3px,1px);opacity:1;}88%{transform:translate(3px,-1px);opacity:1;}90%{transform:translate(0);opacity:0;}}
+@keyframes cgB{0%,84%,100%{transform:translate(0);opacity:0;}87%{transform:translate(3px,1px);opacity:1;}89%{transform:translate(-2px,-1px);opacity:1;}91%{transform:translate(0);opacity:0;}}
+
+/* CALLOUT */
+.callout{display:flex;gap:1rem;align-items:flex-start;border-left:2px solid var(--border);padding:1rem 1.5rem;background:var(--deep);margin:1.5rem 0;}
+.callout-ico{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap;margin-top:2px;}
+.callout p{font-size:13px;color:var(--muted);line-height:1.75;}
+.empty-state{text-align:center;padding:4rem 2rem;font-family:var(--mono);font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--border);}
+
+/* FOOTER */
+footer{border-top:1px solid var(--dark);padding:2rem 3rem;display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:9.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--border);}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  nav{padding:0 1.2rem;}
+  .choice-grid,.type-grid{grid-template-columns:1fr;}
+  .method-grid{grid-template-columns:1fr;}
+  .ph{padding:2.5rem 1.5rem 2rem;}
+  .ph-bgword{display:none;}
+  .wrap{padding:2.5rem 1.5rem;}
+  .form-wrap{padding:2rem 1.5rem;}
+  .two-field,.three-field{grid-template-columns:1fr;}
+  .cv-fnd-header{grid-template-columns:1fr;}
+  .cv-fnd-img,.cv-fnd-img-ph{width:100%;height:180px;}
+  footer{flex-direction:column;gap:.5rem;text-align:center;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo" onclick="window.location.href='index.html'">
+    <span class="nav-logo-name">THREEFOLD</span>
+    <span class="nav-logo-sub">SCP Foundation RP</span>
+  </div>
+  <a class="nav-back" href="index.html">&#8592; Back to Site</a>
+</nav>
+
+<!-- ======== HOME ======== -->
+<div id="v-home" class="view active">
+  <div class="ph">
+    <div class="ph-bgword">CHARS</div>
+    <div class="ph-tag">Character Submissions &amp; Roster</div>
+    <h1>Characters</h1>
+    <p class="ph-desc">Submit a character for review, check on an existing submission, or browse the full approved roster.</p>
+  </div>
+  <div class="wrap">
+    <div class="choice-grid">
+      <div class="choice-card" onclick="showView('v-method')">
+        <div class="choice-num">01</div>
+        <h2>Submit a Character</h2>
+        <p>Build your sheet directly on the website with our full character creator, or submit a Google Docs link. All submissions go through staff review before hitting the roster.</p>
+        <button class="btn btn-fill btn-sm" style="align-self:flex-start;">Start</button>
+      </div>
+      <div class="choice-card" onclick="showView('v-tracker')">
+        <div class="choice-num">02</div>
+        <h2>Track My Submission</h2>
+        <p>Enter your Discord username to see the current status of your submissions and any feedback from the review team.</p>
+        <button class="btn btn-ghost btn-sm" style="align-self:flex-start;">Check Status</button>
+      </div>
+      <div class="choice-card" onclick="loadListing()">
+        <div class="choice-num">03</div>
+        <h2>Browse the Roster</h2>
+        <p>View all approved characters — Foundation personnel, SCPs, and unaffiliated individuals. Colour-coded by clearance and class.</p>
+        <button class="btn btn-ghost btn-sm" style="align-self:flex-start;">View Roster</button>
+      </div>
+    </div>
+  </div>
+  <footer><span>THREEFOLD &mdash; Characters</span><span>Submissions &amp; Roster</span></footer>
+</div>
+
+<!-- ======== METHOD ======== -->
+<div id="v-method" class="view">
+  <div class="ph">
+    <div class="ph-bgword">HOW</div>
+    <div class="ph-tag">Step 1 &mdash; Submission Method</div>
+    <h1>How would you<br>like to submit?</h1>
+  </div>
+  <div class="wrap">
+    <button class="form-back" onclick="showView('v-home')">&#8592; Back</button>
+    <div class="method-grid">
+      <div class="method-card" onclick="setMethod('website')">
+        <h2>Build on the Website</h2>
+        <p>Use our character creator to build your sheet right here. You get full creative control with these tools:</p>
+        <ul class="method-features">
+          <li>Custom fonts &amp; text sizes</li>
+          <li>Text colour palette</li>
+          <li>Bold &amp; italic formatting</li>
+          <li>Click-to-reveal redacted text</li>
+          <li>Glitchy text animation effect</li>
+          <li>Image upload (up to 5MB)</li>
+          <li>Live ACS bar preview (SCP entries)</li>
+          <li>Multiple collapsible addenda (SCP)</li>
+        </ul>
+        <div class="method-card-footer">
+          <span class="btn btn-fill btn-sm">Use Website Builder</span>
+        </div>
+      </div>
+      <div class="method-card" onclick="setMethod('googledoc')">
+        <h2>Submit a Google Doc</h2>
+        <p>Already have a character sheet written up in Google Docs? Just paste the link. Make sure it's set to <strong>"Anyone with the link can view"</strong> before submitting.</p>
+        <p style="margin-top:1rem;font-size:13px;color:var(--muted);">Staff will review the document directly. Approved Google Doc submissions open the original document when viewed on the roster.</p>
+        <div class="method-card-footer">
+          <span class="btn btn-ghost btn-sm">Submit a Link</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== TYPE ======== -->
+<div id="v-type" class="view">
+  <div class="ph">
+    <div class="ph-bgword">TYPE</div>
+    <div class="ph-tag">Step 2 &mdash; Character Type</div>
+    <h1>What type of<br>character is this?</h1>
+  </div>
+  <div class="wrap">
+    <button class="form-back" id="type-back-btn">&#8592; Back</button>
+    <div class="type-grid">
+      <div class="type-card foundation" onclick="setType('foundation')">
+        <span class="type-label">Foundation Personnel</span>
+        <p>Foundation researchers, Class-D personnel, MTF operatives, O5 council members. Full structured format with clearance level, classification, department, and rich text sections.</p>
+      </div>
+      <div class="type-card scp" onclick="setType('scp')">
+        <span class="type-label">SCP Entry</span>
+        <p>Submit an anomaly using the full SCP document format &mdash; complete with a live ACS bar, containment procedures, description, collapsible addenda, and abilities.</p>
+      </div>
+      <div class="type-card unaffiliated" onclick="setType('unaffiliated')">
+        <span class="type-label">Unaffiliated Personnel</span>
+        <p>Characters operating outside the Foundation &mdash; civilians, rogue agents, GoI members, or anyone who doesn't fit neatly into a box. Open format, more freedom.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== GOOGLE DOC FORM ======== -->
+<div id="v-gdoc" class="view">
+  <div class="ph">
+    <div class="ph-bgword">LINK</div>
+    <div class="ph-tag">Google Doc Submission</div>
+    <h1>Submit a<br>Google Doc</h1>
+  </div>
+  <div class="form-wrap">
+    <button class="form-back" onclick="showView('v-type')">&#8592; Back</button>
+    <div class="form-section-title">Your Details</div>
+    <div class="field"><label>Discord Username <span class="req">*</span></label><input type="text" id="gd-discord" placeholder="yourname or yourname#0000"></div>
+    <div class="field"><label>Character Type <span class="req">*</span></label>
+      <select id="gd-type">
+        <option value="">Select type...</option>
+        <option value="foundation">Foundation Personnel</option>
+        <option value="scp">SCP Entry</option>
+        <option value="unaffiliated">Unaffiliated Personnel</option>
+      </select>
+    </div>
+    <div class="form-section-title">Google Doc Link</div>
+    <div class="field">
+      <label>Google Doc URL <span class="req">*</span></label>
+      <input type="url" id="gd-url" placeholder="https://docs.google.com/document/d/...">
+      <span class="field-hint">Make sure sharing is set to "Anyone with the link can view" before submitting.</span>
+    </div>
+    <div class="callout"><span class="callout-ico">&mdash;</span><p>Once approved, clicking your character on the public roster will open this Google Doc directly.</p></div>
+    <div class="submit-row">
+      <button class="btn btn-fill" onclick="submitGDoc()">Submit for Review</button>
+      <div class="form-msg" id="gd-msg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== FOUNDATION BUILDER ======== -->
+<div id="v-foundation" class="view">
+  <div class="ph">
+    <div class="ph-bgword">FOUND</div>
+    <div class="ph-tag">Foundation Personnel &mdash; Character Builder</div>
+    <h1>Foundation<br>Personnel</h1>
+    <p class="ph-desc">All fields marked with <span style="color:var(--danger)">*</span> are required. Use the toolbar at the bottom to format your rich text sections.</p>
+  </div>
+  <div class="form-wrap" style="max-width:800px;">
+    <button class="form-back" onclick="showView('v-type')">&#8592; Back</button>
+
+    <div class="form-section-title">Your Discord</div>
+    <div class="field"><label>Discord Username <span class="req">*</span></label><input type="text" id="fn-discord" placeholder="yourname or yourname#0000"></div>
+
+    <div class="form-section-title">Personnel File &mdash; Basic Info</div>
+    <div class="field"><label>Character Image (optional, max 5MB)</label>
+      <div class="img-upload-area" id="fn-img-area">
+        <input type="file" id="fn-img-input" accept="image/*" onchange="handleImg('fn-img-input','fn-img-preview','fn-img-area')">
+        <div class="img-upload-label">Click to upload image &mdash; JPG, PNG, GIF, WebP &mdash; Max 5MB</div>
+        <img id="fn-img-preview" class="img-preview" alt="Preview">
+      </div>
+    </div>
+    <div class="two-field">
+      <div class="field"><label>Full Name <span class="req">*</span></label><input type="text" id="fn-name" placeholder="Government name"></div>
+      <div class="field"><label>Alias / Codename <span style="color:var(--muted);font-size:9px">(optional)</span></label><input type="text" id="fn-alias" placeholder="If applicable"></div>
+    </div>
+    <div class="three-field">
+      <div class="field"><label>Age <span class="req">*</span></label><input type="text" id="fn-age" placeholder="e.g. 34"></div>
+      <div class="field"><label>Nationality <span class="req">*</span></label><input type="text" id="fn-nationality" placeholder="e.g. British"></div>
+      <div class="field"><label>Role / Position <span class="req">*</span></label><input type="text" id="fn-role" placeholder="e.g. Senior Researcher"></div>
+    </div>
+
+    <div class="form-section-title">Clearance &amp; Classification</div>
+    <div class="two-field">
+      <div class="field"><label>Clearance Level <span class="req">*</span></label>
+        <select id="fn-clearance">
+          <option value="">Select level...</option>
+          <option value="0">Level 0 &mdash; Unrestricted</option>
+          <option value="1">Level 1 &mdash; Confidential</option>
+          <option value="2">Level 2 &mdash; Restricted</option>
+          <option value="3">Level 3 &mdash; Secret</option>
+          <option value="4">Level 4 &mdash; Top Secret</option>
+          <option value="5">Level 5 &mdash; Thaumiel</option>
+          <option value="6">Level 6 &mdash; ██████████</option>
+        </select>
+        <span class="field-hint">Level 6 is reserved for O5 Council members.</span>
+      </div>
+      <div class="field"><label>Classification <span class="req">*</span></label>
+        <select id="fn-classification">
+          <option value="">Select class...</option>
+          <option value="E">Class E &mdash; Unrestricted</option>
+          <option value="D">Class D &mdash; Restricted</option>
+          <option value="C">Class C &mdash; Confidential</option>
+          <option value="B">Class B &mdash; Secret</option>
+          <option value="A">Class A &mdash; Top Secret</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-section-title">Department</div>
+    <div class="field"><label>Primary Department <span class="req">*</span></label><input type="text" id="fn-dept" placeholder="e.g. Department of Anomalous Objects"></div>
+    <div class="field">
+      <label>Sub-Departments <span style="color:var(--muted);font-size:9px">(optional &mdash; add as many as needed)</span></label>
+      <div class="subdept-list" id="fn-subdept-list"></div>
+      <button class="add-link" onclick="addSubDept('fn-subdept-list')">+ Add Sub-Department</button>
+    </div>
+
+    <div class="form-section-title">Rich Text Sections &mdash; Focus a field to activate the toolbar</div>
+    <div class="field"><label>Physical Description <span class="req">*</span></label>
+      <div class="rich-field" id="fn-physical" contenteditable="true" data-placeholder="Describe your character's physical appearance..."></div>
+    </div>
+    <div class="field"><label>Psychological Profile <span class="req">*</span></label>
+      <div class="rich-field" id="fn-psych" contenteditable="true" data-placeholder="Personality, mental state, notable behaviours..."></div>
+    </div>
+    <div class="field"><label>Employment History <span class="req">*</span></label>
+      <div class="rich-field" id="fn-employment" contenteditable="true" data-placeholder="Prior positions, how they came to the Foundation..."></div>
+    </div>
+    <div class="field"><label>Notable Incidents / Logs <span style="color:var(--muted);font-size:9px">(optional)</span></label>
+      <div class="rich-field" id="fn-incidents" contenteditable="true" data-placeholder="Any significant incidents, missions, or logged events..."></div>
+    </div>
+    <div class="field"><label>Additional Notes <span style="color:var(--muted);font-size:9px">(optional)</span></label>
+      <div class="rich-field" id="fn-notes" contenteditable="true" data-placeholder="Anything else worth noting..."></div>
+    </div>
+
+    <div class="submit-row">
+      <button class="btn btn-fill" onclick="submitFoundation()">Submit for Review</button>
+      <div class="form-msg" id="fn-msg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== SCP BUILDER ======== -->
+<div id="v-scp" class="view">
+  <div class="ph">
+    <div class="ph-bgword">SCP</div>
+    <div class="ph-tag">SCP Entry &mdash; Character Builder</div>
+    <h1>SCP Entry</h1>
+    <p class="ph-desc">All fields marked with <span style="color:var(--danger)">*</span> are required. The ACS bar updates live as you fill in the fields above it.</p>
+  </div>
+  <div class="form-wrap" style="max-width:800px;">
+    <button class="form-back" onclick="showView('v-type')">&#8592; Back</button>
+
+    <div class="form-section-title">Your Discord</div>
+    <div class="field"><label>Discord Username <span class="req">*</span></label><input type="text" id="scp-discord" placeholder="yourname or yourname#0000"></div>
+
+    <div class="form-section-title">ACS Bar Configuration &mdash; Updates the preview below</div>
+    <div class="two-field">
+      <div class="field"><label>Item Number <span class="req">*</span></label><input type="text" id="scp-item" placeholder="SCP-XXXX" oninput="updateACS()"></div>
+      <div class="field"><label>Clearance Level Required <span class="req">*</span></label>
+        <select id="scp-clearance" onchange="updateACS()">
+          <option value="">Select...</option>
+          <option value="1">Level 1</option><option value="2">Level 2</option>
+          <option value="3">Level 3</option><option value="4">Level 4</option><option value="5">Level 5</option>
+        </select>
+      </div>
+    </div>
+    <div class="two-field">
+      <div class="field"><label>Containment Class <span class="req">*</span></label>
+        <select id="scp-class" onchange="updateACS()">
+          <option value="">Select...</option>
+          <option value="Safe">Safe</option><option value="Euclid">Euclid</option>
+          <option value="Keter">Keter</option><option value="Neutralized">Neutralized</option>
+          <option value="Pending">Pending</option><option value="Explained">Explained</option>
+          <option value="Esoteric">Esoteric</option>
+        </select>
+      </div>
+      <div class="field"><label>Disruption Class <span class="req">*</span></label>
+        <select id="scp-disruption" onchange="updateACS()">
+          <option value="">Select...</option>
+          <option value="Dark">Dark</option><option value="Vlam">Vlam</option>
+          <option value="Keneq">Keneq</option><option value="Ekhi">Ekhi</option><option value="Amida">Amida</option>
+        </select>
+      </div>
+    </div>
+    <div class="field" style="max-width:300px;"><label>Risk Class <span class="req">*</span></label>
+      <select id="scp-risk" onchange="updateACS()">
+        <option value="">Select...</option>
+        <option value="Notice">Notice</option><option value="Caution">Caution</option>
+        <option value="Warning">Warning</option><option value="Danger">Danger</option><option value="Critical">Critical</option>
+      </select>
+    </div>
+
+    <!-- Secondary class (shows if Esoteric) -->
+    <div class="secondary-group" id="scp-secondary-group">
+      <div class="field">
+        <label>Secondary Class (Esoteric)</label>
+        <select id="scp-secondary" onchange="toggleSecondaryCustom()">
+          <option value="">Select secondary class...</option>
+          <option value="Apollyon">Apollyon</option><option value="Archon">Archon</option>
+          <option value="Cernunnos">Cernunnos</option><option value="Decommissioned">Decommissioned</option>
+          <option value="Hiemal">Hiemal</option><option value="Tiamat">Tiamat</option>
+          <option value="Ticonderoga">Ticonderoga</option><option value="Thaumiel">Thaumiel</option>
+          <option value="Uncontained">Uncontained</option><option value="Other">Other (write your own)</option>
+        </select>
+      </div>
+      <div class="field" id="scp-custom-class-group" style="display:none;">
+        <label>Custom Secondary Class</label>
+        <input type="text" id="scp-custom-class" placeholder="Enter custom class name">
+      </div>
+    </div>
+
+    <!-- ACS Preview -->
+    <div class="stag" style="margin-top:1rem;">ACS Bar Preview</div>
+    <div class="acs-bar" id="acs-preview">
+      <div class="acs-top">
+        <div class="acs-item-num">ITEM #: <span id="acs-num">SCP-XXXX</span></div>
+        <div class="acs-level-tag" id="acs-level">LEVEL ?/SCP-XXXX</div>
+        <div class="acs-class-block" id="acs-class-block">
+          <span class="acs-class-header">OBJECT CLASS</span>
+          <span class="acs-class-value" id="acs-class-val">PENDING</span>
+        </div>
+      </div>
+      <div class="acs-bottom">
+        <div class="acs-disruption" id="acs-dis-block">
+          <span class="acs-meta-label">DISRUPTION CLASS</span>
+          <span class="acs-meta-value" id="acs-dis-val">&mdash;</span>
+        </div>
+        <div class="acs-risk" id="acs-risk-block">
+          <span class="acs-meta-label">RISK CLASS</span>
+          <span class="acs-meta-value" id="acs-risk-val">&mdash;</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section-title">Document &mdash; Focus a field to activate the toolbar</div>
+    <div class="field"><label>Containment Procedures <span class="req">*</span></label>
+      <div class="rich-field" id="scp-containment" contenteditable="true" data-placeholder="Special Containment Procedures: SCP-XXXX is to be..."></div>
+    </div>
+    <div class="field"><label>Description <span class="req">*</span></label>
+      <div class="rich-field" id="scp-description" contenteditable="true" data-placeholder="SCP-XXXX is a..."></div>
+    </div>
+    <div class="field"><label>Abilities <span class="req">*</span></label>
+      <div class="rich-field" id="scp-abilities" contenteditable="true" data-placeholder="Describe the anomaly's abilities, their limits, weaknesses, and behaviour..."></div>
+    </div>
+
+    <div class="form-section-title">Addenda (Optional)</div>
+    <div class="addendum-list" id="scp-addendum-list"></div>
+    <button class="add-link" onclick="addAddendum('scp-addendum-list')">+ Add Addendum</button>
+
+    <div class="submit-row" style="margin-top:2rem;">
+      <button class="btn btn-fill" onclick="submitSCP()">Submit for Review</button>
+      <div class="form-msg" id="scp-msg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== UNAFFILIATED BUILDER ======== -->
+<div id="v-unaff" class="view">
+  <div class="ph">
+    <div class="ph-bgword">FREE</div>
+    <div class="ph-tag">Unaffiliated Personnel &mdash; Character Builder</div>
+    <h1>Unaffiliated<br>Personnel</h1>
+    <p class="ph-desc">A more open format. Fill in what's relevant to your character — not everything needs to be filled unless marked required.</p>
+  </div>
+  <div class="form-wrap" style="max-width:800px;">
+    <button class="form-back" onclick="showView('v-type')">&#8592; Back</button>
+
+    <div class="form-section-title">Your Discord</div>
+    <div class="field"><label>Discord Username <span class="req">*</span></label><input type="text" id="ua-discord" placeholder="yourname or yourname#0000"></div>
+
+    <div class="form-section-title">Character Info</div>
+    <div class="field"><label>Character Image (optional, max 5MB)</label>
+      <div class="img-upload-area" id="ua-img-area">
+        <input type="file" id="ua-img-input" accept="image/*" onchange="handleImg('ua-img-input','ua-img-preview','ua-img-area')">
+        <div class="img-upload-label">Click to upload image &mdash; JPG, PNG, GIF, WebP &mdash; Max 5MB</div>
+        <img id="ua-img-preview" class="img-preview" alt="Preview">
+      </div>
+    </div>
+    <div class="two-field">
+      <div class="field"><label>Full Name <span class="req">*</span></label><input type="text" id="ua-name" placeholder="Character name"></div>
+      <div class="field"><label>Age <span style="color:var(--muted);font-size:9px">(optional)</span></label><input type="text" id="ua-age" placeholder="e.g. 29"></div>
+    </div>
+    <div class="field"><label>Affiliation <span style="color:var(--muted);font-size:9px">(optional &mdash; write your own)</span></label><input type="text" id="ua-affiliation" placeholder="e.g. Serpent's Hand, Global Occult Coalition, Civilian, None"></div>
+
+    <div class="form-section-title">Rich Text Sections &mdash; Focus a field to activate the toolbar</div>
+    <div class="field"><label>Background / History <span class="req">*</span></label>
+      <div class="rich-field" id="ua-background" contenteditable="true" data-placeholder="Who is this person? Where did they come from? How did they end up here?"></div>
+    </div>
+    <div class="field"><label>Skills &amp; Abilities <span style="color:var(--muted);font-size:9px">(optional)</span></label>
+      <div class="rich-field" id="ua-skills" contenteditable="true" data-placeholder="Relevant skills, abilities, training..."></div>
+    </div>
+    <div class="field"><label>Equipment / Resources <span style="color:var(--muted);font-size:9px">(optional)</span></label>
+      <div class="rich-field" id="ua-equipment" contenteditable="true" data-placeholder="Anything they carry, own, or have access to..."></div>
+    </div>
+    <div class="field"><label>Additional Notes <span style="color:var(--muted);font-size:9px">(optional)</span></label>
+      <div class="rich-field" id="ua-notes" contenteditable="true" data-placeholder="Anything else..."></div>
+    </div>
+
+    <div class="submit-row">
+      <button class="btn btn-fill" onclick="submitUnaff()">Submit for Review</button>
+      <div class="form-msg" id="ua-msg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== SUCCESS ======== -->
+<div id="v-success" class="view">
+  <div class="success-wrap">
+    <div class="success-num">#<span id="success-num">—</span></div>
+    <div class="success-title">Submission Received</div>
+    <p class="success-msg">Your character sheet has been submitted for review. Keep an eye on your Discord DMs &mdash; staff usually get back to people within a few days. You can track your submission below.</p>
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;">
+      <button class="btn btn-ghost" onclick="showView('v-tracker')">Track My Submission</button>
+      <button class="btn btn-ghost" onclick="showView('v-home')">Back to Home</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======== TRACKER ======== -->
+<div id="v-tracker" class="view">
+  <div class="ph">
+    <div class="ph-bgword">TRACK</div>
+    <div class="ph-tag">Submission Tracker</div>
+    <h1>Track My<br>Submission</h1>
+    <p class="ph-desc">Enter your Discord username to see the status of all your character submissions.</p>
+  </div>
+  <div class="wrap">
+    <div class="tracker-search">
+      <input type="text" id="tracker-input" placeholder="Your Discord username" onkeydown="if(event.key==='Enter')doTrack()">
+      <button class="btn btn-fill" onclick="doTrack()">Search</button>
+    </div>
+    <div id="tracker-results"></div>
+  </div>
+  <footer><span>THREEFOLD</span><span>Tracker</span></footer>
+</div>
+
+<!-- ======== LISTING ======== -->
+<div id="v-listing" class="view">
+  <div class="ph">
+    <div class="ph-bgword">ROSTER</div>
+    <div class="ph-tag">Approved Characters &mdash; Public Roster</div>
+    <h1>Character<br>Roster</h1>
+    <p class="ph-desc">All approved characters. Click any card to view the full sheet. Colour-coded by clearance level and containment class.</p>
+  </div>
+  <div class="wrap">
+    <div class="listing-filters">
+      <button class="lf-btn active" onclick="filterListing('all',this)">All</button>
+      <button class="lf-btn" onclick="filterListing('foundation',this)">Foundation</button>
+      <button class="lf-btn" onclick="filterListing('scp',this)">SCPs</button>
+      <button class="lf-btn" onclick="filterListing('unaffiliated',this)">Unaffiliated</button>
+    </div>
+    <div class="char-grid" id="char-grid"></div>
+    <div class="empty-state" id="listing-empty" style="display:none;">No approved characters yet.</div>
+  </div>
+  <footer><span>THREEFOLD</span><span>Public Roster</span></footer>
+</div>
+
+<!-- ======== CHARACTER VIEW ======== -->
+<div id="v-character" class="view">
+  <div class="cv-wrap">
+    <button class="cv-back" onclick="showView('v-listing')">&#8592; Back to Roster</button>
+    <div id="cv-content"></div>
+  </div>
+  <footer><span>THREEFOLD</span><span>Character</span></footer>
+</div>
+
+<!-- ======== RICH TEXT TOOLBAR ======== -->
+<div id="rich-toolbar">
+  <div class="tb-group">
+    <span class="tb-label">Font</span>
+    <select class="tb-select" id="tb-font" onchange="tbFont(this.value)">
+      <option value="'Barlow',sans-serif">Barlow</option>
+      <option value="'Barlow Condensed',sans-serif">Barlow Condensed</option>
+      <option value="'Share Tech Mono',monospace">Monospace</option>
+      <option value="'Special Elite',cursive">Special Elite</option>
+      <option value="Georgia,serif">Georgia</option>
+      <option value="'Courier New',monospace">Courier New</option>
+    </select>
+  </div>
+  <div class="tb-group">
+    <span class="tb-label">Size</span>
+    <select class="tb-select" id="tb-size" onchange="tbSize(this.value)">
+      <option value="11px">11</option><option value="13px">13</option>
+      <option value="16px" selected>16</option><option value="18px">18</option>
+      <option value="22px">22</option><option value="28px">28</option><option value="36px">36</option>
+    </select>
+  </div>
+  <div class="tb-group">
+    <button class="tb-btn" onclick="tbCmd('bold')"><b>B</b></button>
+    <button class="tb-btn" onclick="tbCmd('italic')"><i>I</i></button>
+  </div>
+  <div class="tb-group">
+    <span class="tb-label">Colour</span>
+    <div class="color-row">
+      <div class="cswatch" style="background:#f0f0f0" onclick="tbColor('#f0f0f0')" title="White"></div>
+      <div class="cswatch" style="background:#cccccc" onclick="tbColor('#cccccc')" title="Pale"></div>
+      <div class="cswatch" style="background:#999999" onclick="tbColor('#999999')" title="Light grey"></div>
+      <div class="cswatch" style="background:#cc2200" onclick="tbColor('#cc2200')" title="Red"></div>
+      <div class="cswatch" style="background:#4a9a5a" onclick="tbColor('#4a9a5a')" title="Green"></div>
+      <div class="cswatch" style="background:#4a5aaa" onclick="tbColor('#4a5aaa')" title="Blue"></div>
+      <div class="cswatch" style="background:#c8981a" onclick="tbColor('#c8981a')" title="Gold"></div>
+      <div class="cswatch" style="background:#8a3a8a" onclick="tbColor('#8a3a8a')" title="Purple"></div>
+    </div>
+  </div>
+  <div class="tb-group">
+    <button class="tb-btn" onclick="tbRedacted()" title="Wrap selected text in click-to-reveal redaction">[REDACT]</button>
+    <button class="tb-btn" onclick="tbGlitch()" title="Wrap selected text in glitch animation">~GLITCH~</button>
+  </div>
+  <div class="tb-group">
+    <span class="tb-label" style="font-size:9px;color:var(--border);">Select text first, then apply</span>
+  </div>
+</div>
+
+<script>
+/* ===========================================
+   NAVIGATION
+=========================================== */
+let _method = null, _type = null, _focusedField = null, _allChars = [];
+window._pendingImgFile_fn = null;
+window._pendingImgFile_ua = null;
+
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  const t = document.getElementById(id);
+  if (t) { t.classList.add('active'); window.scrollTo(0,0); }
+}
+
+function setMethod(m) {
+  _method = m;
+  if (m === 'googledoc') { showView('v-type'); document.getElementById('type-back-btn').onclick = ()=>showView('v-method'); }
+  else { showView('v-type'); document.getElementById('type-back-btn').onclick = ()=>showView('v-method'); }
+}
+
+function setType(t) {
+  _type = t;
+  if (_method === 'googledoc') { showView('v-gdoc'); return; }
+  if (t === 'foundation') showView('v-foundation');
+  else if (t === 'scp') showView('v-scp');
+  else showView('v-unaff');
+}
+
+/* ===========================================
+   RICH TEXT TOOLBAR
+=========================================== */
+function initToolbar() {
+  document.querySelectorAll('.rich-field').forEach(f => {
+    f.addEventListener('focus', () => { _focusedField = f; document.getElementById('rich-toolbar').classList.add('visible'); });
+    f.addEventListener('blur', () => {
+      setTimeout(() => {
+        if (!document.activeElement.closest('#rich-toolbar')) {
+          document.getElementById('rich-toolbar').classList.remove('visible');
+          _focusedField = null;
+        }
+      }, 200);
+    });
+  });
+}
+
+function tbCmd(cmd) {
+  if (!_focusedField) return;
+  _focusedField.focus();
+  document.execCommand(cmd);
+}
+
+function tbFont(font) {
+  if (!_focusedField) return;
+  _focusedField.focus();
+  wrapSel({ fontFamily: font });
+}
+
+function tbSize(size) {
+  if (!_focusedField) return;
+  _focusedField.focus();
+  wrapSel({ fontSize: size });
+}
+
+function tbColor(color) {
+  if (!_focusedField) return;
+  _focusedField.focus();
+  document.execCommand('foreColor', false, color);
+}
+
+function wrapSel(styles) {
+  const sel = window.getSelection();
+  if (!sel || sel.isCollapsed) return;
+  const range = sel.getRangeAt(0);
+  const span = document.createElement('span');
+  Object.assign(span.style, styles);
+  try { range.surroundContents(span); }
+  catch(e) {
+    const text = sel.toString();
+    document.execCommand('insertHTML', false, `<span style="${Object.entries(styles).map(([k,v])=>k+':'+v).join(';')}">${text}</span>`);
+  }
+  sel.removeAllRanges();
+}
+
+function tbRedacted() {
+  if (!_focusedField) return;
+  const sel = window.getSelection();
+  if (!sel || sel.isCollapsed) { alert('Select some text first.'); return; }
+  const text = sel.toString();
+  const range = sel.getRangeAt(0);
+  const span = document.createElement('span');
+  span.className = 'char-redacted';
+  span.setAttribute('data-text', text);
+  span.textContent = text;
+  span.addEventListener('click', () => span.classList.toggle('revealed'));
+  try {
+    range.deleteContents();
+    range.insertNode(span);
+  } catch(e) {
+    document.execCommand('insertHTML', false, `<span class="char-redacted" onclick="this.classList.toggle('revealed')">${text}</span>`);
+  }
+  sel.removeAllRanges();
+}
+
+function tbGlitch() {
+  if (!_focusedField) return;
+  const sel = window.getSelection();
+  if (!sel || sel.isCollapsed) { alert('Select some text first.'); return; }
+  const text = sel.toString();
+  const range = sel.getRangeAt(0);
+  const span = document.createElement('span');
+  span.className = 'char-glitch';
+  span.setAttribute('data-text', text);
+  span.textContent = text;
+  try {
+    range.deleteContents();
+    range.insertNode(span);
+  } catch(e) {
+    document.execCommand('insertHTML', false, `<span class="char-glitch" data-text="${escHtml(text)}">${text}</span>`);
+  }
+  sel.removeAllRanges();
+}
+
+/* ===========================================
+   IMAGE UPLOAD
+=========================================== */
+function handleImg(inputId, previewId, areaId) {
+  const input = document.getElementById(inputId);
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { alert('Image must be under 5MB.'); input.value=''; return; }
+  const allowed = ['jpg','jpeg','png','gif','webp'];
+  if (!allowed.includes(file.name.split('.').pop().toLowerCase())) { alert('Please use JPG, PNG, GIF, or WebP.'); input.value=''; return; }
+  if (inputId === 'fn-img-input') window._pendingImgFile_fn = file;
+  if (inputId === 'ua-img-input') window._pendingImgFile_ua = file;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const prev = document.getElementById(previewId);
+    prev.src = e.target.result; prev.style.display = 'block';
+    document.getElementById(areaId).querySelector('.img-upload-label').textContent = file.name;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function doUploadImg(fileKey) {
+  const file = window[fileKey];
+  if (!file) return null;
+  try {
+    const url = await uploadCharacterImage(file);
+    return url;
+  } catch(e) { return null; }
+}
+
+/* ===========================================
+   SUB-DEPARTMENTS
+=========================================== */
+function addSubDept(listId) {
+  const list = document.getElementById(listId);
+  const item = document.createElement('div');
+  item.className = 'subdept-item';
+  item.innerHTML = `<input type="text" class="subdept-input" placeholder="Sub-department name"><button class="subdept-remove" onclick="this.parentElement.remove()">✕</button>`;
+  list.appendChild(item);
+}
+
+function getSubDepts(listId) {
+  return Array.from(document.querySelectorAll('#'+listId+' .subdept-input')).map(i=>i.value.trim()).filter(Boolean);
+}
+
+/* ===========================================
+   ADDENDA
+=========================================== */
+let _addendumCount = 0;
+function addAddendum(listId) {
+  _addendumCount++;
+  const list = document.getElementById(listId);
+  const item = document.createElement('div');
+  item.className = 'addendum-item';
+  const id = 'adden-' + _addendumCount;
+  item.innerHTML = `
+    <div class="addendum-header">
+      <input type="text" class="addendum-title" placeholder="Addendum ${_addendumCount} Title">
+      <button class="addendum-del" onclick="this.closest('.addendum-item').remove()">✕</button>
+    </div>
+    <div class="addendum-body">
+      <div class="rich-field addendum-content" id="${id}" contenteditable="true" data-placeholder="Addendum content..."></div>
+    </div>`;
+  list.appendChild(item);
+  // init toolbar for new field
+  const f = item.querySelector('.rich-field');
+  f.addEventListener('focus', () => { _focusedField = f; document.getElementById('rich-toolbar').classList.add('visible'); });
+  f.addEventListener('blur', () => { setTimeout(() => { if (!document.activeElement.closest('#rich-toolbar')) { document.getElementById('rich-toolbar').classList.remove('visible'); _focusedField = null; } }, 200); });
+}
+
+function getAddenda(listId) {
+  return Array.from(document.querySelectorAll('#'+listId+' .addendum-item')).map(item => ({
+    title: item.querySelector('.addendum-title').value.trim() || 'Untitled Addendum',
+    content: item.querySelector('.addendum-content').innerHTML,
+  }));
+}
+
+/* ===========================================
+   ACS BAR LIVE UPDATE
+=========================================== */
+const ACS_CLEARANCE_COLORS = {'1':'#0d4a0d','2':'#0d0d4a','3':'#4a3d0d','4':'#4a1a0d','5':'#4a0d0d'};
+const ACS_CLASS_COLORS = {safe:'#0d4a2a',euclid:'#4a3d0d',keter:'#4a0d0d',neutralized:'#2a2a2a',pending:'#0d2a4a',explained:'#2a0d4a',esoteric:'#3a0d3a'};
+const ACS_DIS_COLORS = {dark:'#0a0a0a',vlam:'#3a1a05',keneq:'#3a2a05',ekhi:'#4a3a0a',amida:'#4a4a3a'};
+const ACS_RISK_COLORS = {notice:'#0a3a0a',caution:'#2a3a0a',warning:'#3a2a0a',danger:'#3a0a0a',critical:'#1a0505'};
+
+function updateACS() {
+  const num = document.getElementById('scp-item').value.trim() || 'SCP-XXXX';
+  const cl = document.getElementById('scp-clearance').value;
+  const cls = document.getElementById('scp-class').value;
+  const dis = document.getElementById('scp-disruption').value;
+  const risk = document.getElementById('scp-risk').value;
+
+  document.getElementById('acs-num').textContent = num;
+  document.getElementById('acs-level').textContent = cl ? `LEVEL ${cl}/${num}` : `LEVEL ?/${num}`;
+  document.getElementById('acs-level').style.background = ACS_CLEARANCE_COLORS[cl] || '#1a1a1a';
+  document.getElementById('acs-class-val').textContent = cls ? cls.toUpperCase() : 'PENDING';
+  document.getElementById('acs-class-block').style.background = cls ? (ACS_CLASS_COLORS[cls.toLowerCase()] || '#2a2a2a') : '#1a1a1a';
+  document.getElementById('acs-dis-val').textContent = dis || '—';
+  document.getElementById('acs-dis-block').style.background = dis ? (ACS_DIS_COLORS[dis.toLowerCase()] || '#111') : '#111';
+  document.getElementById('acs-risk-val').textContent = risk || '—';
+  document.getElementById('acs-risk-block').style.background = risk ? (ACS_RISK_COLORS[risk.toLowerCase()] || '#111') : '#111';
+
+  // Secondary class visibility
+  const sg = document.getElementById('scp-secondary-group');
+  if (sg) sg.style.display = cls === 'Esoteric' ? 'block' : 'none';
+}
+
+function toggleSecondaryCustom() {
+  const sel = document.getElementById('scp-secondary').value;
+  document.getElementById('scp-custom-class-group').style.display = sel === 'Other' ? 'block' : 'none';
+}
+
+/* ===========================================
+   SUBMIT FOUNDATION
+=========================================== */
+async function submitFoundation() {
+  const msg = document.getElementById('fn-msg');
+  const discord = g('fn-discord');
+  const name = g('fn-name');
+  const clearance = g('fn-clearance');
+  const classification = g('fn-classification');
+  const dept = g('fn-dept');
+  const role = g('fn-role');
+  const age = g('fn-age');
+  const nationality = g('fn-nationality');
+
+  if (!discord||!name||!clearance||!classification||!dept||!role||!age||!nationality) {
+    setMsg(msg,'error','Please fill in all required fields.');return;
+  }
+  if (!document.getElementById('fn-physical').innerHTML.trim()||!document.getElementById('fn-psych').innerHTML.trim()||!document.getElementById('fn-employment').innerHTML.trim()) {
+    setMsg(msg,'error','Physical Description, Psychological Profile, and Employment History are required.');return;
+  }
+
+  setMsg(msg,'loading','Uploading...');
+  const imgUrl = await doUploadImg('_pendingImgFile_fn');
+
+  const data = {
+    image_url: imgUrl,
+    full_name: name, alias: g('fn-alias'),
+    age, nationality, role,
+    clearance: parseInt(clearance), classification,
+    department: dept,
+    sub_departments: getSubDepts('fn-subdept-list'),
+    physical_desc: document.getElementById('fn-physical').innerHTML,
+    psych_profile: document.getElementById('fn-psych').innerHTML,
+    employment: document.getElementById('fn-employment').innerHTML,
+    incidents: document.getElementById('fn-incidents').innerHTML,
+    notes: document.getElementById('fn-notes').innerHTML,
+  };
+
+  setMsg(msg,'loading','Submitting...');
+  const {data:result,error} = await submitCharacter('foundation','website',discord,data,null);
+  if (error) { setMsg(msg,'error','Submission failed: '+error.message); return; }
+  document.getElementById('success-num').textContent = result.seq || '?';
+  showView('v-success');
+}
+
+/* ===========================================
+   SUBMIT SCP
+=========================================== */
+async function submitSCP() {
+  const msg = document.getElementById('scp-msg');
+  const discord = g('scp-discord');
+  const item = g('scp-item');
+  const cl = g('scp-clearance');
+  const cls = g('scp-class');
+  const dis = g('scp-disruption');
+  const risk = g('scp-risk');
+
+  if (!discord||!item||!cl||!cls||!dis||!risk) { setMsg(msg,'error','Please fill in all required fields including the ACS bar.'); return; }
+  if (!document.getElementById('scp-containment').innerHTML.trim()||!document.getElementById('scp-description').innerHTML.trim()||!document.getElementById('scp-abilities').innerHTML.trim()) {
+    setMsg(msg,'error','Containment Procedures, Description, and Abilities are required.'); return;
+  }
+
+  const secondarySel = document.getElementById('scp-secondary').value;
+  const data = {
+    item_number: item, clearance_level: parseInt(cl),
+    containment_class: cls,
+    secondary_class: cls === 'Esoteric' ? (secondarySel === 'Other' ? g('scp-custom-class') : secondarySel) : null,
+    disruption_class: dis, risk_class: risk,
+    containment_procedures: document.getElementById('scp-containment').innerHTML,
+    description: document.getElementById('scp-description').innerHTML,
+    abilities: document.getElementById('scp-abilities').innerHTML,
+    addenda: getAddenda('scp-addendum-list'),
+  };
+
+  setMsg(msg,'loading','Submitting...');
+  const {data:result,error} = await submitCharacter('scp','website',discord,data,null);
+  if (error) { setMsg(msg,'error','Submission failed: '+error.message); return; }
+  document.getElementById('success-num').textContent = result.seq || '?';
+  showView('v-success');
+}
+
+/* ===========================================
+   SUBMIT UNAFFILIATED
+=========================================== */
+async function submitUnaff() {
+  const msg = document.getElementById('ua-msg');
+  const discord = g('ua-discord');
+  const name = g('ua-name');
+  if (!discord||!name) { setMsg(msg,'error','Discord username and character name are required.'); return; }
+  if (!document.getElementById('ua-background').innerHTML.trim()) { setMsg(msg,'error','Background / History is required.'); return; }
+
+  setMsg(msg,'loading','Uploading...');
+  const imgUrl = await doUploadImg('_pendingImgFile_ua');
+
+  const data = {
+    image_url: imgUrl,
+    full_name: name,
+    age: g('ua-age'),
+    affiliation: g('ua-affiliation'),
+    background: document.getElementById('ua-background').innerHTML,
+    skills: document.getElementById('ua-skills').innerHTML,
+    equipment: document.getElementById('ua-equipment').innerHTML,
+    notes: document.getElementById('ua-notes').innerHTML,
+  };
+
+  setMsg(msg,'loading','Submitting...');
+  const {data:result,error} = await submitCharacter('unaffiliated','website',discord,data,null);
+  if (error) { setMsg(msg,'error','Submission failed: '+error.message); return; }
+  document.getElementById('success-num').textContent = result.seq || '?';
+  showView('v-success');
+}
+
+/* ===========================================
+   SUBMIT GOOGLE DOC
+=========================================== */
+async function submitGDoc() {
+  const msg = document.getElementById('gd-msg');
+  const discord = g('gd-discord');
+  const type = g('gd-type');
+  const url = g('gd-url');
+  if (!discord||!type||!url) { setMsg(msg,'error','All fields are required.'); return; }
+  if (!url.startsWith('https://docs.google.com')) { setMsg(msg,'error','Please enter a valid Google Docs URL.'); return; }
+
+  setMsg(msg,'loading','Submitting...');
+  const {data:result,error} = await submitCharacter(type,'googledoc',discord,{},url);
+  if (error) { setMsg(msg,'error','Submission failed: '+error.message); return; }
+  document.getElementById('success-num').textContent = result.seq || '?';
+  showView('v-success');
+}
+
+/* ===========================================
+   TRACKER
+=========================================== */
+async function doTrack() {
+  const username = document.getElementById('tracker-input').value.trim();
+  if (!username) return;
+  const container = document.getElementById('tracker-results');
+  container.innerHTML = '<div class="empty-state">Loading...</div>';
+
+  const {data,error} = await getCharactersByDiscord(username);
+  if (error||!data||!data.length) {
+    container.innerHTML = '<div class="empty-state">No submissions found for that username. Make sure it matches exactly.</div>';
+    return;
+  }
+
+  const typeLabel = {foundation:'Foundation',scp:'SCP',unaffiliated:'Unaffiliated'};
+  const rows = data.map(c => {
+    const d = c.character_data || {};
+    const charName = c.type==='scp' ? (d.item_number||'SCP-???') : (d.full_name||'—');
+    const status = c.status;
+    const date = c.created_at ? new Date(c.created_at).toLocaleDateString('en-GB') : '—';
+    const viewBtn = status==='approved' ? `<button class="btn btn-xs btn-ghost" onclick="viewChar('${c.id}')">View</button>` : '';
+    return `<tr>
+      <td style="font-family:var(--mono);font-size:11px;color:var(--muted)">#${c.seq||'?'}</td>
+      <td>${typeLabel[c.type]||c.type}</td>
+      <td>${escHtml(charName)}</td>
+      <td style="font-family:var(--mono);font-size:11px">${date}</td>
+      <td><span class="track-status ts-${status}">${statusLabel(status)}</span>
+        ${c.staff_reason ? `<div class="track-reason">"${escHtml(c.staff_reason)}"</div>` : ''}
+      </td>
+      <td>${viewBtn}</td>
+    </tr>`;
+  }).join('');
+
+  container.innerHTML = `<table class="track-table">
+    <thead><tr><th>#</th><th>Type</th><th>Character</th><th>Submitted</th><th>Status</th><th></th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+/* ===========================================
+   LISTING
+=========================================== */
+let _listingFilter = 'all';
+async function loadListing() {
+  showView('v-listing');
+  const grid = document.getElementById('char-grid');
+  const empty = document.getElementById('listing-empty');
+  grid.innerHTML = '<div class="empty-state">Loading roster...</div>';
+  empty.style.display = 'none';
+
+  const {data,error} = await getCharacters({status:'approved'});
+  _allChars = data || [];
+  renderGrid(_listingFilter);
+}
+
+function filterListing(type, btn) {
+  _listingFilter = type;
+  document.querySelectorAll('.lf-btn').forEach(b=>b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderGrid(type);
+}
+
+function renderGrid(type) {
+  const grid = document.getElementById('char-grid');
+  const empty = document.getElementById('listing-empty');
+  let chars = type==='all' ? _allChars : _allChars.filter(c=>c.type===type);
+  if (!chars.length) { grid.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display = 'none';
+  grid.innerHTML = chars.map(c => charCard(c)).join('');
+}
+
+function charCard(c) {
+  const d = c.character_data || {};
+  const isGdoc = c.method === 'googledoc';
+
+  if (c.type === 'foundation') {
+    const cl = d.clearance !== undefined ? d.clearance : '';
+    const cls = d.classification || '';
+    const clColor = cl===6?'#555':(cl===5?'#aa3a3a':cl===4?'#aa6a3a':cl===3?'#aaa03a':cl===2?'#4a5aaa':cl===1?'#4a9a4a':'#777');
+    return `<div class="char-card cl-${cl}" onclick="${isGdoc?`window.open('${escHtml(c.gdoc_url)}','_blank')`:`viewChar('${c.id}')`}">
+      <div class="char-card-type-tag">Foundation Personnel</div>
+      <div class="char-card-name">${escHtml(d.full_name||'Unknown')}</div>
+      <div class="char-card-meta">
+        <span class="char-badge cl-badge" style="border-color:${clColor};color:${clColor}">CL-${cl}</span>
+        <span class="char-badge" style="border-color:var(--border);color:var(--muted)">CLASS ${cls}</span>
+      </div>
+      <div class="char-card-sub">${escHtml(d.role||'')} &mdash; ${escHtml(d.department||'')}</div>
+      ${isGdoc?'<span class="char-gdoc-badge">Google Doc</span>':''}
+    </div>`;
+  }
+
+  if (c.type === 'scp') {
+    const cls = (d.containment_class||'pending').toLowerCase();
+    const ccColor = cls==='safe'?'#2a9a5a':cls==='euclid'?'#9a8a3a':cls==='keter'?'#aa3a3a':cls==='neutralized'?'#7a7a7a':cls==='pending'?'#3a5aaa':cls==='explained'?'#6a4aaa':'#8a3a8a';
+    return `<div class="char-card scp-${cls}" onclick="${isGdoc?`window.open('${escHtml(c.gdoc_url)}','_blank')`:`viewChar('${c.id}')`}">
+      <div class="char-card-type-tag">SCP Entry</div>
+      <div class="char-card-name">${escHtml(d.item_number||'SCP-???')}</div>
+      <div class="char-card-meta">
+        <span class="char-badge cc-badge" style="border-color:${ccColor};color:${ccColor}">${(d.containment_class||'?').toUpperCase()}</span>
+        ${d.secondary_class?`<span class="char-badge" style="border-color:#5a1a5a;color:#8a3a8a">${escHtml(d.secondary_class)}</span>`:''}
+      </div>
+      <div class="char-card-sub">Risk: ${d.risk_class||'—'} &mdash; Disruption: ${d.disruption_class||'—'}</div>
+      ${isGdoc?'<span class="char-gdoc-badge">Google Doc</span>':''}
+    </div>`;
+  }
+
+  // Unaffiliated
+  return `<div class="char-card" style="border-left-color:#1a3a7a" onclick="${isGdoc?`window.open('${escHtml(c.gdoc_url)}','_blank')`:`viewChar('${c.id}')`}">
+    <div class="char-card-type-tag">Unaffiliated Personnel</div>
+    <div class="char-card-name">${escHtml(d.full_name||'Unknown')}</div>
+    ${d.affiliation?`<div class="char-card-sub">${escHtml(d.affiliation)}</div>`:''}
+    ${isGdoc?'<span class="char-gdoc-badge">Google Doc</span>':''}
+  </div>`;
+}
+
+/* ===========================================
+   CHARACTER VIEW
+=========================================== */
+async function viewChar(id) {
+  showView('v-character');
+  document.getElementById('cv-content').innerHTML = '<div class="empty-state">Loading...</div>';
+
+  const {data,error} = await getCharacterById(id);
+  if (error||!data) { document.getElementById('cv-content').innerHTML='<div class="empty-state">Character not found.</div>'; return; }
+
+  if (data.method==='googledoc') { window.open(data.gdoc_url,'_blank'); showView('v-listing'); return; }
+
+  const d = data.character_data || {};
+  let html = '';
+
+  if (data.type === 'foundation') {
+    const cl = d.clearance !== undefined ? d.clearance : '';
+    const clColors = {0:'#555',1:'#2a7a2a',2:'#2a3a8a',3:'#8a7a1a',4:'#8a4a1a',5:'#8a1a1a',6:'#050505'};
+    const clColor = clColors[cl] || '#555';
+    const clText = cl===6 ? '██████████' : `CLEARANCE LEVEL ${cl}`;
+
+    const subdepts = (d.sub_departments||[]).map(s=>`<tr><td>Sub-Dept</td><td>${escHtml(s)}</td></tr>`).join('');
+
+    html = `
+    <div class="cv-fnd-header cl-${cl}">
+      ${d.image_url ? `<img class="cv-fnd-img" src="${d.image_url}" alt="Character">` : '<div class="cv-fnd-img-ph">No Image</div>'}
+      <div>
+        <div class="cv-badges">
+          <span class="cv-badge" style="border-color:${clColor};color:${clColor}">${cl===6?'<span class="char-glitch" data-text="CLEARANCE LEVEL 6">CLEARANCE LEVEL 6</span>':clText}</span>
+          <span class="cv-badge" style="border-color:var(--border);color:var(--muted)">CLASS ${d.classification||'?'}</span>
+        </div>
+        <div class="cv-fnd-name">${escHtml(d.full_name||'Unknown')}</div>
+        <div class="cv-fnd-role">${escHtml(d.role||'')} &mdash; ${escHtml(d.department||'')}</div>
+        <table class="cv-table" style="margin-top:1rem;">
+          <tr><td>Age</td><td>${escHtml(d.age||'—')}</td></tr>
+          <tr><td>Nationality</td><td>${escHtml(d.nationality||'—')}</td></tr>
+          ${d.alias?`<tr><td>Alias</td><td>${escHtml(d.alias)}</td></tr>`:''}
+          ${subdepts}
+        </table>
+      </div>
+    </div>
+    ${cvSection('Physical Description', d.physical_desc)}
+    ${cvSection('Psychological Profile', d.psych_profile)}
+    ${cvSection('Employment History', d.employment)}
+    ${d.incidents&&d.incidents.trim()!==''&&d.incidents!=='<br>' ? cvSection('Notable Incidents / Logs', d.incidents) : ''}
+    ${d.notes&&d.notes.trim()!==''&&d.notes!=='<br>' ? cvSection('Additional Notes', d.notes) : ''}`;
+  }
+
+  else if (data.type === 'scp') {
+    const cls = (d.containment_class||'pending').toLowerCase();
+    const lvl = d.clearance_level;
+    const acsClassBg = ACS_CLASS_COLORS[cls] || '#1a1a1a';
+    const acsLvlBg = ACS_CLEARANCE_COLORS[String(lvl)] || '#1a1a1a';
+    const acsDiaBg = ACS_DIS_COLORS[(d.disruption_class||'').toLowerCase()] || '#111';
+    const acsRiskBg = ACS_RISK_COLORS[(d.risk_class||'').toLowerCase()] || '#111';
+
+    const addendaHtml = (d.addenda||[]).map((a,i) => `
+      <div class="cv-addendum">
+        <button class="cv-addendum-toggle" onclick="toggleAddendum(this)">${escHtml(a.title||'Addendum '+(i+1))}</button>
+        <div class="cv-addendum-body">${a.content||''}</div>
+      </div>`).join('');
+
+    html = `
+    <div class="acs-bar">
+      <div class="acs-top">
+        <div class="acs-item-num">ITEM #: ${escHtml(d.item_number||'SCP-???')}</div>
+        <div class="acs-level-tag" style="background:${acsLvlBg}">LEVEL ${lvl||'?'}/${escHtml(d.item_number||'SCP-???')}</div>
+        <div class="acs-class-block" style="background:${acsClassBg}">
+          <span class="acs-class-header">OBJECT CLASS</span>
+          <span class="acs-class-value">${(d.containment_class||'PENDING').toUpperCase()}</span>
+          ${d.secondary_class?`<span style="font-size:9px;display:block;color:rgba(255,255,255,.5);letter-spacing:0.1em">${escHtml(d.secondary_class)}</span>`:''}
+        </div>
+      </div>
+      <div class="acs-bottom">
+        <div class="acs-disruption" style="background:${acsDiaBg}"><span class="acs-meta-label">DISRUPTION CLASS</span><span class="acs-meta-value">${escHtml(d.disruption_class||'—')}</span></div>
+        <div class="acs-risk" style="background:${acsRiskBg}"><span class="acs-meta-label">RISK CLASS</span><span class="acs-meta-value">${escHtml(d.risk_class||'—')}</span></div>
+      </div>
+    </div>
+    <div class="cv-scp-doc">
+      <div class="scp-doc-section"><div class="scp-doc-section-title">Special Containment Procedures</div><div class="cv-rich">${d.containment_procedures||''}</div></div>
+      <div class="scp-doc-section"><div class="scp-doc-section-title">Description</div><div class="cv-rich">${d.description||''}</div></div>
+      ${d.addenda&&d.addenda.length ? `<div class="cv-section"><div class="cv-section-title">Addenda</div>${addendaHtml}</div>` : ''}
+      <div class="scp-doc-section"><div class="scp-doc-section-title">Abilities &amp; Limits</div><div class="cv-rich">${d.abilities||''}</div></div>
+    </div>`;
+  }
+
+  else {
+    html = `
+    <div class="cv-fnd-header" style="border-left:3px solid #1a3a7a;">
+      ${d.image_url ? `<img class="cv-fnd-img" src="${d.image_url}" alt="Character">` : '<div class="cv-fnd-img-ph">No Image</div>'}
+      <div>
+        <div class="cv-fnd-name">${escHtml(d.full_name||'Unknown')}</div>
+        <table class="cv-table" style="margin-top:.75rem;">
+          ${d.age?`<tr><td>Age</td><td>${escHtml(d.age)}</td></tr>`:''}
+          ${d.affiliation?`<tr><td>Affiliation</td><td>${escHtml(d.affiliation)}</td></tr>`:''}
+        </table>
+      </div>
+    </div>
+    ${cvSection('Background / History', d.background)}
+    ${d.skills&&d.skills.trim()&&d.skills!=='<br>' ? cvSection('Skills & Abilities', d.skills) : ''}
+    ${d.equipment&&d.equipment.trim()&&d.equipment!=='<br>' ? cvSection('Equipment / Resources', d.equipment) : ''}
+    ${d.notes&&d.notes.trim()&&d.notes!=='<br>' ? cvSection('Additional Notes', d.notes) : ''}`;
+  }
+
+  document.getElementById('cv-content').innerHTML = html;
+  // Re-activate redacted clicks
+  document.querySelectorAll('.char-redacted').forEach(el => {
+    el.addEventListener('click', () => el.classList.toggle('revealed'));
+  });
+}
+
+function cvSection(title, content) {
+  if (!content||!content.trim()) return '';
+  return `<div class="cv-section"><div class="cv-section-title">${title}</div><div class="cv-rich">${content}</div></div>`;
+}
+
+function toggleAddendum(btn) {
+  btn.classList.toggle('open');
+  const body = btn.nextElementSibling;
+  body.classList.toggle('visible');
+}
+
+/* ===========================================
+   HELPERS
+=========================================== */
+function g(id) { const e=document.getElementById(id); return e?e.value.trim():''; }
+function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function statusLabel(s) { return{pending:'Pending',review:'Under Review',approved:'Approved',denied:'Denied'}[s]||s; }
+function setMsg(el,type,text) { el.className='form-msg '+(type==='loading'?'loading':type==='error'?'error':'ok'); el.textContent=text; }
+
+/* ===========================================
+   SUPABASE CHARACTER FUNCTIONS (inline)
+=========================================== */
+async function submitCharacter(type,method,discord,data,gdocUrl) {
+  const {data:r,error} = await db.from('characters').insert([{type,method,discord_username:discord,character_data:data||{},gdoc_url:gdocUrl||null,status:'pending'}]).select().single();
+  return {data:r,error};
+}
+async function getCharacters(filters={}) {
+  let q = db.from('characters').select('id,seq,type,method,discord_username,status,staff_reason,created_at,character_data,gdoc_url').order('seq',{ascending:true});
+  if (filters.status) q=q.eq('status',filters.status);
+  if (filters.type) q=q.eq('type',filters.type);
+  const {data,error}=await q; return {data,error};
+}
+async function getCharacterById(id) { const {data,error}=await db.from('characters').select('*').eq('id',id).single(); return {data,error}; }
+async function getCharactersByDiscord(username) { const {data,error}=await db.from('characters').select('id,seq,type,method,discord_username,status,staff_reason,created_at,character_data,gdoc_url').eq('discord_username',username).order('seq'); return {data,error}; }
+async function uploadCharacterImage(file) {
+  const ext=file.name.split('.').pop().toLowerCase();
+  const name=`${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+  const {error}=await db.storage.from('character-images').upload(name,file,{cacheControl:'3600',upsert:false});
+  if (error) throw error;
+  const {data}=db.storage.from('character-images').getPublicUrl(name);
+  return data.publicUrl;
+}
+
+/* ===========================================
+   INIT
+=========================================== */
+document.addEventListener('DOMContentLoaded', () => {
+  initToolbar();
+
+  // Check for edit mode
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('view')) { loadListing(); }
+
+  // Enter key for tracker
+  const ti = document.getElementById('tracker-input');
+  if (ti) ti.addEventListener('keydown', e => { if(e.key==='Enter') doTrack(); });
+});
+</script>
+</body>
+</html>

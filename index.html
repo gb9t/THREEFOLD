@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THREEFOLD — SCP RP Community</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="supabase.js"></script>
+<style>
+:root {
+  --black:    #0a0a0a;
+  --deep:     #111111;
+  --dark:     #1a1a1a;
+  --mid:      #2e2e2e;
+  --border:   #3a3a3a;
+  --muted:    #666666;
+  --light:    #999999;
+  --pale:     #cccccc;
+  --white:    #f0f0f0;
+  --danger:   #cc2200;
+  --mono:     'Share Tech Mono', monospace;
+  --display:  'Barlow Condensed', sans-serif;
+  --body:     'Barlow', sans-serif;
+}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--black);
+  color: var(--pale);
+  font-family: var(--body);
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 1.7;
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: crosshair;
+}
+
+/* Scanlines */
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background: repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.08) 2px,rgba(0,0,0,0.08) 4px);
+  pointer-events:none; z-index:9999;
+}
+/* Vignette */
+body::after {
+  content:'';
+  position:fixed; inset:0;
+  background: radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,0.6) 100%);
+  pointer-events:none; z-index:9998;
+}
+
+/* ===== NAV ===== */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:1000;
+  height:56px;
+  background: rgba(10,10,10,0.97);
+  border-bottom:1px solid var(--border);
+  padding:0 3rem;
+  display:flex; align-items:center; justify-content:space-between;
+  backdrop-filter:blur(6px);
+}
+.nav-logo { cursor:pointer; }
+.nav-logo-name {
+  font-family:var(--display); font-size:22px; font-weight:700;
+  letter-spacing:0.3em; color:var(--white); text-transform:uppercase;
+  display:block; line-height:1.1;
+}
+.nav-logo-sub {
+  font-family:var(--mono); font-size:9px; letter-spacing:0.2em;
+  color:var(--muted); text-transform:uppercase; display:block;
+}
+.nav-links { display:flex; gap:0; list-style:none; align-items:center; }
+.nav-links button {
+  font-family:var(--mono); font-size:10.5px; letter-spacing:0.15em;
+  text-transform:uppercase; color:var(--light);
+  background:none; border:none; padding:8px 16px; cursor:pointer;
+  transition:color .2s; position:relative;
+}
+.nav-links button::after {
+  content:''; position:absolute; bottom:0; left:16px; right:16px;
+  height:1px; background:var(--white); transform:scaleX(0); transition:transform .2s;
+}
+.nav-links button:hover { color:var(--white); }
+.nav-links button:hover::after { transform:scaleX(1); }
+.nav-discord {
+  border:1px solid var(--border) !important;
+  color:var(--pale) !important; margin-left:10px;
+  padding:6px 18px !important;
+}
+.nav-discord:hover { border-color:var(--white) !important; color:var(--white) !important; }
+.nav-discord::after { display:none !important; }
+
+/* ===== PAGES ===== */
+.page { display:none; min-height:100vh; padding-top:56px; }
+.page.active { display:block; }
+
+/* ===== HOME ===== */
+.hero {
+  position:relative; min-height:calc(100vh - 56px);
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  overflow:hidden; text-align:center; padding:4rem 2rem 6rem;
+}
+/* Grid bg from v1 */
+.hero-grid {
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px);
+  background-size:60px 60px;
+  pointer-events:none;
+}
+.hero-content { position:relative; z-index:2; max-width:900px; }
+
+.hero-eyebrow {
+  font-family:var(--mono); font-size:10px; letter-spacing:0.35em;
+  text-transform:uppercase; color:var(--muted); margin-bottom:1.5rem;
+  animation:riseIn .8s ease both;
+}
+.hero-title-wrap { position:relative; display:inline-block; animation:riseIn .9s ease both .1s; }
+.hero-title {
+  font-family:var(--display); font-weight:700;
+  font-size:clamp(90px,17vw,200px); letter-spacing:0.08em;
+  line-height:.88; color:var(--white); text-transform:uppercase;
+  position:relative; z-index:1;
+}
+.hero-ghost {
+  font-family:var(--display); font-weight:700;
+  font-size:clamp(90px,17vw,200px); letter-spacing:0.08em;
+  line-height:.88; text-transform:uppercase;
+  position:absolute; top:5px; left:5px;
+  color:transparent; -webkit-text-stroke:1px var(--border);
+  z-index:0; pointer-events:none; user-select:none;
+}
+/* Glitch */
+.hero-title::before,.hero-title::after {
+  content:attr(data-text); position:absolute; top:0; left:0;
+  font-family:inherit; font-size:inherit; font-weight:inherit;
+  letter-spacing:inherit; line-height:inherit; color:var(--white);
+}
+.hero-title::before { animation:gA 5s infinite; clip-path:polygon(0 18%,100% 18%,100% 42%,0 42%); }
+.hero-title::after  { animation:gB 5s infinite; clip-path:polygon(0 62%,100% 62%,100% 80%,0 80%); }
+@keyframes gA{0%,85%,100%{transform:translate(0);opacity:0}87%{transform:translate(-5px,2px);opacity:1}89%{transform:translate(5px,-2px);opacity:1}91%{transform:translate(0);opacity:0}}
+@keyframes gB{0%,85%,100%{transform:translate(0);opacity:0}88%{transform:translate(5px,2px);opacity:1}90%{transform:translate(-4px,-2px);opacity:1}92%{transform:translate(0);opacity:0}}
+
+.hero-divider {
+  display:flex; align-items:center; gap:1rem;
+  margin:2rem auto; max-width:500px; animation:riseIn .9s ease both .25s;
+}
+.hero-divider::before,.hero-divider::after { content:''; flex:1; height:1px; background:var(--border); }
+.hero-divider span {
+  font-family:var(--mono); font-size:9px; letter-spacing:0.3em;
+  color:var(--muted); text-transform:uppercase; white-space:nowrap;
+}
+.hero-sub {
+  font-size:18px; font-weight:300; color:var(--light);
+  max-width:520px; margin:0 auto 2.5rem;
+  animation:riseIn .9s ease both .35s;
+}
+.hero-sub strong { color:var(--pale); font-weight:400; }
+.hero-ctas {
+  display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;
+  animation:riseIn .9s ease both .45s;
+}
+.hero-ticker {
+  position:absolute; bottom:2rem; left:0; right:0;
+  font-family:var(--mono); font-size:10px; letter-spacing:0.15em;
+  color:var(--border); text-align:center; text-transform:uppercase;
+  animation:riseIn 1s ease both .8s;
+}
+
+/* Typewriter */
+.tw {
+  display:inline-block; overflow:hidden; border-right:2px solid var(--light);
+  white-space:nowrap; width:0; vertical-align:bottom;
+  animation:twT 2.8s steps(40,end) .6s forwards, twB .8s step-end infinite;
+}
+@keyframes twT{from{width:0}to{width:100%}}
+@keyframes twB{0%,100%{border-color:transparent}50%{border-color:var(--light)}}
+
+/* Feature strip */
+.fstrip {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+  background:var(--deep);
+}
+.fi {
+  padding:3rem 2.5rem; border-right:1px solid var(--border);
+  transition:background .3s;
+}
+.fi:last-child { border-right:none; }
+.fi:hover { background:var(--dark); }
+.fi-n {
+  font-family:var(--display); font-size:64px; letter-spacing:0.02em;
+  color:var(--border); line-height:1; display:block; margin-bottom:.5rem;
+  transition:color .3s;
+}
+.fi:hover .fi-n { color:var(--mid); }
+.fi-title {
+  font-family:var(--display); font-size:24px; font-weight:600;
+  letter-spacing:0.06em; text-transform:uppercase; color:var(--pale); margin-bottom:.75rem;
+}
+.fi-body { font-size:14px; color:var(--muted); line-height:1.8; }
+
+/* ===== BUTTONS ===== */
+.btn {
+  font-family:var(--mono); font-size:10.5px; letter-spacing:0.2em;
+  text-transform:uppercase; padding:13px 30px; border:1px solid;
+  background:transparent; cursor:pointer; transition:all .22s;
+  text-decoration:none; display:inline-block;
+}
+.btn-fill  { border-color:var(--white); color:var(--white); }
+.btn-fill:hover  { background:var(--white); color:var(--black); }
+.btn-ghost { border-color:var(--border); color:var(--light); }
+.btn-ghost:hover { border-color:var(--light); color:var(--pale); }
+.btn-sm { padding:8px 18px; font-size:9.5px; }
+.btn:disabled,.btn[disabled] {
+  opacity:.35; cursor:not-allowed; pointer-events:none;
+}
+
+/* ===== PAGE HEADER ===== */
+.ph {
+  padding:4.5rem 3rem 3.5rem; border-bottom:1px solid var(--border);
+  position:relative; overflow:hidden;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.018) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,0.018) 1px,transparent 1px);
+  background-size:60px 60px;
+}
+.ph-bgword {
+  position:absolute; right:2rem; top:50%; transform:translateY(-50%);
+  font-family:var(--display); font-weight:700; font-size:180px; line-height:1;
+  color:transparent; -webkit-text-stroke:1px var(--border);
+  pointer-events:none; user-select:none; letter-spacing:0.04em;
+}
+.ph-tag {
+  font-family:var(--mono); font-size:9.5px; letter-spacing:0.3em;
+  text-transform:uppercase; color:var(--muted); margin-bottom:1rem;
+}
+.ph h1 {
+  font-family:var(--display); font-weight:700;
+  font-size:clamp(52px,8vw,96px); letter-spacing:0.05em;
+  text-transform:uppercase; color:var(--white); line-height:.9;
+}
+.ph-desc { margin-top:1.25rem; font-size:15px; color:var(--light); max-width:560px; }
+
+/* ===== WRAP ===== */
+.wrap { max-width:1000px; margin:0 auto; padding:4rem 3rem; }
+.stag {
+  font-family:var(--mono); font-size:9.5px; letter-spacing:0.3em;
+  text-transform:uppercase; color:var(--muted);
+  display:flex; align-items:center; gap:1rem; margin-bottom:2.5rem;
+}
+.stag::after { content:''; flex:1; height:1px; background:var(--border); }
+
+/* ===== ABOUT ===== */
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:4rem; margin-bottom:4rem; }
+.col h2 {
+  font-family:var(--display); font-size:30px; font-weight:600;
+  letter-spacing:0.05em; text-transform:uppercase; color:var(--white); margin-bottom:1rem;
+}
+.col p { font-size:15px; color:var(--light); line-height:1.85; }
+.col p+p { margin-top:1rem; }
+
+.lore-block {
+  background:var(--deep); border:1px solid var(--border);
+  padding:2.5rem; position:relative; margin-bottom:1.5rem;
+}
+.lore-label {
+  position:absolute; top:0; left:2rem; transform:translateY(-50%);
+  background:var(--deep); font-family:var(--mono); font-size:9px;
+  letter-spacing:0.25em; color:var(--muted); text-transform:uppercase; padding:0 8px;
+}
+.lore-block h3 {
+  font-family:var(--mono); font-size:11px; letter-spacing:0.2em;
+  text-transform:uppercase; color:var(--pale); margin-bottom:1.25rem;
+}
+.lore-block p { font-size:14px; line-height:1.9; color:var(--light); }
+
+.callout {
+  display:flex; gap:1rem; align-items:flex-start;
+  border-left:2px solid var(--border); padding:1rem 1.5rem;
+  background:var(--deep); margin:2rem 0;
+}
+.callout-ico { font-family:var(--mono); font-size:12px; color:var(--muted); white-space:nowrap; margin-top:3px; }
+.callout p { font-size:13px; color:var(--muted); line-height:1.75; }
+
+/* ===== RULES ===== */
+.rule {
+  display:grid; grid-template-columns:72px 1fr; gap:2rem; align-items:start;
+  padding:2rem 0; border-bottom:1px solid var(--dark);
+}
+.rule:first-of-type { border-top:1px solid var(--dark); }
+.rule-n {
+  font-family:var(--display); font-weight:700; font-size:48px;
+  letter-spacing:0.02em; color:var(--border); line-height:1;
+}
+.rule h3 {
+  font-family:var(--display); font-size:24px; font-weight:600;
+  letter-spacing:0.05em; text-transform:uppercase; color:var(--pale); margin-bottom:.5rem;
+}
+.rule p { font-size:14px; color:var(--muted); line-height:1.8; }
+.rtag {
+  display:inline-block; font-family:var(--mono); font-size:9px;
+  letter-spacing:0.2em; text-transform:uppercase;
+  border:1px solid; padding:3px 10px; margin-top:.75rem;
+}
+.rt-note { border-color:var(--border); color:var(--muted); }
+.rt-warn { border-color:#666; color:#999; }
+.rt-kick { border-color:#888; color:#bbb; }
+.rt-ban  { border-color:var(--danger); color:var(--danger); }
+
+/* ===== JOIN ===== */
+.step { display:grid; grid-template-columns:64px 1fr; gap:2rem; align-items:start; margin-bottom:3rem; }
+.step-badge {
+  width:64px; height:64px; border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--display); font-size:28px; font-weight:700; color:var(--border); flex-shrink:0;
+}
+.step h3 {
+  font-family:var(--display); font-size:24px; font-weight:600;
+  letter-spacing:0.05em; text-transform:uppercase; color:var(--white); margin-bottom:.5rem;
+}
+.step p { font-size:14px; color:var(--muted); line-height:1.85; }
+.step p strong { color:var(--pale); font-weight:400; }
+code {
+  font-family:var(--mono); font-size:12px;
+  background:var(--dark); border:1px solid var(--border); padding:2px 8px; color:var(--pale);
+}
+
+/* ===== STAFF ===== */
+.staff-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:1.5rem;
+}
+.staff-card {
+  border:1px solid var(--border); background:var(--deep); padding:2rem 1.75rem;
+  position:relative; transition:border-color .25s,transform .25s; overflow:hidden;
+}
+.staff-card::before {
+  content:''; position:absolute; top:0; left:0; width:3px; height:100%;
+  background:var(--border);
+}
+.staff-card:hover { border-color:var(--muted); transform:translateY(-3px); }
+.staff-init {
+  width:48px; height:48px; border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-size:14px; color:var(--muted); margin-bottom:1rem;
+}
+.staff-name {
+  font-family:var(--display); font-size:20px; font-weight:600;
+  letter-spacing:0.05em; text-transform:uppercase; color:var(--white); margin-bottom:.2rem;
+}
+.staff-role {
+  font-family:var(--mono); font-size:9.5px; letter-spacing:0.2em;
+  text-transform:uppercase; color:var(--muted); margin-bottom:.75rem;
+}
+.staff-bio { font-size:13px; color:var(--muted); line-height:1.65; }
+
+/* ===== APPLICATIONS PAGE ===== */
+.app-cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1.5rem; margin-top:1rem; }
+.app-card {
+  border:1px solid var(--border); background:var(--deep); padding:2rem;
+  position:relative; transition:border-color .25s;
+  display:flex; flex-direction:column; gap:1rem;
+}
+.app-card:hover { border-color:var(--muted); }
+.app-card-header { display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; }
+.app-card-title {
+  font-family:var(--display); font-size:26px; font-weight:700;
+  letter-spacing:0.05em; text-transform:uppercase; color:var(--white); line-height:1.1;
+}
+.status-pill {
+  font-family:var(--mono); font-size:9px; letter-spacing:0.2em;
+  text-transform:uppercase; padding:4px 10px; border:1px solid; white-space:nowrap; flex-shrink:0;
+}
+.status-open   { border-color:#4a7; color:#4a7; }
+.status-closed { border-color:var(--muted); color:var(--muted); }
+.app-card-desc { font-size:14px; color:var(--light); line-height:1.8; flex:1; }
+.app-card-perks { list-style:none; display:flex; flex-direction:column; gap:.4rem; }
+.app-card-perks li {
+  font-family:var(--mono); font-size:11px; letter-spacing:0.1em; color:var(--muted);
+  display:flex; align-items:flex-start; gap:.5rem;
+}
+.app-card-perks li::before { content:'◼'; font-size:7px; margin-top:3px; flex-shrink:0; }
+.app-card-footer { padding-top:.5rem; border-top:1px solid var(--dark); }
+
+/* ===== APPLICATION FORM PAGE ===== */
+#page-apply-form { display:none; }
+#page-apply-form.active { display:block; }
+
+.form-wrap { max-width:640px; margin:0 auto; padding:4rem 3rem; }
+.form-back {
+  font-family:var(--mono); font-size:10px; letter-spacing:0.2em;
+  text-transform:uppercase; color:var(--muted); background:none; border:none;
+  cursor:pointer; display:flex; align-items:center; gap:.5rem; margin-bottom:2.5rem;
+  transition:color .2s;
+}
+.form-back:hover { color:var(--pale); }
+.form-title {
+  font-family:var(--display); font-size:52px; font-weight:700;
+  letter-spacing:0.06em; text-transform:uppercase; color:var(--white);
+  line-height:.9; margin-bottom:.75rem;
+}
+.form-subtitle { font-family:var(--mono); font-size:10px; letter-spacing:0.2em; color:var(--muted); text-transform:uppercase; margin-bottom:3rem; }
+.form-section-title {
+  font-family:var(--mono); font-size:10px; letter-spacing:0.25em;
+  text-transform:uppercase; color:var(--muted);
+  padding-bottom:.75rem; border-bottom:1px solid var(--border); margin-bottom:1.5rem; margin-top:2.5rem;
+}
+.field { display:flex; flex-direction:column; gap:.5rem; margin-bottom:1.5rem; }
+.field label {
+  font-family:var(--mono); font-size:10px; letter-spacing:0.2em;
+  text-transform:uppercase; color:var(--light);
+}
+.field input,.field textarea,.field select {
+  background:var(--deep); border:1px solid var(--border); color:var(--pale);
+  font-family:var(--body); font-size:14px; padding:10px 14px;
+  transition:border-color .2s; outline:none; width:100%;
+  font-weight:300;
+}
+.field input:focus,.field textarea:focus,.field select:focus { border-color:var(--light); }
+.field textarea { resize:vertical; min-height:100px; line-height:1.7; }
+.field select option { background:var(--dark); }
+.field-hint { font-size:12px; color:var(--muted); margin-top:.25rem; }
+.form-submit-row { margin-top:2.5rem; display:flex; align-items:center; gap:1.5rem; }
+.form-msg {
+  font-family:var(--mono); font-size:11px; letter-spacing:0.1em;
+  color:var(--muted); display:none;
+}
+.form-msg.success { color:#4a7; display:block; }
+.form-msg.error   { color:var(--danger); display:block; }
+
+/* ===== DISCORD ===== */
+.discord-center {
+  min-height:calc(100vh - 56px); display:flex; flex-direction:column;
+  align-items:center; justify-content:center; text-align:center; padding:4rem 2rem;
+  position:relative; overflow:hidden;
+}
+.discord-center::before {
+  content:'JOIN'; position:absolute;
+  font-family:var(--display); font-weight:700; font-size:min(30vw,340px);
+  letter-spacing:0.05em; color:transparent; -webkit-text-stroke:1px var(--border);
+  pointer-events:none; user-select:none; z-index:0; line-height:1;
+}
+.discord-content { position:relative; z-index:2; }
+.discord-icon {
+  width:72px; height:72px; border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  margin:0 auto 2rem; font-size:28px;
+}
+.discord-center h2 {
+  font-family:var(--display); font-size:clamp(48px,8vw,96px);
+  font-weight:700; letter-spacing:0.08em; text-transform:uppercase;
+  color:var(--white); margin-bottom:1rem;
+}
+.discord-center p { font-size:15px; color:var(--light); max-width:400px; margin:0 auto 2.5rem; }
+.discord-pending {
+  font-family:var(--mono); font-size:10px; letter-spacing:0.2em; color:var(--border);
+  border:1px dashed var(--border); padding:1rem 2rem; display:inline-block; margin-top:1.5rem;
+}
+
+/* ===== FOOTER ===== */
+footer {
+  border-top:1px solid var(--dark); padding:2rem 3rem;
+  display:flex; justify-content:space-between; align-items:center;
+  font-family:var(--mono); font-size:9.5px; letter-spacing:0.15em;
+  text-transform:uppercase; color:var(--border);
+}
+
+/* ===== SUCCESS SCREEN ===== */
+.success-screen {
+  display:none; flex-direction:column; align-items:center; justify-content:center;
+  min-height:60vh; text-align:center; padding:4rem 2rem;
+}
+.success-screen.visible { display:flex; }
+.success-num {
+  font-family:var(--display); font-size:96px; font-weight:700;
+  letter-spacing:0.05em; color:var(--border); line-height:1;
+}
+.success-title {
+  font-family:var(--display); font-size:40px; font-weight:700;
+  letter-spacing:0.1em; text-transform:uppercase; color:var(--white); margin-bottom:1rem;
+}
+.success-msg { font-size:15px; color:var(--light); max-width:440px; margin-bottom:2.5rem; }
+
+/* ===== ANIM ===== */
+@keyframes riseIn { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+  nav { padding:0 1.2rem; }
+  .nav-logo-sub { display:none; }
+  .nav-links button { padding:8px 9px; font-size:9px; }
+  .two-col { grid-template-columns:1fr; gap:2rem; }
+  .fstrip { grid-template-columns:1fr; }
+  .fi { border-right:none; border-bottom:1px solid var(--border); }
+  .ph { padding:2.5rem 1.5rem 2rem; }
+  .ph-bgword { display:none; }
+  .wrap { padding:2.5rem 1.5rem; }
+  .form-wrap { padding:2rem 1.5rem; }
+  footer { flex-direction:column; gap:.5rem; text-align:center; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">
+    <span class="nav-logo-name">THREEFOLD</span>
+    <span class="nav-logo-sub">SCP Foundation RP</span>
+  </div>
+  <ul class="nav-links">
+    <li><button onclick="showPage('about')">About</button></li>
+    <li><button onclick="showPage('rules')">Rules</button></li>
+    <li><button onclick="showPage('join')">How to Join</button></li>
+    <li><button onclick="showPage('applications')">Apply</button></li>
+    <li><button onclick="window.location.href='characters.html'">Characters</button></li>
+    <li><button onclick="showPage('staff')">Staff</button></li>
+    <li><button class="nav-discord" onclick="showPage('discord')">Discord</button></li>
+  </ul>
+</nav>
+
+<!-- ======== HOME ======== -->
+<section id="page-home" class="page active">
+  <div class="hero">
+    <div class="hero-grid"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">Text-Based Roleplay &nbsp;/&nbsp; SCP Universe &nbsp;/&nbsp; Community Server</div>
+      <div class="hero-title-wrap">
+        <div class="hero-ghost">THREEFOLD</div>
+        <h1 class="hero-title" data-text="THREEFOLD">THREEFOLD</h1>
+      </div>
+      <div class="hero-divider">
+        <span><span class="tw">SCP Foundation RP — Text-Based</span></span>
+      </div>
+      <p class="hero-sub">
+        A <strong>text-based SCP roleplay</strong> server where the story actually reacts to what you do.
+        Good writing welcome. Elitism not.
+      </p>
+      <div class="hero-ctas">
+        <button class="btn btn-fill" onclick="showPage('join')">Get Involved</button>
+        <button class="btn btn-ghost" onclick="showPage('about')">What's This About</button>
+      </div>
+    </div>
+  </div>
+  <div class="fstrip">
+    <div class="fi"><span class="fi-n">01</span>
+      <div class="fi-title">Story That Reacts</div>
+      <p class="fi-body">Staff run events that respond to what players actually do. Your choices leave marks. Nothing's purely scripted.</p>
+    </div>
+    <div class="fi"><span class="fi-n">02</span>
+      <div class="fi-title">Real Community</div>
+      <p class="fi-body">We take the RP seriously, but we're not snobs about it. Good writing's encouraged, not gatekept.</p>
+    </div>
+    <div class="fi"><span class="fi-n">03</span>
+      <div class="fi-title">Your Character Matters</div>
+      <p class="fi-body">Characters can rise, defect, get promoted, or die badly. The server's history is built by everyone together.</p>
+    </div>
+  </div>
+  <footer>
+    <span>THREEFOLD &mdash; SCP RP Community</span>
+    <span>Semi-Serious &bull; Text-Based &bull; Discord</span>
+  </footer>
+</section>
+
+<!-- ======== ABOUT ======== -->
+<section id="page-about" class="page">
+  <div class="ph">
+    <div class="ph-bgword">ABOUT</div>
+    <div class="ph-tag">General Info &mdash; No Clearance Required</div>
+    <h1>About<br>Threefold</h1>
+    <p class="ph-desc">Here's the plain-English version of what we are, what we do, and whether this place might be for you.</p>
+  </div>
+  <div class="wrap">
+    <div class="stag">The Short Version</div>
+    <div class="two-col">
+      <div class="col">
+        <h2>What Is This?</h2>
+        <p>Threefold is a text-based SCP roleplay server. You write your character's actions and dialogue in Discord channels, collaborating with other players to build scenes and storylines. Think of it like collaborative fiction with a bit of structure holding it together.</p>
+        <p>We're semi-serious &mdash; we love good lore and proper RP, but we're also a bunch of people who want to actually have fun. There's no entry exam. If you can write a sentence and get along with people, you'll fit in.</p>
+      </div>
+      <div class="col">
+        <h2>The Setting</h2>
+        <p>We build on the SCP Foundation universe &mdash; the wiki lore, the anomalies, the factions &mdash; but with our own layer on top. The name "Threefold" comes from a specific in-server event that cracked things open a bit. Three power structures now operate in uneasy balance.</p>
+        <p>Every anomaly is a thread. Pull one and something unravels. Whether that's good depends entirely on who's pulling.</p>
+      </div>
+    </div>
+    <div class="stag">Is This For You?</div>
+    <div class="two-col">
+      <div class="col">
+        <h2>You'll Like It If...</h2>
+        <p>You enjoy collaborative writing and want your choices to actually matter. You're into the SCP aesthetic but also want to hang out with people who get it.</p>
+      </div>
+      <div class="col">
+        <h2>Probably Not If...</h2>
+        <p>You want a game rather than a story, or you're looking to "win" RP. We're not the right fit for everyone &mdash; and that's genuinely fine.</p>
+      </div>
+    </div>
+  </div>
+  <footer><span>THREEFOLD</span><span>About</span></footer>
+</section>
+
+<!-- ======== RULES ======== -->
+<section id="page-rules" class="page">
+  <div class="ph">
+    <div class="ph-bgword">RULES</div>
+    <div class="ph-tag">Conduct &mdash; All Members</div>
+    <h1>Rules &amp;<br>Conduct</h1>
+    <p class="ph-desc">Seven rules. None of them should come as a surprise.</p>
+  </div>
+  <div class="wrap">
+    <div class="callout" style="margin-bottom:2.5rem;">
+      <span class="callout-ico">&mdash;</span>
+      <p>Staff decisions are final, but they're appealable. If something feels wrong, there's a proper channel for it &mdash; just don't do it publicly while everyone's still heated.</p>
+    </div>
+    <div class="rule"><div class="rule-n">01</div><div><h3>Be a decent person</h3><p>IC conflict is fine and encouraged. OOC harassment, targeting people, bigotry, or continuing arguments in DMs isn't. The line is pretty obvious once you're not being heated about it.</p><span class="rtag rt-ban">Instant ban &mdash; no warnings</span></div></div>
+    <div class="rule"><div class="rule-n">02</div><div><h3>Don't control other people's characters</h3><p>Write what your character <em>tries</em> to do, not what happens to someone else. This trips up new players a lot, so the first time it's a quiet word, not a punishment.</p><span class="rtag rt-note">First offence: guidance only</span></div></div>
+    <div class="rule"><div class="rule-n">03</div><div><h3>Keep IC and OOC separate</h3><p>Your character only knows what they've seen in-scene. Using out-of-character knowledge to get an in-character advantage is metagaming, and it makes things less fun for everyone.</p><span class="rtag rt-warn">Warning, then strike</span></div></div>
+    <div class="rule"><div class="rule-n">04</div><div><h3>Write clearly</h3><p>Full sentences, basic punctuation, enough detail that others can respond. Third-person past tense is standard: <em>"She moved toward the door"</em>, not <em>"*moves toward door*"</em>.</p><span class="rtag rt-note">Guidance first, always</span></div></div>
+    <div class="rule"><div class="rule-n">05</div><div><h3>Content limits</h3><p>Dark themes and horror are part of the territory. Explicit sexual content is not allowed, full stop. If you're not sure whether something crosses the line, ask before you post.</p><span class="rtag rt-ban">NSFW: immediate ban</span></div></div>
+    <div class="rule"><div class="rule-n">06</div><div><h3>Work with staff, not against them</h3><p>Comply first, discuss second. There's an appeal process &mdash; but arguing publicly while things are live just makes a mess for everyone.</p><span class="rtag rt-kick">Strike &mdash; escalates if repeated</span></div></div>
+    <div class="rule"><div class="rule-n">07</div><div><h3>Show up, or let us know</h3><p>If you're holding an active scene or faction role, others are waiting on you. Just drop a message in OOC if you need to step away for a bit.</p><span class="rtag rt-note">Character archiving after contact attempts</span></div></div>
+  </div>
+  <footer><span>THREEFOLD</span><span>Conduct &mdash; Updated Each Season</span></footer>
+</section>
+
+<!-- ======== HOW TO JOIN ======== -->
+<section id="page-join" class="page">
+  <div class="ph">
+    <div class="ph-bgword">JOIN</div>
+    <div class="ph-tag">New Members &mdash; Five Steps</div>
+    <h1>How to<br>Join</h1>
+    <p class="ph-desc">It's not complicated. The only real prerequisite is that you actually want to be here.</p>
+  </div>
+  <div class="wrap">
+    <div class="step"><div class="step-badge">01</div><div><h3>Join the Discord</h3><p>Hit the Discord button and join. Read <code>#welcome</code> and <code>#rules</code> in full before doing anything else. Takes about three minutes.</p></div></div>
+    <div class="step"><div class="step-badge">02</div><div><h3>Read the lore docs</h3><p>The <code>#lore-library</code> has faction overviews, active anomalies, site maps, and the backstory. Worth an hour of your time before writing a character.</p></div></div>
+    <div class="step"><div class="step-badge">03</div><div><h3>Submit a character</h3><p>The template is in <code>#character-submissions</code>. Name, background, faction preference, rough personality. <strong>A paragraph or two is plenty.</strong></p></div></div>
+    <div class="step"><div class="step-badge">04</div><div><h3>Staff review</h3><p>Someone will look at your sheet within 48 hours. They might suggest small tweaks. Once approved, you get your faction role and full channel access.</p></div></div>
+    <div class="step"><div class="step-badge">05</div><div><h3>Jump in</h3><p>Find an open scene in your faction's IC channel, or introduce yourself in <code>#arrivals</code>. Stuck? Ask in <code>#ooc-general</code> &mdash; someone'll point you the right way.</p></div></div>
+    <div style="text-align:center;margin-top:3rem;">
+      <button class="btn btn-fill" onclick="showPage('discord')">Head to Discord &rarr;</button>
+    </div>
+  </div>
+  <footer><span>THREEFOLD</span><span>Join &mdash; 48h Turnaround</span></footer>
+</section>
+
+<!-- ======== APPLICATIONS ======== -->
+<section id="page-applications" class="page">
+  <div class="ph">
+    <div class="ph-bgword">APPLY</div>
+    <div class="ph-tag">Open Positions &mdash; Staff &amp; Crew</div>
+    <h1>Applications</h1>
+    <p class="ph-desc">These are the positions you can currently apply for. Check the status of each one before starting an application.</p>
+  </div>
+  <div class="wrap">
+    <div class="callout" style="margin-bottom:2.5rem;">
+      <span class="callout-ico">&mdash;</span>
+      <p>Even if a position shows as open, there's no guarantee of acceptance &mdash; we only bring on people when the fit's right. If a position is closed, it means we're either at capacity or not actively recruiting for that role right now.</p>
+    </div>
+    <div class="app-cards" id="app-cards-container">
+      <!-- Rendered by JS -->
+    </div>
+  </div>
+  <footer><span>THREEFOLD</span><span>Applications</span></footer>
+</section>
+
+<!-- ======== APPLICATION FORM ======== -->
+<section id="page-apply-form" class="page">
+  <div class="form-wrap">
+    <button class="form-back" onclick="showPage('applications')">&#8592; Back to Applications</button>
+    <div id="form-inner">
+      <!-- Rendered by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ======== STAFF ======== -->
+<section id="page-staff" class="page">
+  <div class="ph">
+    <div class="ph-bgword">STAFF</div>
+    <div class="ph-tag">The People Running Things</div>
+    <h1>The<br>Staff Team</h1>
+    <p class="ph-desc">The people keeping this from falling apart. Swap placeholders with real names before launch.</p>
+  </div>
+  <div class="wrap">
+    <div class="callout" style="margin-bottom:2.5rem;">
+      <span class="callout-ico">&mdash;</span>
+      <p>To update these: open <code>index.html</code> in VS Code, search <code>staff-card</code>, and swap in real names, initials, roles, and bios.</p>
+    </div>
+    <div class="staff-grid">
+      <div class="staff-card"><div class="staff-init">OW</div><div class="staff-name">Your Name</div><div class="staff-role">Owner &mdash; Founder</div><div class="staff-bio">Replace with a short bio. A sentence or two is plenty.</div></div>
+      <div class="staff-card"><div class="staff-init">AD</div><div class="staff-name">Admin Name</div><div class="staff-role">Head Admin</div><div class="staff-bio">Handles appeals, big canon decisions, and anything needing a senior sign-off.</div></div>
+      <div class="staff-card"><div class="staff-init">HL</div><div class="staff-name">Head of Lore</div><div class="staff-role">Head of Lore Team</div><div class="staff-bio">Keeps the world consistent, approves new SCP entries, runs major events.</div></div>
+      <div class="staff-card"><div class="staff-init">LT</div><div class="staff-name">Lore Member</div><div class="staff-role">Lore Team</div><div class="staff-bio">Contributes to canon, reviews lore submissions, writes events and anomalies.</div></div>
+      <div class="staff-card"><div class="staff-init">MD</div><div class="staff-name">Moderator</div><div class="staff-role">Moderation</div><div class="staff-bio">Day-to-day moderation, character approvals, general community support.</div></div>
+    </div>
+  </div>
+  <footer><span>THREEFOLD</span><span>Staff &mdash; Update Before Launch</span></footer>
+</section>
+
+<!-- ======== DISCORD ======== -->
+<section id="page-discord" class="page">
+  <div class="discord-center">
+    <div class="discord-content">
+      <div class="discord-icon">&#9997;</div>
+      <h2>Come Join Us</h2>
+      <p>Everything happens on Discord. Swap the button below with your invite link when it's ready.</p>
+      <button class="btn btn-fill" style="opacity:.4;cursor:not-allowed;">Discord Link Coming Soon</button>
+      <div class="discord-pending">Add your Discord invite link here &mdash; search "discord-pending" in VS Code</div>
+    </div>
+  </div>
+  <footer><span>THREEFOLD</span><span>Discord &mdash; Link Pending</span></footer>
+</section>
+
+<script>
+/* ======================================================
+   PAGE NAVIGATION
+====================================================== */
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const t = document.getElementById('page-' + id);
+  if (t) { t.classList.add('active'); window.scrollTo(0,0); }
+}
+
+/* ======================================================
+   APPLICATION DEFINITIONS
+   Edit entails[] and questions[] to customise each role
+====================================================== */
+const APP_TYPES = [
+  {
+    id: 'lore',
+    title: 'Lore Team',
+    tag: 'lore-team',
+    desc: 'The Lore Team is responsible for building and maintaining the world of Threefold. If you love writing, world-building, and making the setting feel alive, this is where you belong.',
+    entails: [
+      'Writing and maintaining SCP entries for the server',
+      'Developing in-world documents, incident reports, and lore drops',
+      'Reviewing player-submitted lore for canon consistency',
+      'Collaborating with GMs on event storylines',
+      'Running lore channels and answering player questions about the setting',
+    ],
+    questions: [
+      { id: 'writing_sample', label: 'Writing Sample', type: 'textarea', placeholder: 'Paste a short piece of writing (100–300 words). It can be anything — fiction, an SCP entry, even a short scene.', required: true },
+      { id: 'scp_knowledge', label: 'How familiar are you with the SCP wiki?', type: 'textarea', placeholder: 'Tell us roughly how long you\'ve been reading it, any favourite entries, etc.', required: true },
+      { id: 'availability', label: 'How much time can you realistically commit per week?', type: 'text', placeholder: 'e.g. "3–5 hours, evenings"', required: true },
+      { id: 'why_lore', label: 'Why do you want to join the Lore Team specifically?', type: 'textarea', placeholder: 'Be honest. We\'re not looking for a pitch, just the real answer.', required: true },
+    ],
+  },
+  {
+    id: 'staff',
+    title: 'Staff / Moderation',
+    tag: 'moderation',
+    desc: 'Moderators keep the community running smoothly. This is less about policing and more about being someone people can rely on. If you\'re level-headed and genuinely want to help, this might be for you.',
+    entails: [
+      'Monitoring channels and handling rule violations fairly',
+      'Reviewing and approving character applications within 48 hours',
+      'Mediating OOC disputes and de-escalating situations',
+      'Welcoming and guiding new members through the joining process',
+      'Communicating with staff about recurring issues or concerns',
+    ],
+    questions: [
+      { id: 'mod_experience', label: 'Any previous moderation experience?', type: 'textarea', placeholder: 'Doesn\'t have to be formal. Managing a friend group server counts. If none, just say so.', required: false },
+      { id: 'scenario', label: 'Scenario: Two members are publicly arguing OOC about an IC dispute. How do you handle it?', type: 'textarea', placeholder: 'Walk us through your approach.', required: true },
+      { id: 'availability', label: 'How much time can you realistically commit per week?', type: 'text', placeholder: 'e.g. "5–8 hours, varies by week"', required: true },
+      { id: 'why_mod', label: 'Why do you want to be a moderator on Threefold specifically?', type: 'textarea', placeholder: 'Again, the honest answer is better than the polished one.', required: true },
+    ],
+  },
+  {
+    id: 'gm',
+    title: 'Gamemaster (GM)',
+    tag: 'gamemaster',
+    desc: 'GMs run events, drive the narrative, and play the world around the players. It\'s a creative role that requires both planning ability and the flexibility to throw your plans out when players do something unexpected.',
+    entails: [
+      'Planning and running multi-session RP events for the server',
+      'Playing NPCs, anomalies, and environmental elements during scenes',
+      'Coordinating with Lore Team to keep events canon-consistent',
+      'Adapting storylines in real-time based on player choices',
+      'Debriefing players after events and incorporating feedback',
+    ],
+    questions: [
+      { id: 'gm_experience', label: 'Have you run tabletop RPGs, RP events, or anything similar before?', type: 'textarea', placeholder: 'D&D, Pathfinder, forum RP, Discord RP events — anything relevant.', required: false },
+      { id: 'event_idea', label: 'Pitch us a brief event idea for Threefold', type: 'textarea', placeholder: 'A few sentences is fine. We\'re not looking for a full script, just a sense of how you think.', required: true },
+      { id: 'improvise', label: 'Players have completely derailed your planned event. What do you do?', type: 'textarea', placeholder: 'Tell us how you\'d handle it in the moment.', required: true },
+      { id: 'availability', label: 'How much time can you realistically commit per week?', type: 'text', placeholder: 'And are you available for scheduled events on weekends?', required: true },
+      { id: 'why_gm', label: 'What draws you to the GM role over, say, Lore Team or Moderation?', type: 'textarea', placeholder: 'Helps us understand how you\'d fit.', required: true },
+    ],
+  },
+];
+
+/* ======================================================
+   RENDER APPLICATION CARDS
+====================================================== */
+async function renderAppCards() {
+  const container = document.getElementById('app-cards-container');
+  if (!container) return;
+
+  // Load position open/closed state from Supabase
+  let positions = [];
+  try { positions = await getPositions(); } catch(e) { /* offline fallback */ }
+
+  container.innerHTML = APP_TYPES.map(app => {
+    const pos = positions.find(p => p.type === app.id);
+    const isOpen = pos ? pos.is_open : false; // default closed until set
+
+    return `
+    <div class="app-card">
+      <div class="app-card-header">
+        <div class="app-card-title">${app.title}</div>
+        <div class="status-pill ${isOpen ? 'status-open' : 'status-closed'}">
+          ${isOpen ? '&#9679; Open' : '&#9679; Closed'}
+        </div>
+      </div>
+      <p class="app-card-desc">${app.desc}</p>
+      <ul class="app-card-perks">
+        ${app.entails.map(e => `<li>${e}</li>`).join('')}
+      </ul>
+      <div class="app-card-footer">
+        <button
+          class="btn btn-sm ${isOpen ? 'btn-fill' : 'btn-ghost'}"
+          ${isOpen ? `onclick="openApplicationForm('${app.id}')"` : 'disabled'}
+        >${isOpen ? 'Start Application' : 'Currently Closed'}</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ======================================================
+   RENDER & SHOW APPLICATION FORM
+====================================================== */
+function openApplicationForm(typeId) {
+  const app = APP_TYPES.find(a => a.id === typeId);
+  if (!app) return;
+
+  const inner = document.getElementById('form-inner');
+  inner.innerHTML = `
+    <div class="form-title">${app.title}</div>
+    <div class="form-subtitle">Application &mdash; ${app.tag}</div>
+
+    <div class="form-section-title">Basic Info</div>
+
+    <div class="field">
+      <label for="f-username">Discord Username <span style="color:var(--danger)">*</span></label>
+      <input type="text" id="f-username" placeholder="e.g. yourname or yourname#0000" required>
+    </div>
+    <div class="field">
+      <label for="f-userid">Discord User ID <span style="color:var(--danger)">*</span></label>
+      <input type="text" id="f-userid" placeholder="18-digit number — Settings → Advanced → Developer Mode, then right-click your name">
+      <span class="field-hint">Enable Developer Mode in Discord settings, then right-click your username and copy ID.</span>
+    </div>
+    <div class="field">
+      <label for="f-timezone">Timezone <span style="color:var(--danger)">*</span></label>
+      <select id="f-timezone">
+        <option value="">Select your timezone</option>
+        ${[
+          'UTC-12:00','UTC-11:00','UTC-10:00','UTC-09:00','UTC-08:00 (PST)',
+          'UTC-07:00 (MST)','UTC-06:00 (CST)','UTC-05:00 (EST)',
+          'UTC-04:00','UTC-03:00','UTC-02:00','UTC-01:00',
+          'UTC+00:00 (GMT/UTC)','UTC+01:00 (CET)','UTC+02:00 (EET)',
+          'UTC+03:00','UTC+04:00','UTC+05:00','UTC+05:30 (IST)',
+          'UTC+06:00','UTC+07:00','UTC+08:00 (CST)','UTC+09:00 (JST)',
+          'UTC+10:00 (AEST)','UTC+11:00','UTC+12:00 (NZST)',
+        ].map(tz => `<option value="${tz}">${tz}</option>`).join('')}
+      </select>
+    </div>
+
+    <div class="form-section-title">Role-Specific Questions</div>
+
+    ${app.questions.map(q => `
+    <div class="field">
+      <label for="f-${q.id}">${q.label}${q.required ? ' <span style="color:var(--danger)">*</span>' : ' <span style="color:var(--muted);font-size:9px">(optional)</span>'}</label>
+      ${q.type === 'textarea'
+        ? `<textarea id="f-${q.id}" placeholder="${q.placeholder}" ${q.required ? 'required' : ''}></textarea>`
+        : `<input type="${q.type}" id="f-${q.id}" placeholder="${q.placeholder}" ${q.required ? 'required' : ''}>`
+      }
+    </div>`).join('')}
+
+    <div class="form-submit-row">
+      <button class="btn btn-fill" onclick="submitAppForm('${typeId}')">Submit Application</button>
+      <div class="form-msg" id="form-msg"></div>
+    </div>
+
+    <div class="success-screen" id="form-success">
+      <div class="success-num">#<span id="success-num">--</span></div>
+      <div class="success-title">Application Received</div>
+      <p class="success-msg">We'll get back to you on Discord. Keep an eye on your DMs &mdash; we usually respond within a few days. In the meantime, feel free to hang around the server.</p>
+      <button class="btn btn-ghost" onclick="showPage('applications')">Back to Applications</button>
+    </div>
+  `;
+
+  showPage('apply-form');
+}
+
+/* ======================================================
+   SUBMIT APPLICATION FORM
+====================================================== */
+async function submitAppForm(typeId) {
+  const app = APP_TYPES.find(a => a.id === typeId);
+  const msg = document.getElementById('form-msg');
+
+  const username = document.getElementById('f-username')?.value.trim();
+  const userid   = document.getElementById('f-userid')?.value.trim();
+  const timezone = document.getElementById('f-timezone')?.value;
+
+  if (!username || !userid || !timezone) {
+    showMsg(msg, 'error', 'Please fill in your Discord Username, User ID, and Timezone.');
+    return;
+  }
+
+  const formData = { discord_username: username, discord_user_id: userid, timezone };
+  app.questions.forEach(q => {
+    const el = document.getElementById('f-' + q.id);
+    if (el) formData[q.id] = el.value.trim();
+    if (q.required && el && !el.value.trim()) {
+      showMsg(msg, 'error', `Please fill in: "${q.label}"`);
+      return;
+    }
+  });
+
+  showMsg(msg, '', 'Submitting...');
+  msg.style.display = 'block';
+
+  const { data, error } = await submitApplication(typeId, formData);
+
+  if (error) {
+    showMsg(msg, 'error', 'Something went wrong. Please try again or contact staff directly on Discord.');
+    return;
+  }
+
+  // Show success screen
+  document.getElementById('form-inner').querySelector('.form-submit-row').style.display = 'none';
+  const successEl = document.getElementById('form-success');
+  document.getElementById('success-num').textContent = data.seq || data.id?.slice(0,6) || '—';
+  successEl.classList.add('visible');
+  window.scrollTo(0,0);
+}
+
+function showMsg(el, type, text) {
+  el.className = 'form-msg ' + type;
+  el.textContent = text;
+  el.style.display = 'block';
+}
+
+/* ======================================================
+   INIT
+====================================================== */
+document.addEventListener('DOMContentLoaded', () => {
+  renderAppCards();
+});
+</script>
+</body>
+</html>

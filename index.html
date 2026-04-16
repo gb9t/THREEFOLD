@@ -493,13 +493,300 @@ footer {
 /* ===== ANIM ===== */
 @keyframes riseIn { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
 
+/* ═══════════════════════════════════════
+   PORTAL SECTION
+═══════════════════════════════════════ */
+.portal-section {
+  padding: 0 0 6rem;
+  background: var(--black);
+}
+
+.portal-divider {
+  display: flex; align-items: center; gap: 1.5rem;
+  padding: 3.5rem 3rem 3rem;
+}
+.portal-divider-line {
+  flex: 1; height: 1px; background: var(--border);
+}
+.portal-divider-label {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.4em;
+  text-transform: uppercase; color: var(--muted); white-space: nowrap;
+}
+
+/* GRID ROWS */
+.portal-top-row {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 0; border-top: 1px solid var(--border); border-left: 1px solid var(--border);
+}
+.portal-map-row {
+  border-top: 1px solid var(--border); border-left: 1px solid var(--border);
+}
+.portal-bottom-row {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 0; border-top: 1px solid var(--border); border-left: 1px solid var(--border);
+}
+.portal-top-row .pcard,
+.portal-bottom-row .pcard { border-right: 1px solid var(--border); }
+.portal-map-row .pcard { border-right: 1px solid var(--border); }
+
+/* BASE CARD */
+.pcard {
+  position: relative; overflow: hidden;
+  display: block; text-decoration: none; color: inherit;
+  padding: 2.75rem 2.5rem 2.5rem;
+  min-height: 320px;
+  background: var(--deep);
+  transition: background .35s;
+  cursor: pointer;
+}
+.pcard:hover { background: var(--dark); }
+
+/* Noise texture overlay */
+.pcard-noise {
+  position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  opacity: .04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 256px;
+}
+
+.pcard-glow {
+  position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  opacity: 0; transition: opacity .4s;
+}
+.pcard:hover .pcard-glow { opacity: 1; }
+
+.pcard-inner {
+  position: relative; z-index: 5;
+  display: flex; flex-direction: column; height: 100%;
+}
+
+.pcard-tag {
+  font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.35em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 2rem;
+  transition: color .3s;
+}
+.pcard:hover .pcard-tag { color: var(--light); }
+
+.pcard-icon {
+  margin-bottom: 1.5rem; color: var(--border);
+  transition: color .3s;
+}
+.pcard:hover .pcard-icon { color: var(--muted); }
+
+.pcard-title {
+  font-family: var(--display); font-weight: 700;
+  font-size: clamp(28px, 3vw, 38px); letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--white); line-height: .95;
+  margin-bottom: 1rem; flex: 1;
+}
+
+.pcard-desc {
+  font-size: 13px; color: var(--muted); line-height: 1.85;
+  margin-bottom: 1.75rem; flex: 2; transition: color .3s;
+}
+.pcard:hover .pcard-desc { color: var(--light); }
+
+.pcard-arrow {
+  font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--border);
+  transition: color .3s, letter-spacing .3s;
+}
+.pcard:hover .pcard-arrow { color: var(--pale); letter-spacing: 0.3em; }
+
+/* ── DEPARTMENTS card ── purple/indigo accent */
+.pcard-dept { border-top: 2px solid #4a3a8a; }
+.pcard-dept .pcard-glow {
+  background: radial-gradient(ellipse at 20% 80%, rgba(80,60,160,.12) 0%, transparent 70%);
+}
+.pcard-dept .pcard-icon { color: #5a4a9a; }
+.pcard-dept:hover .pcard-icon { color: #7a6aba; }
+.pcard-dept-accent {
+  position: absolute; bottom: -60px; right: -60px; z-index: 2;
+  width: 180px; height: 180px; pointer-events: none;
+  border: 1px solid rgba(74, 58, 138, 0.2);
+  border-radius: 50%;
+  transition: transform .5s;
+}
+.pcard-dept-accent::after {
+  content: ''; position: absolute; inset: 20px;
+  border: 1px solid rgba(74, 58, 138, 0.15); border-radius: 50%;
+}
+.pcard-dept:hover .pcard-dept-accent { transform: scale(1.1); }
+
+/* ── WORLD STATE card ── red/amber threat pulse ── */
+.pcard-state { border-top: 2px solid #7a1a1a; }
+.pcard-state .pcard-glow {
+  background: radial-gradient(ellipse at 80% 20%, rgba(150,30,20,.1) 0%, transparent 65%);
+}
+.pcard-state .pcard-icon { color: #7a2020; }
+.pcard-state:hover .pcard-icon { color: #aa3030; }
+.pcard-pulse {
+  position: absolute; top: 2rem; right: 2rem; z-index: 3;
+  width: 10px; height: 10px;
+}
+.pcard-pulse::before {
+  content: ''; position: absolute; inset: 0; border-radius: 50%;
+  background: #cc3030;
+  animation: pulseCore 2s ease-in-out infinite;
+}
+.pcard-pulse::after {
+  content: ''; position: absolute; inset: -8px; border-radius: 50%;
+  border: 1px solid #cc3030;
+  animation: pulseRing 2s ease-in-out infinite;
+}
+@keyframes pulseCore { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
+@keyframes pulseRing { 0%{opacity:.6;transform:scale(1)} 100%{opacity:0;transform:scale(2.5)} }
+
+/* ── LORE card ── aged paper / sepia ── */
+.pcard-lore { border-top: 2px solid #5a4a2a; }
+.pcard-lore .pcard-glow {
+  background: radial-gradient(ellipse at 50% 100%, rgba(100,80,30,.1) 0%, transparent 60%);
+}
+.pcard-lore .pcard-icon { color: #5a4a2a; }
+.pcard-lore:hover .pcard-icon { color: #8a7040; }
+.pcard-lore-lines {
+  position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background-image: repeating-linear-gradient(
+    0deg, transparent, transparent 28px,
+    rgba(90,74,42,.07) 28px, rgba(90,74,42,.07) 29px
+  );
+}
+
+/* ── WORLD MAP card ── tactical / military ── */
+.pcard-map {
+  min-height: 260px; padding: 0;
+  border-top: 2px solid #1a3a1a;
+}
+.pcard-map .pcard-glow {
+  background: radial-gradient(ellipse at 30% 50%, rgba(20,60,20,.12) 0%, transparent 60%);
+}
+
+.pcard-map-grid {
+  position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(30,80,30,.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30,80,30,.08) 1px, transparent 1px);
+  background-size: 40px 40px;
+  transition: opacity .4s;
+}
+.pcard-map:hover .pcard-map-grid { opacity: 1.5; }
+
+.pcard-map-crosshair {
+  position: absolute; z-index: 3; pointer-events: none;
+  width: 16px; height: 16px;
+}
+.pcard-map-crosshair::before,
+.pcard-map-crosshair::after {
+  content: ''; position: absolute; background: rgba(40,120,40,.5);
+}
+.pcard-map-crosshair::before { top: 7px; left: 0; right: 0; height: 1px; }
+.pcard-map-crosshair::after  { left: 7px; top: 0; bottom: 0; width: 1px; }
+.pcard-map-ch1 { top: 30%; left: 25%; }
+.pcard-map-ch2 { top: 55%; left: 60%; }
+.pcard-map-ch3 { top: 20%; left: 75%; }
+
+.pcard-map-inner {
+  flex-direction: row; align-items: center;
+  padding: 3rem 3.5rem; min-height: 260px;
+}
+.pcard-map-left { flex: 1; }
+.pcard-map-right {
+  flex: 0 0 240px; display: flex; flex-direction: column;
+  align-items: flex-end; justify-content: center; gap: 1rem;
+}
+.pcard-map-tag { margin-bottom: 1.25rem; }
+.pcard-map-title { font-size: clamp(44px, 5vw, 64px); margin-bottom: .75rem; flex: 0; }
+.pcard-map-desc { max-width: 400px; flex: 0; }
+
+.pcard-map-coords {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em;
+  color: rgba(40,120,40,.5); display: flex; align-items: center; gap: .75rem;
+  transition: color .3s;
+}
+.pcard-map:hover .pcard-map-coords { color: rgba(60,180,60,.7); }
+.map-coord { display: block; }
+.map-coord-div { color: var(--border); }
+
+.pcard-map-scan {
+  width: 120px; height: 120px; border: 1px solid rgba(40,120,40,.2);
+  border-radius: 50%; position: relative;
+}
+.pcard-map-scan::before {
+  content: ''; position: absolute; inset: 15px;
+  border: 1px solid rgba(40,120,40,.15); border-radius: 50%;
+}
+.pcard-map-scan::after {
+  content: ''; position: absolute; top: 50%; left: 50%;
+  width: 50%; height: 1px; background: rgba(40,120,40,.4);
+  transform-origin: left center;
+  animation: radarSpin 4s linear infinite;
+}
+@keyframes radarSpin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+
+/* ── SUBMISSION card ── clinical/bureaucratic ── */
+.pcard-submit { border-top: 2px solid #3a3a3a; overflow: hidden; }
+.pcard-submit .pcard-glow {
+  background: linear-gradient(135deg, rgba(255,255,255,.02) 0%, transparent 60%);
+}
+.pcard-submit .pcard-icon { color: var(--muted); }
+.pcard-submit:hover .pcard-icon { color: var(--light); }
+
+.pcard-submit-ticker {
+  position: absolute; bottom: 0; left: 0; right: 0; z-index: 3;
+  overflow: hidden; border-top: 1px solid var(--border);
+  padding: 6px 0; background: var(--black);
+}
+.pcard-submit-ticker span {
+  display: inline-block; white-space: nowrap;
+  font-family: var(--mono); font-size: 8px; letter-spacing: 0.2em;
+  color: var(--border); text-transform: uppercase;
+  animation: tickerScroll 18s linear infinite;
+}
+@keyframes tickerScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ── DATABASE card ── neon/cyber ── */
+.pcard-db { border-top: 2px solid #0a2a3a; }
+.pcard-db .pcard-glow {
+  background: radial-gradient(ellipse at 80% 80%, rgba(10,50,80,.15) 0%, transparent 60%);
+}
+.pcard-db .pcard-icon { color: #0a3a5a; }
+.pcard-db:hover .pcard-icon { color: #1a5a8a; }
+
+.pcard-db-lines {
+  position: absolute; bottom: 0; right: 0; z-index: 2;
+  width: 160px; height: 160px; pointer-events: none;
+  background:
+    repeating-linear-gradient(
+      90deg, transparent, transparent 18px,
+      rgba(10,60,100,.1) 18px, rgba(10,60,100,.1) 19px
+    );
+}
+
+/* ═══════════════════════════════════════
+   RESPONSIVE ─ PORTAL
+═══════════════════════════════════════ */
+@media(max-width:900px) {
+  .portal-top-row { grid-template-columns: 1fr 1fr; }
+  .portal-bottom-row { grid-template-columns: 1fr; }
+  .pcard-map-inner { flex-direction: column; align-items: flex-start; padding: 2.5rem; }
+  .pcard-map-right { display: none; }
+}
+@media(max-width:600px) {
+  .portal-top-row { grid-template-columns: 1fr; }
+  .portal-divider { padding: 2.5rem 1.5rem 2rem; }
+  .pcard { padding: 2rem 1.5rem 2rem; min-height: 240px; }
+  .pcard-map-inner { padding: 2rem 1.5rem; }
+}
+
 /* ===== RESPONSIVE ===== */
 @media(max-width:768px){
   nav { padding:0 1.2rem; }
   .nav-logo-sub { display:none; }
   .nav-links button { padding:8px 9px; font-size:9px; }
   .two-col { grid-template-columns:1fr; gap:2rem; }
-  .fstrip { grid-template-columns:1fr; }
   .fi { border-right:none; border-bottom:1px solid var(--border); }
   .ph { padding:2.5rem 1.5rem 2rem; }
   .ph-bgword { display:none; }
@@ -523,12 +810,6 @@ footer {
     <li><button onclick="showPage('about')">About</button></li>
     <li><button onclick="showPage('rules')">Rules</button></li>
     <li><button onclick="showPage('join')">How to Join</button></li>
-    <li><button onclick="window.location.href='departments.html'">Departments</button></li>
-    <li><button onclick="window.location.href='worldstate.html'">World State</button></li>
-    <li><button onclick="window.location.href='lore.html'">Lore</button></li>
-    <li><button onclick="window.location.href='worldmap.html'">World Map</button></li>
-    <li><button onclick="window.location.href='submission.html'">Submission</button></li>
-    <li><button onclick="window.location.href='database.html'">Database</button></li>
     <li><button onclick="showPage('staff')">Staff</button></li>
     <li><button onclick="window.open('staff.html','_blank')" style="font-family:var(--mono);font-size:10.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);background:none;border:none;padding:8px 16px;cursor:pointer;transition:color .2s;">Staff Login</button></li>
     <li><button class="nav-discord" onclick="showPage('discord')">Discord</button></li>
@@ -558,20 +839,134 @@ footer {
       </div>
     </div>
   </div>
-  <div class="fstrip">
-    <div class="fi"><span class="fi-n">01</span>
-      <div class="fi-title">Story That Reacts</div>
-      <p class="fi-body">Staff run events that respond to what players actually do. Your choices leave marks. Nothing's purely scripted.</p>
+  <!-- ═══ PORTAL SECTION ═══ -->
+  <div class="portal-section">
+    <div class="portal-divider">
+      <span class="portal-divider-line"></span>
+      <span class="portal-divider-label">EXPLORE THE SERVER</span>
+      <span class="portal-divider-line"></span>
     </div>
-    <div class="fi"><span class="fi-n">02</span>
-      <div class="fi-title">Real Community</div>
-      <p class="fi-body">We take the RP seriously, but we're not snobs about it. Good writing's encouraged, not gatekept.</p>
+
+    <!-- TOP ROW: 3 cards -->
+    <div class="portal-top-row">
+
+      <!-- DEPARTMENTS -->
+      <a href="departments.html" class="pcard pcard-dept">
+        <div class="pcard-noise"></div>
+        <div class="pcard-glow"></div>
+        <div class="pcard-inner">
+          <div class="pcard-tag">01 — STRUCTURE</div>
+          <div class="pcard-icon">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><rect x="2" y="2" width="12" height="12" stroke="currentColor" stroke-width="1.2"/><rect x="18" y="2" width="12" height="12" stroke="currentColor" stroke-width="1.2"/><rect x="10" y="18" width="12" height="12" stroke="currentColor" stroke-width="1.2"/><line x1="8" y1="14" x2="16" y2="18" stroke="currentColor" stroke-width="1.2"/><line x1="24" y1="14" x2="16" y2="18" stroke="currentColor" stroke-width="1.2"/></svg>
+          </div>
+          <h2 class="pcard-title">Departments</h2>
+          <p class="pcard-desc">Factions, divisions, clearance hierarchies. Understand the power structures before you pick a side.</p>
+          <div class="pcard-arrow">Enter &rarr;</div>
+        </div>
+        <div class="pcard-dept-accent"></div>
+      </a>
+
+      <!-- WORLD STATE -->
+      <a href="worldstate.html" class="pcard pcard-state">
+        <div class="pcard-noise"></div>
+        <div class="pcard-glow"></div>
+        <div class="pcard-inner">
+          <div class="pcard-tag">02 — STATUS</div>
+          <div class="pcard-icon">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="13" stroke="currentColor" stroke-width="1.2"/><circle cx="16" cy="16" r="5" stroke="currentColor" stroke-width="1.2"/><line x1="16" y1="3" x2="16" y2="9" stroke="currentColor" stroke-width="1.2"/><line x1="16" y1="23" x2="16" y2="29" stroke="currentColor" stroke-width="1.2"/><line x1="3" y1="16" x2="9" y2="16" stroke="currentColor" stroke-width="1.2"/><line x1="23" y1="16" x2="29" y2="16" stroke="currentColor" stroke-width="1.2"/></svg>
+          </div>
+          <h2 class="pcard-title">World State</h2>
+          <p class="pcard-desc">Current faction tensions, active anomalies, threat levels. The living pulse of Threefold right now.</p>
+          <div class="pcard-arrow">Enter &rarr;</div>
+        </div>
+        <div class="pcard-pulse"></div>
+      </a>
+
+      <!-- LORE -->
+      <a href="lore.html" class="pcard pcard-lore">
+        <div class="pcard-noise"></div>
+        <div class="pcard-glow"></div>
+        <div class="pcard-inner">
+          <div class="pcard-tag">03 — CANON</div>
+          <div class="pcard-icon">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><rect x="6" y="3" width="20" height="26" rx="1" stroke="currentColor" stroke-width="1.2"/><line x1="10" y1="10" x2="22" y2="10" stroke="currentColor" stroke-width="1.2"/><line x1="10" y1="14" x2="22" y2="14" stroke="currentColor" stroke-width="1.2"/><line x1="10" y1="18" x2="17" y2="18" stroke="currentColor" stroke-width="1.2"/><line x1="6" y1="7" x2="26" y2="7" stroke="currentColor" stroke-width="1.2"/></svg>
+          </div>
+          <h2 class="pcard-title">Server Lore</h2>
+          <p class="pcard-desc">Incident reports, canon events, in-world documents. The history that shapes every scene.</p>
+          <div class="pcard-arrow">Enter &rarr;</div>
+        </div>
+        <div class="pcard-lore-lines"></div>
+      </a>
+
     </div>
-    <div class="fi"><span class="fi-n">03</span>
-      <div class="fi-title">Your Character Matters</div>
-      <p class="fi-body">Characters can rise, defect, get promoted, or die badly. The server's history is built by everyone together.</p>
+
+    <!-- WORLD MAP — wide banner -->
+    <div class="portal-map-row">
+      <a href="worldmap.html" class="pcard pcard-map">
+        <div class="pcard-noise"></div>
+        <div class="pcard-map-grid"></div>
+        <div class="pcard-map-crosshair pcard-map-ch1"></div>
+        <div class="pcard-map-crosshair pcard-map-ch2"></div>
+        <div class="pcard-map-crosshair pcard-map-ch3"></div>
+        <div class="pcard-inner pcard-map-inner">
+          <div class="pcard-map-left">
+            <div class="pcard-tag pcard-map-tag">04 — GEOGRAPHY</div>
+            <h2 class="pcard-title pcard-map-title">World Map</h2>
+            <p class="pcard-desc pcard-map-desc">Facility locations, known anomaly zones, contested territories. Know the terrain before you move.</p>
+            <div class="pcard-arrow">Open Map &rarr;</div>
+          </div>
+          <div class="pcard-map-right">
+            <div class="pcard-map-coords">
+              <span class="map-coord">48.8566° N</span>
+              <span class="map-coord-div">/</span>
+              <span class="map-coord">2.3522° E</span>
+            </div>
+            <div class="pcard-map-scan"></div>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- BOTTOM ROW: 2 cards -->
+    <div class="portal-bottom-row">
+
+      <!-- SUBMISSION -->
+      <a href="submission.html" class="pcard pcard-submit">
+        <div class="pcard-noise"></div>
+        <div class="pcard-glow"></div>
+        <div class="pcard-inner">
+          <div class="pcard-tag">05 — INTAKE</div>
+          <div class="pcard-icon">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><rect x="4" y="6" width="24" height="20" rx="1" stroke="currentColor" stroke-width="1.2"/><line x1="10" y1="13" x2="22" y2="13" stroke="currentColor" stroke-width="1.2"/><line x1="10" y1="17" x2="19" y2="17" stroke="currentColor" stroke-width="1.2"/><polyline points="15,22 18,25 25,18" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h2 class="pcard-title">Character<br>Submission</h2>
+          <p class="pcard-desc">Submit your Foundation personnel file, SCP entity, or unaffiliated operative for staff review.</p>
+          <div class="pcard-arrow">Begin Filing &rarr;</div>
+        </div>
+        <div class="pcard-submit-ticker">
+          <span>FORM-17 &nbsp;&bull;&nbsp; INTAKE SYSTEM &nbsp;&bull;&nbsp; SUBMIT CHARACTER &nbsp;&bull;&nbsp; FORM-17 &nbsp;&bull;&nbsp; INTAKE SYSTEM &nbsp;&bull;&nbsp; SUBMIT CHARACTER &nbsp;&bull;&nbsp;</span>
+        </div>
+      </a>
+
+      <!-- DATABASE -->
+      <a href="database.html" class="pcard pcard-db">
+        <div class="pcard-noise"></div>
+        <div class="pcard-glow"></div>
+        <div class="pcard-inner">
+          <div class="pcard-tag">06 — ARCHIVE</div>
+          <div class="pcard-icon">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><ellipse cx="16" cy="8" rx="12" ry="4" stroke="currentColor" stroke-width="1.2"/><path d="M4 8v8c0 2.2 5.4 4 12 4s12-1.8 12-4V8" stroke="currentColor" stroke-width="1.2"/><path d="M4 16v8c0 2.2 5.4 4 12 4s12-1.8 12-4v-8" stroke="currentColor" stroke-width="1.2"/></svg>
+          </div>
+          <h2 class="pcard-title">Character<br>Database</h2>
+          <p class="pcard-desc">Browse approved personnel files. Foundation staff, anomalous entities, unaffiliated operatives — all on record.</p>
+          <div class="pcard-arrow">Access Records &rarr;</div>
+        </div>
+        <div class="pcard-db-lines"></div>
+      </a>
+
     </div>
   </div>
+  <!-- END PORTAL SECTION -->
   <footer>
     <span>THREEFOLD &mdash; SCP RP Community</span>
     <span>Semi-Serious &bull; Text-Based &bull; Discord</span>

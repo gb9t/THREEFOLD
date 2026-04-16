@@ -346,21 +346,22 @@ footer{border-top:1px solid var(--dark);padding:2rem 3rem;display:flex;justify-c
 <body>
 
 <nav>
-  <div class="nav-logo" onclick="window.location.href='index.html'" style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+  <a href="index.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
     <img src="img/Base.png" alt="" style="width:30px;height:30px;object-fit:contain;mix-blend-mode:screen;flex-shrink:0;">
     <div>
-      <span class="nav-logo-name">THREEFOLD</span>
-      <span class="nav-logo-sub">SCP Foundation RP</span>
+      <span style="font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:0.3em;color:var(--white);text-transform:uppercase;display:block;line-height:1.1;">THREEFOLD</span>
+      <span style="font-family:var(--mono);font-size:9px;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;display:block;">SCP Foundation RP</span>
     </div>
-  </div>
-  <div style="display:flex;gap:.75rem;align-items:center;">
-    <a href="index.html" style="font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:5px 12px;border:1px solid transparent;transition:all .2s;" onmouseover="this.style.borderColor='var(--border)';this.style.color='var(--pale)'" onmouseout="this.style.borderColor='transparent';this.style.color='var(--muted)'">Home</a>
-    <a href="departments.html" style="font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:5px 12px;border:1px solid transparent;transition:all .2s;" onmouseover="this.style.borderColor='var(--border)';this.style.color='var(--pale)'" onmouseout="this.style.borderColor='transparent';this.style.color='var(--muted)'">Departments</a>
-    <a href="worldstate.html" style="font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:5px 12px;border:1px solid transparent;transition:all .2s;" onmouseover="this.style.borderColor='var(--border)';this.style.color='var(--pale)'" onmouseout="this.style.borderColor='transparent';this.style.color='var(--muted)'">World State</a>
-    <a href="lore.html" style="font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:5px 12px;border:1px solid transparent;transition:all .2s;" onmouseover="this.style.borderColor='var(--border)';this.style.color='var(--pale)'" onmouseout="this.style.borderColor='transparent';this.style.color='var(--muted)'">Lore</a>
-    <a href="worldmap.html" style="font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:5px 12px;border:1px solid transparent;transition:all .2s;" onmouseover="this.style.borderColor='var(--border)';this.style.color='var(--pale)'" onmouseout="this.style.borderColor='transparent';this.style.color='var(--muted)'">World Map</a>
-    <a href="characters.html" style="font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--pale);text-decoration:none;padding:5px 12px;border:1px solid var(--border);">Characters</a>
-  </div>
+  </a>
+  <ul style="display:flex;gap:0;list-style:none;align-items:center;flex-wrap:wrap;">
+    <li><a href="index.html" style="font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--light);text-decoration:none;padding:8px 14px;display:block;transition:color .2s;">Home</a></li>
+    <li><a href="departments.html" style="font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--light);text-decoration:none;padding:8px 14px;display:block;transition:color .2s;">Departments</a></li>
+    <li><a href="worldstate.html" style="font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--light);text-decoration:none;padding:8px 14px;display:block;transition:color .2s;">World State</a></li>
+    <li><a href="lore.html" style="font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--light);text-decoration:none;padding:8px 14px;display:block;transition:color .2s;">Lore</a></li>
+    <li><a href="worldmap.html" style="font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--light);text-decoration:none;padding:8px 14px;display:block;transition:color .2s;">World Map</a></li>
+    <li><a href="characters.html" style="font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--light);text-decoration:none;padding:8px 14px;display:block;transition:color .2s;">Characters</a></li>
+    <li><a href="staff.html" target="_blank" style="font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:8px 14px;display:block;transition:color .2s;">Staff Login</a></li>
+  </ul>
 </nav>
 
 <!-- ======== HOME ======== -->

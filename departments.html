@@ -227,6 +227,9 @@ footer{border-top:1px solid var(--dark);padding:2rem 3rem;display:flex;justify-c
   <div class="nav-right">
     <a class="nav-link" href="index.html">Home</a>
     <a class="nav-link active" href="departments.html">Departments</a>
+    <a class="nav-link" href="worldstate.html">World State</a>
+    <a class="nav-link" href="lore.html">Lore</a>
+    <a class="nav-link" href="worldmap.html">World Map</a>
     <a class="nav-link" href="characters.html">Characters</a>
   </div>
 </nav>
@@ -332,7 +335,7 @@ const DEPARTMENTS = [
       {name:'Research Supervisor',   cl:3, cls:'B', note:'Manages individual research teams and approves experimental proposals.'},
       {name:'Lead Researcher',       cl:3, cls:'C', note:'Conducts advanced research and mentors junior staff.'},
       {name:'Senior Researcher',     cl:2, cls:'C', note:'Experienced researcher with independent project authority.'},
-      {name:'Researcher',            cl:1, cls:'C', note:'Core research personnel. Cleared for most standard experiments.'},
+      {name:'Researcher',            cl:2, cls:'C', note:'Core research personnel. Cleared for most standard experiments.'},
       {name:'Junior Researcher',     cl:1, cls:'C', note:'Newly assigned staff. Works under direct supervision at all times.'},
       {name:'Research Intern',       cl:0, cls:'C', note:'Probationary status. Restricted access. Supervised at all times.'},
     ],
@@ -374,10 +377,10 @@ const DEPARTMENTS = [
     desc:`The Ethics Committee is an independent oversight body operating across all Foundation facilities. It is tasked with ensuring that containment procedures, research practices, and personnel management do not cross into unnecessary cruelty, corruption, or violation of the Foundation's internal code of conduct.\n\nUnlike most departments, the EC holds authority over all other departments — including Site Directorship. The Head of Ethics operates at O5 Council level and is not subordinate to any site command structure. EC investigators have the power to suspend experiments, relieve personnel of duty, and recommend disciplinary action without requiring approval from anyone below O5 level.`,
     mandate:"To uphold the Foundation's internal code of conduct, investigate violations, and ensure that the means — to whatever extent possible — justify the ends.",
     ranks:[
-      {name:'Head of Ethics',          cl:6, cls:'A', note:'Operates at O5 Council level. A peer authority to the O5, site command, or the Administrator on ethical matters.'},
+      {name:'Head of Ethics',          cl:6, cls:'A', note:'Operates at O5 Council level. A peer authority — not subordinate to O5, site command, or the Administrator on ethical matters.'},
       {name:'Ethics Commissioner',     cl:4, cls:'B', note:'Senior EC authority. Coordinates cross-site investigations and policy enforcement.'},
-      {name:'Senior Ethics Liaison',   cl:3, cls:'B', note:'Leads complex investigations and formal disciplinary proceedings.'},
-      {name:'Ethics Liaison',          cl:2, cls:'C', note:'Conducts inquiries and compliance reviews. First point of contact for reported violations.'},
+      {name:'Senior Ethics Liaison',   cl:4, cls:'B', note:'Leads complex investigations and formal disciplinary proceedings.'},
+      {name:'Ethics Liaison',          cl:3, cls:'C', note:'Conducts inquiries and compliance reviews. First point of contact for reported violations.'},
     ],
     units:null,
   },
@@ -394,7 +397,7 @@ const DEPARTMENTS = [
       {name:'MTF Lieutenant',  cl:3, cls:'C', note:'Team leader. Coordinates unit-level tactics during operations.'},
       {name:'MTF Sergeant',    cl:2, cls:'C', note:'Non-commissioned leader. Manages squad operations in the field.'},
       {name:'MTF Specialist',  cl:2, cls:'C', note:'Trained in a specific discipline — demolitions, anomaly handling, etc.'},
-      {name:'MTF Operative',   cl:1, cls:'C', note:'Core MTF personnel. Field-deployed following full selection and training.'},
+      {name:'MTF Operative',   cl:2, cls:'C', note:'Core MTF personnel. Field-deployed following full selection and training.'},
     ],
     units:null,
   },
@@ -426,7 +429,7 @@ const DEPARTMENTS = [
       {name:'Intelligence Director',   cl:4, cls:'B', note:'Heads the agency. Reports directly to the O5 Council.'},
       {name:'Intelligence Officer',    cl:3, cls:'B', note:'Senior field authority. Coordinates multi-agent operations and strategy.'},
       {name:'Senior Field Agent',      cl:3, cls:'C', note:'Experienced operative with expanded mission authority and autonomy.'},
-      {name:'Field Agent',             cl:2, cls:'C', note:'Core IA personnel. Conducts field operations and intelligence gathering.'},
+      {name:'Field Agent',             cl:3, cls:'C', note:'Core IA personnel. Conducts field operations and intelligence gathering.'},
     ],
     units:null,
   },
@@ -439,7 +442,7 @@ const DEPARTMENTS = [
     mandate:"To govern the Foundation at its highest level, set global strategic direction, and ensure that the mission is pursued without compromise or deviation.",
     ranks:[
       {name:'Administrator',          cl:6, cls:'A', note:'Above the O5 Council. The singular executive authority of the Foundation. Identity known only to O5 members.'},
-      {name:'O5 Council Member',      cl:5, cls:'A', note:'The thirteen. Final policy authority on all Foundation matters. Identities classified at every clearance level.'},
+      {name:'O5 Council Member',      cl:6, cls:'A', note:'The thirteen. Final policy authority on all Foundation matters. Identities classified at every clearance level.'},
       {name:'Factotum',               cl:5, cls:'A', note:'Personal staff of the O5 Council. Selected for absolute loyalty. Act as assistants, bodyguards, and decoys — some with anomalous alterations. Carry full O5 authority in the field.'},
     ],
     units:null,

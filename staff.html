@@ -1171,6 +1171,11 @@ async function deleteChar(id, fromModal = false) {
 }
 
 /* END CHARACTER MANAGEMENT */
+
+/* =========================================================
+   INIT — check existing session on load
+========================================================= */
+document.addEventListener('DOMContentLoaded', async () => {
   const session = await getSession();
   if (session) {
     await initShell();

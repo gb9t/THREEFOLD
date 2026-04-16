@@ -34,21 +34,37 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:56px;background:rgba(
 .ph-tag{font-family:var(--mono);font-size:9.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;}
 .ph h1{font-family:var(--display);font-weight:700;font-size:clamp(48px,7vw,88px);letter-spacing:0.05em;text-transform:uppercase;color:var(--white);line-height:.9;}
 .ph-desc{margin-top:1rem;font-size:15px;color:var(--light);max-width:560px;}
-
 .wrap{max-width:1100px;margin:0 auto;padding:3rem 3rem 5rem;}
 .stag{font-family:var(--mono);font-size:9.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:1rem;margin-bottom:2rem;}
 .stag::after{content:'';flex:1;height:1px;background:var(--border);}
 
+/* PERSONNEL CLASSIFICATION SECTION */
+.cls-section{margin-bottom:2.5rem;border:1px solid var(--border);background:var(--deep);}
+.cls-toggle{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.5rem;cursor:pointer;transition:background .2s;user-select:none;}
+.cls-toggle:hover{background:rgba(255,255,255,.02);}
+.cls-toggle-label{font-family:var(--mono);font-size:9.5px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);}
+.cls-chevron{font-family:var(--mono);font-size:14px;color:var(--border);transition:transform .25s;}
+.cls-chevron.open{transform:rotate(90deg);}
+.cls-body{display:none;border-top:1px solid var(--border);}
+.cls-body.show{display:block;}
+.cls-cards{display:grid;grid-template-columns:repeat(5,1fr);}
+.cls-card{padding:1.25rem;border-right:1px solid var(--border);}
+.cls-card:last-child{border-right:none;}
+.cls-card-letter{font-family:var(--display);font-size:36px;font-weight:700;letter-spacing:0.06em;line-height:1;margin-bottom:.5rem;}
+.cls-card-title{font-family:var(--mono);font-size:8.5px;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:.75rem;}
+.cls-card-desc{font-size:12px;color:var(--muted);line-height:1.75;}
+.cls-a .cls-card-letter{color:#aa3a3a;}.cls-a .cls-card-title{color:#7a1a1a;}
+.cls-b .cls-card-letter{color:#3a6aaa;}.cls-b .cls-card-title{color:#1a3a6a;}
+.cls-c .cls-card-letter{color:#4a8a4a;}.cls-c .cls-card-title{color:#2a5a2a;}
+.cls-d .cls-card-letter{color:#888;}.cls-d .cls-card-title{color:#555;}
+.cls-e .cls-card-letter{color:#9a7a3a;}.cls-e .cls-card-title{color:#5a4a1a;}
+
 /* DEPARTMENT GRID */
 .dept-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;}
-
-/* DEPARTMENT CARD */
 .dept-card{background:var(--deep);border:1px solid var(--border);border-left:3px solid var(--border);padding:1.4rem 1.6rem;display:flex;align-items:center;gap:1.25rem;cursor:pointer;position:relative;overflow:hidden;transition:transform .2s,background .2s;animation:cardIn .5s ease both;}
 .dept-card:nth-child(1){animation-delay:.05s}.dept-card:nth-child(2){animation-delay:.1s}.dept-card:nth-child(3){animation-delay:.15s}.dept-card:nth-child(4){animation-delay:.2s}.dept-card:nth-child(5){animation-delay:.25s}.dept-card:nth-child(6){animation-delay:.3s}.dept-card:nth-child(7){animation-delay:.35s}.dept-card:nth-child(8){animation-delay:.4s}.dept-card:nth-child(9){animation-delay:.45s}.dept-card:nth-child(10){animation-delay:.5s}
 @keyframes cardIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 .dept-card:hover{transform:translateY(-2px);background:var(--dark);}
-
-/* Shimmer sweep on hover */
 .dept-card::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.025) 50%,transparent 100%);transform:translateX(-120%);pointer-events:none;}
 .dept-card:hover::after{animation:shimmer .7s ease forwards;}
 @keyframes shimmer{from{transform:translateX(-120%)}to{transform:translateX(120%)}}
@@ -57,18 +73,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:56px;background:rgba(
 .dept-logo-wrap{width:44px;height:44px;flex-shrink:0;position:relative;overflow:hidden;}
 .dept-logo{width:44px;height:44px;object-fit:contain;mix-blend-mode:screen;display:block;transition:transform .3s;}
 .dept-card:hover .dept-logo{transform:scale(1.08);}
-
-/* Scan line sweep over logo */
 .dept-logo-wrap::before{content:'';position:absolute;left:0;right:0;height:35%;background:linear-gradient(transparent,rgba(255,255,255,0.1),transparent);top:-35%;pointer-events:none;z-index:2;}
 .dept-card:hover .dept-logo-wrap::before{animation:logoScan .8s ease forwards;}
 @keyframes logoScan{from{top:-35%}to{top:110%}}
-
-/* ISD special: static noise + dim */
 .dept-card.classified .dept-logo{opacity:.55;filter:contrast(1.2);}
 .dept-card.classified:hover .dept-logo{animation:isdLogoGlitch 3s steps(2) infinite;}
 @keyframes isdLogoGlitch{0%,88%,100%{filter:none;transform:scale(1);}90%{filter:hue-rotate(90deg) brightness(1.8);transform:scale(1.05) translate(-1px,0);}92%{filter:none;transform:scale(1);}95%{filter:hue-rotate(200deg) brightness(.4);transform:scale(1.02) translate(1px,0);}97%{filter:none;transform:scale(1.08);}}
 
-/* Card content */
 .dept-info{flex:1;min-width:0;}
 .dept-abbr{font-family:var(--mono);font-size:8px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);margin-bottom:.2rem;}
 .dept-name{font-family:var(--display);font-size:20px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:var(--white);line-height:1.1;margin-bottom:.3rem;}
@@ -82,12 +93,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:56px;background:rgba(
 .detail-overlay.open{background:rgba(0,0,0,0.82);pointer-events:all;}
 .detail-panel{position:absolute;right:0;top:0;bottom:0;width:min(680px,100%);background:var(--deep);border-left:1px solid var(--border);overflow-y:auto;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);}
 .detail-overlay.open .detail-panel{transform:translateX(0);}
-
 .detail-topbar{position:sticky;top:0;z-index:10;background:rgba(17,17,17,.97);border-bottom:1px solid var(--border);padding:.8rem 2rem;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(4px);}
 .detail-topbar-name{font-family:var(--mono);font-size:9.5px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);}
 .detail-close{font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);background:none;border:1px solid var(--border);padding:5px 14px;cursor:pointer;transition:all .2s;}
 .detail-close:hover{border-color:var(--light);color:var(--pale);}
-
 .detail-content{padding:2.5rem;}
 
 /* Detail header */
@@ -115,11 +124,30 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:56px;background:rgba(
 .rank-item:nth-child(1){animation-delay:.04s}.rank-item:nth-child(2){animation-delay:.08s}.rank-item:nth-child(3){animation-delay:.12s}.rank-item:nth-child(4){animation-delay:.16s}.rank-item:nth-child(5){animation-delay:.2s}.rank-item:nth-child(6){animation-delay:.24s}.rank-item:nth-child(7){animation-delay:.28s}.rank-item:nth-child(8){animation-delay:.32s}
 @keyframes rankSlide{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
 .rank-item:hover{background:rgba(255,255,255,.03);}
-.rank-cl{width:30px;height:30px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:8.5px;font-weight:bold;border:1px solid;flex-direction:column;line-height:1;}
-.rank-cl small{font-size:6px;opacity:.7;}
+.rank-cl{width:30px;height:30px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:8.5px;font-weight:bold;border:1px solid;}
 .rank-body{flex:1;}
+.rank-name-row{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.15rem;}
 .rank-name{font-family:var(--display);font-size:17px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:var(--pale);line-height:1.1;}
-.rank-note{font-size:12px;color:var(--muted);margin-top:.15rem;line-height:1.4;}
+.rank-cls-badge{font-family:var(--mono);font-size:8px;letter-spacing:0.1em;text-transform:uppercase;padding:1px 6px;border:1px solid;white-space:nowrap;flex-shrink:0;}
+.rank-note{font-size:12px;color:var(--muted);line-height:1.4;}
+
+/* Clearance colors */
+.cl-0{border-color:#444!important;color:#666!important;}
+.cl-1{border-color:#1a6a1a!important;color:#4a9a4a!important;}
+.cl-2{border-color:#1a3a8a!important;color:#4a6aaa!important;}
+.cl-3{border-color:#8a7a1a!important;color:#baa03a!important;}
+.cl-4{border-color:#8a3a1a!important;color:#ba6a3a!important;}
+.cl-5{border-color:#8a1a1a!important;color:#ba3a3a!important;}
+.cl-6{border-color:#222!important;color:#444!important;}
+.cl-null{border-color:#1a1a1a!important;color:#2a2a2a!important;}
+
+/* Classification badge colors */
+.rcls-a{border-color:#7a1a1a!important;color:#aa3a3a!important;}
+.rcls-b{border-color:#1a3a6a!important;color:#3a6aaa!important;}
+.rcls-c{border-color:#2a5a2a!important;color:#4a8a4a!important;}
+.rcls-d{border-color:#555!important;color:#888!important;}
+.rcls-e{border-color:#5a4a1a!important;color:#9a7a3a!important;}
+.rcls-blank{border-color:#1a1a1a!important;color:#2a2a2a!important;}
 
 /* UNIT CARDS */
 .unit-list{display:flex;flex-direction:column;gap:.75rem;}
@@ -136,22 +164,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:56px;background:rgba(
 @keyframes unitReveal{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
 .unit-cl-gate{display:flex;align-items:center;gap:.75rem;font-family:var(--mono);font-size:9.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);}
 .unit-cl-gate span{color:var(--danger);}
-.gate-unlock{font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--muted);padding:4px 12px;cursor:pointer;margin-left:auto;transition:all .2s;}
+.gate-unlock{font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--muted);padding:4px 12px;margin-left:auto;cursor:pointer;transition:all .2s;}
 .gate-unlock:hover{border-color:var(--light);color:var(--pale);}
 
-/* ISD classified note */
+/* ISD note */
 .isd-note{background:rgba(10,0,0,.4);border:1px solid rgba(100,0,0,.3);padding:1rem 1.25rem;font-family:var(--mono);font-size:10px;letter-spacing:0.15em;color:rgba(200,50,50,.7);text-transform:uppercase;margin-top:1.5rem;line-height:1.7;}
 
-/* Clearance color classes */
-.cl-0{border-color:#555!important;color:#777!important;}
-.cl-1{border-color:#1a6a1a!important;color:#4a9a4a!important;}
-.cl-2{border-color:#1a3a8a!important;color:#4a6aaa!important;}
-.cl-3{border-color:#8a7a1a!important;color:#baa03a!important;}
-.cl-4{border-color:#8a3a1a!important;color:#ba6a3a!important;}
-.cl-5{border-color:#8a1a1a!important;color:#ba3a3a!important;}
-.cl-6{border-color:#222!important;color:#444!important;}
-
-/* ======= ISD AUTH GATE ======= */
+/* ISD AUTH GATE */
 .auth-overlay{position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0);display:none;align-items:center;justify-content:center;padding:2rem;}
 .auth-overlay.open{background:rgba(0,0,0,.94);display:flex;}
 .auth-box{max-width:400px;width:100%;background:var(--deep);border:1px solid rgba(100,0,0,.4);padding:3rem 2.5rem;text-align:center;position:relative;animation:authIn .3s ease both;}
@@ -173,17 +192,23 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:56px;background:rgba(
 .btn-auth-cancel{font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);background:none;border:none;cursor:pointer;transition:color .2s;padding:4px;}
 .btn-auth-cancel:hover{color:var(--pale);}
 
-/* FOOTER */
 footer{border-top:1px solid var(--dark);padding:2rem 3rem;display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:9.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--border);margin-top:2rem;}
 
-/* RESPONSIVE */
+@media(max-width:900px){
+  .cls-cards{grid-template-columns:repeat(3,1fr);}
+  .cls-card:nth-child(3){border-right:none;}
+  .cls-card:nth-child(4){border-top:1px solid var(--border);}
+  .cls-card:nth-child(5){border-top:1px solid var(--border);border-right:none;}
+}
 @media(max-width:768px){
-  nav{padding:0 1.2rem;}
-  .nav-logo-sub{display:none;}
+  nav{padding:0 1.2rem;}.nav-logo-sub{display:none;}
   .ph{padding:2.5rem 1.5rem 2rem;}.ph-bgword{display:none;}
   .wrap{padding:2rem 1.5rem 4rem;}
   .dept-grid{grid-template-columns:1fr;}
   .dh{flex-direction:column;gap:1rem;}
+  .cls-cards{grid-template-columns:1fr 1fr;}
+  .cls-card:nth-child(2n){border-right:none;}
+  .cls-card:nth-child(n+3){border-top:1px solid var(--border);}
   footer{flex-direction:column;gap:.5rem;text-align:center;}
   .detail-panel{width:100%;}
   .detail-content{padding:1.5rem;}
@@ -211,10 +236,49 @@ footer{border-top:1px solid var(--dark);padding:2rem 3rem;display:flex;justify-c
     <div class="ph-bgword">DEPT</div>
     <div class="ph-tag">Foundation Structure &mdash; Site Departments</div>
     <h1>Departments</h1>
-    <p class="ph-desc">The operational divisions of the Threefold Foundation site. Click any department to view its full mandate, personnel structure, and rank listings.</p>
+    <p class="ph-desc">The operational divisions of the Threefold Foundation site. Click any department to view its full mandate, personnel ranks, and classifications.</p>
   </div>
 
   <div class="wrap">
+
+    <!-- PERSONNEL CLASSIFICATIONS -->
+    <div class="stag">Personnel Classifications</div>
+    <div class="cls-section">
+      <div class="cls-toggle" onclick="toggleCls()">
+        <span class="cls-toggle-label">Classifications are assigned based on proximity to anomalous phenomena &mdash; click to expand</span>
+        <span class="cls-chevron" id="cls-chevron">&#8250;</span>
+      </div>
+      <div class="cls-body" id="cls-body">
+        <div class="cls-cards">
+          <div class="cls-card cls-a">
+            <div class="cls-card-letter">A</div>
+            <div class="cls-card-title">Class A</div>
+            <div class="cls-card-desc">Personnel essential to Foundation strategic operations. Not permitted direct access to anomalies under any circumstances. In an emergency, Class A personnel are to be immediately evacuated to a secure off-site location. O5 Council members and the Administrator are always Class A.</div>
+          </div>
+          <div class="cls-card cls-b">
+            <div class="cls-card-letter">B</div>
+            <div class="cls-card-title">Class B</div>
+            <div class="cls-card-desc">Personnel essential to local Foundation operations. May only access anomalies that have passed quarantine and been cleared of memetic or mind-affecting effects. In the event of a breach or hostile action, Class B personnel are to be evacuated to a secure off-site location as soon as possible.</div>
+          </div>
+          <div class="cls-card cls-c">
+            <div class="cls-card-letter">C</div>
+            <div class="cls-card-title">Class C</div>
+            <div class="cls-card-desc">Personnel with direct access to most anomalies not deemed strictly hostile or dangerous. Those who have had contact with potentially memetic properties may be subject to mandatory quarantine and psychiatric evaluation. In a breach, non-combatants are to report to secure lock-down areas or evacuate at security's discretion.</div>
+          </div>
+          <div class="cls-card cls-d">
+            <div class="cls-card-letter">D</div>
+            <div class="cls-card-title">Class D</div>
+            <div class="cls-card-desc">Expendable personnel used to handle extremely hazardous anomalies. Not permitted contact with Class A or B personnel. Typically drawn from prison inmates convicted of violent crimes. Subject to regular psychiatric evaluations and administered amnestics or terminated at month's end. In a catastrophic site event, Class D are to be terminated immediately unless otherwise determined by security.</div>
+          </div>
+          <div class="cls-card cls-e">
+            <div class="cls-card-letter">E</div>
+            <div class="cls-card-title">Class E</div>
+            <div class="cls-card-desc">A provisional classification applied to field agents and containment personnel exposed to potentially dangerous anomalous effects during initial containment of a newly-designated anomaly. Class E personnel are to be quarantined as soon as possible, monitored, and may only return to duty after being fully cleared by psychiatric and medical staff.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="stag">Operational Departments &mdash; 10 Active Divisions</div>
     <div class="dept-grid" id="dept-grid"></div>
   </div>
@@ -257,39 +321,39 @@ footer{border-top:1px solid var(--dark);padding:2rem 3rem;display:flex;justify-c
 const DEPARTMENTS = [
   {
     id:'science', name:'Science Department', abbr:'ScD', logo:'img/Science.png',
-    border:'#2a5a8a', cl:{border:'#2a5a8a',color:'#4a7aaa'}, range:'CL1 &mdash; CL4',
+    border:'#2a5a8a', cl:{border:'#2a5a8a',color:'#4a7aaa'}, range:'CL0 &mdash; CL4',
     tagline:'The pursuit of anomalous understanding.',
     classified:false,
     desc:`The Science Department forms the intellectual backbone of Foundation operations. Researchers catalogue, study, and contain anomalies through rigorous empirical methodology. From analysis of recovered artefacts to controlled experimentation on designated subjects, ScD personnel are responsible for building the Foundation's understanding of the anomalous — and by extension, its containment capabilities.\n\nThe department spans a wide range of disciplines: physics, biology, chemistry, psychology, and numerous fields that have no name in mainstream academia. Junior researchers are assigned to established containment teams before eventually leading their own research projects.`,
     mandate:"To study, understand, and document anomalous phenomena in service of containment and the Foundation's broader mission.",
     ranks:[
-      {name:'Research Director',cl:4,note:'Department head. Final authority on all research projects and staffing.'},
-      {name:'Head of Research',cl:4,note:'Oversees multiple research teams and cross-departmental collaboration.'},
-      {name:'Research Supervisor',cl:3,note:'Manages individual research teams and approves experimental proposals.'},
-      {name:'Lead Researcher',cl:3,note:'Conducts advanced research and mentors junior staff.'},
-      {name:'Senior Researcher',cl:2,note:'Experienced researcher with independent project authority.'},
-      {name:'Researcher',cl:2,note:'Core research personnel. Cleared for most standard experiments.'},
-      {name:'Junior Researcher',cl:1,note:'Newly assigned staff. Works under direct supervision at all times.'},
-      {name:'Research Intern',cl:1,note:'Probationary status. Limited access. Supervised at all times.'},
+      {name:'Research Director',     cl:4, cls:'B', note:'Department head. Final authority on all research projects and staffing decisions.'},
+      {name:'Head of Research',      cl:4, cls:'B', note:'Oversees multiple research teams and cross-departmental collaboration.'},
+      {name:'Research Supervisor',   cl:3, cls:'B', note:'Manages individual research teams and approves experimental proposals.'},
+      {name:'Lead Researcher',       cl:3, cls:'C', note:'Conducts advanced research and mentors junior staff.'},
+      {name:'Senior Researcher',     cl:2, cls:'C', note:'Experienced researcher with independent project authority.'},
+      {name:'Researcher',            cl:2, cls:'C', note:'Core research personnel. Cleared for most standard experiments.'},
+      {name:'Junior Researcher',     cl:1, cls:'C', note:'Newly assigned staff. Works under direct supervision at all times.'},
+      {name:'Research Intern',       cl:0, cls:'C', note:'Probationary status. Restricted access. Supervised at all times.'},
     ],
     units:null,
   },
   {
     id:'security', name:'Security Department', abbr:'SD', logo:'img/Security.png',
-    border:'#8a7a1a', cl:{border:'#8a7a1a',color:'#baa03a'}, range:'CL1 &mdash; CL3',
+    border:'#8a7a1a', cl:{border:'#8a7a1a',color:'#baa03a'}, range:'CL0 &mdash; CL4',
     tagline:'Order maintained. Containment enforced.',
     classified:false,
     desc:`The Security Department maintains physical order across all Foundation sites. Divided into four specialist units, SD personnel manage everything from active breach response to undercover enforcement operations. Security is not simply a protective measure — it is the mechanism by which the Foundation's containment infrastructure holds together.\n\nSD operates under a strict chain of command and coordinates closely with the Ethics Committee, Site Directorship, and ISD depending on the nature of the operation. Personnel are assigned to specialist units based on aptitude assessments conducted during onboarding.`,
     mandate:'To maintain order, enforce containment, protect Foundation personnel, and neutralise all threats to site integrity.',
     ranks:[
-      {name:'Security Director',cl:3,note:'Department head. Coordinates all SD operations across the site.'},
-      {name:'Security Major',cl:3,note:'Senior command officer. Manages unit commanders and site-wide response.'},
-      {name:'Security Captain',cl:2,note:'Commands a specialist unit. Responsible for deployment decisions.'},
-      {name:'Security Lieutenant',cl:2,note:'Assists command. Leads small-unit operations and briefings.'},
-      {name:'Security Sergeant',cl:2,note:'Non-commissioned officer. Leads fireteams and supervises junior personnel.'},
-      {name:'Security Corporal',cl:1,note:'Experienced officer with minor supervisory duties.'},
-      {name:'Security Officer',cl:1,note:'Core security personnel. Standard deployment roles.'},
-      {name:'Security Cadet',cl:1,note:'In training. Supervised at all times. No independent duty assignment.'},
+      {name:'Security Director',   cl:4, cls:'B', note:'Department head. Coordinates all SD operations across the site.'},
+      {name:'Security Major',      cl:3, cls:'B', note:'Senior command officer. Manages unit commanders and site-wide response.'},
+      {name:'Security Captain',    cl:2, cls:'C', note:'Commands a specialist unit. Responsible for deployment decisions.'},
+      {name:'Security Lieutenant', cl:2, cls:'C', note:'Assists command. Leads small-unit operations and briefings.'},
+      {name:'Security Sergeant',   cl:2, cls:'C', note:'Non-commissioned officer. Leads fireteams and supervises junior personnel.'},
+      {name:'Security Corporal',   cl:1, cls:'C', note:'Experienced officer with minor supervisory duties.'},
+      {name:'Security Officer',    cl:0, cls:'C', note:'Core security personnel. Standard deployment roles.'},
+      {name:'Security Cadet',      cl:0, cls:'C', note:'In training. Supervised at all times. No independent duty assignment.'},
     ],
     units:[
       {id:'sru',abbr:'SRU',full:'Security Response Unit',cl:null,
@@ -304,19 +368,16 @@ const DEPARTMENTS = [
   },
   {
     id:'ethics', name:'Ethics Committee', abbr:'EC', logo:'img/Ethics.png',
-    border:'#7a3a1a', cl:{border:'#7a3a1a',color:'#ba6a3a'}, range:'CL3 &mdash; CL5',
+    border:'#7a3a1a', cl:{border:'#7a3a1a',color:'#ba6a3a'}, range:'CL3 &mdash; CL6',
     tagline:'Accountability where no law applies.',
     classified:false,
-    desc:`The Ethics Committee is an independent oversight body operating across all Foundation facilities. It is tasked with ensuring that containment procedures, research practices, and personnel management do not cross into unnecessary cruelty, corruption, or violation of the Foundation's internal code of conduct.\n\nUnlike most departments, the EC holds authority over all other departments — including Site Directorship. It cannot be overruled by local command structures and reports directly to the O5 Council. EC investigators have the power to suspend experiments, relieve personnel of duty, and recommend disciplinary action without requiring prior approval from site administration.`,
+    desc:`The Ethics Committee is an independent oversight body operating across all Foundation facilities. It is tasked with ensuring that containment procedures, research practices, and personnel management do not cross into unnecessary cruelty, corruption, or violation of the Foundation's internal code of conduct.\n\nUnlike most departments, the EC holds authority over all other departments — including Site Directorship. The Head of Ethics operates at O5 Council level and is not subordinate to any site command structure. EC investigators have the power to suspend experiments, relieve personnel of duty, and recommend disciplinary action without requiring approval from anyone below O5 level.`,
     mandate:"To uphold the Foundation's internal code of conduct, investigate violations, and ensure that the means — to whatever extent possible — justify the ends.",
     ranks:[
-      {name:'Head of Ethics',cl:5,note:'Reports directly to the O5 Council. Final authority on all EC matters.'},
-      {name:'Ethics Commissioner',cl:4,note:'Senior EC authority. Coordinates cross-site investigations and policy.'},
-      {name:'Senior Ethics Investigator',cl:4,note:'Leads complex investigations and formal disciplinary proceedings.'},
-      {name:'Ethics Investigator',cl:3,note:'Conducts standard inquiries, compliance reviews, and interviews.'},
-      {name:'Ethics Supervisor',cl:3,note:'Manages EC casework and junior representatives within a site.'},
-      {name:'Ethics Representative',cl:3,note:'First point of contact for personnel reporting potential violations.'},
-      {name:'Ethics Liaison',cl:3,note:'Assigned to coordinate between the EC and specific departments.'},
+      {name:'Head of Ethics',          cl:6, cls:'A', note:'Operates at O5 Council level. A peer authority — not subordinate to O5, site command, or the Administrator on ethical matters.'},
+      {name:'Ethics Commissioner',     cl:4, cls:'B', note:'Senior EC authority. Coordinates cross-site investigations and policy enforcement.'},
+      {name:'Senior Ethics Liaison',   cl:4, cls:'B', note:'Leads complex investigations and formal disciplinary proceedings.'},
+      {name:'Ethics Liaison',          cl:3, cls:'C', note:'Conducts inquiries and compliance reviews. First point of contact for reported violations.'},
     ],
     units:null,
   },
@@ -325,94 +386,92 @@ const DEPARTMENTS = [
     border:'#5a3a8a', cl:{border:'#5a3a8a',color:'#8a6aaa'}, range:'CL2 &mdash; CL4',
     tagline:'Deployed where standard units cannot go.',
     classified:false,
-    desc:`Mobile Task Forces are elite field units commissioned by the O5 Council and deployed for operations that exceed the capability of standard site security. Each task force is built around a specific anomalous threat type, given specialist training and tailored equipment, and operates under direct mandate from above Site Director level.\n\nTask forces are designated by a Greek letter followed by a numeric identifier. Assignment to an MTF is considered both a privilege and an expectation of exceptional performance. MTF units have broader operational authority than standard SD personnel and frequently operate off-site for extended periods without return.`,
+    desc:`Mobile Task Forces are elite field units commissioned by the O5 Council and deployed for operations that exceed the capability of standard site security. Each task force is built around a specific anomalous threat type, given specialist training and tailored equipment, and operates under direct mandate from above Site Director level.\n\nTask forces are designated by a Greek letter followed by a numeric identifier. Assignment to an MTF is considered both a privilege and an expectation of exceptional performance. MTF units have broader operational authority than standard SD personnel and frequently operate off-site for extended periods.`,
     mandate:'To respond to anomalous threats that exceed standard containment capability, execute high-risk field operations, and protect Foundation assets wherever they may be.',
     ranks:[
-      {name:'MTF Commander',cl:4,note:'Leads an entire task force. Appointed by O5 mandate. Answers to O5 directly.'},
-      {name:'MTF Captain',cl:4,note:'Field command of multi-team operations within a task force.'},
-      {name:'MTF Lieutenant',cl:3,note:'Team leader. Coordinates unit-level tactics during operations.'},
-      {name:'MTF Sergeant',cl:3,note:'Non-commissioned leader. Manages squad operations in the field.'},
-      {name:'MTF Specialist',cl:2,note:'Trained in a specific discipline (demolitions, anomaly handling, etc.).'},
-      {name:'MTF Operative',cl:2,note:'Core MTF personnel. Field-deployed following full selection and training.'},
+      {name:'MTF Commander',   cl:4, cls:'B', note:'Leads an entire task force. Appointed by O5 mandate.'},
+      {name:'MTF Captain',     cl:3, cls:'C', note:'Field command of multi-team operations within a task force.'},
+      {name:'MTF Lieutenant',  cl:3, cls:'C', note:'Team leader. Coordinates unit-level tactics during operations.'},
+      {name:'MTF Sergeant',    cl:2, cls:'C', note:'Non-commissioned leader. Manages squad operations in the field.'},
+      {name:'MTF Specialist',  cl:2, cls:'C', note:'Trained in a specific discipline — demolitions, anomaly handling, etc.'},
+      {name:'MTF Operative',   cl:2, cls:'C', note:'Core MTF personnel. Field-deployed following full selection and training.'},
     ],
     units:null,
   },
   {
     id:'medical', name:'Medical Department', abbr:'MD', logo:'img/Medical.png',
-    border:'#1a7a3a', cl:{border:'#1a7a3a',color:'#3a9a5a'}, range:'CL1 &mdash; CL3',
+    border:'#1a7a3a', cl:{border:'#1a7a3a',color:'#3a9a5a'}, range:'CL0 &mdash; CL4',
     tagline:'Keeping what remains of personnel functional.',
     classified:false,
-    desc:`The Medical Department maintains the physical and psychological welfare of all Foundation personnel. Operating in conditions that have no equivalent in civilian healthcare — anomalous pathogens, cognitohazardous exposure, reality instability, and trauma from regular containment failures — MD staff are among the most resilient in the organisation.\n\nSpecialisations within the department include anomalous pathology, psychotropic containment therapy, post-incident trauma response, and Scranton reality research. The Medical Department also manages D-Class health screening prior to experimental assignment and provides post-experiment evaluations for all test participants.`,
+    desc:`The Medical Department maintains the physical and psychological welfare of all Foundation personnel. Operating in conditions that have no equivalent in civilian healthcare — anomalous pathogens, cognitohazardous exposure, reality instability, and trauma from regular containment failures — MD staff are among the most resilient in the organisation.\n\nSpecialisations within the department include anomalous pathology, psychotropic containment therapy, post-incident trauma response, and Scranton reality research. The Medical Department also manages D-Class health screening prior to experimental assignment and provides post-experiment evaluations for all participants.`,
     mandate:'To preserve the health and operational capability of Foundation personnel, and to study biological phenomena arising from anomalous exposure.',
     ranks:[
-      {name:'Director of Medicine',cl:3,note:'Department head. Oversees all medical operations across the site.'},
-      {name:'Chief Medical Officer',cl:3,note:'Senior physician. Heads specialist medical teams and protocols.'},
-      {name:'Senior Medical Officer',cl:2,note:'Experienced clinician with authority over standard medical decisions.'},
-      {name:'Medical Officer',cl:2,note:'Qualified physician. Handles day-to-day medical operations.'},
-      {name:'Medic',cl:1,note:'Field-trained first responder. Deployed during active incidents and breaches.'},
-      {name:'Medical Intern',cl:1,note:'Probationary status. Works under supervision in non-critical environments.'},
+      {name:'Director of Medicine',      cl:4, cls:'B', note:'Department head. Oversees all medical operations across the site.'},
+      {name:'Chief Medical Officer',     cl:3, cls:'B', note:'Senior physician. Heads specialist medical teams and protocols.'},
+      {name:'Senior Medical Officer',    cl:2, cls:'C', note:'Experienced clinician with authority over standard medical decisions.'},
+      {name:'Medical Officer',           cl:2, cls:'C', note:'Qualified physician. Handles day-to-day medical operations.'},
+      {name:'Medic',                     cl:1, cls:'C', note:'Field-trained first responder. Deployed during active incidents and breaches.'},
+      {name:'Medical Intern',            cl:0, cls:'C', note:'Probationary status. Works under supervision in non-critical environments only.'},
     ],
     units:null,
   },
   {
     id:'intelligence', name:'Intelligence Agency', abbr:'IA', logo:'img/Intelligence.png',
-    border:'#1a3a6a', cl:{border:'#1a3a6a',color:'#3a5aaa'}, range:'CL3 &mdash; CL5',
+    border:'#1a3a6a', cl:{border:'#1a3a6a',color:'#3a5aaa'}, range:'CL3 &mdash; CL4',
     tagline:'Information is containment before containment is needed.',
     classified:false,
-    desc:`The Intelligence Agency is the Foundation's primary external information-gathering body. IA agents operate embedded within governments, rival organisations, civilian institutions, and areas of known anomalous interest. Their intelligence informs containment strategies before threats materialise, rather than after.\n\nIA personnel rarely interact directly with standard site staff. Field agents operate with significant autonomy and are trained to maintain cover across extended deployment periods. The Agency coordinates closely with ISD on matters where internal and external intelligence overlap, and with the Ethics Committee in cases of covert operations that may implicate Foundation personnel.`,
+    desc:`The Intelligence Agency is the Foundation's primary external information-gathering body. IA agents operate embedded within governments, rival organisations, civilian institutions, and areas of known anomalous interest. Their intelligence informs containment strategies before threats materialise, rather than after.\n\nIA personnel rarely interact directly with standard site staff. Field agents operate with significant autonomy and are trained to maintain cover across extended deployment periods. The Agency coordinates closely with ISD on matters where internal and external intelligence overlap.`,
     mandate:'To gather, analyse, and act upon intelligence relating to anomalous threats, hostile groups of interest, and Foundation operational security.',
     ranks:[
-      {name:'Intelligence Director',cl:5,note:'Heads the agency. Reports directly to the O5 Council.'},
-      {name:'Intelligence Officer',cl:4,note:'Senior field authority. Coordinates multi-agent operations and strategy.'},
-      {name:'Senior Field Agent',cl:4,note:'Experienced operative with expanded mission authority and autonomy.'},
-      {name:'Field Agent',cl:3,note:'Core IA personnel. Conducts field operations and intelligence gathering.'},
-      {name:'Intelligence Analyst',cl:3,note:'Processes and evaluates intelligence data. Typically site-based.'},
+      {name:'Intelligence Director',   cl:4, cls:'B', note:'Heads the agency. Reports directly to the O5 Council.'},
+      {name:'Intelligence Officer',    cl:3, cls:'B', note:'Senior field authority. Coordinates multi-agent operations and strategy.'},
+      {name:'Senior Field Agent',      cl:3, cls:'C', note:'Experienced operative with expanded mission authority and autonomy.'},
+      {name:'Field Agent',             cl:3, cls:'C', note:'Core IA personnel. Conducts field operations and intelligence gathering.'},
     ],
     units:null,
   },
   {
     id:'admin', name:"Administrator's Office", abbr:'AO', logo:'img/AdministratorsOffice.png',
-    border:'#7a1a1a', cl:{border:'#7a1a1a',color:'#aa3a3a'}, range:'CL4 &mdash; CL6',
+    border:'#7a1a1a', cl:{border:'#7a1a1a',color:'#aa3a3a'}, range:'CL5 &mdash; CL6',
     tagline:'The hand that guides. The voice that does not speak.',
     classified:false,
-    desc:`The Administrator's Office encompasses the highest tier of Foundation governance. The Administrator — whose identity is not disclosed below Level 5 clearance — oversees the global coordination of Foundation activities, with the O5 Council serving as the ultimate decision-making body on all matters of policy, containment strategy, and resource allocation.\n\nThe Factotum serve as the Administrator's direct agents in the field, carrying full executive authority on their behalf. Interaction with AO personnel is not routine for site staff, and their presence at any given site typically signals a matter of exceptional significance.`,
-    mandate:"To govern the Foundation at the highest level, set strategic direction, and ensure that the mission is pursued without compromise or deviation.",
+    desc:`The Administrator's Office encompasses the very highest tier of Foundation governance. The Administrator — whose identity is known only to O5 Council members — sits above the O5 Council itself, serving as the singular executive authority from which all Foundation mandate ultimately flows.\n\nThe Factotum are the personal staff of the O5 Council: selected for absolute loyalty, they act as personal assistants, bodyguards, and decoys. Many encounters with an apparent "O5" are in fact mediated by a Factotum, dressed and trained to perfectly resemble their assigned Council member. Some Factotum are reportedly subject to anomalous alteration approved by O5 Command, making it nearly impossible to distinguish them from those they represent. For all practical purposes, they carry the authority of an O5 Council member.`,
+    mandate:"To govern the Foundation at its highest level, set global strategic direction, and ensure that the mission is pursued without compromise or deviation.",
     ranks:[
-      {name:'O5 Council Member',cl:6,note:'The thirteen. Final authority on all Foundation matters. Identities classified at all clearance levels.'},
-      {name:'Administrator',cl:5,note:'The singular executive authority beneath the O5 Council. Identity classified below CL5.'},
-      {name:'Assistant to the Administrator',cl:4,note:'Senior support staff with broad access and delegated executive authority.'},
-      {name:'Factotum',cl:4,note:"Acts as the Administrator's direct representative in field situations. Carries full executive authority."},
+      {name:'Administrator',          cl:6, cls:'A', note:'Above the O5 Council. The singular executive authority of the Foundation. Identity known only to O5 members.'},
+      {name:'O5 Council Member',      cl:6, cls:'A', note:'The thirteen. Final policy authority on all Foundation matters. Identities classified at every clearance level.'},
+      {name:'Factotum',               cl:5, cls:'A', note:'Personal staff of the O5 Council. Selected for absolute loyalty. Act as assistants, bodyguards, and decoys — some with anomalous alterations. Carry full O5 authority in the field.'},
     ],
     units:null,
   },
   {
     id:'directorship', name:'Site Directorship', abbr:'SDir', logo:'img/SiteDirectorship.png',
-    border:'#6a2a1a', cl:{border:'#6a2a1a',color:'#9a5a3a'}, range:'CL4 &mdash; CL5',
+    border:'#6a2a1a', cl:{border:'#6a2a1a',color:'#9a5a3a'}, range:'CL4',
     tagline:'Command of the installation. Responsibility for everything inside it.',
     classified:false,
     desc:`Site Directors are the commanding officers of individual Foundation installations. They hold authority over all departmental operations within their site, manage inter-site communications, and bear direct personal responsibility for any containment failure, personnel casualty, or resource misallocation that occurs under their watch.\n\nSite Directors report upward to the Administrator's Office and are expected to maintain full operational readiness at all times. The role of Assistant Site Director exists to ensure continuity of command and to develop candidates for future Site Director appointments.`,
     mandate:"To maintain full operational control of an assigned Foundation site, uphold containment protocols, and be personally accountable for everything that happens within it.",
     ranks:[
-      {name:'Site Director',cl:5,note:"Commanding officer of the installation. Reports to the Administrator's Office."},
-      {name:'Assistant Site Director',cl:4,note:"Deputy command. Manages day-to-day operations and stands in during the Director's absence."},
+      {name:'Site Director',            cl:4, cls:'B', note:"Commanding officer of the installation. Reports to the Administrator's Office."},
+      {name:'Assistant Site Director',  cl:4, cls:'B', note:"Deputy command. Manages day-to-day operations and assumes full authority during the Director's absence."},
     ],
     units:null,
   },
   {
     id:'engineering', name:'Engineering Department', abbr:'Eng', logo:'img/Engineering.png',
-    border:'#5a5a1a', cl:{border:'#5a5a1a',color:'#8a8a3a'}, range:'CL1 &mdash; CL3',
+    border:'#5a5a1a', cl:{border:'#5a5a1a',color:'#8a8a3a'}, range:'CL0 &mdash; CL4',
     tagline:'If it holds, Engineering built it.',
     classified:false,
-    desc:`The Engineering Department designs, constructs, and maintains the physical infrastructure that makes containment possible. Containment chambers calibrated for Keter-class entities, anomalous power distribution networks, secure transport systems, and the architecture of Foundation sites — all of it falls under Engineering's domain.\n\nWithout them, containment is theoretical. Engineering works closely with the Science Department on containment design and with Site Directorship on expansion and maintenance projects. A significant portion of the department's work involves retrofitting existing containment solutions when anomalies evolve or behave in unexpected ways.`,
+    desc:`The Engineering Department designs, constructs, and maintains the physical infrastructure that makes containment possible. Containment chambers calibrated for Keter-class entities, anomalous power distribution networks, secure transport systems, and the architecture of Foundation sites — all of it falls under Engineering's domain.\n\nWithout them, containment is theoretical. Engineering works closely with the Science Department on containment design and with Site Directorship on expansion and maintenance projects. A significant portion of the department's work involves retrofitting existing containment solutions when anomalies evolve in unexpected ways.`,
     mandate:'To build and maintain the physical infrastructure required for anomalous containment, site security, and Foundation operational capability.',
     ranks:[
-      {name:'Director of Engineering',cl:3,note:'Department head. Oversees all engineering projects and personnel allocation.'},
-      {name:'Chief Engineer',cl:3,note:'Lead technical authority. Approves designs and manages senior project teams.'},
-      {name:'Lead Engineer',cl:3,note:'Heads specialised engineering teams on major containment or infrastructure projects.'},
-      {name:'Senior Engineer',cl:2,note:'Experienced engineer with independent project authority.'},
-      {name:'Engineer',cl:2,note:'Core engineering personnel. Handles standard construction and maintenance.'},
-      {name:'Engineering Technician',cl:1,note:'Handles equipment maintenance, calibration, and technical support.'},
-      {name:'Engineering Apprentice',cl:1,note:'Probationary status. Works under direct supervision at all times.'},
+      {name:'Director of Engineering',   cl:4, cls:'B', note:'Department head. Oversees all engineering projects and personnel allocation.'},
+      {name:'Chief Engineer',            cl:3, cls:'B', note:'Lead technical authority. Approves designs and manages senior project teams.'},
+      {name:'Lead Engineer',             cl:3, cls:'C', note:'Heads specialised engineering teams on major containment or infrastructure projects.'},
+      {name:'Senior Engineer',           cl:2, cls:'C', note:'Experienced engineer with independent project authority.'},
+      {name:'Engineer',                  cl:2, cls:'C', note:'Core engineering personnel. Handles standard construction and maintenance.'},
+      {name:'Engineering Technician',    cl:1, cls:'C', note:'Handles equipment maintenance, calibration, and technical support.'},
+      {name:'Engineering Apprentice',    cl:0, cls:'C', note:'Probationary status. Works under direct supervision at all times.'},
     ],
     units:null,
   },
@@ -421,14 +480,14 @@ const DEPARTMENTS = [
     border:'#1a1a2a', cl:{border:'#333',color:'#555'}, range:'&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;',
     tagline:'[ INFORMATION RESTRICTED ]',
     classified:true,
-    desc:`The Internal Security Department exists to identify and neutralise threats originating from within the Foundation itself. Rogue agents, compromised personnel, information leaks, anomalous coercion of staff, and attempts to exploit Foundation assets for personal or external gain all fall within ISD's mandate.\n\nThe department operates with a high degree of autonomy and reports directly to the O5 Council, bypassing standard site command structures entirely. ISD agents may operate within any site without disclosure to local administration. Their investigation records are not accessible below Level 4 clearance.\n\nISD works in close coordination with the Intelligence Agency on matters of overlapping jurisdiction, and with the Security Department's SIU on operational matters. Their existence is acknowledged only on a need-to-know basis.`,
+    desc:`The Internal Security Department exists to identify and neutralise threats originating from within the Foundation itself. Rogue agents, compromised personnel, information leaks, anomalous coercion of staff, and attempts to exploit Foundation assets for personal or external gain all fall within ISD's mandate.\n\nThe department operates with a high degree of autonomy and reports directly to the O5 Council, bypassing standard site command structures entirely. ISD agents may operate within any site without disclosure to local administration. Their investigation records are not accessible below Level 4 clearance.\n\nISD works in close coordination with the Intelligence Agency on matters of overlapping jurisdiction, and with the Security Department's SIU on operational matters. Field agents use their cover role's clearance level — their ISD affiliation is not reflected in any accessible personnel file.`,
     mandate:'To identify, investigate, and neutralise internal threats to Foundation security, integrity, and chain of command — by any means deemed necessary.',
     ranks:[
-      {name:'ISD Director',cl:5,note:'Reports directly to the O5 Council. All operations withheld from site command.'},
-      {name:'ISD Supervisor',cl:4,note:'Manages active investigations and coordinates field agent deployments.'},
-      {name:'Senior ISD Agent',cl:4,note:'Experienced operative with expanded investigative authority and access.'},
-      {name:'ISD Agent',cl:3,note:'Core ISD personnel. Conducts surveillance, investigation, and neutralisation operations.'},
-      {name:'Junior ISD Agent',cl:3,note:'Newly inducted. Works under direct supervision of a Senior Agent.'},
+      {name:'ISD Director',       cl:5,    cls:'A',  note:'Reports directly to the O5 Council. All operations withheld from site command structure.'},
+      {name:'ISD Handler',        cl:4,    cls:'B',  note:'Manages active investigations and coordinates field agent deployments.'},
+      {name:'Senior ISD Agent',   cl:null, cls:'—',  note:'Operates under cover role clearance. True ISD affiliation is not recorded in accessible files.'},
+      {name:'ISD Agent',          cl:null, cls:'—',  note:'Operates under cover role clearance. True ISD affiliation is not recorded in accessible files.'},
+      {name:'Junior ISD Agent',   cl:null, cls:'—',  note:'Operates under cover role clearance. Works under direct supervision of a Handler.'},
     ],
     units:null,
     isd:true,
@@ -478,16 +537,20 @@ function onOverlayClick(e) {
 }
 
 function renderDetail(d) {
-  document.getElementById('detail-topbar-name').textContent = d.abbr + ' — ' + d.name;
-
+  document.getElementById('detail-topbar-name').textContent = d.abbr + ' \u2014 ' + d.name;
   const descHtml = d.desc.split('\n\n').map(p=>`<p>${p}</p>`).join('');
+  const clsMap = {A:'rcls-a',B:'rcls-b',C:'rcls-c',D:'rcls-d',E:'rcls-e','—':'rcls-blank'};
 
   const ranksHtml = d.ranks.map(r => {
-    const clLabel = r.cl === 6 ? '██' : `L${r.cl}`;
+    const clLabel = r.cl === null ? '—' : r.cl === 6 ? '██' : `L${r.cl}`;
+    const clClass = r.cl === null ? 'cl-null' : `cl-${r.cl}`;
+    const clsBadge = r.cls
+      ? `<span class="rank-cls-badge ${clsMap[r.cls]||'rcls-blank'}">${r.cls==='—'?'Cover CL':`Class ${r.cls}`}</span>`
+      : '';
     return `<div class="rank-item">
-      <div class="rank-cl cl-${r.cl}"><span>${clLabel}</span></div>
+      <div class="rank-cl ${clClass}"><span>${clLabel}</span></div>
       <div class="rank-body">
-        <div class="rank-name">${r.name}</div>
+        <div class="rank-name-row"><span class="rank-name">${r.name}</span>${clsBadge}</div>
         ${r.note ? `<div class="rank-note">${r.note}</div>` : ''}
       </div>
     </div>`;
@@ -507,7 +570,7 @@ function renderDetail(d) {
             <div id="ugate-${u.id}">
               <div class="unit-cl-gate">
                 <span>&#9632;</span>
-                Level ${u.cl} clearance required.
+                Level ${u.cl} clearance required to access this file.
                 <button class="gate-unlock" onclick="unlockUnit('${u.id}')">Declassify</button>
               </div>
             </div>
@@ -526,19 +589,15 @@ function renderDetail(d) {
     unitsHtml = `<div class="ds"><div class="ds-title">Specialist Units</div><div class="unit-list">${unitCards}</div></div>`;
   }
 
-  const isdNote = d.isd ? `<div class="isd-note">&#9632; ACCESS TO THIS FILE HAS BEEN LOGGED.<br>&#9632; ISD AGENTS MAY BE AWARE OF THIS QUERY.<br>&#9632; FURTHER INVESTIGATION RECORDS: RESTRICTED CL4+</div>` : '';
+  const isdNote = d.isd ? `<div class="isd-note">&#9632; ACCESS TO THIS FILE HAS BEEN LOGGED.<br>&#9632; ISD PERSONNEL MAY BE AWARE OF THIS QUERY.<br>&#9632; FURTHER INVESTIGATION RECORDS: RESTRICTED CL4+</div>` : '';
 
   document.getElementById('detail-content').innerHTML = `
     <div class="dh">
-      <div class="dh-logo-box">
-        <img class="dh-logo" src="${d.logo}" alt="${d.name}">
-      </div>
+      <div class="dh-logo-box"><img class="dh-logo" src="${d.logo}" alt="${d.name}"></div>
       <div>
         <div class="dh-abbr">${d.abbr}</div>
         <div class="dh-name">${d.name}</div>
-        <div class="dh-badges">
-          <span class="dh-badge" style="border-color:${d.cl.border};color:${d.cl.color}">${d.range}</span>
-        </div>
+        <div class="dh-badges"><span class="dh-badge" style="border-color:${d.cl.border};color:${d.cl.color}">${d.range}</span></div>
       </div>
     </div>
     <div class="ds">
@@ -551,17 +610,15 @@ function renderDetail(d) {
       <div class="rank-list">${ranksHtml}</div>
     </div>
     ${unitsHtml}
-    ${isdNote}
-  `;
+    ${isdNote}`;
 }
 
 function toggleUnit(id) {
   const body = document.getElementById('ubody-' + id);
   const chev = document.getElementById('chev-' + id);
-  const hdr  = chev.parentElement;
   const open = body.classList.contains('show');
   body.classList.toggle('show', !open);
-  hdr.classList.toggle('open', !open);
+  chev.parentElement.classList.toggle('open', !open);
 }
 
 function unlockUnit(id) {
@@ -572,6 +629,17 @@ function unlockUnit(id) {
 }
 
 /* =====================================================
+   CLASSIFICATIONS TOGGLE
+===================================================== */
+function toggleCls() {
+  const body = document.getElementById('cls-body');
+  const chev = document.getElementById('cls-chevron');
+  const open = body.classList.contains('show');
+  body.classList.toggle('show', !open);
+  chev.classList.toggle('open', !open);
+}
+
+/* =====================================================
    ISD AUTH GATE
 ===================================================== */
 function openAuth() {
@@ -579,6 +647,7 @@ function openAuth() {
   document.body.style.overflow = 'hidden';
   document.getElementById('btn-auth').style.display = 'block';
   document.getElementById('auth-progress').style.display = 'none';
+  document.getElementById('auth-bar').style.transition = 'none';
   document.getElementById('auth-bar').style.width = '0';
   document.getElementById('auth-status').style.display = 'none';
   document.getElementById('auth-status').className = 'auth-status';
@@ -594,42 +663,25 @@ function onAuthOverlayClick(e) {
 }
 
 async function doAuth() {
-  const btn      = document.getElementById('btn-auth');
+  const btn = document.getElementById('btn-auth');
   const progress = document.getElementById('auth-progress');
-  const bar      = document.getElementById('auth-bar');
-  const status   = document.getElementById('auth-status');
-
+  const bar = document.getElementById('auth-bar');
+  const status = document.getElementById('auth-status');
   btn.style.display = 'none';
   progress.style.display = 'block';
   status.style.display = 'block';
-
-  const msgs = [
-    'VERIFYING IDENTITY...',
-    'CROSS-REFERENCING PERSONNEL RECORD...',
-    'CHECKING CLEARANCE LEVEL...',
-    'LOGGING ACCESS ATTEMPT...',
-    'AUTHORIZATION GRANTED.',
-  ];
-
+  const msgs = ['VERIFYING IDENTITY...','CROSS-REFERENCING PERSONNEL RECORD...','CHECKING CLEARANCE LEVEL...','LOGGING ACCESS ATTEMPT...','AUTHORIZATION GRANTED.'];
   status.textContent = msgs[0];
   setTimeout(() => { bar.style.transition = 'width 1.8s linear'; bar.style.width = '100%'; }, 40);
-
   for (let i = 1; i < msgs.length; i++) {
-    await sleep(i === msgs.length - 1 ? 1500 : 380);
+    await sleep(i === msgs.length-1 ? 1500 : 380);
     status.textContent = msgs[i];
-    if (i === msgs.length - 1) status.className = 'auth-status granted';
+    if (i === msgs.length-1) status.className = 'auth-status granted';
   }
-
   await sleep(500);
   closeAuth();
   const isd = DEPARTMENTS.find(d => d.isd);
-  if (isd) openDetailDirect(isd);
-}
-
-function openDetailDirect(d) {
-  renderDetail(d);
-  document.getElementById('detail-overlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
+  if (isd) { renderDetail(isd); document.getElementById('detail-overlay').classList.add('open'); document.body.style.overflow = 'hidden'; }
 }
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }

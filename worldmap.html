@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THREEFOLD — World Map</title>
+<link rel="icon" type="image/png" href="img/Base.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{--black:#0a0a0a;--deep:#111;--dark:#1a1a1a;--mid:#2e2e2e;--border:#3a3a3a;--muted:#666;--light:#999;--pale:#ccc;--white:#f0f0f0;--mono:'Share Tech Mono',monospace;--display:'Barlow Condensed',sans-serif;--body:'Barlow',sans-serif;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--black);color:var(--pale);font-family:var(--body);font-weight:300;}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.07) 2px,rgba(0,0,0,0.07) 4px);pointer-events:none;z-index:9999;}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:500;height:56px;background:rgba(10,10,10,0.97);border-bottom:1px solid var(--border);padding:0 3rem;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(6px);}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-logo img{width:30px;height:30px;object-fit:contain;mix-blend-mode:screen;flex-shrink:0;}
+.nav-logo-name{font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:0.3em;color:var(--white);text-transform:uppercase;display:block;line-height:1.1;}
+.nav-logo-sub{font-family:var(--mono);font-size:9px;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;display:block;}
+.nav-right{display:flex;gap:.75rem;align-items:center;}
+.nav-link{font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:5px 12px;border:1px solid transparent;transition:all .2s;}
+.nav-link:hover{color:var(--pale);border-color:var(--border);}
+.nav-link.active{color:var(--pale);border-color:var(--border);}
+
+/* MAP CONTAINER */
+#map-wrap{position:fixed;inset:0;padding-top:56px;background:var(--black);}
+#map-svg{width:100%;height:100%;display:block;}
+
+/* Country paths */
+.country{fill:#111;stroke:#1e1e1e;stroke-width:.4;transition:fill .2s;}
+.graticule{fill:none;stroke:#141414;stroke-width:.3;}
+.sphere{fill:#0a0a0a;}
+
+/* Site markers */
+.site-marker{cursor:pointer;}
+.site-ring{fill:none;stroke-width:1;opacity:.6;}
+.site-ring-outer{animation:ringPulse 2.5s ease-out infinite;}
+.site-ring-inner{animation:ringPulse 2.5s ease-out infinite .6s;}
+@keyframes ringPulse{0%{r:8;opacity:.8}100%{r:22;opacity:0}}
+.site-core{stroke-width:1;}
+.site-icon-frame{pointer-events:none;}
+.site-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.12em;pointer-events:none;text-transform:uppercase;}
+
+/* Classified site */
+.site-classified .site-ring{animation:classifiedPulse 3s ease-in-out infinite;}
+@keyframes classifiedPulse{0%,100%{opacity:.3}50%{opacity:.7}}
+.site-classified .site-core{animation:classifiedCorePulse 1.5s step-end infinite;}
+@keyframes classifiedCorePulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* POPUP */
+#map-popup{
+  position:fixed;z-index:600;
+  background:rgba(10,10,10,.97);border:1px solid var(--border);
+  padding:1.25rem 1.5rem;max-width:280px;
+  pointer-events:none;display:none;
+  font-family:var(--mono);
+}
+#map-popup::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);}
+.popup-tag{font-size:8.5px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-bottom:.35rem;}
+.popup-name{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--white);line-height:1;margin-bottom:.6rem;}
+.popup-row{display:flex;gap:.5rem;align-items:flex-start;margin-bottom:.3rem;}
+.popup-key{font-size:8px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);width:70px;flex-shrink:0;padding-top:2px;}
+.popup-val{font-size:11px;color:var(--light);line-height:1.5;}
+.popup-classified{color:var(--muted);letter-spacing:0.1em;}
+.popup-status-dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:5px;vertical-align:middle;}
+
+/* INFO BAR */
+#info-bar{
+  position:fixed;bottom:0;left:0;right:0;z-index:400;
+  background:rgba(10,10,10,.95);border-top:1px solid var(--border);
+  padding:.6rem 2rem;
+  display:flex;align-items:center;justify-content:space-between;
+  font-family:var(--mono);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--border);
+}
+#info-bar span+span::before{content:'&bull;';margin:0 .75rem;color:var(--dark);}
+
+/* LEGEND */
+#legend{
+  position:fixed;top:72px;right:1.5rem;z-index:400;
+  background:rgba(10,10,10,.95);border:1px solid var(--border);
+  padding:1rem 1.25rem;
+}
+.legend-title{font-family:var(--mono);font-size:8px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-bottom:.75rem;}
+.legend-item{display:flex;align-items:center;gap:.6rem;margin-bottom:.4rem;font-family:var(--mono);font-size:9px;letter-spacing:0.1em;color:var(--light);}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+
+@media(max-width:768px){nav{padding:0 1.2rem;}.nav-logo-sub{display:none;}#legend{display:none;}}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="index.html">
+    <img src="img/Base.png" alt="Threefold">
+    <div><span class="nav-logo-name">THREEFOLD</span><span class="nav-logo-sub">SCP Foundation RP</span></div>
+  </a>
+  <div class="nav-right">
+    <a class="nav-link" href="worldstate.html">World State</a>
+    <a class="nav-link" href="lore.html">Lore</a>
+    <a class="nav-link active" href="worldmap.html">World Map</a>
+  </div>
+</nav>
+
+<div id="map-wrap"><svg id="map-svg"></svg></div>
+
+<div id="map-popup">
+  <div class="popup-tag" id="popup-tag">Foundation Installation</div>
+  <div class="popup-name" id="popup-name">Site-00</div>
+  <div class="popup-row"><span class="popup-key">Location</span><span class="popup-val" id="popup-loc">—</span></div>
+  <div class="popup-row"><span class="popup-key">Status</span><span class="popup-val" id="popup-status">—</span></div>
+  <div class="popup-row"><span class="popup-key">Clearance</span><span class="popup-val" id="popup-cl">—</span></div>
+</div>
+
+<div id="legend">
+  <div class="legend-title">Site Status</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#2a8a2a"></div>Operational</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#8a7a1a"></div>Restricted</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#8a1a1a"></div>Compromised</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#444;border:1px solid #555"></div>Classified</div>
+</div>
+
+<div id="info-bar">
+  <span>THREEFOLD &mdash; Foundation Installation Map</span>
+  <span>Hover sites for details</span>
+  <span id="coord-display">Coordinates: —</span>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+<script>
+/* =============================================
+   SITE DATA — add new sites here as the server grows
+============================================= */
+const SITES = [
+  {
+    id: 'site7',
+    name: 'Site-7',
+    tag: 'Foundation Installation',
+    coords: [-162.5, 63.8],   // Norton Sound, Alaska
+    location: 'Norton Sound, 80km off the Alaskan coast, USA',
+    status: 'Operational',
+    statusColor: '#2a8a2a',
+    clearance: 'Level 2 minimum',
+    classified: false,
+    icon: 'img/Site-7.png',
+    note: 'Primary northern containment site.',
+  },
+  {
+    id: 'site19',
+    name: 'Site-19',
+    tag: 'Foundation Installation',
+    coords: [-72.5, 41.8],    // Visually placed, actual coords redacted
+    location: '[LOCATION REDACTED]',
+    status: 'Operational',
+    statusColor: '#2a8a2a',
+    clearance: 'Level 3 minimum',
+    classified: true,
+    icon: 'img/Site-19.png',
+    note: null,
+  },
+];
+
+/* =============================================
+   MAP SETUP
+============================================= */
+const svg    = d3.select('#map-svg');
+const wrap   = document.getElementById('map-wrap');
+const popup  = document.getElementById('map-popup');
+const coords = document.getElementById('coord-display');
+
+let W, H, projection, path;
+
+function resize() {
+  W = wrap.clientWidth;
+  H = wrap.clientHeight - 32; // subtract info bar
+
+  const scale = Math.min(W / 6.2, H / 3.1);
+
+  projection = d3.geoNaturalEarth1()
+    .scale(scale)
+    .translate([W / 2, H / 2]);
+
+  path = d3.geoPath().projection(projection);
+  redraw();
+}
+
+async function init() {
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Track mouse coordinates
+  svg.on('mousemove', function(event) {
+    const [x,y] = d3.pointer(event);
+    const inv = projection.invert([x,y]);
+    if (inv) {
+      const lon = inv[0].toFixed(2);
+      const lat = inv[1].toFixed(2);
+      coords.textContent = `${lat > 0 ? lat+'°N' : Math.abs(lat)+'°S'}  ${lon > 0 ? lon+'°E' : Math.abs(lon)+'°W'}`;
+    }
+  }).on('mouseleave', () => { coords.textContent = 'Coordinates: —'; });
+
+  try {
+    const world = await d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json');
+    const countries = topojson.feature(world, world.objects.countries);
+    const borders   = topojson.mesh(world, world.objects.countries, (a,b) => a !== b);
+    const graticule = d3.geoGraticule();
+
+    svg.select('.graticule').datum(graticule()).attr('d', path);
+    svg.select('.sphere').attr('d', path({type:'Sphere'}));
+    svg.select('#countries').selectAll('path')
+      .data(countries.features)
+      .join('path').attr('class','country').attr('d', path);
+    svg.select('.borders').attr('d', path(borders));
+
+    plotSites();
+  } catch(e) {
+    console.error('Map data failed to load:', e);
+  }
+}
+
+function redraw() {
+  if (!projection) return;
+  const graticule = d3.geoGraticule();
+  svg.select('.graticule').attr('d', path(graticule()));
+  svg.select('.sphere').attr('d', path({type:'Sphere'}));
+  svg.selectAll('.country').attr('d', path);
+  svg.select('.borders').attr('d', d => d ? path(d) : null);
+  plotSites();
+}
+
+/* =============================================
+   INITIAL SVG STRUCTURE
+============================================= */
+// Ocean
+svg.append('path').attr('class','sphere');
+// Graticule
+svg.append('path').attr('class','graticule');
+// Countries group
+svg.append('g').attr('id','countries');
+// Country borders
+svg.append('path').attr('class','borders').attr('fill','none').attr('stroke','#1a1a1a').attr('stroke-width',.3);
+// Sites group (on top)
+svg.append('g').attr('id','sites');
+
+/* =============================================
+   SITE MARKERS
+============================================= */
+function plotSites() {
+  const g = svg.select('#sites');
+  g.selectAll('*').remove();
+
+  SITES.forEach(site => {
+    const [x, y] = projection(site.coords);
+    if (!x || !y || isNaN(x) || isNaN(y)) return;
+
+    const col = site.classified ? '#555' : site.statusColor;
+    const m = g.append('g')
+      .attr('class', `site-marker ${site.classified ? 'site-classified' : ''}`)
+      .attr('transform', `translate(${x},${y})`);
+
+    // Pulse rings
+    m.append('circle').attr('class','site-ring site-ring-outer').attr('r',8).attr('stroke',col);
+    m.append('circle').attr('class','site-ring site-ring-inner').attr('r',8).attr('stroke',col);
+
+    // Core dot
+    m.append('circle')
+      .attr('class','site-core')
+      .attr('r', 5)
+      .attr('fill', site.classified ? '#1a1a1a' : '#111')
+      .attr('stroke', col)
+      .attr('stroke-width', 1.2);
+
+    // Icon (white-on-black — use mix-blend-mode:screen in foreignObject)
+    const fo = m.append('foreignObject')
+      .attr('class','site-icon-frame')
+      .attr('x', -16).attr('y', -46)
+      .attr('width', 32).attr('height', 32);
+
+    const div = fo.append('xhtml:div').style('width','32px').style('height','32px')
+      .style('display','flex').style('align-items','center').style('justify-content','center')
+      .style('background','rgba(10,10,10,.85)').style('border','1px solid').style('border-color', col);
+
+    if (site.classified) {
+      div.append('xhtml:span')
+        .style('font-family','Share Tech Mono,monospace').style('font-size','14px').style('color','#444')
+        .text('?');
+    } else {
+      div.append('xhtml:img')
+        .attr('src', site.icon).attr('alt', site.name)
+        .style('width','24px').style('height','24px')
+        .style('object-fit','contain').style('mix-blend-mode','screen');
+    }
+
+    // Label
+    m.append('text')
+      .attr('class','site-label')
+      .attr('x', 10).attr('y', 4)
+      .attr('fill', col)
+      .text(site.name);
+
+    // Hover / click
+    m.on('mouseenter', function(event) { showPopup(event, site); })
+     .on('mousemove',  function(event) { movePopup(event); })
+     .on('mouseleave', hidePopup)
+     .on('click',      function(event) { showPopup(event, site); event.stopPropagation(); });
+  });
+}
+
+/* =============================================
+   POPUP
+============================================= */
+function showPopup(event, site) {
+  document.getElementById('popup-tag').textContent  = site.tag;
+  document.getElementById('popup-name').textContent = site.name;
+  document.getElementById('popup-loc').innerHTML    = site.classified
+    ? '<span class="popup-classified">&#9608;&#9608;&#9608;&#9608; LOCATION REDACTED &#9608;&#9608;&#9608;&#9608;</span>'
+    : site.location;
+  document.getElementById('popup-status').innerHTML =
+    `<span class="popup-status-dot" style="background:${site.statusColor}"></span>${site.status}`;
+  document.getElementById('popup-cl').textContent = site.classified ? '[CLASSIFIED]' : site.clearance;
+  popup.style.display = 'block';
+  movePopup(event);
+}
+
+function movePopup(event) {
+  const pw = popup.offsetWidth + 20;
+  const ph = popup.offsetHeight + 20;
+  let lx = event.clientX + 16;
+  let ly = event.clientY - 10;
+  if (lx + pw > window.innerWidth)  lx = event.clientX - pw;
+  if (ly + ph > window.innerHeight) ly = event.clientY - ph;
+  popup.style.left = lx + 'px';
+  popup.style.top  = ly + 'px';
+}
+
+function hidePopup() { popup.style.display = 'none'; }
+
+svg.on('click', hidePopup);
+
+/* =============================================
+   INIT
+============================================= */
+init();
+</script>
+</body>
+</html>

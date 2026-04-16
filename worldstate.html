@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THREEFOLD — World State</title>
+<link rel="icon" type="image/png" href="img/Base.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="supabase.js"></script>
+<style>
+:root{--black:#0a0a0a;--deep:#111;--dark:#1a1a1a;--mid:#2e2e2e;--border:#3a3a3a;--muted:#666;--light:#999;--pale:#ccc;--white:#f0f0f0;--danger:#cc2200;--mono:'Share Tech Mono',monospace;--display:'Barlow Condensed',sans-serif;--body:'Barlow',sans-serif;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--pale);font-family:var(--body);font-weight:300;font-size:16px;line-height:1.7;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.08) 2px,rgba(0,0,0,0.08) 4px);pointer-events:none;z-index:9999;}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,0.6) 100%);pointer-events:none;z-index:9998;}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:500;height:56px;background:rgba(10,10,10,0.97);border-bottom:1px solid var(--border);padding:0 3rem;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(6px);}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-logo img{width:30px;height:30px;object-fit:contain;mix-blend-mode:screen;flex-shrink:0;}
+.nav-logo-name{font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:0.3em;color:var(--white);text-transform:uppercase;display:block;line-height:1.1;}
+.nav-logo-sub{font-family:var(--mono);font-size:9px;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;display:block;}
+.nav-right{display:flex;gap:.75rem;align-items:center;}
+.nav-link{font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:5px 12px;border:1px solid transparent;transition:all .2s;}
+.nav-link:hover{color:var(--pale);border-color:var(--border);}
+.nav-link.active{color:var(--pale);border-color:var(--border);}
+
+.page-pad{padding-top:56px;}
+.ph{padding:4rem 3rem 3rem;border-bottom:1px solid var(--border);position:relative;overflow:hidden;background-image:linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);background-size:60px 60px;}
+.ph-bgword{position:absolute;right:2rem;top:50%;transform:translateY(-50%);font-family:var(--display);font-weight:700;font-size:160px;line-height:1;color:transparent;-webkit-text-stroke:1px var(--border);pointer-events:none;user-select:none;letter-spacing:0.04em;}
+.ph-tag{font-family:var(--mono);font-size:9.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;}
+.ph h1{font-family:var(--display);font-weight:700;font-size:clamp(48px,7vw,88px);letter-spacing:0.05em;text-transform:uppercase;color:var(--white);line-height:.9;}
+.ph-desc{margin-top:1rem;font-size:15px;color:var(--light);max-width:560px;}
+.wrap{max-width:1000px;margin:0 auto;padding:3.5rem 3rem 5rem;}
+.stag{font-family:var(--mono);font-size:9.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:1rem;margin-bottom:1.75rem;}
+.stag::after{content:'';flex:1;height:1px;background:var(--border);}
+.section{margin-bottom:3.5rem;}
+
+/* THREAT LEVEL */
+.threat-bar{display:grid;grid-template-columns:repeat(5,1fr);gap:.5rem;margin-bottom:1rem;}
+.threat-level{border:1px solid var(--border);padding:1rem .75rem;text-align:center;position:relative;transition:all .3s;opacity:.35;}
+.threat-level.active{opacity:1;}
+.threat-level.active::before{content:'';position:absolute;inset:0;animation:threatPulse 2s ease infinite;}
+.tl-num{font-family:var(--display);font-size:36px;font-weight:700;letter-spacing:0.04em;line-height:1;margin-bottom:.35rem;}
+.tl-label{font-family:var(--mono);font-size:8.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);}
+.threat-level.active .tl-label{color:var(--pale);}
+
+.tl-1{border-color:#1a5a1a;}.tl-1 .tl-num{color:#2a8a2a;}
+.tl-2{border-color:#5a5a1a;}.tl-2 .tl-num{color:#8a8a2a;}
+.tl-3{border-color:#6a3a1a;}.tl-3 .tl-num{color:#aa5a2a;}
+.tl-4{border-color:#6a1a1a;}.tl-4 .tl-num{color:#aa2a2a;}
+.tl-5{border-color:#2a0a0a;}.tl-5 .tl-num{color:#660a0a;}
+.tl-5.active{animation:tl5blink 1s step-end infinite;}
+@keyframes tl5blink{0%,100%{opacity:1}50%{opacity:.6}}
+@keyframes threatPulse{0%,100%{box-shadow:none}50%{box-shadow:inset 0 0 20px rgba(255,255,255,.02)}}
+
+.threat-note{font-family:var(--mono);font-size:10px;letter-spacing:0.15em;color:var(--muted);text-transform:uppercase;}
+
+/* STATUS GRID */
+.status-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;}
+.status-card{background:var(--deep);border:1px solid var(--border);padding:1.5rem;}
+.status-card-label{font-family:var(--mono);font-size:8.5px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;}
+.status-card-value{font-family:var(--display);font-size:32px;font-weight:700;letter-spacing:0.04em;color:var(--white);line-height:1;}
+.status-card-sub{font-size:12px;color:var(--muted);margin-top:.25rem;}
+
+/* CONTAINMENT TABLE */
+.contain-table{width:100%;border-collapse:collapse;}
+.contain-table th{font-family:var(--mono);font-size:8.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);padding:.6rem 1rem;text-align:left;border-bottom:1px solid var(--border);}
+.contain-table td{padding:.85rem 1rem;border-bottom:1px solid var(--dark);font-size:13px;color:var(--light);}
+.contain-table tr:hover td{background:var(--deep);}
+.contain-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:.5rem;flex-shrink:0;}
+
+/* EVENTS */
+.events-list{display:flex;flex-direction:column;gap:.75rem;}
+.event-item{border:1px solid var(--border);background:var(--deep);padding:1.25rem 1.5rem;display:grid;grid-template-columns:auto 1fr;gap:1.5rem;align-items:flex-start;}
+.event-date{font-family:var(--mono);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);white-space:nowrap;padding-top:2px;}
+.event-content{}
+.event-title{font-family:var(--display);font-size:18px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:var(--pale);margin-bottom:.25rem;}
+.event-body{font-size:13px;color:var(--muted);line-height:1.7;}
+.event-tag{font-family:var(--mono);font-size:8px;letter-spacing:0.15em;text-transform:uppercase;padding:2px 8px;border:1px solid;display:inline-block;margin-top:.5rem;}
+
+/* EMPTY */
+.no-data{border:1px dashed var(--border);padding:3rem 2rem;text-align:center;}
+.no-data-label{font-family:var(--mono);font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:var(--border);margin-bottom:.5rem;}
+.no-data-sub{font-size:13px;color:var(--muted);}
+
+/* LAST UPDATED */
+.last-updated{font-family:var(--mono);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--border);text-align:right;margin-top:-.75rem;margin-bottom:2rem;}
+
+footer{border-top:1px solid var(--dark);padding:2rem 3rem;display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:9.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--border);margin-top:2rem;}
+@media(max-width:768px){nav{padding:0 1.2rem;}.nav-logo-sub{display:none;}.ph{padding:2.5rem 1.5rem 2rem;}.ph-bgword{display:none;}.wrap{padding:2.5rem 1.5rem 4rem;}.status-grid{grid-template-columns:1fr;}.threat-bar{grid-template-columns:repeat(3,1fr);}.threat-level:nth-child(4),.threat-level:nth-child(5){margin-top:0;}footer{flex-direction:column;gap:.5rem;text-align:center;}}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="index.html">
+    <img src="img/Base.png" alt="Threefold">
+    <div><span class="nav-logo-name">THREEFOLD</span><span class="nav-logo-sub">SCP Foundation RP</span></div>
+  </a>
+  <div class="nav-right">
+    <a class="nav-link" href="index.html">Home</a>
+    <a class="nav-link active" href="worldstate.html">World State</a>
+    <a class="nav-link" href="lore.html">Lore</a>
+    <a class="nav-link" href="worldmap.html">World Map</a>
+  </div>
+</nav>
+
+<div class="page-pad">
+  <div class="ph">
+    <div class="ph-bgword">STATE</div>
+    <div class="ph-tag">Site Operations &mdash; Current Status</div>
+    <h1>World<br>State</h1>
+    <p class="ph-desc">Current operational status across all Foundation installations. Updated by senior staff as situations develop. All times in UTC.</p>
+  </div>
+
+  <div class="wrap">
+
+    <!-- THREAT LEVEL -->
+    <div class="section">
+      <div class="stag">Global Threat Level</div>
+      <div class="threat-bar" id="threat-bar">
+        <div class="threat-level tl-1"><div class="tl-num">1</div><div class="tl-label">Nominal</div></div>
+        <div class="threat-level tl-2"><div class="tl-num">2</div><div class="tl-label">Elevated</div></div>
+        <div class="threat-level tl-3"><div class="tl-num">3</div><div class="tl-label">Breach</div></div>
+        <div class="threat-level tl-4"><div class="tl-num">4</div><div class="tl-label">Critical</div></div>
+        <div class="threat-level tl-5"><div class="tl-num">5</div><div class="tl-label">Emergency</div></div>
+      </div>
+      <div class="threat-note" id="threat-note">No threat level set &mdash; update via Staff Panel</div>
+    </div>
+
+    <!-- STATUS CARDS -->
+    <div class="section">
+      <div class="stag">Site Status</div>
+      <div class="status-grid" id="status-grid">
+        <div class="status-card"><div class="status-card-label">Active Personnel</div><div class="status-card-value" id="stat-personnel">—</div><div class="status-card-sub">Awaiting data from Staff Panel</div></div>
+        <div class="status-card"><div class="status-card-label">Active Containment Breaches</div><div class="status-card-value" id="stat-breaches" style="color:#8a1a1a">—</div><div class="status-card-sub">Awaiting data from Staff Panel</div></div>
+        <div class="status-card"><div class="status-card-label">On-Site SCPs</div><div class="status-card-value" id="stat-scps">—</div><div class="status-card-sub">Awaiting data from Staff Panel</div></div>
+        <div class="status-card"><div class="status-card-label">D-Class Population</div><div class="status-card-value" id="stat-dclass">—</div><div class="status-card-sub">Awaiting data from Staff Panel</div></div>
+      </div>
+    </div>
+
+    <!-- CONTAINMENT STATUS -->
+    <div class="section">
+      <div class="stag">Containment Status</div>
+      <div id="containment-wrap">
+        <div class="no-data">
+          <div class="no-data-label">No Active Reports</div>
+          <div class="no-data-sub">Containment status entries are added by staff via the Staff Panel.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECENT EVENTS -->
+    <div class="section">
+      <div class="stag">Recent Site Events</div>
+      <div class="events-list" id="events-list">
+        <div class="no-data">
+          <div class="no-data-label">No Entries Yet</div>
+          <div class="no-data-sub">Site events are logged by staff via the Staff Panel and will appear here.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <footer><span>THREEFOLD &mdash; World State</span><span>Updated by Senior Staff</span></footer>
+</div>
+
+<script>
+/*
+  SUPABASE TABLE NEEDED — run in SQL Editor:
+
+  CREATE TABLE world_state (
+    id          UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    key         TEXT UNIQUE NOT NULL,
+    value       JSONB NOT NULL DEFAULT '{}',
+    updated_at  TIMESTAMPTZ DEFAULT now(),
+    updated_by  TEXT
+  );
+
+  INSERT INTO world_state (key, value) VALUES
+    ('threat_level',   '{"level": 0, "note": ""}'),
+    ('site_stats',     '{"personnel": null, "breaches": null, "scps": null, "dclass": null}'),
+    ('containment',    '{"entries": []}'),
+    ('events',         '{"entries": []}');
+
+  ALTER TABLE world_state ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "Anyone can read world state" ON world_state FOR SELECT USING (true);
+  CREATE POLICY "Staff can update world state" ON world_state FOR UPDATE USING (auth.role() = 'authenticated');
+*/
+
+async function loadWorldState() {
+  try {
+    const { data } = await db.from('world_state').select('*');
+    if (!data || !data.length) return;
+
+    const byKey = {};
+    data.forEach(r => byKey[r.key] = r.value);
+
+    // Threat level
+    const tl = byKey.threat_level;
+    if (tl && tl.level >= 1 && tl.level <= 5) {
+      document.querySelectorAll('.threat-level').forEach((el, i) => {
+        el.classList.toggle('active', i + 1 === tl.level);
+      });
+      if (tl.note) document.getElementById('threat-note').textContent = tl.note;
+      else document.getElementById('threat-note').textContent = ['Nominal — operations proceeding as standard.','Elevated — heightened monitoring in effect.','Active breach — response units deployed.','Critical — site lockdown initiated.','Site-wide emergency — evacuation protocols active.'][tl.level - 1] || '';
+    }
+
+    // Stats
+    const st = byKey.site_stats;
+    if (st) {
+      if (st.personnel !== null) document.getElementById('stat-personnel').textContent = st.personnel;
+      if (st.breaches  !== null) document.getElementById('stat-breaches').textContent  = st.breaches;
+      if (st.scps      !== null) document.getElementById('stat-scps').textContent      = st.scps;
+      if (st.dclass    !== null) document.getElementById('stat-dclass').textContent    = st.dclass;
+    }
+
+    // Containment
+    const ct = byKey.containment;
+    if (ct && ct.entries && ct.entries.length) {
+      const ccColors = {safe:'#2a9a5a',euclid:'#9a8a3a',keter:'#aa3a3a',neutralized:'#7a7a7a',contained:'#2a5a8a'};
+      document.getElementById('containment-wrap').innerHTML = `<table class="contain-table">
+        <thead><tr><th>Item</th><th>Class</th><th>Status</th><th>Location</th><th>Notes</th></tr></thead>
+        <tbody>${ct.entries.map(e => {
+          const col = ccColors[(e.class||'').toLowerCase()] || '#666';
+          return `<tr>
+            <td style="font-family:var(--mono);font-size:11px">${e.item||'—'}</td>
+            <td><span style="font-family:var(--mono);font-size:9px;border:1px solid ${col};color:${col};padding:1px 6px">${e.class||'?'}</span></td>
+            <td style="font-family:var(--mono);font-size:10px;color:var(--muted)">${e.status||'—'}</td>
+            <td style="font-size:12px;color:var(--muted)">${e.location||'—'}</td>
+            <td style="font-size:12px;color:var(--muted)">${e.notes||'—'}</td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>`;
+    }
+
+    // Events
+    const ev = byKey.events;
+    if (ev && ev.entries && ev.entries.length) {
+      const tagColors = {breach:'#7a1a1a',containment:'#1a3a7a',personnel:'#1a5a1a',announcement:'#5a5a1a',other:'#3a3a3a'};
+      document.getElementById('events-list').innerHTML = ev.entries.map(e => {
+        const tc = tagColors[(e.type||'other').toLowerCase()] || '#3a3a3a';
+        return `<div class="event-item">
+          <div class="event-date">${e.date||'—'}</div>
+          <div class="event-content">
+            <div class="event-title">${e.title||'Untitled'}</div>
+            <div class="event-body">${e.body||''}</div>
+            ${e.type?`<span class="event-tag" style="border-color:${tc};color:${tc}">${e.type}</span>`:''}
+          </div>
+        </div>`;
+      }).join('');
+    }
+  } catch(err) {
+    console.log('World state not yet configured:', err);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', loadWorldState);
+</script>
+</body>
+</html>

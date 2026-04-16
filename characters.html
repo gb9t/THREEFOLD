@@ -192,19 +192,65 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:56px;background:rgba(
 .ts-denied{border-color:var(--danger);color:var(--danger);}
 .track-reason{font-size:12px;color:var(--muted);font-style:italic;margin-top:.25rem;}
 
-/* LISTING */
-.listing-filters{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:2rem;}
-.lf-btn{font-family:var(--mono);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--muted);padding:5px 14px;cursor:pointer;transition:all .2s;}
-.lf-btn:hover{border-color:var(--light);color:var(--pale);}
-.lf-btn.active{border-color:var(--pale);color:var(--pale);}
-.char-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.25rem;}
-.char-card{border:1px solid var(--border);border-left:3px solid var(--border);background:var(--deep);padding:1.5rem;cursor:pointer;transition:border-color .25s,transform .2s;position:relative;overflow:hidden;}
-.char-card:hover{transform:translateY(-2px);}
-.char-card-type-tag{font-family:var(--mono);font-size:8px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;}
-.char-card-name{font-family:var(--display);font-size:22px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:var(--white);margin-bottom:.4rem;line-height:1.1;}
-.char-card-meta{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem;}
+/* ROSTER TABS */
+.roster-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:2.5rem;}
+.rtab-btn{font-family:var(--mono);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;padding:.85rem 1.75rem;cursor:pointer;transition:all .2s;margin-bottom:-1px;}
+.rtab-btn:hover{color:var(--pale);}
+.rtab-btn.active{color:var(--white);border-bottom-color:var(--white);}
+.rtab-panel{display:none;}.rtab-panel.active{display:block;}
+
+/* Department pills */
+.dept-pills{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:2rem;}
+.dpill{font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--muted);padding:4px 12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.4rem;}
+.dpill:hover{border-color:var(--light);color:var(--pale);}
+.dpill.active{border-color:var(--pale);color:var(--pale);}
+.dpill img{width:16px;height:16px;object-fit:contain;mix-blend-mode:screen;flex-shrink:0;}
+
+/* Department section group */
+.dept-section{margin-bottom:3rem;}
+.dept-sec-hdr{display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;padding-bottom:.75rem;border-bottom:1px solid var(--border);}
+.dept-sec-icon{width:34px;height:34px;object-fit:contain;mix-blend-mode:screen;}
+.dept-sec-name{font-family:var(--display);font-size:20px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--pale);}
+.dept-sec-count{font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--border);margin-left:auto;}
+
+/* Roster grids */
+.rchar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:1rem;}
+
+/* Foundation character card */
+.rchar-card{background:var(--deep);border:1px solid var(--border);cursor:pointer;position:relative;overflow:hidden;transition:transform .2s,border-color .2s;}
+.rchar-card:hover{transform:translateY(-2px);border-color:var(--mid);}
+.rchar-ht{position:absolute;inset:0;background-image:radial-gradient(circle,var(--ht,#333) 1.5px,transparent 1.5px);background-size:10px 10px;opacity:0.13;pointer-events:none;z-index:0;}
+.rchar-accent{position:absolute;left:0;top:0;bottom:0;width:3px;z-index:1;}
+.rchar-body{position:relative;z-index:2;padding:1.1rem 1.1rem 1rem;}
+.rchar-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.7rem;}
+.rchar-icon{width:30px;height:30px;object-fit:contain;mix-blend-mode:screen;flex-shrink:0;}
+.rchar-cl{font-family:var(--mono);font-size:8px;letter-spacing:0.12em;text-transform:uppercase;padding:2px 7px;border:1px solid;}
+.rchar-name{font-family:var(--display);font-size:19px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:var(--white);line-height:1.05;margin-bottom:.25rem;}
+.rchar-rank{font-family:var(--mono);font-size:8.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.15rem;}
+.rchar-dept{font-size:11.5px;color:var(--muted);}
+.rchar-gdoc{font-family:var(--mono);font-size:7.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--border);border:1px solid var(--border);padding:1px 6px;display:inline-block;margin-top:.4rem;}
+
+/* SCP card */
+.rscp-card{background:var(--deep);border:1px solid var(--border);cursor:pointer;position:relative;overflow:hidden;transition:transform .2s,border-color .2s;}
+.rscp-card:hover{transform:translateY(-2px);}
+.rscp-ht{position:absolute;inset:0;background-image:radial-gradient(circle,var(--ht,#333) 1.5px,transparent 1.5px);background-size:10px 10px;opacity:0.13;pointer-events:none;z-index:0;}
+.rscp-acs{position:relative;z-index:2;padding:.55rem 1rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.05);}
+.rscp-num{font-family:var(--mono);font-size:11px;letter-spacing:0.06em;color:var(--pale);}
+.rscp-cc{font-family:var(--mono);font-size:8px;letter-spacing:0.15em;text-transform:uppercase;padding:2px 8px;border:1px solid;}
+.rscp-body{position:relative;z-index:2;padding:1rem 1.1rem .9rem;}
+.rscp-name{font-family:var(--display);font-size:19px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:var(--white);margin-bottom:.25rem;line-height:1.05;}
+.rscp-meta{font-family:var(--mono);font-size:8.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);}
+
+/* Unaffiliated card */
+.runaff-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:1rem;}
+.runaff-card{background:var(--deep);border:1px solid var(--border);border-left:3px solid #1a3a6a;padding:1.1rem;cursor:pointer;transition:transform .2s,border-color .2s;position:relative;overflow:hidden;}
+.runaff-card:hover{transform:translateY(-2px);}
+.runaff-ht{position:absolute;inset:0;background-image:radial-gradient(circle,#1a3a6a 1.5px,transparent 1.5px);background-size:10px 10px;opacity:0.1;pointer-events:none;}
+.runaff-name{font-family:var(--display);font-size:19px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:var(--white);margin-bottom:.25rem;line-height:1.05;position:relative;}
+.runaff-aff{font-size:12px;color:var(--muted);position:relative;}
+
+/* Legacy (kept for character view) */
 .char-badge{font-family:var(--mono);font-size:8px;letter-spacing:0.2em;text-transform:uppercase;padding:2px 8px;border:1px solid;}
-.char-card-sub{font-size:12px;color:var(--muted);}
 .char-gdoc-badge{font-family:var(--mono);font-size:8px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);border:1px solid var(--border);padding:2px 8px;display:inline-block;margin-top:.5rem;}
 
 /* CLEARANCE COLORS */
@@ -731,19 +777,35 @@ footer{border-top:1px solid var(--dark);padding:2rem 3rem;display:flex;justify-c
 <div id="v-listing" class="view">
   <div class="ph">
     <div class="ph-bgword">ROSTER</div>
-    <div class="ph-tag">Approved Characters &mdash; Public Roster</div>
+    <div class="ph-tag">Approved Personnel &mdash; Public Roster</div>
     <h1>Character<br>Roster</h1>
-    <p class="ph-desc">All approved characters. Click any card to view the full sheet. Colour-coded by clearance level and containment class.</p>
+    <p class="ph-desc">All approved characters. Colour-coded by clearance level and containment class. Click any card to open the full sheet.</p>
   </div>
   <div class="wrap">
-    <div class="listing-filters">
-      <button class="lf-btn active" onclick="filterListing('all',this)">All</button>
-      <button class="lf-btn" onclick="filterListing('foundation',this)">Foundation</button>
-      <button class="lf-btn" onclick="filterListing('scp',this)">SCPs</button>
-      <button class="lf-btn" onclick="filterListing('unaffiliated',this)">Unaffiliated</button>
+    <div class="roster-tabs">
+      <button class="rtab-btn active" onclick="switchTab('foundation',this)">Foundation</button>
+      <button class="rtab-btn" onclick="switchTab('scp',this)">SCPs</button>
+      <button class="rtab-btn" onclick="switchTab('unaffiliated',this)">Unaffiliated</button>
     </div>
-    <div class="char-grid" id="char-grid"></div>
-    <div class="empty-state" id="listing-empty" style="display:none;">No approved characters yet.</div>
+
+    <!-- Foundation -->
+    <div class="rtab-panel active" id="rtab-foundation">
+      <div class="dept-pills" id="dept-pills"></div>
+      <div id="foundation-content"></div>
+      <div class="empty-state" id="foundation-empty" style="display:none;">No approved Foundation characters yet.</div>
+    </div>
+
+    <!-- SCP -->
+    <div class="rtab-panel" id="rtab-scp">
+      <div class="rchar-grid" id="scp-content"></div>
+      <div class="empty-state" id="scp-empty" style="display:none;">No approved SCP entries yet.</div>
+    </div>
+
+    <!-- Unaffiliated -->
+    <div class="rtab-panel" id="rtab-unaffiliated">
+      <div class="runaff-grid" id="unaff-content"></div>
+      <div class="empty-state" id="unaff-empty" style="display:none;">No approved unaffiliated characters yet.</div>
+    </div>
   </div>
   <footer><span>THREEFOLD</span><span>Public Roster</span></footer>
 </div>
@@ -1209,79 +1271,218 @@ async function doTrack() {
 }
 
 /* ===========================================
-   LISTING
+   ROSTER — DEPT ICON MAP
 =========================================== */
-let _listingFilter = 'all';
+const DEPT_ICONS = {
+  science:   'img/Science.png',   research: 'img/Science.png',
+  security:  'img/Security.png',
+  ethics:    'img/Ethics.png',
+  task:      'img/MTF.png',       mtf: 'img/MTF.png',
+  medical:   'img/Medical.png',
+  intelligence: 'img/Intelligence.png',
+  administrator: 'img/AdministratorsOffice.png', admin: 'img/AdministratorsOffice.png',
+  o5: 'img/AdministratorsOffice.png', factotum: 'img/AdministratorsOffice.png',
+  director:  'img/SiteDirectorship.png', directorship: 'img/SiteDirectorship.png',
+  engineer:  'img/Engineering.png',
+  internal:  'img/ISD.png', isd: 'img/ISD.png',
+};
+function getDeptIcon(dept) {
+  if (!dept) return 'img/Base.png';
+  const n = dept.toLowerCase();
+  for (const [k,v] of Object.entries(DEPT_ICONS)) { if (n.includes(k)) return v; }
+  return 'img/Base.png';
+}
+
+/* Clearance colors */
+const CL_HT  = {0:'#444',1:'#1a6a1a',2:'#1a3a8a',3:'#8a7a1a',4:'#8a3a1a',5:'#8a1a1a',6:'#0a0a0a'};
+const CL_COL = {0:'#666',1:'#4a9a4a',2:'#4a6aaa',3:'#baa03a',4:'#ba6a3a',5:'#ba3a3a',6:'#444'};
+/* Containment class colors */
+const CC_HT  = {safe:'#1a6a3a',euclid:'#6a5a1a',keter:'#7a1a1a',neutralized:'#3a3a3a',pending:'#1a2a6a',explained:'#3a1a6a',esoteric:'#5a1a5a'};
+const CC_COL = {safe:'#2a9a5a',euclid:'#9a8a3a',keter:'#aa3a3a',neutralized:'#7a7a7a',pending:'#3a5aaa',explained:'#6a4aaa',esoteric:'#8a3a8a'};
+
+/* ===========================================
+   LISTING — LOAD & TABS
+=========================================== */
+let _activeTab = 'foundation';
+let _activeDept = 'all';
+
 async function loadListing() {
   showView('v-listing');
-  const grid = document.getElementById('char-grid');
-  const empty = document.getElementById('listing-empty');
-  grid.innerHTML = '<div class="empty-state">Loading roster...</div>';
+  document.getElementById('foundation-content').innerHTML = '<div class="empty-state">Loading...</div>';
+
+  const {data} = await getCharacters({status:'approved'});
+  _allChars = data || [];
+  renderRoster();
+}
+
+function switchTab(tab, btn) {
+  _activeTab = tab;
+  document.querySelectorAll('.rtab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.rtab-panel').forEach(p=>p.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  document.getElementById('rtab-' + tab).classList.add('active');
+}
+
+function renderRoster() {
+  renderFoundationTab();
+  renderSCPTab();
+  renderUnaffTab();
+}
+
+/* --- Foundation --- */
+function renderFoundationTab() {
+  const chars = _allChars.filter(c => c.type === 'foundation');
+  const empty = document.getElementById('foundation-empty');
+
+  if (!chars.length) {
+    document.getElementById('foundation-content').innerHTML = '';
+    document.getElementById('dept-pills').innerHTML = '';
+    empty.style.display = 'block'; return;
+  }
   empty.style.display = 'none';
 
-  const {data,error} = await getCharacters({status:'approved'});
-  _allChars = data || [];
-  renderGrid(_listingFilter);
+  // Group by department
+  const groups = {};
+  chars.forEach(c => {
+    const dept = (c.character_data?.department || 'Unknown Department').trim();
+    if (!groups[dept]) groups[dept] = [];
+    groups[dept].push(c);
+  });
+
+  // Sort each group by clearance desc
+  Object.values(groups).forEach(arr => arr.sort((a,b) => (b.character_data?.clearance||0) - (a.character_data?.clearance||0)));
+
+  const depts = Object.keys(groups).sort();
+
+  // Build pills
+  const pills = document.getElementById('dept-pills');
+  pills.innerHTML = `<button class="dpill active" onclick="filterByDept('all',this)">All Departments</button>` +
+    depts.map(d => `<button class="dpill" onclick="filterByDept('${escHtml(d)}',this)">
+      <img src="${getDeptIcon(d)}" alt=""><span>${escHtml(d)}</span>
+    </button>`).join('');
+
+  // Build content
+  renderFoundationGroups(groups, depts, 'all');
 }
 
-function filterListing(type, btn) {
-  _listingFilter = type;
-  document.querySelectorAll('.lf-btn').forEach(b=>b.classList.remove('active'));
+function filterByDept(dept, btn) {
+  _activeDept = dept;
+  document.querySelectorAll('.dpill').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
-  renderGrid(type);
+
+  const chars = _allChars.filter(c => c.type === 'foundation');
+  const groups = {};
+  chars.forEach(c => {
+    const d = (c.character_data?.department || 'Unknown Department').trim();
+    if (!groups[d]) groups[d] = [];
+    groups[d].push(c);
+  });
+  Object.values(groups).forEach(arr => arr.sort((a,b) => (b.character_data?.clearance||0) - (a.character_data?.clearance||0)));
+  const depts = Object.keys(groups).sort();
+  renderFoundationGroups(groups, dept === 'all' ? depts : [dept], dept);
 }
 
-function renderGrid(type) {
-  const grid = document.getElementById('char-grid');
-  const empty = document.getElementById('listing-empty');
-  let chars = type==='all' ? _allChars : _allChars.filter(c=>c.type===type);
+function renderFoundationGroups(groups, depts, filter) {
+  const container = document.getElementById('foundation-content');
+  if (!depts.length) { container.innerHTML = '<div class="empty-state">No characters in this department yet.</div>'; return; }
+
+  container.innerHTML = depts.map(dept => {
+    const chars = groups[dept] || [];
+    const icon = getDeptIcon(dept);
+    const cards = chars.map(c => foundationCard(c)).join('');
+    return `<div class="dept-section">
+      <div class="dept-sec-hdr">
+        <img class="dept-sec-icon" src="${icon}" alt="">
+        <span class="dept-sec-name">${escHtml(dept)}</span>
+        <span class="dept-sec-count">${chars.length} personnel</span>
+      </div>
+      <div class="rchar-grid">${cards}</div>
+    </div>`;
+  }).join('');
+}
+
+function foundationCard(c) {
+  const d = c.character_data || {};
+  const cl  = d.clearance ?? 0;
+  const ht  = CL_HT[cl]  || '#333';
+  const col = CL_COL[cl] || '#666';
+  const icon = getDeptIcon(d.department || '');
+  const click = c.method==='googledoc' ? `window.open('${escHtml(c.gdoc_url)}','_blank')` : `viewChar('${c.id}')`;
+  return `<div class="rchar-card" style="--ht:${ht}" onclick="${click}">
+    <div class="rchar-ht"></div>
+    <div class="rchar-accent" style="background:${ht}"></div>
+    <div class="rchar-body">
+      <div class="rchar-top">
+        <img class="rchar-icon" src="${icon}" alt="">
+        <span class="rchar-cl" style="border-color:${col};color:${col}">CL-${cl}</span>
+      </div>
+      <div class="rchar-name">${escHtml(d.full_name||'Unknown')}</div>
+      <div class="rchar-rank">${escHtml(d.role||'')}</div>
+      <div class="rchar-dept">${escHtml(d.department||'')}</div>
+      ${c.method==='googledoc'?'<span class="rchar-gdoc">Google Doc</span>':''}
+    </div>
+  </div>`;
+}
+
+/* --- SCP --- */
+function renderSCPTab() {
+  const chars = _allChars.filter(c => c.type === 'scp');
+  const empty = document.getElementById('scp-empty');
+  const grid  = document.getElementById('scp-content');
   if (!chars.length) { grid.innerHTML=''; empty.style.display='block'; return; }
   empty.style.display = 'none';
-  grid.innerHTML = chars.map(c => charCard(c)).join('');
+
+  // Sort by SCP number numerically
+  chars.sort((a,b) => {
+    const na = parseInt((a.character_data?.item_number||'').replace(/\D/g,'')) || 9999;
+    const nb = parseInt((b.character_data?.item_number||'').replace(/\D/g,'')) || 9999;
+    return na - nb;
+  });
+  grid.innerHTML = chars.map(c => scpCard(c)).join('');
 }
 
-function charCard(c) {
-  const d = c.character_data || {};
-  const isGdoc = c.method === 'googledoc';
-
-  if (c.type === 'foundation') {
-    const cl = d.clearance !== undefined ? d.clearance : '';
-    const cls = d.classification || '';
-    const clColor = cl===6?'#555':(cl===5?'#aa3a3a':cl===4?'#aa6a3a':cl===3?'#aaa03a':cl===2?'#4a5aaa':cl===1?'#4a9a4a':'#777');
-    return `<div class="char-card cl-${cl}" onclick="${isGdoc?`window.open('${escHtml(c.gdoc_url)}','_blank')`:`viewChar('${c.id}')`}">
-      <div class="char-card-type-tag">Foundation Personnel</div>
-      <div class="char-card-name">${escHtml(d.full_name||'Unknown')}</div>
-      <div class="char-card-meta">
-        <span class="char-badge cl-badge" style="border-color:${clColor};color:${clColor}">CL-${cl}</span>
-        <span class="char-badge" style="border-color:var(--border);color:var(--muted)">CLASS ${cls}</span>
-      </div>
-      <div class="char-card-sub">${escHtml(d.role||'')} &mdash; ${escHtml(d.department||'')}</div>
-      ${isGdoc?'<span class="char-gdoc-badge">Google Doc</span>':''}
-    </div>`;
-  }
-
-  if (c.type === 'scp') {
-    const cls = (d.containment_class||'pending').toLowerCase();
-    const ccColor = cls==='safe'?'#2a9a5a':cls==='euclid'?'#9a8a3a':cls==='keter'?'#aa3a3a':cls==='neutralized'?'#7a7a7a':cls==='pending'?'#3a5aaa':cls==='explained'?'#6a4aaa':'#8a3a8a';
-    return `<div class="char-card scp-${cls}" onclick="${isGdoc?`window.open('${escHtml(c.gdoc_url)}','_blank')`:`viewChar('${c.id}')`}">
-      <div class="char-card-type-tag">SCP Entry</div>
-      <div class="char-card-name">${escHtml(d.item_number||'SCP-???')}</div>
-      <div class="char-card-meta">
-        <span class="char-badge cc-badge" style="border-color:${ccColor};color:${ccColor}">${(d.containment_class||'?').toUpperCase()}</span>
-        ${d.secondary_class?`<span class="char-badge" style="border-color:#5a1a5a;color:#8a3a8a">${escHtml(d.secondary_class)}</span>`:''}
-      </div>
-      <div class="char-card-sub">Risk: ${d.risk_class||'—'} &mdash; Disruption: ${d.disruption_class||'—'}</div>
-      ${isGdoc?'<span class="char-gdoc-badge">Google Doc</span>':''}
-    </div>`;
-  }
-
-  // Unaffiliated
-  return `<div class="char-card" style="border-left-color:#1a3a7a" onclick="${isGdoc?`window.open('${escHtml(c.gdoc_url)}','_blank')`:`viewChar('${c.id}')`}">
-    <div class="char-card-type-tag">Unaffiliated Personnel</div>
-    <div class="char-card-name">${escHtml(d.full_name||'Unknown')}</div>
-    ${d.affiliation?`<div class="char-card-sub">${escHtml(d.affiliation)}</div>`:''}
-    ${isGdoc?'<span class="char-gdoc-badge">Google Doc</span>':''}
+function scpCard(c) {
+  const d   = c.character_data || {};
+  const cls = (d.containment_class||'pending').toLowerCase();
+  const ht  = CC_HT[cls]  || '#333';
+  const col = CC_COL[cls] || '#666';
+  const click = c.method==='googledoc' ? `window.open('${escHtml(c.gdoc_url)}','_blank')` : `viewChar('${c.id}')`;
+  return `<div class="rscp-card" style="--ht:${ht};border-left:3px solid ${ht}" onclick="${click}">
+    <div class="rscp-ht"></div>
+    <div class="rscp-acs">
+      <span class="rscp-num">${escHtml(d.item_number||'SCP-???')}</span>
+      <span class="rscp-cc" style="border-color:${col};color:${col}">${(d.containment_class||'?').toUpperCase()}</span>
+    </div>
+    <div class="rscp-body">
+      ${d.secondary_class?`<div class="rscp-meta" style="margin-bottom:.2rem;color:#8a3a8a">${escHtml(d.secondary_class)}</div>`:''}
+      <div class="rscp-meta">Risk: ${d.risk_class||'—'} &nbsp;/&nbsp; Disruption: ${d.disruption_class||'—'}</div>
+      ${c.method==='googledoc'?'<span class="rchar-gdoc" style="margin-top:.4rem;">Google Doc</span>':''}
+    </div>
   </div>`;
+}
+
+/* --- Unaffiliated --- */
+function renderUnaffTab() {
+  const chars = _allChars.filter(c => c.type === 'unaffiliated');
+  const empty = document.getElementById('unaff-empty');
+  const grid  = document.getElementById('unaff-content');
+  if (!chars.length) { grid.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display = 'none';
+  grid.innerHTML = chars.map(c => {
+    const d = c.character_data || {};
+    const click = c.method==='googledoc' ? `window.open('${escHtml(c.gdoc_url)}','_blank')` : `viewChar('${c.id}')`;
+    return `<div class="runaff-card" onclick="${click}">
+      <div class="runaff-ht"></div>
+      <div class="runaff-name">${escHtml(d.full_name||'Unknown')}</div>
+      ${d.affiliation?`<div class="runaff-aff">${escHtml(d.affiliation)}</div>`:''}
+      ${c.method==='googledoc'?'<span class="rchar-gdoc" style="margin-top:.4rem;display:inline-block;position:relative">Google Doc</span>':''}
+    </div>`;
+  }).join('');
+}
+
+/* Legacy stubs kept for any remaining references */
+function filterListing() {}
+function renderGrid() {}
 }
 
 /* ===========================================

@@ -1053,7 +1053,7 @@ function renderCharTable(typeKey, statusFilter = 'all') {
       <td><span class="status-tag st-${c.status}" ${canManage ? `onclick="cycleCharStatus('${c.id}',this)"` : ''} title="${canManage ? 'Click to cycle' : ''}">${statusLabel(c.status)}</span></td>
       <td class="app-actions">
         <button class="btn-view-app" onclick="openCharModal('${c.id}')">Review</button>
-        ${canEdit && c.method === 'website' && c.status === 'approved' ? `<button class="btn-view-app" onclick="window.open('characters.html?edit=${c.id}','_blank')">Edit</button>` : ''}
+        ${canEdit && c.method === 'website' && c.status === 'approved' ? `<button class="btn-view-app" onclick="window.open('submission.html?edit=${c.id}','_blank')">Edit</button>` : ''}
         ${canManage ? `<button class="btn-del-app" onclick="deleteChar('${c.id}')">Delete</button>` : ''}
       </td>
     </tr>`;

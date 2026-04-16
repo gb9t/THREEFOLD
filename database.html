@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THREEFOLD — Database</title>
+<link rel="icon" type="image/png" href="img/Base.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="supabase.js"></script>
+<style>
+:root{--black:#0a0a0a;--deep:#111;--dark:#1a1a1a;--mid:#2e2e2e;--border:#3a3a3a;--muted:#666;--light:#999;--pale:#ccc;--white:#f0f0f0;--danger:#cc2200;--mono:'Share Tech Mono',monospace;--display:'Barlow Condensed',sans-serif;--body:'Barlow',sans-serif;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--pale);font-family:var(--body);font-weight:300;font-size:16px;line-height:1.7;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.08) 2px,rgba(0,0,0,0.08) 4px);pointer-events:none;z-index:9999;}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,0.6) 100%);pointer-events:none;z-index:9998;}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:500;height:56px;background:rgba(10,10,10,0.97);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(6px);}
+nav a.logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+nav a.logo img{width:30px;height:30px;object-fit:contain;mix-blend-mode:screen;}
+nav a.logo .n{font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:0.3em;color:var(--white);text-transform:uppercase;display:block;line-height:1.1;}
+nav a.logo .s{font-family:var(--mono);font-size:9px;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;display:block;}
+nav ul{display:flex;list-style:none;align-items:center;flex-wrap:wrap;}
+nav ul a{font-family:var(--mono);font-size:9.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--light);text-decoration:none;padding:8px 12px;display:block;transition:color .2s;}
+nav ul a:hover{color:var(--white);}
+
+/* PAGES */
+.page{display:none;min-height:100vh;padding-top:56px;}
+.page.active{display:block;}
+
+.ph{padding:4rem 3rem 3rem;border-bottom:1px solid var(--border);position:relative;overflow:hidden;background-image:linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);background-size:60px 60px;}
+.ph-bgword{position:absolute;right:2rem;top:50%;transform:translateY(-50%);font-family:var(--display);font-weight:700;font-size:160px;line-height:1;color:transparent;-webkit-text-stroke:1px var(--border);pointer-events:none;user-select:none;}
+.ph-tag{font-family:var(--mono);font-size:9.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;}
+.ph h1{font-family:var(--display);font-weight:700;font-size:clamp(48px,7vw,88px);letter-spacing:0.05em;text-transform:uppercase;color:var(--white);line-height:.9;}
+.ph-desc{margin-top:1rem;font-size:15px;color:var(--light);max-width:560px;}
+.wrap{max-width:1100px;margin:0 auto;padding:3rem 3rem 5rem;}
+
+.btn{font-family:var(--mono);font-size:10.5px;letter-spacing:0.2em;text-transform:uppercase;padding:10px 22px;border:1px solid;background:transparent;cursor:pointer;transition:all .22s;text-decoration:none;display:inline-block;}
+.btn-ghost{border-color:var(--border);color:var(--light);}
+.btn-ghost:hover{border-color:var(--light);color:var(--pale);}
+.btn-sm{padding:6px 14px;font-size:9.5px;}
+.cv-back{font-family:var(--mono);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:.5rem;margin-bottom:2rem;transition:color .2s;padding:0;}
+.cv-back:hover{color:var(--pale);}
+
+/* TABS */
+.roster-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:2.5rem;}
+.rtab-btn{font-family:var(--mono);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;padding:.85rem 1.75rem;cursor:pointer;transition:all .2s;margin-bottom:-1px;}
+.rtab-btn:hover{color:var(--pale);}
+.rtab-btn.active{color:var(--white);border-bottom-color:var(--white);}
+.rtab-panel{display:none;}.rtab-panel.active{display:block;}
+
+/* DEPT PILLS */
+.dept-pills{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:2rem;}
+.dpill{font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--muted);padding:4px 12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.4rem;}
+.dpill:hover{border-color:var(--light);color:var(--pale);}
+.dpill.active{border-color:var(--pale);color:var(--pale);}
+.dpill img{width:16px;height:16px;object-fit:contain;mix-blend-mode:screen;flex-shrink:0;}
+
+/* DEPT SECTION */
+.dept-section{margin-bottom:3rem;}
+.dept-sec-hdr{display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;padding-bottom:.75rem;border-bottom:1px solid var(--border);}
+.dept-sec-icon{width:34px;height:34px;object-fit:contain;mix-blend-mode:screen;}
+.dept-sec-name{font-family:var(--display);font-size:20px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--pale);}
+.dept-sec-count{font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--border);margin-left:auto;}
+
+/* CARD GRIDS */
+.rchar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;}
+.runaff-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;}
+
+/* FOUNDATION CARD */
+.rchar-card{background:var(--deep);border:1px solid var(--border);cursor:pointer;position:relative;overflow:hidden;transition:transform .2s,border-color .2s;}
+.rchar-card:hover{transform:translateY(-2px);border-color:var(--mid);}
+.rchar-ht{position:absolute;inset:0;background-image:radial-gradient(circle,var(--ht,#333) 1.5px,transparent 1.5px);background-size:10px 10px;opacity:0.13;pointer-events:none;}
+.rchar-accent{position:absolute;left:0;top:0;bottom:0;width:3px;}
+.rchar-body{position:relative;padding:1.1rem;}
+.rchar-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.7rem;}
+.rchar-icon{width:30px;height:30px;object-fit:contain;mix-blend-mode:screen;flex-shrink:0;}
+.rchar-cl{font-family:var(--mono);font-size:8px;letter-spacing:0.12em;text-transform:uppercase;padding:2px 7px;border:1px solid;}
+.rchar-name{font-family:var(--display);font-size:18px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:var(--white);line-height:1.05;margin-bottom:.25rem;}
+.rchar-rank{font-family:var(--mono);font-size:8.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.15rem;}
+.rchar-dept{font-size:11.5px;color:var(--muted);}
+.rchar-gdoc{font-family:var(--mono);font-size:7.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--border);border:1px solid var(--border);padding:1px 6px;display:inline-block;margin-top:.4rem;}
+
+/* SCP CARD */
+.rscp-card{background:var(--deep);border:1px solid var(--border);cursor:pointer;position:relative;overflow:hidden;transition:transform .2s,border-color .2s;}
+.rscp-card:hover{transform:translateY(-2px);}
+.rscp-ht{position:absolute;inset:0;background-image:radial-gradient(circle,var(--ht,#333) 1.5px,transparent 1.5px);background-size:10px 10px;opacity:0.13;pointer-events:none;}
+.rscp-acs{position:relative;padding:.55rem 1rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.05);}
+.rscp-num{font-family:var(--mono);font-size:11px;letter-spacing:0.06em;color:var(--pale);}
+.rscp-cc{font-family:var(--mono);font-size:8px;letter-spacing:0.15em;text-transform:uppercase;padding:2px 8px;border:1px solid;}
+.rscp-body{position:relative;padding:1rem 1.1rem .9rem;}
+.rscp-meta{font-family:var(--mono);font-size:8.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);}
+
+/* UNAFFILIATED CARD */
+.runaff-card{background:var(--deep);border:1px solid var(--border);border-left:3px solid #1a3a6a;padding:1.1rem;cursor:pointer;transition:transform .2s,border-color .2s;position:relative;overflow:hidden;}
+.runaff-card:hover{transform:translateY(-2px);}
+.runaff-ht{position:absolute;inset:0;background-image:radial-gradient(circle,#1a3a6a 1.5px,transparent 1.5px);background-size:10px 10px;opacity:0.1;pointer-events:none;}
+.runaff-name{font-family:var(--display);font-size:18px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:var(--white);margin-bottom:.25rem;line-height:1.05;position:relative;}
+.runaff-aff{font-size:12px;color:var(--muted);position:relative;}
+
+/* EMPTY */
+.empty-state{text-align:center;padding:4rem 2rem;font-family:var(--mono);font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--border);}
+
+/* CHARACTER VIEW */
+.cv-wrap{max-width:800px;margin:0 auto;padding:3rem;}
+.cv-fnd-header{border:1px solid var(--border);background:var(--deep);padding:2rem;display:grid;grid-template-columns:160px 1fr;gap:2rem;margin-bottom:2rem;}
+.cv-fnd-img{width:160px;height:160px;object-fit:cover;border:1px solid var(--border);}
+.cv-fnd-img-ph{width:160px;height:160px;border:1px solid var(--border);background:var(--dark);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;color:var(--muted);text-align:center;}
+.cv-fnd-name{font-family:var(--display);font-size:clamp(28px,5vw,52px);font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--white);line-height:.9;margin-bottom:.75rem;}
+.cv-fnd-role{font-family:var(--mono);font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:.75rem;}
+.cv-badges{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem;}
+.cv-badge{font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;padding:3px 10px;border:1px solid;}
+.cv-table{width:100%;border-collapse:collapse;font-size:13px;}
+.cv-table td{padding:.4rem .75rem;border-bottom:1px solid var(--dark);color:var(--light);}
+.cv-table td:first-child{font-family:var(--mono);font-size:9.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);width:35%;}
+.cv-section{margin-bottom:2rem;}
+.cv-section-title{font-family:var(--mono);font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);padding-bottom:.75rem;border-bottom:1px solid var(--border);margin-bottom:1.25rem;}
+.cv-rich{font-size:14px;color:var(--light);line-height:1.9;}
+.cv-scp-doc{}
+.scp-doc-section{border-left:2px solid var(--border);padding:1rem 1.5rem;margin-bottom:1.5rem;background:rgba(255,255,255,.01);}
+.scp-doc-section-title{font-family:var(--mono);font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--pale);margin-bottom:.75rem;}
+.cv-addendum{border:1px solid var(--border);margin-bottom:.75rem;background:var(--deep);}
+.cv-addendum-toggle{width:100%;background:none;border:none;padding:.75rem 1.25rem;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-family:var(--mono);font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--pale);transition:background .2s;}
+.cv-addendum-toggle:hover{background:rgba(255,255,255,.03);}
+.cv-addendum-toggle::after{content:'▼';font-size:9px;color:var(--muted);transition:transform .2s;}
+.cv-addendum-toggle.open::after{transform:rotate(180deg);}
+.cv-addendum-body{padding:1rem 1.25rem;border-top:1px solid var(--border);display:none;font-size:14px;color:var(--light);line-height:1.9;}
+.cv-addendum-body.visible{display:block;}
+.acs-bar{border:1px solid var(--border);overflow:hidden;margin-bottom:2rem;font-family:var(--mono);}
+.acs-top{display:grid;grid-template-columns:2fr 2fr 1fr;border-bottom:1px solid var(--border);}
+.acs-item-num{padding:.85rem 1.25rem;font-size:13px;letter-spacing:0.08em;color:var(--pale);border-right:1px solid var(--border);background:#0a0a0a;}
+.acs-level-tag{padding:.85rem 1.25rem;font-size:11px;letter-spacing:0.08em;color:rgba(255,255,255,.7);border-right:1px solid var(--border);background:#1a1a1a;}
+.acs-class-block{padding:.75rem 1rem;text-align:center;background:#1a1a1a;}
+.acs-class-header{display:block;font-size:7.5px;letter-spacing:0.25em;color:rgba(255,255,255,.4);margin-bottom:3px;}
+.acs-class-value{display:block;font-size:17px;letter-spacing:0.1em;color:rgba(255,255,255,.9);}
+.acs-bottom{display:grid;grid-template-columns:1fr 1fr;}
+.acs-disruption{padding:.6rem 1.25rem;font-size:10px;letter-spacing:0.1em;color:rgba(255,255,255,.5);border-right:1px solid rgba(255,255,255,.06);background:#111;}
+.acs-risk{padding:.6rem 1.25rem;font-size:10px;letter-spacing:0.1em;color:rgba(255,255,255,.5);background:#111;}
+.acs-meta-label{display:block;font-size:7.5px;letter-spacing:0.2em;opacity:.5;margin-bottom:2px;}
+.acs-meta-value{font-size:12px;letter-spacing:0.1em;color:rgba(255,255,255,.8);}
+
+/* Redacted / glitch (for viewing) */
+.char-redacted{background:var(--pale);color:transparent;cursor:pointer;padding:0 3px;border-radius:2px;transition:background .3s,color .3s;user-select:none;display:inline;}
+.char-redacted:hover,.char-redacted.revealed{background:transparent;color:var(--danger);}
+.char-glitch{position:relative;display:inline-block;animation:cglitch 3s infinite;}
+.char-glitch::before,.char-glitch::after{content:attr(data-text);position:absolute;top:0;left:0;}
+.char-glitch::before{animation:cgA 3s infinite;clip-path:polygon(0 18%,100% 18%,100% 42%,0 42%);color:#cc4444;}
+.char-glitch::after{animation:cgB 3s infinite;clip-path:polygon(0 62%,100% 62%,100% 80%,0 80%);color:#4444cc;}
+@keyframes cglitch{0%,85%,100%{transform:translate(0);}87%{transform:translate(-2px,1px);}89%{transform:translate(2px,-1px);}91%{transform:translate(0);}}
+@keyframes cgA{0%,84%,100%{transform:translate(0);opacity:0;}86%{transform:translate(-3px,1px);opacity:1;}88%{transform:translate(3px,-1px);opacity:1;}90%{transform:translate(0);opacity:0;}}
+@keyframes cgB{0%,84%,100%{transform:translate(0);opacity:0;}87%{transform:translate(3px,1px);opacity:1;}89%{transform:translate(-2px,-1px);opacity:1;}91%{transform:translate(0);opacity:0;}}
+
+footer{border-top:1px solid var(--dark);padding:2rem 3rem;display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:9.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--border);}
+@media(max-width:768px){nav{padding:0 1rem;}nav ul a{padding:8px 8px;font-size:8.5px;}.rchar-grid,.runaff-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));}.cv-fnd-header{grid-template-columns:1fr;}.cv-fnd-img,.cv-fnd-img-ph{width:100%;height:180px;}.cv-wrap{padding:2rem 1.5rem;}.wrap{padding:2rem 1.5rem 4rem;}footer{flex-direction:column;gap:.5rem;text-align:center;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">
+    <img src="img/Base.png" alt="">
+    <div><span class="n">THREEFOLD</span><span class="s">SCP Foundation RP</span></div>
+  </a>
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="departments.html">Departments</a></li>
+    <li><a href="worldstate.html">World State</a></li>
+    <li><a href="lore.html">Lore</a></li>
+    <li><a href="worldmap.html">World Map</a></li>
+    <li><a href="submission.html">Submission</a></li>
+    <li><a href="database.html">Database</a></li>
+    <li><a href="staff.html" target="_blank">Staff Login</a></li>
+  </ul>
+</nav>
+
+<!-- LISTING PAGE -->
+<div id="pg-listing" class="page active">
+  <div class="ph">
+    <div class="ph-bgword">DB</div>
+    <div class="ph-tag">Approved Personnel &mdash; Public Database</div>
+    <h1>Database</h1>
+    <p class="ph-desc">All approved characters. Click any card to view the full sheet. Colour-coded by clearance level and containment class.</p>
+  </div>
+  <div class="wrap">
+    <div class="roster-tabs">
+      <button class="rtab-btn active" onclick="switchTab('foundation',this)">Foundation</button>
+      <button class="rtab-btn" onclick="switchTab('scp',this)">SCPs</button>
+      <button class="rtab-btn" onclick="switchTab('unaffiliated',this)">Unaffiliated</button>
+    </div>
+    <div class="rtab-panel active" id="rtab-foundation">
+      <div class="dept-pills" id="dept-pills"></div>
+      <div id="foundation-content"></div>
+      <div class="empty-state" id="foundation-empty" style="display:none;">No approved Foundation characters yet.</div>
+    </div>
+    <div class="rtab-panel" id="rtab-scp">
+      <div class="rchar-grid" id="scp-content"></div>
+      <div class="empty-state" id="scp-empty" style="display:none;">No approved SCP entries yet.</div>
+    </div>
+    <div class="rtab-panel" id="rtab-unaffiliated">
+      <div class="runaff-grid" id="unaff-content"></div>
+      <div class="empty-state" id="unaff-empty" style="display:none;">No approved unaffiliated characters yet.</div>
+    </div>
+  </div>
+  <footer><span>THREEFOLD &mdash; Database</span><span>Approved Characters Only</span></footer>
+</div>
+
+<!-- CHARACTER VIEW PAGE -->
+<div id="pg-character" class="page">
+  <div class="cv-wrap">
+    <button class="cv-back" onclick="showPage('pg-listing')">&#8592; Back to Database</button>
+    <div id="cv-content"></div>
+  </div>
+  <footer><span>THREEFOLD</span><span>Character</span></footer>
+</div>
+
+<script>
+let _allChars = [];
+
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const t=document.getElementById(id);
+  if(t){t.classList.add('active');window.scrollTo(0,0);}
+}
+
+/* DEPT ICON MAP */
+const DEPT_ICONS = {
+  science:'img/Science.png', research:'img/Science.png',
+  security:'img/Security.png',
+  ethics:'img/Ethics.png',
+  task:'img/MTF.png', mtf:'img/MTF.png',
+  medical:'img/Medical.png',
+  intelligence:'img/Intelligence.png',
+  administrator:'img/AdministratorsOffice.png', admin:'img/AdministratorsOffice.png',
+  o5:'img/AdministratorsOffice.png', factotum:'img/AdministratorsOffice.png',
+  director:'img/SiteDirectorship.png', directorship:'img/SiteDirectorship.png',
+  engineer:'img/Engineering.png',
+  internal:'img/ISD.png', isd:'img/ISD.png',
+};
+function getDeptIcon(dept){
+  if(!dept)return'img/Base.png';
+  const n=dept.toLowerCase();
+  for(const[k,v]of Object.entries(DEPT_ICONS)){if(n.includes(k))return v;}
+  return'img/Base.png';
+}
+
+const CL_HT  = {0:'#444',1:'#1a6a1a',2:'#1a3a8a',3:'#8a7a1a',4:'#8a3a1a',5:'#8a1a1a',6:'#0a0a0a'};
+const CL_COL = {0:'#666',1:'#4a9a4a',2:'#4a6aaa',3:'#baa03a',4:'#ba6a3a',5:'#ba3a3a',6:'#444'};
+const CC_HT  = {safe:'#1a6a3a',euclid:'#6a5a1a',keter:'#7a1a1a',neutralized:'#3a3a3a',pending:'#1a2a6a',explained:'#3a1a6a',esoteric:'#5a1a5a'};
+const CC_COL = {safe:'#2a9a5a',euclid:'#9a8a3a',keter:'#aa3a3a',neutralized:'#7a7a7a',pending:'#3a5aaa',explained:'#6a4aaa',esoteric:'#8a3a8a'};
+
+/* TABS */
+function switchTab(tab,btn){
+  document.querySelectorAll('.rtab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.rtab-panel').forEach(p=>p.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  document.getElementById('rtab-'+tab).classList.add('active');
+}
+
+/* LOAD */
+async function loadDatabase(){
+  const{data}=await getCharacters({status:'approved'});
+  _allChars=data||[];
+  renderFoundationTab();
+  renderSCPTab();
+  renderUnaffTab();
+}
+
+/* FOUNDATION */
+function renderFoundationTab(){
+  const chars=_allChars.filter(c=>c.type==='foundation');
+  const empty=document.getElementById('foundation-empty');
+  if(!chars.length){document.getElementById('foundation-content').innerHTML='';document.getElementById('dept-pills').innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  const groups={};
+  chars.forEach(c=>{const dept=(c.character_data?.department||'Unknown').trim();if(!groups[dept])groups[dept]=[];groups[dept].push(c);});
+  Object.values(groups).forEach(arr=>arr.sort((a,b)=>(b.character_data?.clearance||0)-(a.character_data?.clearance||0)));
+  const depts=Object.keys(groups).sort();
+  const pills=document.getElementById('dept-pills');
+  pills.innerHTML=`<button class="dpill active" onclick="filterByDept('all',this)">All Departments</button>`+
+    depts.map(d=>`<button class="dpill" onclick="filterByDept('${escHtml(d)}',this)"><img src="${getDeptIcon(d)}" alt=""><span>${escHtml(d)}</span></button>`).join('');
+  renderFoundationGroups(groups,depts);
+}
+
+function filterByDept(dept,btn){
+  document.querySelectorAll('.dpill').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  const chars=_allChars.filter(c=>c.type==='foundation');
+  const groups={};
+  chars.forEach(c=>{const d=(c.character_data?.department||'Unknown').trim();if(!groups[d])groups[d]=[];groups[d].push(c);});
+  Object.values(groups).forEach(arr=>arr.sort((a,b)=>(b.character_data?.clearance||0)-(a.character_data?.clearance||0)));
+  const depts=Object.keys(groups).sort();
+  renderFoundationGroups(groups,dept==='all'?depts:[dept]);
+}
+
+function renderFoundationGroups(groups,depts){
+  const container=document.getElementById('foundation-content');
+  if(!depts.length){container.innerHTML='<div class="empty-state">No characters in this department yet.</div>';return;}
+  container.innerHTML=depts.map(dept=>{
+    const chars=groups[dept]||[];
+    const icon=getDeptIcon(dept);
+    const cards=chars.map(c=>foundationCard(c)).join('');
+    return`<div class="dept-section"><div class="dept-sec-hdr"><img class="dept-sec-icon" src="${icon}" alt=""><span class="dept-sec-name">${escHtml(dept)}</span><span class="dept-sec-count">${chars.length} personnel</span></div><div class="rchar-grid">${cards}</div></div>`;
+  }).join('');
+}
+
+function foundationCard(c){
+  const d=c.character_data||{};
+  const cl=d.clearance??0;
+  const ht=CL_HT[cl]||'#333';
+  const col=CL_COL[cl]||'#666';
+  const icon=getDeptIcon(d.department||'');
+  const click=c.method==='googledoc'?`window.open('${escHtml(c.gdoc_url)}','_blank')`:`viewChar('${c.id}')`;
+  return`<div class="rchar-card" style="--ht:${ht}" onclick="${click}">
+    <div class="rchar-ht"></div>
+    <div class="rchar-accent" style="background:${ht}"></div>
+    <div class="rchar-body">
+      <div class="rchar-top"><img class="rchar-icon" src="${icon}" alt=""><span class="rchar-cl" style="border-color:${col};color:${col}">CL-${cl}</span></div>
+      <div class="rchar-name">${escHtml(d.full_name||'Unknown')}</div>
+      <div class="rchar-rank">${escHtml(d.role||'')}</div>
+      <div class="rchar-dept">${escHtml(d.department||'')}</div>
+      ${c.method==='googledoc'?'<span class="rchar-gdoc">Google Doc</span>':''}
+    </div>
+  </div>`;
+}
+
+/* SCP */
+function renderSCPTab(){
+  const chars=_allChars.filter(c=>c.type==='scp');
+  const empty=document.getElementById('scp-empty');
+  const grid=document.getElementById('scp-content');
+  if(!chars.length){grid.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  chars.sort((a,b)=>{
+    const na=parseInt((a.character_data?.item_number||'').replace(/\D/g,''))||9999;
+    const nb=parseInt((b.character_data?.item_number||'').replace(/\D/g,''))||9999;
+    return na-nb;
+  });
+  grid.innerHTML=chars.map(c=>scpCard(c)).join('');
+}
+
+function scpCard(c){
+  const d=c.character_data||{};
+  const cls=(d.containment_class||'pending').toLowerCase();
+  const ht=CC_HT[cls]||'#333';
+  const col=CC_COL[cls]||'#666';
+  const click=c.method==='googledoc'?`window.open('${escHtml(c.gdoc_url)}','_blank')`:`viewChar('${c.id}')`;
+  return`<div class="rscp-card" style="--ht:${ht};border-left:3px solid ${ht}" onclick="${click}">
+    <div class="rscp-ht"></div>
+    <div class="rscp-acs"><span class="rscp-num">${escHtml(d.item_number||'SCP-???')}</span><span class="rscp-cc" style="border-color:${col};color:${col}">${(d.containment_class||'?').toUpperCase()}</span></div>
+    <div class="rscp-body">
+      ${d.secondary_class?`<div class="rscp-meta" style="color:#8a3a8a;margin-bottom:.2rem">${escHtml(d.secondary_class)}</div>`:''}
+      <div class="rscp-meta">Risk: ${d.risk_class||'—'} / Disruption: ${d.disruption_class||'—'}</div>
+      ${c.method==='googledoc'?'<span class="rchar-gdoc" style="margin-top:.4rem;display:inline-block">Google Doc</span>':''}
+    </div>
+  </div>`;
+}
+
+/* UNAFFILIATED */
+function renderUnaffTab(){
+  const chars=_allChars.filter(c=>c.type==='unaffiliated');
+  const empty=document.getElementById('unaff-empty');
+  const grid=document.getElementById('unaff-content');
+  if(!chars.length){grid.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  grid.innerHTML=chars.map(c=>{
+    const d=c.character_data||{};
+    const click=c.method==='googledoc'?`window.open('${escHtml(c.gdoc_url)}','_blank')`:`viewChar('${c.id}')`;
+    return`<div class="runaff-card" onclick="${click}"><div class="runaff-ht"></div><div class="runaff-name">${escHtml(d.full_name||'Unknown')}</div>${d.affiliation?`<div class="runaff-aff">${escHtml(d.affiliation)}</div>`:''}</div>`;
+  }).join('');
+}
+
+/* CHARACTER VIEW */
+const ACS_CL={'1':'#0d4a0d','2':'#0d0d4a','3':'#4a3d0d','4':'#4a1a0d','5':'#4a0d0d'};
+const ACS_CC={safe:'#0d4a2a',euclid:'#4a3d0d',keter:'#4a0d0d',neutralized:'#2a2a2a',pending:'#0d2a4a',explained:'#2a0d4a',esoteric:'#3a0d3a'};
+const ACS_DI={dark:'#0a0a0a',vlam:'#3a1a05',keneq:'#3a2a05',ekhi:'#4a3a0a',amida:'#4a4a3a'};
+const ACS_RI={notice:'#0a3a0a',caution:'#2a3a0a',warning:'#3a2a0a',danger:'#3a0a0a',critical:'#1a0505'};
+
+async function viewChar(id){
+  showPage('pg-character');
+  document.getElementById('cv-content').innerHTML='<div class="empty-state">Loading...</div>';
+  const{data,error}=await getCharacterById(id);
+  if(error||!data){document.getElementById('cv-content').innerHTML='<div class="empty-state">Character not found.</div>';return;}
+  if(data.method==='googledoc'){window.open(data.gdoc_url,'_blank');showPage('pg-listing');return;}
+  const d=data.character_data||{};
+  let html='';
+
+  if(data.type==='foundation'){
+    const cl=d.clearance??'';
+    const clColors={0:'#555',1:'#2a7a2a',2:'#2a3a8a',3:'#8a7a1a',4:'#8a4a1a',5:'#8a1a1a',6:'#050505'};
+    const clColor=clColors[cl]||'#555';
+    const subdepts=(d.sub_departments||[]).map(s=>`<tr><td>Sub-Dept</td><td>${escHtml(s)}</td></tr>`).join('');
+    html=`<div class="cv-fnd-header">
+      ${d.image_url?`<img class="cv-fnd-img" src="${d.image_url}" alt="Character">`:'<div class="cv-fnd-img-ph">No Image</div>'}
+      <div>
+        <div class="cv-badges">
+          <span class="cv-badge" style="border-color:${clColor};color:${clColor}">${cl===6?'<span style="animation:cglitch 3s infinite;display:inline-block">CLEARANCE LEVEL 6</span>':`CLEARANCE LEVEL ${cl}`}</span>
+          <span class="cv-badge" style="border-color:var(--border);color:var(--muted)">CLASS ${d.classification||'?'}</span>
+        </div>
+        <div class="cv-fnd-name">${escHtml(d.full_name||'Unknown')}</div>
+        <div class="cv-fnd-role">${escHtml(d.role||'')} &mdash; ${escHtml(d.department||'')}</div>
+        <table class="cv-table" style="margin-top:1rem;">
+          <tr><td>Age</td><td>${escHtml(d.age||'—')}</td></tr>
+          <tr><td>Nationality</td><td>${escHtml(d.nationality||'—')}</td></tr>
+          ${d.alias?`<tr><td>Alias</td><td>${escHtml(d.alias)}</td></tr>`:''}
+          ${subdepts}
+        </table>
+      </div>
+    </div>
+    ${cvSection('Physical Description',d.physical_desc)}
+    ${cvSection('Psychological Profile',d.psych_profile)}
+    ${cvSection('Employment History',d.employment)}
+    ${d.incidents?cvSection('Notable Incidents / Logs',d.incidents):''}
+    ${d.notes?cvSection('Additional Notes',d.notes):''}`;
+  } else if(data.type==='scp'){
+    const cls=(d.containment_class||'pending').toLowerCase();
+    const acsClassBg=ACS_CC[cls]||'#1a1a1a';
+    const acsLvlBg=ACS_CL[String(d.clearance_level)]||'#1a1a1a';
+    const acsDiaBg=ACS_DI[(d.disruption_class||'').toLowerCase()]||'#111';
+    const acsRiskBg=ACS_RI[(d.risk_class||'').toLowerCase()]||'#111';
+    const addendaHtml=(d.addenda||[]).map((a,i)=>`<div class="cv-addendum"><button class="cv-addendum-toggle" onclick="toggleAddendum(this)">${escHtml(a.title||'Addendum '+(i+1))}</button><div class="cv-addendum-body">${a.content||''}</div></div>`).join('');
+    html=`<div class="acs-bar">
+      <div class="acs-top">
+        <div class="acs-item-num">ITEM #: ${escHtml(d.item_number||'SCP-???')}</div>
+        <div class="acs-level-tag" style="background:${acsLvlBg}">LEVEL ${d.clearance_level||'?'}/${escHtml(d.item_number||'SCP-???')}</div>
+        <div class="acs-class-block" style="background:${acsClassBg}"><span class="acs-class-header">OBJECT CLASS</span><span class="acs-class-value">${(d.containment_class||'PENDING').toUpperCase()}</span>${d.secondary_class?`<span style="font-size:9px;display:block;color:rgba(255,255,255,.5)">${escHtml(d.secondary_class)}</span>`:''}</div>
+      </div>
+      <div class="acs-bottom">
+        <div class="acs-disruption" style="background:${acsDiaBg}"><span class="acs-meta-label">DISRUPTION CLASS</span><span class="acs-meta-value">${escHtml(d.disruption_class||'—')}</span></div>
+        <div class="acs-risk" style="background:${acsRiskBg}"><span class="acs-meta-label">RISK CLASS</span><span class="acs-meta-value">${escHtml(d.risk_class||'—')}</span></div>
+      </div>
+    </div>
+    <div class="cv-scp-doc">
+      <div class="scp-doc-section"><div class="scp-doc-section-title">Special Containment Procedures</div><div class="cv-rich">${d.containment_procedures||''}</div></div>
+      <div class="scp-doc-section"><div class="scp-doc-section-title">Description</div><div class="cv-rich">${d.description||''}</div></div>
+      ${d.addenda&&d.addenda.length?`<div class="cv-section"><div class="cv-section-title">Addenda</div>${addendaHtml}</div>`:''}
+      <div class="scp-doc-section"><div class="scp-doc-section-title">Abilities &amp; Limits</div><div class="cv-rich">${d.abilities||''}</div></div>
+    </div>`;
+  } else {
+    html=`<div class="cv-fnd-header" style="border-left:3px solid #1a3a7a;">
+      ${d.image_url?`<img class="cv-fnd-img" src="${d.image_url}" alt="">`:'<div class="cv-fnd-img-ph">No Image</div>'}
+      <div>
+        <div class="cv-fnd-name">${escHtml(d.full_name||'Unknown')}</div>
+        <table class="cv-table" style="margin-top:.75rem;">
+          ${d.age?`<tr><td>Age</td><td>${escHtml(d.age)}</td></tr>`:''}
+          ${d.affiliation?`<tr><td>Affiliation</td><td>${escHtml(d.affiliation)}</td></tr>`:''}
+        </table>
+      </div>
+    </div>
+    ${cvSection('Background / History',d.background)}
+    ${d.skills?cvSection('Skills & Abilities',d.skills):''}
+    ${d.equipment?cvSection('Equipment / Resources',d.equipment):''}
+    ${d.notes?cvSection('Additional Notes',d.notes):''}`;
+  }
+  document.getElementById('cv-content').innerHTML=html;
+  document.querySelectorAll('.char-redacted').forEach(el=>el.addEventListener('click',()=>el.classList.toggle('revealed')));
+}
+
+function cvSection(title,content){if(!content||!content.trim())return'';return`<div class="cv-section"><div class="cv-section-title">${title}</div><div class="cv-rich">${content}</div></div>`;}
+function toggleAddendum(btn){btn.classList.toggle('open');btn.nextElementSibling.classList.toggle('visible');}
+
+/* HELPERS */
+function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+/* SUPABASE */
+async function getCharacters(filters={}){
+  let q=db.from('characters').select('id,seq,type,method,discord_username,status,staff_reason,created_at,character_data,gdoc_url').order('seq',{ascending:true});
+  if(filters.status)q=q.eq('status',filters.status);
+  if(filters.type)q=q.eq('type',filters.type);
+  const{data,error}=await q;return{data,error};
+}
+async function getCharacterById(id){const{data,error}=await db.from('characters').select('*').eq('id',id).single();return{data,error};}
+
+/* INIT */
+document.addEventListener('DOMContentLoaded',()=>{
+  // Check if opened with a specific character ID
+  const params=new URLSearchParams(window.location.search);
+  if(params.get('id')){
+    loadDatabase().then(()=>viewChar(params.get('id')));
+  } else {
+    loadDatabase();
+  }
+});
+</script>
+</body>
+</html>

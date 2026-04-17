@@ -387,6 +387,48 @@ body::after {
 .goi-tooltip-staff .tt-name{font-family:var(--display);font-size:14px;font-weight:600;letter-spacing:0.1em;color:var(--white);display:block;margin-bottom:.3rem;}
 .goi-tooltip-staff .tt-rel{display:flex;align-items:center;gap:.5rem;margin-top:.25rem;}
 .goi-tooltip-staff .tt-dot{width:8px;height:8px;border:1px solid;flex-shrink:0;}
+/* Legend + reset (mirrors worldstate.html) */
+.goi-legend-staff{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin-top:1.25rem;}
+.goi-legend-staff .gli{display:flex;align-items:center;gap:.4rem;font-family:var(--mono);font-size:8.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);}
+.goi-legend-staff .gli-dot{width:10px;height:10px;border:1px solid;flex-shrink:0;}
+.goi-legend-staff .gli-dot.enemy   {border-color:#7a1a1a;background:rgba(120,20,20,.35);}
+.goi-legend-staff .gli-dot.hostile {border-color:#7a4a1a;background:rgba(100,50,10,.35);}
+.goi-legend-staff .gli-dot.neutral {border-color:#3a3a3a;background:rgba(40,40,40,.6);}
+.goi-legend-staff .gli-dot.indiff  {border-color:#2a2a4a;background:rgba(25,25,50,.6);}
+.goi-legend-staff .gli-dot.friendly{border-color:#1a5a1a;background:rgba(15,65,20,.4);}
+.goi-legend-staff .gli-dot.allied  {border-color:#1a3a6a;background:rgba(10,50,80,.4);}
+.goi-reset-btn{margin-left:auto;font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--muted);padding:6px 12px;cursor:pointer;transition:all .2s;}
+.goi-reset-btn:hover{border-color:var(--pale);color:var(--pale);}
+/* Relation matrix */
+.rel-matrix{display:flex;flex-direction:column;gap:.3rem;max-height:480px;overflow-y:auto;padding-right:.25rem;}
+.rel-matrix::-webkit-scrollbar{width:6px;}
+.rel-matrix::-webkit-scrollbar-track{background:var(--dark);}
+.rel-matrix::-webkit-scrollbar-thumb{background:var(--border);}
+.rel-row{display:grid;grid-template-columns:1fr auto 1fr 160px;gap:.75rem;align-items:center;padding:.55rem .85rem;border:1px solid var(--border);background:var(--dark);transition:border-color .15s;}
+.rel-row:hover{border-color:#555;}
+.rel-row.unset{opacity:.55;}
+.rel-row .rel-goi{font-family:var(--mono);font-size:11px;letter-spacing:0.08em;color:var(--pale);display:flex;align-items:center;gap:.5rem;min-width:0;}
+.rel-row .rel-goi img{width:20px;height:20px;object-fit:contain;mix-blend-mode:screen;flex-shrink:0;}
+.rel-row .rel-goi .abbr{font-weight:600;color:var(--white);}
+.rel-row .rel-goi .name{color:var(--muted);font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.rel-row .rel-goi.to{justify-content:flex-end;text-align:right;}
+.rel-row .rel-goi.to .name{order:-1;}
+.rel-row .rel-arrow{font-family:var(--mono);font-size:11px;color:var(--border);}
+.rel-row select{width:100%;background:var(--deep);border:1px solid var(--border);color:var(--pale);font-family:var(--mono);font-size:10.5px;padding:6px 8px;outline:none;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;}
+.rel-row select:hover{border-color:#555;}
+.rel-row select.s-allied  {border-left:3px solid #3a6aaa;}
+.rel-row select.s-friendly{border-left:3px solid #3a9a3a;}
+.rel-row select.s-neutral {border-left:3px solid #555;}
+.rel-row select.s-indiff  {border-left:3px solid #4a4a7a;}
+.rel-row select.s-hostile {border-left:3px solid #aa6a3a;}
+.rel-row select.s-enemy   {border-left:3px solid #aa3a3a;}
+.rel-empty{font-family:var(--mono);font-size:10px;color:var(--border);letter-spacing:0.1em;text-align:center;padding:2rem;border:1px dashed var(--border);}
+@media(max-width:720px){
+  .rel-row{grid-template-columns:1fr;gap:.35rem;}
+  .rel-row .rel-goi.to{justify-content:flex-start;text-align:left;}
+  .rel-row .rel-goi.to .name{order:0;}
+  .rel-row .rel-arrow{display:none;}
+}
 </style>
 </head>
 <body>
@@ -770,27 +812,26 @@ body::after {
       <canvas id="goi-canvas-staff"></canvas>
       <div class="goi-tooltip-staff" id="goi-tooltip-staff"><span class="tt-name"></span><div id="tt-rels-staff"></div></div>
     </div>
-    <div style="font-family:var(--mono);font-size:8.5px;letter-spacing:0.12em;color:var(--muted);text-transform:uppercase;margin-top:.5rem;">Drag nodes to rearrange — hover to highlight connections — updates after saving</div>
+    <div class="goi-legend-staff">
+      <div class="gli"><div class="gli-dot allied"></div>Allied</div>
+      <div class="gli"><div class="gli-dot friendly"></div>Friendly</div>
+      <div class="gli"><div class="gli-dot neutral"></div>Neutral</div>
+      <div class="gli"><div class="gli-dot indiff"></div>Indifferent</div>
+      <div class="gli"><div class="gli-dot hostile"></div>Hostile</div>
+      <div class="gli"><div class="gli-dot enemy"></div>Enemy</div>
+      <button type="button" onclick="resetStaffLayout()" class="goi-reset-btn">Reset Layout</button>
+    </div>
+    <div style="font-family:var(--mono);font-size:8.5px;letter-spacing:0.12em;color:var(--muted);text-transform:uppercase;margin-top:.5rem;">Hover to highlight connections &mdash; drag to rearrange &mdash; chart updates automatically when relations change</div>
 
-    <!-- Relation editor -->
+    <!-- Relation matrix -->
     <div style="border:1px solid var(--border);background:var(--deep);padding:1.5rem;margin-top:2rem;">
-      <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-bottom:1.25rem;display:flex;align-items:center;gap:.75rem;">Edit Relation<span style="flex:1;height:1px;background:var(--border);display:block;"></span></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:.75rem;align-items:end;">
-        <div><label style="font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.35rem;">From</label>
-          <select id="rel-from" style="width:100%;background:var(--dark);border:1px solid var(--border);color:var(--pale);font-family:var(--mono);font-size:11px;padding:8px 10px;outline:none;"></select></div>
-        <div><label style="font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.35rem;">To</label>
-          <select id="rel-to" style="width:100%;background:var(--dark);border:1px solid var(--border);color:var(--pale);font-family:var(--mono);font-size:11px;padding:8px 10px;outline:none;"></select></div>
-        <div><label style="font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.35rem;">Status</label>
-          <select id="rel-status" style="width:100%;background:var(--dark);border:1px solid var(--border);color:var(--pale);font-family:var(--mono);font-size:11px;padding:8px 10px;outline:none;">
-            <option value="enemy">Enemy</option>
-            <option value="hostile">Hostile</option>
-            <option value="neutral" selected>Neutral</option>
-            <option value="indiff">Indifferent</option>
-            <option value="friendly">Friendly</option>
-            <option value="allied">Allied</option>
-          </select></div>
-        <button onclick="saveRelation()" style="font-family:var(--mono);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;background:var(--pale);color:var(--black);border:none;padding:9px 14px;cursor:pointer;">Set</button>
+      <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-bottom:1.25rem;display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;">
+        <span>Relation Matrix</span>
+        <span style="flex:1;height:1px;background:var(--border);display:block;min-width:1rem;"></span>
+        <input type="text" id="rel-matrix-filter" placeholder="Filter pairs..." oninput="renderRelMatrix()" style="background:var(--dark);border:1px solid var(--border);color:var(--pale);font-family:var(--mono);font-size:10px;padding:5px 10px;outline:none;width:160px;letter-spacing:0.05em;text-transform:none;">
       </div>
+      <div style="font-family:var(--mono);font-size:9.5px;color:var(--muted);margin-bottom:1rem;letter-spacing:0.03em;">Every unique GOI pair. Change a dropdown to update its relation &mdash; saves automatically. Pairs left on <em style="color:var(--light);font-style:normal;">Neutral</em> are rendered as faint grey lines.</div>
+      <div id="rel-matrix-wrap"></div>
       <div id="rel-msg" style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:.75rem;"></div>
     </div>
   </div>
@@ -1278,12 +1319,100 @@ function renderGOIAdmin() {
         ${g.id!=='foundation'?`<button onclick="removeGOI(${i})" style="background:none;border:none;color:var(--muted);cursor:pointer;font-family:var(--mono);font-size:11px;padding:0 3px;" title="Remove">✕</button>`:''}
       </div>`).join('')}
     </div>`;
-  // Populate relation dropdowns
-  const opts = _wsGOIs.map(g=>`<option value="${g.id}">${g.abbr} — ${g.name}</option>`).join('');
-  document.getElementById('rel-from').innerHTML = opts;
-  document.getElementById('rel-to').innerHTML   = opts;
-  // Refresh bubble chart
+  // Refresh matrix + bubble chart
+  renderRelMatrix();
   setTimeout(()=>initStaffBubble(_wsGOIs, _wsRels), 50);
+}
+
+/* ── RELATION MATRIX ──
+   Shows every unique GOI pair as a row with a status dropdown.
+   Change any dropdown → saves automatically → live preview updates.
+   Much faster than From/To/Set when adding a new GOI. */
+const REL_STATUS_OPTIONS = [
+  {v:'neutral', label:'Neutral'},
+  {v:'allied',  label:'Allied'},
+  {v:'friendly',label:'Friendly'},
+  {v:'indiff',  label:'Indifferent'},
+  {v:'hostile', label:'Hostile'},
+  {v:'enemy',   label:'Enemy'},
+];
+
+function renderRelMatrix() {
+  const wrap = document.getElementById('rel-matrix-wrap');
+  if (!wrap) return;
+  if (_wsGOIs.length < 2) {
+    wrap.innerHTML = '<div class="rel-empty">Add at least two GOIs to edit relations.</div>';
+    return;
+  }
+  const filter = (document.getElementById('rel-matrix-filter')?.value || '').trim().toLowerCase();
+  const relMap = {};
+  _wsRels.forEach(r => { relMap[r.from+'|'+r.to] = r.status; relMap[r.to+'|'+r.from] = r.status; });
+
+  const rows = [];
+  for (let i=0; i<_wsGOIs.length; i++) {
+    for (let j=i+1; j<_wsGOIs.length; j++) {
+      const a = _wsGOIs[i], b = _wsGOIs[j];
+      if (filter) {
+        const hay = (a.name+' '+a.abbr+' '+b.name+' '+b.abbr).toLowerCase();
+        if (!hay.includes(filter)) continue;
+      }
+      const status = relMap[a.id+'|'+b.id] || 'neutral';
+      const isUnset = !relMap[a.id+'|'+b.id];
+      const opts = REL_STATUS_OPTIONS.map(o =>
+        `<option value="${o.v}" ${o.v===status?'selected':''}>${o.label}</option>`).join('');
+      rows.push(`<div class="rel-row ${isUnset?'unset':''}" data-a="${a.id}" data-b="${b.id}">
+        <div class="rel-goi from">
+          <img src="${a.logo}" onerror="this.style.display='none'">
+          <span class="abbr">${a.abbr}</span>
+          <span class="name">${a.name}</span>
+        </div>
+        <div class="rel-arrow">&harr;</div>
+        <div class="rel-goi to">
+          <span class="name">${b.name}</span>
+          <span class="abbr">${b.abbr}</span>
+          <img src="${b.logo}" onerror="this.style.display='none'">
+        </div>
+        <select class="s-${status}" onchange="onRelChange('${a.id}','${b.id}',this)">${opts}</select>
+      </div>`);
+    }
+  }
+  wrap.innerHTML = rows.length
+    ? `<div class="rel-matrix">${rows.join('')}</div>`
+    : '<div class="rel-empty">No pairs match that filter.</div>';
+}
+
+async function onRelChange(fromId, toId, selectEl) {
+  const canEdit = currentProfile && (currentProfile.role==='owner'||currentProfile.role==='head_lore'||currentProfile.role==='admin');
+  const msg = document.getElementById('rel-msg');
+  if (!canEdit) {
+    msg.textContent = 'Permission denied — reverting.';
+    renderRelMatrix();
+    setTimeout(()=>{ msg.textContent=''; }, 2500);
+    return;
+  }
+  const status = selectEl.value;
+  // Update the visual left-border colour immediately
+  selectEl.className = 's-' + status;
+  // Drop any existing pair (either direction) then push fresh
+  _wsRels = _wsRels.filter(r => !((r.from===fromId&&r.to===toId)||(r.from===toId&&r.to===fromId)));
+  _wsRels.push({ from: fromId, to: toId, status });
+  // Row no longer "unset"
+  selectEl.closest('.rel-row')?.classList.remove('unset');
+  msg.textContent = 'Saving...';
+  const { error } = await db.from('world_state').upsert({
+    key:'goi_relations',
+    value:{ list: _wsRels },
+    updated_at: new Date().toISOString(),
+    updated_by: currentProfile?.display_name
+  });
+  if (error) {
+    msg.textContent = 'Error: ' + error.message;
+  } else {
+    msg.textContent = `Saved: ${fromId.toUpperCase()} ↔ ${toId.toUpperCase()} = ${status.toUpperCase()}`;
+    setTimeout(()=>{ if(msg.textContent.startsWith('Saved')) msg.textContent=''; }, 2500);
+  }
+  // Refresh live preview
+  initStaffBubble(_wsGOIs, _wsRels);
 }
 
 async function addGOI() {
@@ -1332,23 +1461,6 @@ async function removeGOI(idx) {
   renderGOIAdmin();
 }
 
-async function saveRelation() {
-  const canEdit = currentProfile && (currentProfile.role==='owner'||currentProfile.role==='head_lore'||currentProfile.role==='admin');
-  if (!canEdit) { document.getElementById('rel-msg').textContent='Permission denied.'; return; }
-  const from   = document.getElementById('rel-from').value;
-  const to     = document.getElementById('rel-to').value;
-  const status = document.getElementById('rel-status').value;
-  if (from===to) { document.getElementById('rel-msg').textContent='Cannot set relation with self.'; return; }
-  // Remove any existing forward or backward relation
-  _wsRels = _wsRels.filter(r=>!((r.from===from&&r.to===to)||(r.from===to&&r.to===from)));
-  _wsRels.push({ from, to, status });
-  document.getElementById('rel-msg').textContent='Saving...';
-  await saveRelations();
-  document.getElementById('rel-msg').textContent='Relation saved.';
-  setTimeout(()=>{ document.getElementById('rel-msg').textContent=''; },3000);
-  initStaffBubble(_wsGOIs, _wsRels);
-}
-
 async function saveGOIs() {
   await db.from('world_state').upsert({ key:'gois', value:{ list: _wsGOIs }, updated_at: new Date().toISOString(), updated_by: currentProfile?.display_name });
 }
@@ -1392,12 +1504,15 @@ function initStaffBubble(gois, rels) {
   const wrap=document.getElementById('goi-bubble-wrap-staff');
   const canvas=document.getElementById('goi-canvas-staff');
   if(!wrap||!canvas) return;
-  const W=wrap.clientWidth||700, H=Math.max(380, W*0.55);
+  const W=wrap.clientWidth||700, H=Math.max(480, W*0.62);
   canvas.width=W; canvas.height=H; wrap.style.height=H+'px';
-  const cx=W/2, cy=H/2, r=Math.min(W,H)*0.33, n=gois.length;
+  const n=Math.max(gois.length,1);
+  const ringR=Math.min(W,H)*(n>9?0.38:n>6?0.35:0.33);
+  const nodeR=Math.max(26, Math.min(46, 140/Math.sqrt(n)));
+  const cx=W/2, cy=H/2;
   _sNodes=gois.map((g,i)=>{
     const a=(2*Math.PI*i/n)-Math.PI/2;
-    return {id:g.id,name:g.name,abbr:g.abbr,logo:g.logo,x:cx+r*Math.cos(a),y:cy+r*Math.sin(a),vx:0,vy:0,radius:40};
+    return {id:g.id,name:g.name,abbr:g.abbr,logo:g.logo,x:cx+ringR*Math.cos(a),y:cy+ringR*Math.sin(a),vx:0,vy:0,radius:nodeR};
   });
   _sEdges=rels.map(r=>({from:r.from,to:r.to,status:r.status||'neutral'}));
   _sLogoCache={};
@@ -1414,6 +1529,23 @@ function initStaffBubble(gois, rels) {
   sTick();
 }
 
+// Snap nodes back to default circular layout
+function resetStaffLayout(){
+  if(!_sNodes.length) return;
+  const canvas=document.getElementById('goi-canvas-staff');
+  if(!canvas) return;
+  const W=canvas.width, H=canvas.height;
+  const n=_sNodes.length;
+  const ringR=Math.min(W,H)*(n>9?0.38:n>6?0.35:0.33);
+  const cx=W/2, cy=H/2;
+  _sNodes.forEach((node,i)=>{
+    const a=(2*Math.PI*i/n)-Math.PI/2;
+    node.x=cx+ringR*Math.cos(a);
+    node.y=cy+ringR*Math.sin(a);
+    node.vx=0; node.vy=0;
+  });
+}
+
 function sTick(){
   const canvas=document.getElementById('goi-canvas-staff');
   if(!canvas) return;
@@ -1422,21 +1554,11 @@ function sTick(){
 }
 
 function sSimulate(){
+  // Static — clamp only
   const canvas=document.getElementById('goi-canvas-staff');
-  const W=parseInt(canvas.width), H=parseInt(canvas.height);
-  for(let i=0;i<_sNodes.length;i++){
-    for(let j=i+1;j<_sNodes.length;j++){
-      const a=_sNodes[i],b=_sNodes[j];
-      let dx=b.x-a.x,dy=b.y-a.y,d=Math.sqrt(dx*dx+dy*dy)||1;
-      const minD=(a.radius+b.radius)*1.6;
-      if(d<minD){const f=(minD-d)/d*0.12;a.vx-=dx*f;a.vy-=dy*f;b.vx+=dx*f;b.vy+=dy*f;}
-    }
-  }
-  const cx=W/2,cy=H/2;
+  if(!canvas) return;
+  const W=canvas.width, H=canvas.height;
   _sNodes.forEach(n=>{
-    if(n===_sDrag) return;
-    n.vx+=(cx-n.x)*0.008; n.vy+=(cy-n.y)*0.008;
-    n.vx*=0.82; n.vy*=0.82; n.x+=n.vx; n.y+=n.vy;
     n.x=Math.max(n.radius+4,Math.min(W-n.radius-4,n.x));
     n.y=Math.max(n.radius+4,Math.min(H-n.radius-4,n.y));
   });

@@ -3,152 +3,346 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>THREEFOLD — Server Lore</title>
+<title>THREEFOLD / Server Lore</title>
 <link rel="icon" type="image/png" href="img/Base.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;800&family=Barlow:wght@300;400;500&family=Special+Elite&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="supabase.js"></script>
 <style>
-:root{--black:#0a0a0a;--deep:#111;--dark:#1a1a1a;--mid:#2e2e2e;--border:#3a3a3a;--muted:#666;--light:#999;--pale:#ccc;--white:#f0f0f0;--mono:'Share Tech Mono',monospace;--display:'Barlow Condensed',sans-serif;--body:'Barlow',sans-serif;}
+:root{
+  --black:#0a0a0a;--deep:#111;--dark:#1a1a1a;--mid:#2e2e2e;--border:#3a3a3a;
+  --muted:#666;--light:#999;--pale:#ccc;--white:#f0f0f0;
+  --red:#8a2a2a;--red-bright:#bb3a3a;
+  --amber:#9a7a2a;--amber-bright:#d4a52c;
+  --blue:#2a4a7a;--blue-bright:#3a6aaa;
+  --green:#2a6a2a;--green-bright:#3a8a3a;
+  --mono:'Share Tech Mono',monospace;
+  --typewriter:'Special Elite',monospace;
+  --display:'Barlow Condensed',sans-serif;
+  --body:'Barlow',sans-serif;
+}
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
 body{background:var(--black);color:var(--pale);font-family:var(--body);font-weight:300;font-size:16px;line-height:1.7;min-height:100vh;overflow-x:hidden;}
 body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.08) 2px,rgba(0,0,0,0.08) 4px);pointer-events:none;z-index:9999;}
-body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,0.6) 100%);pointer-events:none;z-index:9998;}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,0.7) 100%);pointer-events:none;z-index:9998;}
 
-nav{position:fixed;top:0;left:0;right:0;z-index:500;height:56px;background:rgba(10,10,10,0.97);border-bottom:1px solid var(--border);padding:0 3rem;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(6px);}
-.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
-.nav-logo img{width:30px;height:30px;object-fit:contain;mix-blend-mode:screen;flex-shrink:0;}
-.nav-logo-name{font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:0.3em;color:var(--white);text-transform:uppercase;display:block;line-height:1.1;}
-.nav-logo-sub{font-family:var(--mono);font-size:9px;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;display:block;}
-.nav-right{display:flex;gap:.75rem;align-items:center;}
-.nav-link{font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:5px 12px;border:1px solid transparent;transition:all .2s;}
-.nav-link:hover{color:var(--pale);border-color:var(--border);}
-.nav-link.active{color:var(--pale);border-color:var(--border);}
+/* ============================
+   NAV: unchanged from siblings
+============================ */
+nav{position:fixed;top:0;left:0;right:0;z-index:500;height:56px;background:rgba(10,10,10,0.97);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(6px);}
+nav a.logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+nav a.logo img{width:30px;height:30px;object-fit:contain;mix-blend-mode:screen;}
+nav a.logo .n{font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:0.3em;color:var(--white);text-transform:uppercase;display:block;line-height:1.1;}
+nav a.logo .s{font-family:var(--mono);font-size:9px;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;display:block;}
+nav ul{display:flex;list-style:none;align-items:center;flex-wrap:wrap;}
+nav ul a{font-family:var(--mono);font-size:9.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--light);text-decoration:none;padding:8px 12px;display:block;transition:color .2s;}
+nav ul a:hover{color:var(--white);}
 
 .page-pad{padding-top:56px;}
-.ph{padding:4rem 3rem 3rem;border-bottom:1px solid var(--border);position:relative;overflow:hidden;background-image:linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);background-size:60px 60px;}
-.ph-bgword{position:absolute;right:2rem;top:50%;transform:translateY(-50%);font-family:var(--display);font-weight:700;font-size:160px;line-height:1;color:transparent;-webkit-text-stroke:1px var(--border);pointer-events:none;user-select:none;letter-spacing:0.04em;}
-.ph-tag{font-family:var(--mono);font-size:9.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;}
-.ph h1{font-family:var(--display);font-weight:700;font-size:clamp(48px,7vw,88px);letter-spacing:0.05em;text-transform:uppercase;color:var(--white);line-height:.9;}
-.ph-desc{margin-top:1rem;font-size:15px;color:var(--light);max-width:560px;}
 
-.wrap{max-width:920px;margin:0 auto;padding:3.5rem 3rem 5rem;}
-.stag{font-family:var(--mono);font-size:9.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:1rem;margin-bottom:1.75rem;}
-.stag::after{content:'';flex:1;height:1px;background:var(--border);}
+/* ============================
+   HERO: dossier cover sheet
+============================ */
+.cover{position:relative;overflow:hidden;border-bottom:1px solid var(--border);
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(138,42,42,0.08), transparent 60%),
+    radial-gradient(ellipse 70% 50% at 80% 70%, rgba(42,74,122,0.06), transparent 60%),
+    linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px),
+    var(--black);
+  background-size: auto, auto, 48px 48px, 48px 48px, auto;
+  padding:5rem 3rem 4.5rem;
+}
+.cover-grid{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:3rem;align-items:end;}
+.cover-left{min-width:0;}
+.cover-stamps{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem;}
+.stamp{font-family:var(--mono);font-size:8.5px;letter-spacing:0.25em;text-transform:uppercase;padding:4px 10px;border:1px solid;}
+.stamp.red{border-color:var(--red);color:var(--red-bright);background:rgba(138,42,42,0.08);}
+.stamp.amber{border-color:var(--amber);color:var(--amber-bright);background:rgba(154,122,42,0.06);}
+.stamp.border{border-color:var(--border);color:var(--muted);}
+.cover-tag{font-family:var(--mono);font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;}
+.cover h1{font-family:var(--display);font-weight:800;font-size:clamp(64px,10vw,140px);letter-spacing:0.02em;text-transform:uppercase;color:var(--white);line-height:.85;margin-bottom:1.5rem;}
+.cover h1 em{font-style:normal;color:var(--red-bright);font-weight:800;}
+.cover-meta{display:flex;gap:2.5rem;flex-wrap:wrap;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border);}
+.cover-meta-item{min-width:0;}
+.cover-meta-item .k{font-family:var(--mono);font-size:8.5px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-bottom:.3rem;}
+.cover-meta-item .v{font-family:var(--typewriter);font-size:14px;color:var(--pale);letter-spacing:0.03em;}
+.cover-right{display:flex;flex-direction:column;align-items:flex-end;gap:1rem;}
+.cover-seal{width:180px;height:180px;position:relative;opacity:.85;}
+.cover-seal svg{width:100%;height:100%;}
+@keyframes sealSpin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+.cover-seal .ring{animation:sealSpin 120s linear infinite;transform-origin:center;}
+.cover-fileno{font-family:var(--mono);font-size:9.5px;letter-spacing:0.2em;color:var(--muted);text-align:right;}
+.cover-fileno strong{color:var(--pale);display:block;font-size:12px;margin-top:.25rem;letter-spacing:0.25em;}
 
-/* CATEGORY TABS */
-.cat-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:2.5rem;}
-.cat-btn{font-family:var(--mono);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;padding:.85rem 1.5rem;cursor:pointer;transition:all .2s;margin-bottom:-1px;}
-.cat-btn:hover{color:var(--pale);}
-.cat-btn.active{color:var(--white);border-bottom-color:var(--white);}
-.cat-panel{display:none;}.cat-panel.active{display:block;}
+/* ============================
+   CONTROL BAR: filters
+============================ */
+.wrap{max-width:1180px;margin:0 auto;padding:3.5rem 3rem 6rem;}
 
-/* TIMELINE */
-.timeline{position:relative;padding-left:2.5rem;}
-.timeline::before{content:'';position:absolute;left:.5rem;top:0;bottom:0;width:1px;background:var(--border);}
-.tl-entry{position:relative;margin-bottom:2.5rem;}
-.tl-dot{position:absolute;left:-2rem;top:.35rem;width:10px;height:10px;border:1px solid var(--border);background:var(--dark);flex-shrink:0;}
-.tl-date{font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem;}
-.tl-title{font-family:var(--display);font-size:22px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:var(--white);margin-bottom:.5rem;}
-.tl-body{font-size:14px;color:var(--light);line-height:1.85;}
-.tl-tag{font-family:var(--mono);font-size:8px;letter-spacing:0.15em;text-transform:uppercase;padding:2px 8px;border:1px solid;display:inline-block;margin-top:.5rem;}
-.tag-major{border-color:#7a1a1a;color:#aa3a3a;}
-.tag-incident{border-color:#6a5a1a;color:#9a8a3a;}
-.tag-canon{border-color:#1a3a6a;color:#3a5aaa;}
+.controls{display:flex;align-items:center;gap:1rem;margin-bottom:2.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.controls-label{font-family:var(--mono);font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);}
+.filter-btn{font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--light);padding:7px 14px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.4rem;}
+.filter-btn:hover{border-color:var(--pale);color:var(--pale);}
+.filter-btn.active{background:var(--pale);color:var(--black);border-color:var(--pale);}
+.filter-btn .count{font-size:8px;opacity:.65;}
+.controls-spacer{flex:1;min-width:1rem;}
+.entry-total{font-family:var(--mono);font-size:9px;letter-spacing:0.2em;color:var(--border);text-transform:uppercase;}
+.entry-total strong{color:var(--pale);}
 
-/* DOCUMENT ENTRIES */
-.doc-list{display:flex;flex-direction:column;gap:1rem;}
-.doc-entry{border:1px solid var(--border);background:var(--deep);padding:1.5rem;position:relative;transition:border-color .2s;}
-.doc-entry:hover{border-color:var(--mid);}
-.doc-label{position:absolute;top:0;left:1.5rem;transform:translateY(-50%);background:var(--deep);font-family:var(--mono);font-size:8.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);padding:0 8px;}
-.doc-title{font-family:var(--display);font-size:20px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:var(--pale);margin-bottom:.4rem;}
-.doc-meta{font-family:var(--mono);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--border);margin-bottom:.75rem;}
-.doc-excerpt{font-size:13px;color:var(--muted);line-height:1.75;}
+/* ============================
+   TIMELINE: the spine
+============================ */
+.timeline{position:relative;padding-left:3rem;}
+.timeline::before{content:'';position:absolute;left:10px;top:6px;bottom:0;width:1px;background:linear-gradient(to bottom, var(--border) 0%, var(--border) 95%, transparent 100%);}
+.year-marker{position:relative;margin:3rem 0 2rem;padding-left:.5rem;}
+.year-marker:first-child{margin-top:0;}
+.year-marker::before{content:'';position:absolute;left:-2.75rem;top:calc(50% - 1px);width:1.5rem;height:3px;background:var(--pale);}
+.year-marker::after{content:'';position:absolute;left:-2rem;top:calc(50% - 8px);width:16px;height:16px;background:var(--black);border:1px solid var(--pale);}
+.year-marker .yr{font-family:var(--display);font-size:52px;font-weight:800;letter-spacing:0.05em;color:var(--white);line-height:1;}
+.year-marker .yr-sub{font-family:var(--mono);font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-top:.4rem;}
 
-/* EMPTY */
-.no-data{border:1px dashed var(--border);padding:4rem 2rem;text-align:center;}
-.no-data-label{font-family:var(--mono);font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:var(--border);margin-bottom:.5rem;}
-.no-data-sub{font-size:13px;color:var(--muted);}
+.tl-entry{position:relative;margin-bottom:2rem;animation:entryIn .6s ease-out both;}
+@keyframes entryIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.tl-entry::before{content:'';position:absolute;left:-2.3rem;top:1.4rem;width:11px;height:11px;background:var(--dark);border:1px solid var(--border);transform:rotate(45deg);transition:all .25s;}
+.tl-entry:hover::before{border-color:var(--pale);background:var(--mid);}
+.tl-entry::after{content:'';position:absolute;left:-1.65rem;top:1.85rem;width:1.1rem;height:1px;background:var(--border);}
 
-footer{border-top:1px solid var(--dark);padding:2rem 3rem;display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:9.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--border);margin-top:2rem;}
-@media(max-width:768px){nav{padding:0 1.2rem;}.nav-logo-sub{display:none;}.ph{padding:2.5rem 1.5rem 2rem;}.ph-bgword{display:none;}.wrap{padding:2.5rem 1.5rem 4rem;}footer{flex-direction:column;gap:.5rem;text-align:center;}}
+/* per-type dot colours */
+.tl-entry[data-type="milestone"]::before{background:var(--red);border-color:var(--red-bright);}
+.tl-entry[data-type="incident"]::before{background:var(--amber);border-color:var(--amber-bright);}
+.tl-entry[data-type="document"]::before{background:var(--blue);border-color:var(--blue-bright);}
+.tl-entry[data-type="dispatch"]::before{background:var(--dark);border-color:var(--light);}
+
+/* ============================
+   ENTRY CARDS: four variants
+============================ */
+.entry{border:1px solid var(--border);background:var(--deep);padding:0;position:relative;transition:border-color .25s;overflow:hidden;}
+.entry:hover{border-color:var(--mid);}
+.entry-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.85rem 1.5rem;border-bottom:1px solid var(--border);background:var(--dark);flex-wrap:wrap;}
+.entry-type{font-family:var(--mono);font-size:8.5px;letter-spacing:0.28em;text-transform:uppercase;display:flex;align-items:center;gap:.5rem;}
+.entry-type::before{content:'';width:6px;height:6px;display:inline-block;}
+.entry[data-type="milestone"] .entry-type{color:var(--red-bright);}.entry[data-type="milestone"] .entry-type::before{background:var(--red-bright);}
+.entry[data-type="incident"]  .entry-type{color:var(--amber-bright);}.entry[data-type="incident"] .entry-type::before{background:var(--amber-bright);}
+.entry[data-type="document"]  .entry-type{color:var(--blue-bright);}.entry[data-type="document"] .entry-type::before{background:var(--blue-bright);}
+.entry[data-type="dispatch"]  .entry-type{color:var(--light);}.entry[data-type="dispatch"] .entry-type::before{background:var(--light);}
+
+.entry-date{font-family:var(--mono);font-size:9.5px;letter-spacing:0.15em;color:var(--pale);text-transform:uppercase;}
+.entry-body{padding:1.5rem 1.75rem 1.75rem;}
+.entry h2{font-family:var(--display);font-size:26px;font-weight:700;letter-spacing:0.03em;text-transform:uppercase;color:var(--white);line-height:1.1;margin-bottom:.75rem;}
+.entry h2 .codename{color:var(--red-bright);}
+.entry .subhead{font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;border-left:2px solid var(--border);padding-left:.85rem;}
+.entry p{font-size:14.5px;color:var(--pale);line-height:1.85;margin-bottom:1rem;}
+.entry p:last-child{margin-bottom:0;}
+.entry .lede::first-letter{font-family:var(--display);font-size:3.2rem;font-weight:700;float:left;line-height:.85;margin:4px 10px 0 0;color:var(--white);}
+
+/* Milestone: with optional hero image */
+.entry[data-type="milestone"] .entry-hero{position:relative;width:100%;max-height:320px;overflow:hidden;border-bottom:1px solid var(--border);}
+.entry[data-type="milestone"] .entry-hero img{display:block;width:100%;height:320px;object-fit:cover;filter:grayscale(.7) contrast(1.05) brightness(.75);transition:filter .4s;}
+.entry[data-type="milestone"]:hover .entry-hero img{filter:grayscale(.4) contrast(1.1) brightness(.85);}
+.entry[data-type="milestone"] .entry-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom, transparent 40%, rgba(17,17,17,.75) 100%);pointer-events:none;}
+.entry[data-type="milestone"] .entry-hero .hero-cap{position:absolute;left:1rem;bottom:.75rem;font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;color:rgba(220,220,220,0.7);text-transform:uppercase;z-index:2;}
+.entry[data-type="milestone"]{border-color:rgba(138,42,42,0.4);}
+.entry[data-type="milestone"]:hover{border-color:var(--red);}
+
+/* Incident: typewriter field report */
+.entry[data-type="incident"]{background:
+    repeating-linear-gradient(0deg, transparent 0, transparent 24px, rgba(255,255,255,0.015) 24px, rgba(255,255,255,0.015) 25px),
+    var(--deep);
+  border-color:rgba(154,122,42,0.35);
+}
+.entry[data-type="incident"]:hover{border-color:var(--amber);}
+.entry[data-type="incident"] .entry-body{font-family:var(--typewriter);}
+.entry[data-type="incident"] h2{font-family:var(--display);}
+.entry[data-type="incident"] p{font-family:var(--typewriter);font-size:13.5px;color:#b8b8b0;line-height:2;}
+.entry[data-type="incident"] .field-line{display:grid;grid-template-columns:auto 1fr;gap:.75rem 1.5rem;font-family:var(--mono);font-size:10px;letter-spacing:0.1em;margin-bottom:1.25rem;padding:.85rem 1rem;background:rgba(0,0,0,0.25);border:1px solid var(--border);}
+.entry[data-type="incident"] .field-line dt{color:var(--muted);text-transform:uppercase;letter-spacing:0.2em;font-size:9px;padding-top:2px;}
+.entry[data-type="incident"] .field-line dd{color:var(--pale);font-family:var(--typewriter);font-size:12px;}
+.entry[data-type="incident"] .redact{display:inline-block;background:var(--black);color:transparent;padding:0 .4em;margin:0 .1em;border-radius:1px;user-select:none;letter-spacing:0;}
+
+/* Document: classified file */
+.entry[data-type="document"]{background:
+    linear-gradient(135deg, rgba(42,74,122,0.04) 0%, transparent 50%),
+    var(--deep);
+  border-color:rgba(42,74,122,0.4);
+}
+.entry[data-type="document"]:hover{border-color:var(--blue);}
+.entry[data-type="document"] .doc-stamp{position:absolute;top:1.25rem;right:1.25rem;font-family:var(--mono);font-size:9px;letter-spacing:0.25em;color:var(--red);border:2px solid var(--red);padding:6px 12px;transform:rotate(6deg);opacity:.75;text-transform:uppercase;pointer-events:none;background:rgba(10,10,10,0.6);}
+.entry[data-type="document"] .doc-header{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem 2rem;padding:1rem 1.5rem;background:rgba(0,0,0,0.3);border-bottom:1px solid var(--border);margin:-1.5rem -1.75rem 1.5rem;}
+.entry[data-type="document"] .doc-header .f{font-family:var(--mono);font-size:9px;letter-spacing:0.15em;}
+.entry[data-type="document"] .doc-header .f .k{color:var(--muted);text-transform:uppercase;display:block;font-size:8.5px;letter-spacing:0.22em;margin-bottom:.2rem;}
+.entry[data-type="document"] .doc-header .f .v{color:var(--pale);font-family:var(--typewriter);font-size:11.5px;letter-spacing:0.05em;}
+.entry[data-type="document"] blockquote{border-left:3px solid var(--blue);padding:.5rem 0 .5rem 1.25rem;margin:1rem 0;font-family:var(--typewriter);font-size:13.5px;color:#c0c8d4;line-height:1.95;}
+
+/* Dispatch: news feed style */
+.entry[data-type="dispatch"]{background:var(--deep);}
+.entry[data-type="dispatch"] .entry-body{padding:1.25rem 1.5rem 1.4rem;}
+.entry[data-type="dispatch"] h2{font-size:20px;margin-bottom:.5rem;}
+.entry[data-type="dispatch"] p{font-size:13.5px;color:var(--light);}
+.entry[data-type="dispatch"] .veil{display:inline-block;font-family:var(--mono);font-size:8px;letter-spacing:0.25em;text-transform:uppercase;padding:2px 8px;border:1px solid;margin-top:.5rem;}
+.entry[data-type="dispatch"] .veil.above{border-color:var(--blue);color:var(--blue-bright);}
+.entry[data-type="dispatch"] .veil.below{border-color:var(--green);color:var(--green-bright);}
+.entry[data-type="dispatch"] .veil.both{border-color:var(--amber);color:var(--amber-bright);}
+
+/* Tags */
+.entry-tags{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:1.25rem;padding-top:1rem;border-top:1px dashed var(--border);}
+.entry-tag{font-family:var(--mono);font-size:8px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);padding:2px 8px;border:1px solid var(--border);}
+
+/* Byline */
+.entry-foot{margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:var(--mono);font-size:8.5px;letter-spacing:0.18em;text-transform:uppercase;color:var(--border);flex-wrap:wrap;gap:.5rem;}
+.entry-foot .auth{color:var(--muted);}
+
+/* Legend key */
+.legend{margin-top:4rem;padding-top:2rem;border-top:1px solid var(--border);display:flex;gap:1.5rem;flex-wrap:wrap;align-items:center;}
+.legend-title{font-family:var(--mono);font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);}
+.legend-item{display:flex;align-items:center;gap:.5rem;font-family:var(--mono);font-size:9px;letter-spacing:0.15em;color:var(--light);text-transform:uppercase;}
+.legend-dot{width:10px;height:10px;transform:rotate(45deg);flex-shrink:0;}
+
+/* Empty state */
+.no-data{border:1px dashed var(--border);padding:5rem 2rem;text-align:center;margin:2rem 0;}
+.no-data .l{font-family:var(--mono);font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:var(--border);margin-bottom:.75rem;}
+.no-data .s{font-size:13px;color:var(--muted);max-width:420px;margin:0 auto;}
+
+footer{border-top:1px solid var(--border);padding:2rem 3rem;display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:9.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--border);}
+
+@media(max-width:860px){
+  .cover-grid{grid-template-columns:1fr;}
+  .cover-right{flex-direction:row-reverse;align-items:center;}
+  .cover-seal{width:120px;height:120px;}
+}
+@media(max-width:640px){
+  nav{padding:0 1rem;}
+  .cover{padding:3rem 1.25rem 2.5rem;}
+  .wrap{padding:2.5rem 1rem 4rem;}
+  .timeline{padding-left:2rem;}
+  .timeline::before{left:6px;}
+  .year-marker::before{left:-2rem;}
+  .year-marker::after{left:-1.5rem;}
+  .tl-entry::before{left:-1.85rem;}
+  .tl-entry::after{left:-1.2rem;}
+  .entry-body{padding:1.25rem;}
+  .entry[data-type="document"] .doc-header{grid-template-columns:1fr;gap:.5rem;margin:-1.25rem -1.25rem 1.25rem;}
+  .entry[data-type="document"] .doc-stamp{font-size:8px;padding:4px 8px;}
+  footer{flex-direction:column;gap:.5rem;text-align:center;}
+}
 </style>
 </head>
 <body>
+
 <nav>
-  <a href="index.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
-    <img src="img/Base.png" alt="" style="width:30px;height:30px;object-fit:contain;mix-blend-mode:screen;flex-shrink:0;">
-    <div>
-      <span style="font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:0.3em;color:var(--white);text-transform:uppercase;display:block;line-height:1.1;">THREEFOLD</span>
-      <span style="font-family:var(--mono);font-size:9px;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;display:block;">SCP Foundation RP</span>
-    </div>
+  <a href="index.html" class="logo">
+    <img src="img/Base.png" alt="">
+    <div><span class="n">THREEFOLD</span><span class="s">SCP Foundation RP</span></div>
   </a>
-  <ul style="display:flex;gap:0;list-style:none;align-items:center;flex-wrap:wrap;">
-    <li><a href="index.html" style="font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--light);text-decoration:none;padding:8px 14px;display:block;transition:color .2s;">Home</a></li>
-    <li><a href="departments.html" style="font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--light);text-decoration:none;padding:8px 14px;display:block;transition:color .2s;">Departments</a></li>
-    <li><a href="worldstate.html" style="font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--light);text-decoration:none;padding:8px 14px;display:block;transition:color .2s;">World State</a></li>
-    <li><a href="lore.html" style="font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--light);text-decoration:none;padding:8px 14px;display:block;transition:color .2s;">Lore</a></li>
-    <li><a href="worldmap.html" style="font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--light);text-decoration:none;padding:8px 14px;display:block;transition:color .2s;">World Map</a></li>
-    <li><a href="submission.html" style="font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--light);text-decoration:none;padding:8px 14px;display:block;transition:color .2s;">Submission</a></li>
-    <li><a href="staff.html" target="_blank" style="font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:8px 14px;display:block;transition:color .2s;">Staff Login</a></li>
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="departments.html">Departments</a></li>
+    <li><a href="worldstate.html">World State</a></li>
+    <li><a href="lore.html">Lore</a></li>
+    <li><a href="worldmap.html">World Map</a></li>
+    <li><a href="submission.html">Submission</a></li>
+    <li><a href="database.html">Database</a></li>
+    <li><a href="staff.html" target="_blank">Staff Login</a></li>
   </ul>
 </nav>
 
 <div class="page-pad">
-  <div class="ph">
-    <div class="ph-bgword">LORE</div>
-    <div class="ph-tag">Server Canon &mdash; Timeline &amp; Documents</div>
-    <h1>Server<br>Lore</h1>
-    <p class="ph-desc">The canonical history of Threefold — major events, incident reports, and in-world documents. Maintained by the Lore Team.</p>
-  </div>
+
+  <!-- ============================
+       COVER SHEET
+  ============================ -->
+  <section class="cover">
+    <div class="cover-grid">
+      <div class="cover-left">
+        <div class="cover-tag">Server Canon, Consolidated Dossier</div>
+        <h1>The <em>Long</em><br>Silence</h1>
+        <p style="max-width:520px;color:var(--light);font-size:15.5px;line-height:1.75;">
+          A single, chronological record of the Threefold timeline: the Eighth Occult War, the
+          HMFSCP schism, the breaking of the Veil over the British Isles, and the quiet war that
+          continues underneath it. Events, incidents, and documents compiled by the Lore Team.
+        </p>
+        <div class="cover-meta">
+          <div class="cover-meta-item"><div class="k">Period Covered</div><div class="v">2014 to present</div></div>
+          <div class="cover-meta-item"><div class="k">Current Tensions</div><div class="v">Level 3, Volatile</div></div>
+          <div class="cover-meta-item"><div class="k">Last Revision</div><div class="v" id="last-rev">...</div></div>
+        </div>
+      </div>
+
+      <div class="cover-right">
+        <div class="cover-seal">
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <path id="sealArcTop" d="M 20,100 A 80,80 0 0 1 180,100" fill="none"/>
+              <path id="sealArcBot" d="M 20,100 A 80,80 0 0 0 180,100" fill="none"/>
+            </defs>
+            <g class="ring">
+              <circle cx="100" cy="100" r="88" fill="none" stroke="#3a3a3a" stroke-width="1"/>
+              <circle cx="100" cy="100" r="78" fill="none" stroke="#666" stroke-width="0.5" stroke-dasharray="2,4"/>
+              <text font-family="Share Tech Mono, monospace" font-size="9" fill="#999" letter-spacing="3">
+                <textPath href="#sealArcTop" startOffset="50%" text-anchor="middle">THREEFOLD &bull; LORE ARCHIVE</textPath>
+              </text>
+              <text font-family="Share Tech Mono, monospace" font-size="8" fill="#666" letter-spacing="2.5">
+                <textPath href="#sealArcBot" startOffset="50%" text-anchor="middle">SECURE &bull; CONTAIN &bull; PROTECT</textPath>
+              </text>
+            </g>
+            <g transform="translate(100,100)">
+              <polygon points="0,-42 36,-14 24,32 -24,32 -36,-14" fill="none" stroke="#ccc" stroke-width="1.5"/>
+              <polygon points="0,-28 24,-10 16,22 -16,22 -24,-10" fill="none" stroke="#ccc" stroke-width="1" opacity=".6"/>
+              <circle r="6" fill="#8a2a2a"/>
+              <circle r="12" fill="none" stroke="#8a2a2a" stroke-width=".5"/>
+              <line x1="-50" y1="0" x2="-44" y2="0" stroke="#ccc" stroke-width="1"/>
+              <line x1="50" y1="0" x2="44" y2="0" stroke="#ccc" stroke-width="1"/>
+              <line x1="0" y1="-50" x2="0" y2="-46" stroke="#ccc" stroke-width="1"/>
+              <line x1="0" y1="46" x2="0" y2="50" stroke="#ccc" stroke-width="1"/>
+            </g>
+          </svg>
+        </div>
+        <div class="cover-fileno">
+          Dossier<strong>TF / LORE / 001</strong>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <div class="wrap">
-    <div class="cat-tabs">
-      <button class="cat-btn active" onclick="switchCat('events',this)">Major Events</button>
-      <button class="cat-btn" onclick="switchCat('incidents',this)">Incident Reports</button>
-      <button class="cat-btn" onclick="switchCat('documents',this)">Canon Documents</button>
+
+    <!-- CONTROLS -->
+    <div class="controls">
+      <span class="controls-label">Filter by Type</span>
+      <button class="filter-btn active" data-filter="all" onclick="setFilter('all',this)">All <span class="count" id="cnt-all">0</span></button>
+      <button class="filter-btn" data-filter="milestone" onclick="setFilter('milestone',this)">Milestones <span class="count" id="cnt-milestone">0</span></button>
+      <button class="filter-btn" data-filter="incident" onclick="setFilter('incident',this)">Incidents <span class="count" id="cnt-incident">0</span></button>
+      <button class="filter-btn" data-filter="document" onclick="setFilter('document',this)">Documents <span class="count" id="cnt-document">0</span></button>
+      <button class="filter-btn" data-filter="dispatch" onclick="setFilter('dispatch',this)">Dispatches <span class="count" id="cnt-dispatch">0</span></button>
+      <div class="controls-spacer"></div>
+      <span class="entry-total"><strong id="entry-total-num">0</strong> Records</span>
     </div>
 
-    <!-- MAJOR EVENTS -->
-    <div class="cat-panel active" id="cat-events">
-      <div class="timeline" id="timeline-events">
-        <div class="no-data">
-          <div class="no-data-label">No Entries Yet</div>
-          <div class="no-data-sub">Major events are added by the Lore Team via the Staff Panel and will appear here in chronological order.</div>
-        </div>
-      </div>
-    </div>
+    <!-- TIMELINE -->
+    <div class="timeline" id="timeline"></div>
 
-    <!-- INCIDENT REPORTS -->
-    <div class="cat-panel" id="cat-incidents">
-      <div class="timeline" id="timeline-incidents">
-        <div class="no-data">
-          <div class="no-data-label">No Reports Filed</div>
-          <div class="no-data-sub">Incident reports are filed by staff following significant RP events and will appear here once approved.</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CANON DOCUMENTS -->
-    <div class="cat-panel" id="cat-documents">
-      <div class="doc-list" id="doc-list">
-        <div class="no-data">
-          <div class="no-data-label">No Documents</div>
-          <div class="no-data-sub">In-world documents, memos, and canon files are published here by the Lore Team.</div>
-        </div>
-      </div>
+    <!-- LEGEND -->
+    <div class="legend">
+      <span class="legend-title">Legend</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#bb3a3a;border:1px solid #bb3a3a;"></span>Milestone</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#d4a52c;border:1px solid #d4a52c;"></span>Incident Report</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#3a6aaa;border:1px solid #3a6aaa;"></span>Canon Document</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#1a1a1a;border:1px solid #999;"></span>Field Dispatch</span>
     </div>
   </div>
 
-  <footer><span>THREEFOLD &mdash; Server Lore</span><span>Maintained by Lore Team</span></footer>
+  <footer>
+    <span>THREEFOLD / Server Lore</span>
+    <span>Maintained by the Lore Team</span>
+  </footer>
 </div>
 
 <script>
 /*
-  SUPABASE TABLE NEEDED — run in SQL Editor:
+  SUPABASE TABLE (unchanged from previous lore.html, existing entries continue to work):
 
   CREATE TABLE lore_entries (
     id          UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -163,62 +357,372 @@ footer{border-top:1px solid var(--dark);padding:2rem 3rem;display:flex;justify-c
     created_at  TIMESTAMPTZ DEFAULT now()
   );
 
-  ALTER TABLE lore_entries ENABLE ROW LEVEL SECURITY;
-  CREATE POLICY "Anyone can read published lore" ON lore_entries FOR SELECT USING (status = 'published');
-  CREATE POLICY "Staff can manage lore" ON lore_entries FOR ALL USING (auth.role() = 'authenticated');
+  CATEGORY MAPPING (DB → visual type in this page):
+    events     → milestone
+    incidents  → incident
+    documents  → document
+  New "dispatch" type is reserved. To use it, extend the CHECK constraint
+  to include 'dispatches' and map it here.
 */
 
-function switchCat(cat, btn) {
-  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.cat-panel').forEach(p => p.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  document.getElementById('cat-' + cat).classList.add('active');
+const CAT_TO_TYPE = { events:'milestone', incidents:'incident', documents:'document', dispatches:'dispatch' };
+const TYPE_LABEL = {
+  milestone:'Milestone', incident:'Incident Report',
+  document:'Canon Document', dispatch:'Field Dispatch'
+};
+
+let _allEntries = [];
+let _currentFilter = 'all';
+
+/* ============================
+   SEED DATA: demo content
+   Shown ONLY when the DB returns no published entries.
+   This lets the page look correct out of the box; once staff
+   publish real entries, these disappear automatically.
+============================ */
+const SEED = [
+  {
+    type:'milestone', year:2014, date_label:'February 2014',
+    title:'The Crimean Spark',
+    subhead:'Annexation of Crimea &bull; GRU-P resurfaces after two decades dormant',
+    hero:'https://images.unsplash.com/photo-1519892300165-cb5542fb47c7?auto=format&fit=crop&w=1400&q=70',
+    hero_caption:'Cover story: civil unrest. Reality: the Directorate is awake.',
+    body:`Russia&rsquo;s annexation of Crimea provided political cover for the reactivation of GRU-P (the Main Directorate&rsquo;s Paranormal Section) after nearly twenty years of effective dormancy. Within weeks, intelligence assessments from both SCPF and GOC analytical divisions concluded that GRU-P was not merely reconstituting but pre-positioning. The question was never <em>whether</em> they intended to act, only <em>when</em>.<br><br>Foundation Overseer-04 authored an early position paper recommending immediate pre-emption. The Council voted to wait. That decision shaped the next twelve years.`,
+    tags:['GRU-P','O5 Council','Crimea'],
+    author:'Analytical Division, Eastern Theatre'
+  },
+  {
+    type:'milestone', year:2014, date_label:'April 2014',
+    title:'Operation <span class="codename">FULCRUM</span>',
+    subhead:'Joint SCPF-GOC working group established under Pact of Zurich, Article 72',
+    hero:'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1400&q=70',
+    hero_caption:'The conference room where trust was built, then buried.',
+    body:`FULCRUM was the first formal joint-command mechanism between the Foundation and the GOC since 1998. Four GOC Assessors, four members of the O4 Council, one UIU liaison. Operational command rotated monthly. The working group&rsquo;s mandate: strangle GRU-P before it could operationalize.<br><br>For eighteen months, it worked. By late 2015, GRU-P&rsquo;s operational capacity was assessed at 30% of its 2013 level. Senior analysts on both sides began quietly speaking of the Directorate in the past tense.<br><br>They were wrong.`,
+    tags:['FULCRUM','GOC','Pact of Zurich']
+  },
+  {
+    type:'incident', year:2016, date_label:'17 March 2016 &bull; 04:12 local',
+    title:'The Cistern',
+    subhead:'Saratov, Russia. Joint strike against presumed GRU-P facility.',
+    fields:[
+      ['Operation','CISTERN, FULCRUM-coordinated'],
+      ['Unit','MTF Xi-13 under GOC command'],
+      ['Target','Presumed GRU-P bioresearch facility'],
+      ['Actual','GOC Forward Site Teleios'],
+      ['Casualties','347 GOC personnel KIA'],
+      ['Attribution','UNRESOLVED. Forged intelligence.']
+    ],
+    body:`At approximately <strong>04:12 local time</strong>, Xi-13 elements engaged what they believed to be GRU-P perimeter defences at an abandoned reservoir complex outside Saratov. Forty-seven minutes into the engagement, revised intelligence reached the Foundation strike coordinator. The facility was not GRU-P. It was <span class="redact">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>, a GOC containment site holding a Class-4 reality-corrupting entity. The "GRU-P defences" were GOC garrison troops.<br><br>By the time orders were reversed, three hundred and forty-seven Global Occult Coalition personnel were dead. Every member of the containment team. All three Assessors overseeing from the ground.<br><br>The revised intelligence was forged. The forgery passed <span class="redact">&nbsp;&nbsp;&nbsp;&nbsp;</span> independent RAISA verification protocols. No attribution has ever been established. The working group dissolved within seventy-two hours.`,
+    tags:['Cistern','FULCRUM Collapse','The Third'],
+    author:'Filed: RAISA Central, post-action reconstruction'
+  },
+  {
+    type:'milestone', year:2019, date_label:'December 2019',
+    title:'The Wuhan Release',
+    subhead:'GRU-P bioweapons division &bull; Project TAIGA &bull; Article K',
+    hero:'https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?auto=format&fit=crop&w=1400&q=70',
+    hero_caption:'The release point. Mundane cover: zoonotic transmission.',
+    body:`Under cover of the December 2019 Hong Kong crisis, a GRU-P field team conducted the first live-population deployment of <strong>Article K</strong> at a wet market in Wuhan. The weapon was engineered as a strategic depopulation device: a respiratory pathogen with an anomalous payload designed to collapse central nervous system function within forty-eight hours, reversible only by a GRU-P-held antiviral.<br><br>The anomalous payload failed. Genomics division at Site-17 determined, weeks later, that Article K had been modelled against an insufficiently diverse captive test cohort; on contact with the genetic variability of an actual population, the anomalous component lost structural coherence by the third generation of cellular replication.<br><br>What remained was the carrier virus. <strong>The world knows it as COVID-19.</strong><br><br>Approximately seven million people are dead. Had Article K propagated as designed, genomics estimates the toll would have exceeded two billion inside eighteen months. This information is held above SL-3. Most Foundation personnel do not know it. No GOC personnel knew it until January 2025.`,
+    tags:['GRU-P','COVID-19','Article K','Above SL-3']
+  },
+  {
+    type:'document', year:2020, date_label:'06 January 2020',
+    title:'Procedure ICEBREAKER',
+    doc_header:[
+      ['Document','O5-06-JAN-2020'],
+      ['Classification','Level 5 / Cosmic'],
+      ['Authorization','Overseer Council, unanimous']
+    ],
+    body:`<blockquote>&ldquo;The Council has weighed, and rejected, all active response options. The pathogen is loose at a scale beyond containment by any agency capable of maintaining the Veil. Active intervention would expose the anomalous origin of the outbreak to every public health authority on Earth.<br><br>The Council authorizes Procedure ICEBREAKER: sustained non-intervention. The mundane response will be permitted to proceed. The Foundation will support that response covertly, through existing assets embedded at <span class="redact">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>, <span class="redact">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>, and within the <span class="redact">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>.<br><br>The anomalous nature of the initial pathogen will not, under any circumstance, be disclosed to the World Health Organization, to national health authorities, or to the Global Occult Coalition. This restriction is not time-limited.<br><br>The Veil holds. At this cost.&rdquo;</blockquote><p style="font-family:var(--typewriter);font-size:12px;color:var(--muted);margin-top:1rem;">Overseer Council minute, extract. Full document held by RAISA.</p>`,
+    tags:['ICEBREAKER','Veil Maintenance','O5 Council']
+  },
+  {
+    type:'milestone', year:2021, date_label:'15 January 2021',
+    title:'The Windsor Accord',
+    subhead:'UK Regional Command signs private accord with the Crown',
+    body:`Dr. Edmund Wakefield-Crane, Regional Director of the UK branch, signed a private agreement with representatives of the British government formalising the UK branch&rsquo;s operational independence from Overseer authority. Under the Accord, the UK branch was to be renamed <strong>Her Majesty&rsquo;s Foundation for the Secure Containment of the Paranormal</strong> and placed under direct Crown oversight.<br><br>The Council rejected the Accord. Wakefield-Crane did not acknowledge the rejection. Internal investigation later concluded that at least 64% of UK branch personnel knew of the schism in advance and declined to notify central command. The UK branch was, effectively, already gone.`,
+    tags:['HMFSCP Schism','Wakefield-Crane','UK Branch']
+  },
+  {
+    type:'incident', year:2021, date_label:'February 2021',
+    title:'Operation EMBER',
+    subhead:'O5-authorized counter-action to arrest Wakefield-Crane and dissolve HMSCP',
+    fields:[
+      ['Operation','EMBER, extraction / arrest'],
+      ['Target','Dr. E. Wakefield-Crane &amp; senior HMSCP leadership'],
+      ['Outcome','FAILURE, total'],
+      ['Personnel Recovered','0 of 14 deployed'],
+      ['Notes','UK branch cooperation with Foundation ends']
+    ],
+    body:`EMBER was an attempt to reassert central authority over the UK branch through direct action. The operation was compromised before the first team arrived in country. Every deployed asset was intercepted on arrival. No violence was reported. No personnel were harmed. The message was clear.<br><br>A week after the operation&rsquo;s collapse, Wakefield-Crane sent a private communication to the Overseer Council, content redacted in all currently-circulating versions. The sole recorded response, from Overseer-04: <em>&ldquo;Understood.&rdquo;</em><br><br>No further direct action was authorised against HMSCP.`,
+    tags:['EMBER','Operational Failure','HMFSCP']
+  },
+  {
+    type:'milestone', year:2021, date_label:'19 September 2021',
+    title:'The Breaking of the Veil',
+    subhead:'King&rsquo;s Address &bull; 07:00 GMT &bull; BBC Radio 4',
+    hero:'https://images.unsplash.com/photo-1529655683826-aba9b3e77383?auto=format&fit=crop&w=1400&q=70',
+    hero_caption:'07:04 GMT. The first disclosure package reaches the newsroom.',
+    body:`At 07:00 GMT, the BBC broadcast a pre-recorded address from King Charles III, confirmed shortly thereafter by the Taoiseach of Ireland and the Chief Minister of the Isle of Man. &ldquo;Phenomena which science has not yet been able to explain,&rdquo; the King said, &ldquo;exist, have long been under state management, and will now be acknowledged.&rdquo; The address ran four minutes, seventeen seconds.<br><br>At 07:04, HMSCP released a prepared information package to every major UK news outlet: verified footage of three low-Euclid anomalies under containment, redacted classifications for twelve entities, and the articulation of what would become known as the <strong>Acclimatization Doctrine</strong>.<br><br>Inside HMSCP, this was disclosure. Inside the Foundation, it was the <em>Wakefield Catastrophe</em>.<br><br>By 13:00 GMT the naval cordon was forming. By midnight, MTF Theta-5 held a complete ring. The GOC contributed a full fleet element without signing anything. No diplomatic communication was exchanged.`,
+    tags:['Disclosure','Theta-5','Acclimatization Doctrine','MAJOR']
+  },
+  {
+    type:'dispatch', year:2021, date_label:'20 September 2021',
+    title:'Hinkley Point C: Cascading Failure Confirmed',
+    veil:'above',
+    body:`UK authorities have confirmed a cascading containment failure at the Hinkley Point C nuclear facility. Regional readings indicate significant radiological contamination across southwestern England. A fifty-kilometre exclusion zone has been established. The UN Containment Authority has been briefed and is coordinating international support. Residents within the affected region are advised to shelter in place pending evacuation protocols.`,
+    tags:['Cover Story','UN','Hinkley']
+  },
+  {
+    type:'milestone', year:2022, date_label:'08 September 2022',
+    title:'The Passing of the Queen',
+    subhead:'Elizabeth II dies at Balmoral, inside the cordon. State funeral held under quarantine.',
+    hero:'https://images.unsplash.com/photo-1529655683826-aba9b3e77383?auto=format&fit=crop&w=1400&q=70',
+    hero_caption:'Balmoral, Scottish Highlands. A private death, a state problem.',
+    body:`Queen Elizabeth II died at Balmoral Castle at 15:10 BST, less than a year after she had, in the person of her son, broken the Veil over her own nation. The succession was immediate and uncontested. King Charles III, who had read the disclosure address on 19 September 2021, ascended to a throne whose constitutional relationship to HMFSCP was now the most carefully-guarded secret in Europe.<br><br>The state funeral became a diplomatic crisis unlike any in the Foundation&rsquo;s operational history. Sixty-four heads of state had formally requested attendance. None could be permitted inside the cordon without catastrophic exposure. MTF Gamma-5 and HMFSCP&rsquo;s own communications directorate ran, for eleven days, what is internally referred to as the <em>largest coordinated disinformation operation of the modern era</em>: a full simulation of Westminster Abbey&rsquo;s interior, carefully-staged broadcast footage, and a parallel ceremonial track held at Windsor attended only by those already inside.<br><br>The world saw a funeral. The world mourned. The world did not know that every foreign dignitary in the broadcast was either a long-duration HMFSCP asset, a body double, or composited in post. Gamma-5 classifies the operation as a complete success. Elizabeth II is, by all accounts, actually buried at St George&rsquo;s Chapel. The rest is open to interpretation.<br><br>For HMFSCP, the succession consolidated the Crown&rsquo;s authority over the organization in a way the Windsor Accord alone had not. For Charles, who had been the public face of disclosure, it meant the institution his mother had guided through seventy years of mundane statecraft now answered to him, on terms the rest of the world could not be permitted to know.`,
+    tags:['HMFSCP','Queen Elizabeth II','Charles III','Gamma-5','MAJOR']
+  },
+  {
+    type:'incident', year:2023, date_label:'14 January 2023',
+    title:'The Roscoff Incident',
+    subhead:'PARAWATCH cell successfully breaches the cordon. Brittany to Plymouth.',
+    fields:[
+      ['Subject','PARAWATCH Cell Baker-3'],
+      ['Method','Modified fishing vessel, anomalous-safe recording equipment'],
+      ['Cordon Duration','11 days inside, partial return'],
+      ['Recovered','2 of 3 operatives (routine interdiction, GOC)'],
+      ['Missing','1 operative, &Eacute;lise Nocart'],
+      ['Material Recovered','None. ~40 hours of footage unaccounted for.']
+    ],
+    body:`Baker-3 proved that the cordon can be crossed with sufficient preparation, knowledge of MTF Theta-5 patrol patterns, and local maritime expertise. They spent eleven days inside the Isles, moving through Plymouth, Bristol, and, per post-incident reconstruction, <span class="redact">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>.<br><br>Two operatives were recovered without incident on the return crossing. &Eacute;lise Nocart was not with them. The footage has not surfaced. Gamma-5 assesses it is held by senior PARAWATCH command as leverage, to be released in the event of <span class="redact">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>.<br><br>The Foundation&rsquo;s working assumption is that the footage exists, is genuine, and will eventually be released.`,
+    tags:['PARAWATCH','Roscoff','Gamma-5'],
+    author:'Filed: MTF Gamma-5, Cpt. T. Osei'
+  },
+  {
+    type:'milestone', year:2024, date_label:'Q4 2024',
+    title:'Piraeus / Novi Sad / Kotor',
+    subhead:'First SCPF-GOC joint operational cooperation since Cistern',
+    body:`Three simultaneous Chaos Insurgency extraction attempts, at Piraeus, Novi Sad, and Kotor, were intercepted across a forty-eight hour window. Two by the Foundation, one by the GOC. In each case, the intercepting organization voluntarily shared its operational intelligence with the other. No treaty governed this. No working group authorised it. Field officers made the call, and nobody above them reversed it.<br><br>Within internal Foundation communications, this is referred to as <em>the first thaw</em>. It is, measured against the eight years preceding it, remarkable.`,
+    tags:['Chaos Insurgency','SCPF-GOC Cooperation','Reykjavík prelude']
+  },
+  {
+    type:'document', year:2025, date_label:'22 January 2025',
+    title:'The Strain-K Disclosure',
+    doc_header:[
+      ['From','Overseer Council'],
+      ['To','GOC Permanent Council'],
+      ['Classification','Joint, Level 5']
+    ],
+    body:`<blockquote>&ldquo;Enclosed is the complete record of Project TAIGA&rsquo;s Article K deployment, the subsequent failure cascade, and the Foundation&rsquo;s assessment of the pandemic&rsquo;s true origin. The Council has withheld this material from joint channels for five years. No defence of that decision is offered.<br><br>The Council offers, for the Permanent Council&rsquo;s consideration, a single observation. The failure mode of Article K, collapse at the third generation of cellular replication, is not consistent with modelling error. It is consistent with deliberate sabotage by an actor with access to GRU-P&rsquo;s final staging process.<br><br>If this hypothesis is correct, that actor spared approximately two billion lives. The Council does not know who they are. The Council does not know what they want.<br><br>We believe you will recognise the pattern.&rdquo;</blockquote><p style="font-family:var(--typewriter);font-size:12px;color:var(--muted);margin-top:1rem;">Cover letter, Strain-K file transmission. Fourteen months of joint reconciliation followed.</p>`,
+    tags:['Strain-K','COVID-19','The Third','Joint Disclosure']
+  },
+  {
+    type:'milestone', year:2026, date_label:'February 2026',
+    title:'The Reykjavík Accords',
+    subhead:'First open tripartite session. SCPF, GOC, HMFSCP.',
+    hero:'https://images.unsplash.com/photo-1531168556467-80aace0d0144?auto=format&fit=crop&w=1400&q=70',
+    hero_caption:'Reykjavík. The first table with three chairs.',
+    body:`For the first time since 2016, delegations from the Foundation and the GOC sat at the same table without Veil cover. For the first time ever, Director-General Aoife Roche sat with them. The Accords did not end the Eighth Occult War. They did not reopen the British Isles. They did not resolve the Strain-K file.<br><br>They established that the three organizations would coordinate on existential-level threats. The first threat they formally agreed to coordinate on was the Third.<br><br>Nobody signed anything. The Accords exist as parallel internal memoranda in all three organizations, each phrased slightly differently, each binding in precisely the ways their authors intended them to bind.<br><br>It is, measurably, the closest thing to peace the Eighth Occult War has produced.`,
+    tags:['Reykjavík','HMFSCP','The Third','Current State']
+  },
+  {
+    type:'dispatch', year:2026, date_label:'Current, Apr 2026',
+    title:'Unattributed Intrusion at Area-314',
+    veil:'below',
+    body:`At 02:41 local time, perimeter sensors registered an unauthorized physical intrusion. No personnel were harmed. No containment breaches were reported. A single item was removed from Archive-Delta: a sealed folder of 2014-2016 FULCRUM operational correspondence, previously declassified to internal use only. No suspect has been identified. RAISA has initiated a Level-2 review. Classified post-incident assessment: <em>first confirmed physical intrusion attributable to the Third.</em>`,
+    tags:['The Third','Area-314','Active Threat']
+  }
+];
+
+/* ============================
+   RENDERERS
+============================ */
+function renderEntry(e){
+  const type = e.type || CAT_TO_TYPE[e.category] || 'milestone';
+  const title = e.title || 'Untitled';
+  const date  = e.date_label || '';
+  const body  = e.body || '';
+  const sub   = e.subhead || '';
+  const tags  = e.tags || (e.tag ? [e.tag] : []);
+  const author = e.author || '';
+
+  let inner = '';
+
+  if (type === 'milestone') {
+    const hero = e.hero ? `<div class="entry-hero">
+      <img src="${e.hero}" alt="" loading="lazy" onerror="this.parentElement.style.display='none'">
+      ${e.hero_caption ? `<div class="hero-cap">${e.hero_caption}</div>` : ''}
+    </div>` : '';
+    inner = `
+      <div class="entry-head">
+        <span class="entry-type">${TYPE_LABEL[type]}</span>
+        <span class="entry-date">${date}</span>
+      </div>
+      ${hero}
+      <div class="entry-body">
+        <h2>${title}</h2>
+        ${sub ? `<div class="subhead">${sub}</div>` : ''}
+        <div class="lede">${body}</div>
+        ${renderTags(tags)}
+        ${author ? `<div class="entry-foot"><span class="auth">// ${author}</span></div>` : ''}
+      </div>`;
+  }
+  else if (type === 'incident') {
+    const fields = e.fields && e.fields.length
+      ? `<dl class="field-line">${e.fields.map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl>`
+      : '';
+    inner = `
+      <div class="entry-head">
+        <span class="entry-type">${TYPE_LABEL[type]}</span>
+        <span class="entry-date">${date}</span>
+      </div>
+      <div class="entry-body">
+        <h2>${title}</h2>
+        ${sub ? `<div class="subhead">${sub}</div>` : ''}
+        ${fields}
+        <div>${body}</div>
+        ${renderTags(tags)}
+        ${author ? `<div class="entry-foot"><span class="auth">${author}</span></div>` : ''}
+      </div>`;
+  }
+  else if (type === 'document') {
+    const hdr = e.doc_header && e.doc_header.length
+      ? `<div class="doc-header">${e.doc_header.map(([k,v])=>`<div class="f"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('')}</div>`
+      : '';
+    inner = `
+      <div class="entry-head">
+        <span class="entry-type">${TYPE_LABEL[type]}</span>
+        <span class="entry-date">${date}</span>
+      </div>
+      <div class="entry-body" style="position:relative;">
+        <span class="doc-stamp">Classified</span>
+        ${hdr}
+        <h2>${title}</h2>
+        ${sub ? `<div class="subhead">${sub}</div>` : ''}
+        <div>${body}</div>
+        ${renderTags(tags)}
+      </div>`;
+  }
+  else { // dispatch
+    const veilCls = e.veil || 'both';
+    const veilLabel = {above:'Above the Veil', below:'Below the Veil', both:'Both Veils'}[veilCls]||'';
+    inner = `
+      <div class="entry-head">
+        <span class="entry-type">${TYPE_LABEL[type]}</span>
+        <span class="entry-date">${date}</span>
+      </div>
+      <div class="entry-body">
+        <h2>${title}</h2>
+        <div>${body}</div>
+        <span class="veil ${veilCls}">${veilLabel}</span>
+        ${renderTags(tags)}
+      </div>`;
+  }
+
+  return `<div class="tl-entry" data-type="${type}"><div class="entry" data-type="${type}">${inner}</div></div>`;
 }
 
-async function loadLore() {
+function renderTags(tags){
+  if (!tags || !tags.length) return '';
+  return `<div class="entry-tags">${tags.map(t=>`<span class="entry-tag">${t}</span>`).join('')}</div>`;
+}
+
+function renderTimeline(entries){
+  const tl = document.getElementById('timeline');
+  if (!entries.length) {
+    tl.innerHTML = `<div class="no-data"><div class="l">No Records</div><div class="s">No entries match the current filter, or no lore has been published yet.</div></div>`;
+    return;
+  }
+  // Group by year
+  const byYear = {};
+  entries.forEach(e => {
+    const y = e.year || parseYear(e.date_label) || 'UNDATED';
+    (byYear[y] = byYear[y] || []).push(e);
+  });
+  const years = Object.keys(byYear).sort((a,b) => {
+    if (a === 'UNDATED') return 1; if (b === 'UNDATED') return -1;
+    return parseInt(a) - parseInt(b);
+  });
+  let html = '';
+  years.forEach(y => {
+    html += `<div class="year-marker"><div class="yr">${y}</div><div class="yr-sub">${byYear[y].length} record${byYear[y].length===1?'':'s'}</div></div>`;
+    byYear[y].forEach(e => { html += renderEntry(e); });
+  });
+  tl.innerHTML = html;
+  // stagger animation
+  tl.querySelectorAll('.tl-entry').forEach((el, i) => {
+    el.style.animationDelay = Math.min(i*30, 400) + 'ms';
+  });
+}
+
+function parseYear(label){
+  if (!label) return null;
+  const m = String(label).match(/(19|20)\d{2}/);
+  return m ? parseInt(m[0]) : null;
+}
+
+function applyFilter(){
+  const filtered = _currentFilter === 'all'
+    ? _allEntries
+    : _allEntries.filter(e => (e.type || CAT_TO_TYPE[e.category]) === _currentFilter);
+  renderTimeline(filtered);
+  document.getElementById('entry-total-num').textContent = filtered.length;
+}
+
+function setFilter(f, btn){
+  _currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  applyFilter();
+}
+
+function updateCounts(){
+  const counts = { all: _allEntries.length, milestone:0, incident:0, document:0, dispatch:0 };
+  _allEntries.forEach(e => {
+    const t = e.type || CAT_TO_TYPE[e.category];
+    if (counts[t] !== undefined) counts[t]++;
+  });
+  Object.entries(counts).forEach(([k,v]) => {
+    const el = document.getElementById('cnt-'+k);
+    if (el) el.textContent = v;
+  });
+}
+
+async function loadLore(){
+  let entries = [];
   try {
-    const { data } = await db.from('lore_entries').select('*').eq('status','published').order('seq');
-    if (!data || !data.length) return;
-
-    const cats = { events: [], incidents: [], documents: [] };
-    data.forEach(e => { if (cats[e.category]) cats[e.category].push(e); });
-
-    const tagCls = { major:'tag-major', incident:'tag-incident', canon:'tag-canon' };
-
-    if (cats.events.length) {
-      document.getElementById('timeline-events').innerHTML = cats.events.map(e => `
-        <div class="tl-entry">
-          <div class="tl-dot"></div>
-          ${e.date_label ? `<div class="tl-date">${e.date_label}</div>` : ''}
-          <div class="tl-title">${e.title}</div>
-          <div class="tl-body">${e.body}</div>
-          ${e.tag ? `<span class="tl-tag ${tagCls[e.tag]||''}">${e.tag}</span>` : ''}
-        </div>`).join('');
-    }
-
-    if (cats.incidents.length) {
-      document.getElementById('timeline-incidents').innerHTML = cats.incidents.map(e => `
-        <div class="tl-entry">
-          <div class="tl-dot"></div>
-          ${e.date_label ? `<div class="tl-date">${e.date_label}</div>` : ''}
-          <div class="tl-title">${e.title}</div>
-          <div class="tl-body">${e.body}</div>
-          ${e.author ? `<div style="font-family:var(--mono);font-size:9px;color:var(--border);margin-top:.5rem">Filed by: ${e.author}</div>` : ''}
-        </div>`).join('');
-    }
-
-    if (cats.documents.length) {
-      document.getElementById('doc-list').innerHTML = cats.documents.map(e => `
-        <div class="doc-entry">
-          <div class="doc-label">Canon Document</div>
-          <div class="doc-title">${e.title}</div>
-          <div class="doc-meta">${e.date_label || ''} ${e.author ? '&mdash; ' + e.author : ''}</div>
-          <div class="doc-excerpt">${e.body}</div>
-        </div>`).join('');
+    const { data } = await db.from('lore_entries')
+      .select('*')
+      .eq('status','published')
+      .order('seq');
+    if (data && data.length) {
+      entries = data.map(d => ({
+        ...d,
+        type: CAT_TO_TYPE[d.category] || d.category,
+        year: parseYear(d.date_label),
+        tags: d.tag ? [d.tag] : []
+      }));
     }
   } catch(err) {
-    console.log('Lore table not yet set up:', err);
+    console.log('Lore table not reachable, using seed data:', err);
   }
+
+  if (!entries.length) entries = SEED;
+  _allEntries = entries;
+
+  // Sort chronologically by year, then original order within year
+  _allEntries.sort((a,b) => {
+    const ya = a.year || parseYear(a.date_label) || 9999;
+    const yb = b.year || parseYear(b.date_label) || 9999;
+    return ya - yb;
+  });
+
+  updateCounts();
+  applyFilter();
+
+  // Last revision = latest date_label we can find
+  const now = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+  document.getElementById('last-rev').textContent = now;
 }
 
 document.addEventListener('DOMContentLoaded', loadLore);

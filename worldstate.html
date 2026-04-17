@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>THREEFOLD — World State</title>
+<title>THREEFOLD / World State</title>
 <link rel="icon" type="image/png" href="img/Base.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;800&family=Barlow:wght@300;400;500&family=Special+Elite&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="supabase.js"></script>
 <style>
-:root{--black:#0a0a0a;--deep:#111;--dark:#1a1a1a;--mid:#2e2e2e;--border:#3a3a3a;--muted:#666;--light:#999;--pale:#ccc;--white:#f0f0f0;--mono:'Share Tech Mono',monospace;--display:'Barlow Condensed',sans-serif;--body:'Barlow',sans-serif;}
+:root{--black:#0a0a0a;--deep:#111;--dark:#1a1a1a;--mid:#2e2e2e;--border:#3a3a3a;--muted:#666;--light:#999;--pale:#ccc;--white:#f0f0f0;--red:#8a2a2a;--red-bright:#bb3a3a;--amber:#9a7a2a;--amber-bright:#d4a52c;--blue:#2a4a7a;--blue-bright:#3a6aaa;--green:#2a6a2a;--green-bright:#3a8a3a;--mono:'Share Tech Mono',monospace;--display:'Barlow Condensed',sans-serif;--body:'Barlow',sans-serif;--typewriter:'Special Elite',monospace;}
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
 body{background:var(--black);color:var(--pale);font-family:var(--body);font-weight:300;font-size:16px;line-height:1.7;min-height:100vh;overflow-x:hidden;}
@@ -26,81 +26,171 @@ nav ul{display:flex;list-style:none;align-items:center;flex-wrap:wrap;}
 nav ul a{font-family:var(--mono);font-size:9.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--light);text-decoration:none;padding:8px 12px;display:block;transition:color .2s;}
 nav ul a:hover{color:var(--white);}
 .page-pad{padding-top:56px;}
-.ph{padding:4rem 3rem 3rem;border-bottom:1px solid var(--border);position:relative;overflow:hidden;background-image:linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);background-size:60px 60px;}
-.ph-bgword{position:absolute;right:2rem;top:50%;transform:translateY(-50%);font-family:var(--display);font-weight:700;font-size:160px;line-height:1;color:transparent;-webkit-text-stroke:1px var(--border);pointer-events:none;user-select:none;}
-.ph-tag{font-family:var(--mono);font-size:9.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;}
-.ph h1{font-family:var(--display);font-weight:700;font-size:clamp(48px,7vw,88px);letter-spacing:0.05em;text-transform:uppercase;color:var(--white);line-height:.9;}
-.ph-desc{margin-top:1rem;font-size:15px;color:var(--light);max-width:560px;}
-.wrap{max-width:1080px;margin:0 auto;padding:3.5rem 3rem 6rem;}
-.ws-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:2.5rem;}
-.ws-tab{font-family:var(--mono);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;padding:.85rem 1.75rem;cursor:pointer;transition:all .2s;margin-bottom:-1px;}
+
+/* ========== COVER SHEET ========== */
+.cover{position:relative;overflow:hidden;border-bottom:1px solid var(--border);padding:4.5rem 3rem 3.5rem;background:radial-gradient(ellipse 80% 60% at 15% 25%, rgba(138,42,42,0.07), transparent 60%),radial-gradient(ellipse 70% 50% at 85% 75%, rgba(42,74,122,0.05), transparent 60%),linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px),var(--black);background-size:auto,auto,48px 48px,48px 48px,auto;}
+.cover-grid{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:3rem;align-items:end;}
+.cover-left{min-width:0;}
+.cover-stamps{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem;}
+.stamp{font-family:var(--mono);font-size:8.5px;letter-spacing:0.25em;text-transform:uppercase;padding:4px 10px;border:1px solid;}
+.stamp.red{border-color:var(--red);color:var(--red-bright);background:rgba(138,42,42,.08);}
+.stamp.amber{border-color:var(--amber);color:var(--amber-bright);background:rgba(154,122,42,.06);}
+.stamp.blue{border-color:var(--blue);color:var(--blue-bright);background:rgba(42,74,122,.06);}
+.stamp.border{border-color:var(--border);color:var(--muted);}
+.stamp.live{border-color:var(--green);color:var(--green-bright);background:rgba(42,106,42,.06);display:inline-flex;align-items:center;gap:.5rem;}
+.stamp.live::before{content:'';width:6px;height:6px;background:var(--green-bright);border-radius:50%;animation:livePulse 1.8s ease-in-out infinite;}
+@keyframes livePulse{0%,100%{opacity:1}50%{opacity:.35}}
+.cover-tag{font-family:var(--mono);font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;}
+.cover h1{font-family:var(--display);font-weight:800;font-size:clamp(56px,9vw,120px);letter-spacing:0.01em;text-transform:uppercase;color:var(--white);line-height:.85;}
+.cover h1 em{font-style:normal;color:var(--red-bright);font-weight:800;}
+.cover-desc{margin-top:1.25rem;font-family:var(--typewriter);font-size:15px;color:var(--pale);line-height:1.75;max-width:560px;}
+.cover-right{display:flex;flex-direction:column;gap:.75rem;align-items:flex-end;}
+.cover-fileno{font-family:var(--mono);font-size:9.5px;letter-spacing:0.2em;color:var(--muted);text-align:right;}
+.cover-fileno strong{color:var(--pale);display:block;font-size:12px;margin-top:.25rem;letter-spacing:0.25em;}
+.cover-meta{display:grid;grid-template-columns:repeat(3,auto);gap:1.5rem;padding-top:.9rem;border-top:1px dashed var(--border);min-width:260px;}
+.cover-meta-item .k{font-family:var(--mono);font-size:8.5px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-bottom:.2rem;}
+.cover-meta-item .v{font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:0.04em;color:var(--white);line-height:1;}
+.cover-meta-item.amber .v{color:var(--amber-bright);}
+.cover-meta-item.red .v{color:var(--red-bright);}
+
+.wrap{max-width:1180px;margin:0 auto;padding:3rem 3rem 5rem;}
+
+/* ========== TABS ========== */
+.ws-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:2.5rem;gap:0;}
+.ws-tab{position:relative;font-family:var(--mono);font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);background:none;border:none;padding:.9rem 1.6rem;cursor:pointer;transition:color .2s;margin-bottom:-1px;display:flex;align-items:center;gap:.6rem;}
+.ws-tab::after{content:'';position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--red-bright);transform:scaleX(0);transform-origin:center;transition:transform .25s;}
 .ws-tab:hover{color:var(--pale);}
-.ws-tab.active{color:var(--white);border-bottom-color:var(--white);}
-.ws-panel{display:none;}.ws-panel.active{display:block;}
+.ws-tab:hover::after{transform:scaleX(.4);}
+.ws-tab.active{color:var(--white);}
+.ws-tab.active::after{transform:scaleX(1);}
+.ws-tab-num{font-family:var(--display);font-size:14px;font-weight:700;color:var(--border);letter-spacing:0;transition:color .2s;}
+.ws-tab.active .ws-tab-num{color:var(--red-bright);}
+.ws-tab-ico{display:inline-block;width:8px;height:8px;border:1px solid var(--border);transform:rotate(45deg);transition:all .2s;}
+.ws-tab.active .ws-tab-ico{background:var(--red-bright);border-color:var(--red-bright);}
+.ws-panel{display:none;}.ws-panel.active{display:block;animation:panelFade .3s ease both;}
+@keyframes panelFade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 
-/* TENSIONS */
-.tension-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:.4rem;margin-bottom:1.25rem;}
-.tension-box{border:1px solid var(--border);padding:.9rem .5rem .7rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;opacity:.28;transition:all .3s;}
+/* Section heading */
+.stag{font-family:var(--mono);font-size:9.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;}
+.stag::before{content:'';width:8px;height:8px;background:var(--red-bright);flex-shrink:0;}
+.stag::after{content:'';flex:1;height:1px;background:var(--border);}
+.stag strong{color:var(--pale);font-weight:400;}
+
+/* ========== GLOBAL TENSIONS ========== */
+.tension-summary{display:grid;grid-template-columns:1fr auto;gap:2rem;align-items:end;margin-bottom:1.5rem;padding:1.5rem 1.75rem;background:var(--deep);border:1px solid var(--border);position:relative;overflow:hidden;}
+.tension-summary::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--red-bright);}
+.ts-lbl{font-family:var(--mono);font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem;}
+.ts-current{font-family:var(--display);font-size:48px;font-weight:800;line-height:1;color:var(--red-bright);letter-spacing:0.02em;}
+.ts-word{font-family:var(--display);font-size:22px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--white);margin-top:.2rem;}
+.ts-fileref{font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);text-align:right;}
+.ts-fileref strong{display:block;color:var(--pale);font-size:11px;margin-top:.2rem;letter-spacing:0.22em;}
+
+.tension-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:.5rem;margin-bottom:1.25rem;}
+.tension-box{position:relative;border:1px solid var(--border);padding:1.4rem .5rem 1rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.3rem;opacity:.35;transition:all .3s;overflow:hidden;background:var(--deep);}
+.tension-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--border);transition:background .3s;}
 .tension-box.active{opacity:1;}
-.tension-box.active.t-1{border-color:#1a6a1a;background:rgba(26,106,26,.07);}
-.tension-box.active.t-2{border-color:#6a6a1a;background:rgba(100,100,26,.07);}
-.tension-box.active.t-3{border-color:#8a5a1a;background:rgba(138,90,26,.07);}
-.tension-box.active.t-4{border-color:#8a1a1a;background:rgba(138,26,26,.08);}
-.tension-box.active.t-5{border-color:#4a0a0a;background:rgba(80,10,10,.12);animation:tPulse 1.5s ease-in-out infinite;}
-@keyframes tPulse{0%,100%{box-shadow:none}50%{box-shadow:inset 0 0 14px rgba(138,26,26,.18)}}
-.tension-num{font-family:var(--display);font-size:28px;font-weight:700;line-height:1;}
-.t-1 .tension-num{color:#2a8a2a;}.t-2 .tension-num{color:#9a9a2a;}.t-3 .tension-num{color:#ba7a2a;}.t-4 .tension-num{color:#ba2a2a;}.t-5 .tension-num{color:#7a0a0a;}
-.tension-label{font-family:var(--mono);font-size:7.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);}
-.tension-box.active .tension-label{color:var(--light);}
-.tension-desc{font-family:var(--mono);font-size:10.5px;letter-spacing:0.08em;color:var(--muted);border-left:2px solid var(--border);padding-left:.85rem;line-height:1.8;}
+.tension-box.active.t-1{border-color:var(--green);}
+.tension-box.active.t-1::before{background:var(--green-bright);}
+.tension-box.active.t-2{border-color:#6a6a1a;}
+.tension-box.active.t-2::before{background:#9a9a2a;}
+.tension-box.active.t-3{border-color:var(--amber);}
+.tension-box.active.t-3::before{background:var(--amber-bright);}
+.tension-box.active.t-4{border-color:var(--red);}
+.tension-box.active.t-4::before{background:var(--red-bright);}
+.tension-box.active.t-5{border-color:var(--red);background:rgba(138,42,42,.08);}
+.tension-box.active.t-5::before{background:var(--red-bright);}
+.tension-box.active.t-5{animation:tPulse 1.6s ease-in-out infinite;}
+@keyframes tPulse{0%,100%{box-shadow:inset 0 0 0 rgba(187,58,58,0);}50%{box-shadow:inset 0 0 20px rgba(187,58,58,.2);}}
+.tension-num{font-family:var(--display);font-size:40px;font-weight:800;line-height:1;color:var(--border);transition:color .3s;}
+.t-1.active .tension-num{color:var(--green-bright);}
+.t-2.active .tension-num{color:#baba3a;}
+.t-3.active .tension-num{color:var(--amber-bright);}
+.t-4.active .tension-num{color:var(--red-bright);}
+.t-5.active .tension-num{color:var(--red-bright);}
+.tension-label{font-family:var(--mono);font-size:8px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);margin-top:.25rem;}
+.tension-box.active .tension-label{color:var(--pale);}
+.tension-desc{font-family:var(--typewriter);font-size:13px;line-height:1.85;color:var(--pale);border-left:2px solid var(--red);padding:1rem 1.5rem;background:rgba(138,42,42,.04);position:relative;}
+.tension-desc::before{content:'TRANSMISSION';position:absolute;top:-10px;left:1rem;background:var(--black);font-family:var(--mono);font-size:8px;letter-spacing:0.3em;color:var(--red-bright);padding:0 .5rem;}
 
-/* NEWS */
-.news-feed{display:flex;flex-direction:column;gap:0;}
-.news-item{border:1px solid var(--border);border-top:none;background:var(--deep);display:grid;grid-template-columns:190px 1fr;transition:background .2s;}
-.news-item:first-child{border-top:1px solid var(--border);}
-.news-item:hover{background:var(--dark);}
-.news-meta{padding:1.25rem 1.5rem;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:.4rem;}
-.news-date{font-family:var(--mono);font-size:10.5px;letter-spacing:0.08em;color:var(--pale);}
-.news-time{font-family:var(--mono);font-size:9px;letter-spacing:0.08em;color:var(--muted);}
-.news-veil{font-family:var(--mono);font-size:7.5px;letter-spacing:0.2em;text-transform:uppercase;padding:2px 7px;border:1px solid;display:inline-block;margin-top:.4rem;width:fit-content;}
-.news-veil.above{border-color:#1a3a6a;color:#3a6aaa;}
-.news-veil.below{border-color:#1a5a1a;color:#3a8a3a;}
-.news-veil.both{border-color:#5a3a1a;color:#9a6a3a;}
-.news-body{padding:1.25rem 1.5rem;}
-.news-headline{font-family:var(--display);font-size:20px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:var(--white);margin-bottom:.35rem;line-height:1.15;}
-.news-summary{font-size:13px;color:var(--muted);line-height:1.8;}
-.news-tag{font-family:var(--mono);font-size:8px;letter-spacing:0.15em;text-transform:uppercase;padding:2px 8px;border:1px solid;display:inline-block;margin-top:.65rem;}
-.no-news{border:1px dashed var(--border);padding:3rem;text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--border);}
+/* ========== NEWS FEED ========== */
+.news-feed{display:flex;flex-direction:column;gap:.75rem;}
+.news-item{position:relative;border:1px solid var(--border);background:var(--deep);display:grid;grid-template-columns:200px 1fr;transition:border-color .25s,background .25s;overflow:hidden;}
+.news-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--border);transition:background .25s,width .25s;}
+.news-item:hover{border-color:var(--mid);background:var(--dark);}
+.news-item:hover::before{width:5px;background:var(--red-bright);}
+.news-meta{padding:1.5rem 1.5rem 1.25rem;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:.55rem;}
+.news-fileref{font-family:var(--mono);font-size:8.5px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);padding-bottom:.5rem;border-bottom:1px dashed var(--border);}
+.news-date{font-family:var(--mono);font-size:11px;letter-spacing:0.1em;color:var(--pale);}
+.news-time{font-family:var(--mono);font-size:9px;letter-spacing:0.12em;color:var(--muted);}
+.news-veil{font-family:var(--mono);font-size:7.5px;letter-spacing:0.22em;text-transform:uppercase;padding:3px 8px;border:1px solid;display:inline-block;width:fit-content;margin-top:.15rem;}
+.news-veil.above{border-color:var(--blue);color:var(--blue-bright);background:rgba(42,74,122,.06);}
+.news-veil.below{border-color:var(--green);color:var(--green-bright);background:rgba(42,106,42,.06);}
+.news-veil.both{border-color:var(--amber);color:var(--amber-bright);background:rgba(154,122,42,.06);}
+.news-body{padding:1.5rem 1.75rem 1.4rem;position:relative;}
+.news-headline{font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--white);margin-bottom:.5rem;line-height:1.1;}
+.news-summary{font-family:var(--typewriter);font-size:13px;color:var(--pale);line-height:1.8;}
+.news-tag{font-family:var(--mono);font-size:8.5px;letter-spacing:0.22em;text-transform:uppercase;padding:3px 9px;border:1px solid;display:inline-block;margin-top:.85rem;}
+.no-news{border:1px dashed var(--border);padding:3.5rem;text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:var(--border);background:var(--deep);}
+.no-news::before{content:'▓ ▓ ▓ ▓ ▓ ▓';display:block;font-size:14px;color:var(--border);margin-bottom:.75rem;letter-spacing:0.3em;opacity:.4;}
 
-/* GOI BUBBLE CHART */
-.goi-bubble-wrap{position:relative;width:100%;background:var(--deep);border:1px solid var(--border);overflow:hidden;}
-#goi-canvas{display:block;width:100%;cursor:grab;}
+/* ========== GOI RELATIONS CHART ========== */
+.goi-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;padding:.85rem 1.25rem;border:1px solid var(--border);background:var(--deep);}
+.goi-head-left{display:flex;align-items:center;gap:.9rem;font-family:var(--mono);font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);}
+.goi-head-count{font-family:var(--display);font-size:14px;font-weight:700;color:var(--red-bright);letter-spacing:0.05em;}
+.goi-reset-btn{font-family:var(--mono);font-size:9px;letter-spacing:0.22em;text-transform:uppercase;background:transparent;border:1px solid var(--border);color:var(--muted);padding:7px 14px;cursor:pointer;transition:all .2s;}
+.goi-reset-btn:hover{border-color:var(--red);color:var(--red-bright);}
+
+.goi-bubble-wrap{position:relative;width:100%;background:radial-gradient(ellipse at center, rgba(138,42,42,0.04), transparent 70%),var(--deep);border:1px solid var(--border);overflow:hidden;}
+.goi-bubble-wrap::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);background-size:40px 40px;pointer-events:none;}
+.goi-bubble-wrap::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.08) 2px,rgba(0,0,0,.08) 4px);pointer-events:none;z-index:3;}
+#goi-canvas{display:block;width:100%;cursor:grab;position:relative;z-index:2;}
 #goi-canvas:active{cursor:grabbing;}
-.goi-tooltip{position:absolute;pointer-events:none;background:rgba(10,10,10,0.97);border:1px solid var(--border);padding:.6rem 1rem;font-family:var(--mono);font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--pale);white-space:nowrap;z-index:50;opacity:0;transition:opacity .15s;}
-.goi-tooltip .tt-name{font-family:var(--display);font-size:14px;font-weight:600;letter-spacing:0.1em;color:var(--white);display:block;margin-bottom:.3rem;}
-.goi-tooltip .tt-rel{display:flex;align-items:center;gap:.5rem;margin-top:.25rem;}
-.goi-tooltip .tt-dot{width:8px;height:8px;border:1px solid;flex-shrink:0;}
-.goi-legend{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:1.25rem;}
-.gli{display:flex;align-items:center;gap:.4rem;font-family:var(--mono);font-size:8.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);}
-.gli-dot{width:10px;height:10px;border:1px solid;flex-shrink:0;}
-.gli-dot.enemy   {border-color:#7a1a1a;background:rgba(120,20,20,.35);}
-.gli-dot.hostile {border-color:#7a4a1a;background:rgba(100,50,10,.35);}
-.gli-dot.neutral {border-color:#3a3a3a;background:rgba(40,40,40,.6);}
-.gli-dot.indiff  {border-color:#2a2a4a;background:rgba(25,25,50,.6);}
-.gli-dot.friendly{border-color:#1a5a1a;background:rgba(15,65,20,.4);}
-.gli-dot.allied  {border-color:#1a3a6a;background:rgba(10,50,80,.4);}
-.goi-hint{font-family:var(--mono);font-size:8.5px;letter-spacing:0.12em;color:var(--muted);text-transform:uppercase;margin-top:.75rem;}
-.goi-reset-btn{margin-left:auto;font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--muted);padding:6px 12px;cursor:pointer;transition:all .2s;}
-.goi-reset-btn:hover{border-color:var(--pale);color:var(--pale);}
+.goi-corner{position:absolute;font-family:var(--mono);font-size:8.5px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);z-index:4;pointer-events:none;}
+.goi-corner.tl{top:.9rem;left:1rem;}
+.goi-corner.tr{top:.9rem;right:1rem;color:var(--red-bright);display:flex;align-items:center;gap:.5rem;}
+.goi-corner.tr::before{content:'';width:6px;height:6px;background:var(--red-bright);border-radius:50%;animation:livePulse 1.8s ease-in-out infinite;}
+.goi-corner.bl{bottom:.9rem;left:1rem;}
+.goi-corner.br{bottom:.9rem;right:1rem;}
 
+.goi-tooltip{position:absolute;pointer-events:none;background:rgba(10,10,10,0.97);border:1px solid var(--red);padding:.9rem 1.2rem;font-family:var(--mono);font-size:9.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--pale);white-space:nowrap;z-index:50;opacity:0;transition:opacity .15s;min-width:180px;}
+.goi-tooltip::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--red-bright);}
+.goi-tooltip .tt-head{font-family:var(--mono);font-size:8px;letter-spacing:0.3em;color:var(--red-bright);margin-bottom:.4rem;}
+.goi-tooltip .tt-name{font-family:var(--display);font-size:16px;font-weight:700;letter-spacing:0.05em;color:var(--white);display:block;margin-bottom:.6rem;padding-bottom:.5rem;border-bottom:1px dashed var(--border);}
+.goi-tooltip .tt-rel{display:grid;grid-template-columns:14px auto 1fr;gap:.55rem;align-items:center;margin-top:.3rem;}
+.goi-tooltip .tt-dot{width:12px;height:12px;border:1px solid;flex-shrink:0;}
+
+.goi-legend{display:flex;flex-wrap:wrap;gap:.85rem;margin-top:1.25rem;align-items:center;padding:1rem 1.25rem;background:var(--deep);border:1px solid var(--border);}
+.goi-legend-label{font-family:var(--mono);font-size:8.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);margin-right:.5rem;}
+.gli{display:flex;align-items:center;gap:.5rem;font-family:var(--mono);font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--light);}
+.gli-dot{width:18px;height:3px;flex-shrink:0;}
+.gli-dot.enemy   {background:var(--red-bright);box-shadow:inset 0 0 0 1px var(--red);}
+.gli-dot.hostile {background:linear-gradient(to right, var(--amber-bright) 0, var(--amber-bright) 60%, transparent 60%, transparent 100%), var(--amber);background-size:8px 100%;}
+.gli-dot.neutral {background:var(--muted);}
+.gli-dot.indiff  {background:#6a6a8a;opacity:.6;}
+.gli-dot.friendly{background:var(--green-bright);}
+.gli-dot.allied  {background:var(--blue-bright);box-shadow:0 0 4px var(--blue-bright);}
+.goi-hint{font-family:var(--typewriter);font-size:12px;color:var(--muted);margin-top:.9rem;line-height:1.7;}
+
+/* ========== FOOTER ========== */
 footer{border-top:1px solid var(--border);padding:2rem 3rem;display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:9.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--border);}
+
+@media(max-width:900px){
+  .cover-grid{grid-template-columns:1fr;gap:1.5rem;}
+  .cover-right{align-items:flex-start;}
+  .goi-legend{gap:.6rem;}
+}
 @media(max-width:768px){
   nav{padding:0 1rem;}
-  .ph{padding:2.5rem 1.5rem 2rem;}.ph-bgword{display:none;}
+  .cover{padding:2.5rem 1.5rem 2rem;}
   .wrap{padding:2.5rem 1.5rem 4rem;}
   .news-item{grid-template-columns:1fr;}
-  .news-meta{border-right:none;border-bottom:1px solid var(--border);flex-direction:row;flex-wrap:wrap;gap:.5rem;padding:1rem;}
+  .news-meta{border-right:none;border-bottom:1px solid var(--border);flex-direction:row;flex-wrap:wrap;gap:.6rem;padding:1rem;align-items:center;}
+  .news-fileref{padding-bottom:0;border-bottom:none;}
   .tension-grid{grid-template-columns:repeat(3,1fr);}
+  .tension-summary{grid-template-columns:1fr;gap:.75rem;}
+  .ts-fileref{text-align:left;}
+  .ws-tabs{overflow-x:auto;flex-wrap:nowrap;}
+  .ws-tab{flex-shrink:0;padding:.7rem 1rem;}
   footer{flex-direction:column;gap:.5rem;text-align:center;}
 }
 </style>
@@ -125,27 +215,65 @@ footer{border-top:1px solid var(--border);padding:2rem 3rem;display:flex;justify
 </nav>
 
 <div class="page-pad">
-  <div class="ph">
-    <div class="ph-bgword">STATE</div>
-    <div class="ph-tag">World Affairs &mdash; Above &amp; Below the Veil</div>
-    <h1>World<br>State</h1>
-    <p class="ph-desc">Current global affairs — both within the anomalous world and the mundane. Updated by Senior Lore Staff as the narrative develops.</p>
+  <div class="cover">
+    <div class="cover-grid">
+      <div class="cover-left">
+        <div class="cover-stamps">
+          <span class="stamp red">Secure / Contain / Protect</span>
+          <span class="stamp live">Live Feed</span>
+          <span class="stamp border">Internal Document</span>
+        </div>
+        <div class="cover-tag">World Affairs / Above and Below the Veil</div>
+        <h1>World <em>State</em></h1>
+        <p class="cover-desc">Current global affairs, anomalous and mundane, held on a single page. Updated by Senior Lore Staff as the narrative develops. Every dispatch on record is canon.</p>
+      </div>
+      <div class="cover-right">
+        <div class="cover-fileno">
+          File Reference
+          <strong>TF / STATE / LIVE</strong>
+        </div>
+        <div class="cover-meta">
+          <div class="cover-meta-item red"><div class="k">Tensions</div><div class="v" id="cm-tension">--</div></div>
+          <div class="cover-meta-item amber"><div class="k">Dispatches</div><div class="v" id="cm-dispatches">0</div></div>
+          <div class="cover-meta-item"><div class="k">GOI Nodes</div><div class="v" id="cm-gois">0</div></div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="wrap">
     <div class="ws-tabs">
-      <button class="ws-tab active" onclick="switchTab('news',this)">World News</button>
-      <button class="ws-tab" onclick="switchTab('tensions',this)">Global Tensions</button>
-      <button class="ws-tab" onclick="switchTab('relations',this)">GOI Relations</button>
+      <button class="ws-tab active" onclick="switchTab('news',this)">
+        <span class="ws-tab-num">01</span><span class="ws-tab-ico"></span> World News
+      </button>
+      <button class="ws-tab" onclick="switchTab('tensions',this)">
+        <span class="ws-tab-num">02</span><span class="ws-tab-ico"></span> Global Tensions
+      </button>
+      <button class="ws-tab" onclick="switchTab('relations',this)">
+        <span class="ws-tab-num">03</span><span class="ws-tab-ico"></span> GOI Relations
+      </button>
     </div>
 
     <!-- WORLD NEWS -->
     <div class="ws-panel active" id="ws-news">
+      <div class="stag">Dispatches <strong>&middot; Chronological, most recent first</strong></div>
       <div id="news-feed-wrap"><div class="no-news">No dispatches on record yet.</div></div>
     </div>
 
     <!-- GLOBAL TENSIONS -->
     <div class="ws-panel" id="ws-tensions">
+      <div class="stag">Current Reading <strong>&middot; Five-step escalation scale</strong></div>
+      <div class="tension-summary">
+        <div>
+          <div class="ts-lbl">Global Tension Level</div>
+          <div class="ts-current" id="ts-current">--</div>
+          <div class="ts-word" id="ts-word">Awaiting Update</div>
+        </div>
+        <div class="ts-fileref">
+          Reference
+          <strong>TF / TENSION / SCALE</strong>
+        </div>
+      </div>
       <div class="tension-grid">
         <div class="tension-box t-1" data-level="1"><div class="tension-num">1</div><div class="tension-label">Calm</div></div>
         <div class="tension-box t-2" data-level="2"><div class="tension-num">2</div><div class="tension-label">Uneasy</div></div>
@@ -153,29 +281,44 @@ footer{border-top:1px solid var(--border);padding:2rem 3rem;display:flex;justify
         <div class="tension-box t-4" data-level="4"><div class="tension-num">4</div><div class="tension-label">Critical</div></div>
         <div class="tension-box t-5" data-level="5"><div class="tension-num">5</div><div class="tension-label">Collapse</div></div>
       </div>
-      <div class="tension-desc" id="tension-desc">No tension level set — awaiting update from staff.</div>
+      <div class="tension-desc" id="tension-desc">No tension level set. Awaiting update from staff.</div>
     </div>
 
     <!-- GOI RELATIONS -->
     <div class="ws-panel" id="ws-relations">
+      <div class="stag">Network Topology <strong>&middot; Active Groups of Interest</strong></div>
+      <div class="goi-head">
+        <div class="goi-head-left">
+          <span>Nodes on Record:</span>
+          <span class="goi-head-count" id="goi-count">0</span>
+          <span>/</span>
+          <span>Relations Plotted:</span>
+          <span class="goi-head-count" id="goi-rel-count">0</span>
+        </div>
+        <button type="button" onclick="resetBubbleLayout()" class="goi-reset-btn">Reset Layout</button>
+      </div>
       <div class="goi-bubble-wrap" id="goi-bubble-wrap">
+        <div class="goi-corner tl">TF / GOI / NET</div>
+        <div class="goi-corner tr">Live Topology</div>
+        <div class="goi-corner bl">Heading: 000&deg;</div>
+        <div class="goi-corner br" id="goi-corner-time">--:--:-- UTC</div>
         <canvas id="goi-canvas"></canvas>
-        <div class="goi-tooltip" id="goi-tooltip"><span class="tt-name"></span><div id="tt-rels"></div></div>
+        <div class="goi-tooltip" id="goi-tooltip"><div class="tt-head">Network Node</div><span class="tt-name"></span><div id="tt-rels"></div></div>
       </div>
       <div class="goi-legend">
+        <span class="goi-legend-label">Relation Key</span>
         <div class="gli"><div class="gli-dot allied"></div>Allied</div>
         <div class="gli"><div class="gli-dot friendly"></div>Friendly</div>
         <div class="gli"><div class="gli-dot neutral"></div>Neutral</div>
         <div class="gli"><div class="gli-dot indiff"></div>Indifferent</div>
         <div class="gli"><div class="gli-dot hostile"></div>Hostile</div>
         <div class="gli"><div class="gli-dot enemy"></div>Enemy</div>
-        <button type="button" onclick="resetBubbleLayout()" class="goi-reset-btn">Reset Layout</button>
       </div>
-      <div class="goi-hint">Hover a node to highlight its connections &mdash; drag to rearrange (position persists until reset)</div>
+      <div class="goi-hint">Hover any node to highlight its relations. Drag to reposition. The layout persists until you reset.</div>
     </div>
   </div>
 
-  <footer><span>THREEFOLD &mdash; World State</span><span>Updated by Senior Lore Staff</span></footer>
+  <footer><span>THREEFOLD / World State</span><span>Updated by Senior Lore Staff</span></footer>
 </div>
 
 <script>
@@ -216,12 +359,12 @@ function getRelation(rels, a, b) {
 
 /* ── GOI BUBBLE CHART ENGINE ── */
 const REL_COLORS = {
-  allied:  {stroke:'#3a6aaa',fill:'rgba(10,50,80,0.55)',label:'#3a6aaa'},
-  friendly:{stroke:'#3a9a3a',fill:'rgba(15,65,20,0.55)',label:'#3a9a3a'},
-  neutral: {stroke:'#555',   fill:'rgba(40,40,40,0.55)',label:'#666'},
-  indiff:  {stroke:'#4a4a7a',fill:'rgba(25,25,50,0.55)',label:'#5a5a8a'},
-  hostile: {stroke:'#aa6a3a',fill:'rgba(100,50,10,0.55)',label:'#aa6a3a'},
-  enemy:   {stroke:'#aa3a3a',fill:'rgba(120,20,20,0.55)',label:'#aa3a3a'},
+  allied:  {stroke:'#3a6aaa',fill:'rgba(42,74,122,0.5)',label:'#3a6aaa',glow:'rgba(58,106,170,0.4)'},
+  friendly:{stroke:'#3a8a3a',fill:'rgba(42,106,42,0.5)',label:'#3a8a3a',glow:'rgba(58,138,58,0.35)'},
+  neutral: {stroke:'#666',   fill:'rgba(60,60,60,0.45)',label:'#999',  glow:'rgba(153,153,153,0.2)'},
+  indiff:  {stroke:'#6a6a8a',fill:'rgba(60,60,100,0.45)',label:'#8a8aba',glow:'rgba(138,138,186,0.22)'},
+  hostile: {stroke:'#d4a52c',fill:'rgba(154,122,42,0.5)',label:'#d4a52c',glow:'rgba(212,165,44,0.35)'},
+  enemy:   {stroke:'#bb3a3a',fill:'rgba(138,42,42,0.5)',label:'#bb3a3a',glow:'rgba(187,58,58,0.45)'},
 };
 
 let _bubbleGois=[], _bubbleRels=[], _nodes=[], _edges=[];
@@ -234,7 +377,15 @@ function initBubbleChart(gois, rels) {
   const canvas=document.getElementById('goi-canvas');
   if(!wrap||!canvas) return;
 
-  const W=wrap.clientWidth||800, H=Math.max(480, W*0.62);
+  // Update counters
+  const countEl = document.getElementById('goi-count');
+  const relCountEl = document.getElementById('goi-rel-count');
+  const coverGois = document.getElementById('cm-gois');
+  if (countEl) countEl.textContent = gois.length;
+  if (relCountEl) relCountEl.textContent = rels.length;
+  if (coverGois) coverGois.textContent = gois.length;
+
+  const W=wrap.clientWidth||800, H=Math.max(520, W*0.62);
   canvas.width=W; canvas.height=H;
   wrap.style.height=H+'px';
 
@@ -294,7 +445,7 @@ function tick() {
 }
 
 function simulate() {
-  // Static layout — nodes hold their positions. Dragging still works
+  // Static layout: nodes hold their positions. Dragging still works
   // (onMove updates node.x/y directly), but nothing bounces or drifts.
   // Clamp all nodes inside the canvas in case a drag overshoots.
   const canvas=document.getElementById('goi-canvas');
@@ -306,107 +457,248 @@ function simulate() {
   });
 }
 
+let _sweepAngle = 0;
+
 function draw(canvas) {
   const ctx=canvas.getContext('2d');
   const W=canvas.width,H=canvas.height;
   ctx.clearRect(0,0,W,H);
 
-  // Background grid
-  ctx.strokeStyle='rgba(255,255,255,0.025)';
+  const cx = W/2, cy = H/2;
+  const ringOuter = Math.min(W,H) * 0.42;
+  const ringInner = Math.min(W,H) * 0.14;
+
+  // ── Background concentric rings (subtle target)
+  ctx.save();
+  ctx.strokeStyle='rgba(187,58,58,0.06)';
   ctx.lineWidth=1;
-  for(let x=0;x<W;x+=60){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
-  for(let y=0;y<H;y+=60){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  [ringInner, ringInner*1.6, ringOuter*0.65, ringOuter*0.85, ringOuter].forEach(r => {
+    ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.stroke();
+  });
+  // Compass cross
+  ctx.strokeStyle='rgba(255,255,255,0.035)';
+  ctx.lineWidth=1;
+  ctx.setLineDash([3,5]);
+  ctx.beginPath(); ctx.moveTo(cx-ringOuter-10,cy); ctx.lineTo(cx+ringOuter+10,cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx,cy-ringOuter-10); ctx.lineTo(cx,cy+ringOuter+10); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+
+  // ── Radar sweep
+  _sweepAngle = (_sweepAngle + 0.004) % (Math.PI * 2);
+  ctx.save();
+  const sweepGrad = ctx.createRadialGradient(cx,cy,ringInner,cx,cy,ringOuter+20);
+  sweepGrad.addColorStop(0,'rgba(187,58,58,0)');
+  sweepGrad.addColorStop(0.85,'rgba(187,58,58,0.04)');
+  sweepGrad.addColorStop(1,'rgba(187,58,58,0.12)');
+  ctx.translate(cx,cy);
+  ctx.rotate(_sweepAngle);
+  ctx.fillStyle = sweepGrad;
+  ctx.beginPath();
+  ctx.moveTo(0,0);
+  ctx.arc(0,0,ringOuter+20,-0.35,0.05);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+
+  // ── Center compass emblem
+  ctx.save();
+  ctx.strokeStyle='rgba(187,58,58,0.3)';
+  ctx.lineWidth=1;
+  ctx.beginPath(); ctx.arc(cx,cy,ringInner*0.6,0,Math.PI*2); ctx.stroke();
+  ctx.strokeStyle='rgba(187,58,58,0.18)';
+  ctx.beginPath(); ctx.arc(cx,cy,ringInner,0,Math.PI*2); ctx.stroke();
+  // Tick marks on the inner ring
+  for (let i=0;i<8;i++){
+    const a = (i/8)*Math.PI*2;
+    const r1 = ringInner*0.85, r2 = ringInner*1.05;
+    ctx.strokeStyle='rgba(187,58,58,0.35)';
+    ctx.lineWidth=1;
+    ctx.beginPath();
+    ctx.moveTo(cx+Math.cos(a)*r1, cy+Math.sin(a)*r1);
+    ctx.lineTo(cx+Math.cos(a)*r2, cy+Math.sin(a)*r2);
+    ctx.stroke();
+  }
+  // Center label
+  ctx.fillStyle='rgba(187,58,58,0.85)';
+  ctx.font='bold 9px "Share Tech Mono",monospace';
+  ctx.textAlign='center';
+  ctx.textBaseline='middle';
+  ctx.fillText('GOI', cx, cy - 6);
+  ctx.fillStyle='rgba(153,153,153,0.7)';
+  ctx.font='7px "Share Tech Mono",monospace';
+  ctx.fillText('NETWORK', cx, cy + 6);
+  ctx.restore();
 
   const nodeMap={};
   _nodes.forEach(n=>nodeMap[n.id]=n);
 
-  // Draw edges
-  _edges.forEach(e=>{
-    const a=nodeMap[e.from], b=nodeMap[e.to];
+  // ── Draw edges as curved arcs
+  // Depth-order: neutral/indiff underneath, then friendly/allied, then hostile/enemy, hovered always on top
+  const layerOrder = ['neutral','indiff','friendly','allied','hostile','enemy'];
+  const sortedEdges = [..._edges].sort((a,b) => layerOrder.indexOf(a.status) - layerOrder.indexOf(b.status));
+
+  sortedEdges.forEach(e => {
+    const a = nodeMap[e.from], b = nodeMap[e.to];
     if(!a||!b) return;
-    const col=REL_COLORS[e.status]||REL_COLORS.neutral;
-    const isHovered=_hoveredNode&&(e.from===_hoveredNode.id||e.to===_hoveredNode.id);
-    const alpha=_hoveredNode?(isHovered?1:0.08):(e.status==='neutral'?0.18:0.45);
+    const col = REL_COLORS[e.status] || REL_COLORS.neutral;
+    const isHovered = _hoveredNode && (e.from===_hoveredNode.id || e.to===_hoveredNode.id);
+    const hasHover = !!_hoveredNode;
+
+    let alpha;
+    if (hasHover) alpha = isHovered ? 1 : 0.06;
+    else alpha = (e.status==='neutral' || e.status==='indiff') ? 0.22 : 0.55;
 
     ctx.save();
-    ctx.globalAlpha=alpha;
-    ctx.strokeStyle=col.stroke;
-    ctx.lineWidth=isHovered?2.5:1.5;
-    if(e.status==='enemy') { ctx.setLineDash([6,4]); }
-    else if(e.status==='hostile') { ctx.setLineDash([10,4]); }
-    else { ctx.setLineDash([]); }
+    ctx.globalAlpha = alpha;
+
+    // Curve control point: midpoint pulled toward the center
+    // Inward bow makes long edges loop nicely through the center ring
+    const mx = (a.x + b.x)/2, my = (a.y + b.y)/2;
+    const dx = mx - cx, dy = my - cy;
+    const distFromCenter = Math.hypot(dx, dy) || 1;
+    // Pull midpoint toward center by ~25% for a gentle concave arc
+    const pullStrength = 0.35;
+    const ctrlX = mx - (dx/distFromCenter) * (distFromCenter * pullStrength);
+    const ctrlY = my - (dy/distFromCenter) * (distFromCenter * pullStrength);
+
+    // Styling per relation tier
+    ctx.strokeStyle = col.stroke;
+    ctx.lineCap = 'round';
+
+    if (isHovered) {
+      // Glow underlay
+      ctx.save();
+      ctx.strokeStyle = col.glow;
+      ctx.lineWidth = 7;
+      ctx.shadowColor = col.stroke;
+      ctx.shadowBlur = 12;
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.quadraticCurveTo(ctrlX, ctrlY, b.x, b.y);
+      ctx.stroke();
+      ctx.restore();
+      ctx.lineWidth = 2;
+    } else {
+      ctx.lineWidth = 1.3;
+    }
+
+    if (e.status === 'enemy')         ctx.setLineDash([]);
+    else if (e.status === 'hostile')  ctx.setLineDash([8, 5]);
+    else if (e.status === 'allied')   ctx.setLineDash([]);
+    else if (e.status === 'friendly') ctx.setLineDash([]);
+    else if (e.status === 'indiff')   ctx.setLineDash([2, 4]);
+    else                              ctx.setLineDash([1, 3]);
+
     ctx.beginPath();
-    ctx.moveTo(a.x,a.y);
-    ctx.lineTo(b.x,b.y);
+    ctx.moveTo(a.x, a.y);
+    ctx.quadraticCurveTo(ctrlX, ctrlY, b.x, b.y);
     ctx.stroke();
     ctx.setLineDash([]);
 
-    // Label on hovered edges
-    if(isHovered){
-      const mx=(a.x+b.x)/2, my=(a.y+b.y)/2;
-      ctx.globalAlpha=0.95;
-      ctx.font='bold 8px "Share Tech Mono",monospace';
-      ctx.fillStyle=col.label;
-      ctx.textAlign='center'; ctx.textBaseline='middle';
-      // Small pill bg
-      const tw=ctx.measureText(e.status).width+10;
-      ctx.fillStyle='rgba(10,10,10,0.85)';
-      ctx.fillRect(mx-tw/2,my-8,tw,16);
-      ctx.strokeStyle=col.stroke; ctx.lineWidth=1;
-      ctx.strokeRect(mx-tw/2,my-8,tw,16);
-      ctx.fillStyle=col.label;
-      ctx.fillText(e.status.toUpperCase(),mx,my);
+    // Tick marks along enemy edges (for the "broken line" sharp look)
+    if (e.status === 'enemy' && !isHovered) {
+      const n = 3;
+      ctx.lineWidth = 1;
+      for (let i = 1; i <= n; i++) {
+        const t = i/(n+1);
+        // Quadratic point at t
+        const px = (1-t)*(1-t)*a.x + 2*(1-t)*t*ctrlX + t*t*b.x;
+        const py = (1-t)*(1-t)*a.y + 2*(1-t)*t*ctrlY + t*t*b.y;
+        // Tangent direction
+        const tx = 2*(1-t)*(ctrlX - a.x) + 2*t*(b.x - ctrlX);
+        const ty = 2*(1-t)*(ctrlY - a.y) + 2*t*(b.y - ctrlY);
+        const tlen = Math.hypot(tx, ty) || 1;
+        // Perpendicular
+        const perpX = -ty/tlen * 4, perpY = tx/tlen * 4;
+        ctx.beginPath();
+        ctx.moveTo(px - perpX, py - perpY);
+        ctx.lineTo(px + perpX, py + perpY);
+        ctx.stroke();
+      }
     }
+
     ctx.restore();
   });
 
-  // Draw nodes
-  _nodes.forEach(node=>{
-    const isHov=node===_hoveredNode;
+  // ── Draw nodes
+  _nodes.forEach(node => {
+    const isHov = node === _hoveredNode;
     ctx.save();
-    const r=node.radius;
+    const r = node.radius;
 
-    // Glow on hover
-    if(isHov){
-      ctx.shadowBlur=24; ctx.shadowColor='rgba(240,240,240,0.3)';
+    // Outer glow on hover
+    if (isHov) {
+      ctx.shadowBlur = 28;
+      ctx.shadowColor = 'rgba(187,58,58,0.55)';
     }
 
-    // Outer ring
-    ctx.beginPath(); ctx.arc(node.x,node.y,r,0,Math.PI*2);
-    ctx.fillStyle='#111';
-    ctx.fill();
-    ctx.strokeStyle=isHov?'rgba(240,240,240,0.7)':'rgba(60,60,60,0.9)';
-    ctx.lineWidth=isHov?2:1.5;
+    // Outer ring (accent)
+    ctx.beginPath(); ctx.arc(node.x, node.y, r+3, 0, Math.PI*2);
+    ctx.strokeStyle = isHov ? 'rgba(187,58,58,0.9)' : 'rgba(80,80,80,0.55)';
+    ctx.lineWidth = 1;
     ctx.stroke();
 
-    // Logo clipped circle
-    if(_logoCache[node.id]){
+    ctx.shadowBlur = 0;
+
+    // Solid inner disc
+    ctx.beginPath(); ctx.arc(node.x, node.y, r, 0, Math.PI*2);
+    ctx.fillStyle = '#0e0e0e';
+    ctx.fill();
+    ctx.strokeStyle = isHov ? 'rgba(240,240,240,0.85)' : 'rgba(90,90,90,0.85)';
+    ctx.lineWidth = isHov ? 2 : 1.3;
+    ctx.stroke();
+
+    // Inner soft ring
+    ctx.beginPath(); ctx.arc(node.x, node.y, r-4, 0, Math.PI*2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Logo
+    if (_logoCache[node.id]) {
       ctx.save();
-      ctx.beginPath(); ctx.arc(node.x,node.y,r-3,0,Math.PI*2); ctx.clip();
-      ctx.globalAlpha=0.9;
-      const sz=(r-3)*2;
-      ctx.drawImage(_logoCache[node.id],node.x-r+3,node.y-r+3,sz,sz);
+      ctx.beginPath(); ctx.arc(node.x, node.y, r-6, 0, Math.PI*2); ctx.clip();
+      ctx.globalAlpha = isHov ? 1 : 0.85;
+      const sz = (r-6) * 2;
+      ctx.drawImage(_logoCache[node.id], node.x-r+6, node.y-r+6, sz, sz);
       ctx.restore();
     } else {
-      // Fallback: abbr text
-      ctx.fillStyle=isHov?'#f0f0f0':'#999';
-      ctx.font=`bold ${Math.floor(r*0.38)}px "Barlow Condensed",sans-serif`;
-      ctx.textAlign='center'; ctx.textBaseline='middle';
-      ctx.fillText(node.abbr,node.x,node.y);
+      // Fallback abbr
+      ctx.fillStyle = isHov ? '#f0f0f0' : '#bbb';
+      ctx.font = `bold ${Math.floor(r*0.36)}px "Barlow Condensed",sans-serif`;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(node.abbr, node.x, node.y);
     }
 
-    // Name label below
-    ctx.shadowBlur=0;
-    ctx.font='bold 9px "Share Tech Mono",monospace';
-    ctx.fillStyle=isHov?'#f0f0f0':'#888';
-    ctx.textAlign='center'; ctx.textBaseline='top';
-    ctx.letterSpacing='0.1em';
-    // BG for label
-    const lw=ctx.measureText(node.abbr).width+14;
-    ctx.fillStyle='rgba(10,10,10,0.75)';
-    ctx.fillRect(node.x-lw/2,node.y+r+3,lw,14);
-    ctx.fillStyle=isHov?'#f0f0f0':'#888';
-    ctx.fillText(node.abbr,node.x,node.y+r+5);
+    // Radial tick marks around the outside (subtle tactical look)
+    const tickCount = 12;
+    for (let i = 0; i < tickCount; i++) {
+      const a = (i/tickCount) * Math.PI * 2;
+      const r1 = r + 4, r2 = r + (isHov ? 9 : 6);
+      ctx.strokeStyle = isHov ? 'rgba(187,58,58,0.7)' : 'rgba(90,90,90,0.3)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(node.x + Math.cos(a)*r1, node.y + Math.sin(a)*r1);
+      ctx.lineTo(node.x + Math.cos(a)*r2, node.y + Math.sin(a)*r2);
+      ctx.stroke();
+    }
+
+    // Abbr label below
+    const labelY = node.y + r + 18;
+    ctx.font = 'bold 10px "Barlow Condensed",sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const lw = ctx.measureText(node.abbr).width + 16;
+    // Label background
+    ctx.fillStyle = 'rgba(10,10,10,0.85)';
+    ctx.fillRect(node.x - lw/2, labelY - 8, lw, 16);
+    ctx.strokeStyle = isHov ? 'rgba(187,58,58,0.8)' : 'rgba(80,80,80,0.6)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(node.x - lw/2, labelY - 8, lw, 16);
+    ctx.fillStyle = isHov ? '#f0f0f0' : '#aaa';
+    ctx.letterSpacing = '0.15em';
+    ctx.fillText(node.abbr, node.x, labelY);
 
     ctx.restore();
   });
@@ -454,12 +746,13 @@ function showTooltip(canvas,node,x,y){
   if(!node){tt.style.opacity='0';return;}
   const nodeMap={};
   _nodes.forEach(n=>nodeMap[n.id]=n);
+  tt.querySelector('.tt-head').textContent = 'Network Node';
   tt.querySelector('.tt-name').textContent=node.name;
   const relsHtml=_edges.filter(e=>e.from===node.id||e.to===node.id).map(e=>{
     const otherId=e.from===node.id?e.to:e.from;
     const other=_bubbleGois.find(g=>g.id===otherId);
     const col=REL_COLORS[e.status]||REL_COLORS.neutral;
-    return `<div class="tt-rel"><div class="tt-dot" style="border-color:${col.stroke};background:${col.fill}"></div><span style="color:${col.label}">${e.status.toUpperCase()}</span><span style="color:#666"> — </span><span style="color:#ccc">${other?other.abbr:otherId}</span></div>`;
+    return `<div class="tt-rel"><div class="tt-dot" style="border-color:${col.stroke};background:${col.fill}"></div><span style="color:${col.label};font-weight:700">${e.status.toUpperCase()}</span><span style="color:#ccc;padding-left:.4rem;border-left:1px solid #3a3a3a">${other?other.abbr:otherId}</span></div>`;
   }).join('');
   document.getElementById('tt-rels').innerHTML=relsHtml||'<span style="color:#666">No relations defined</span>';
   moveTooltip(canvas,x,y);
@@ -482,17 +775,19 @@ function hideTooltip(){
 
 function renderNews(entries) {
   const veilMap = {above:'Above the Veil',below:'Below the Veil',both:'Both'};
-  const tagColors = {anomalous:'#1a3a6a',conflict:'#6a1a1a',political:'#3a3a1a',natural:'#1a4a1a',foundation:'#3a1a6a',other:'#3a3a3a'};
+  const tagColors = {anomalous:'#3a6aaa',conflict:'#bb3a3a',political:'#d4a52c',natural:'#3a8a3a',foundation:'#8a6aba',other:'#666'};
   const sorted = [...entries].sort((a,b)=>new Date(b.timestamp||0)-new Date(a.timestamp||0));
   document.getElementById('news-feed-wrap').innerHTML = sorted.length
-    ? `<div class="news-feed">${sorted.map(e=>{
+    ? `<div class="news-feed">${sorted.map((e,i)=>{
         const ts = e.timestamp ? new Date(e.timestamp) : null;
-        const dateStr = ts ? ts.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) : (e.date||'—');
+        const dateStr = ts ? ts.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) : (e.date||'');
         const timeStr = ts ? ts.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',timeZone:'UTC'})+' UTC' : '';
-        const tc = tagColors[(e.tag||'other').toLowerCase()]||'#3a3a3a';
+        const tc = tagColors[(e.tag||'other').toLowerCase()]||'#666';
         const veil = e.veil||'both';
+        const fileNum = String(sorted.length - i).padStart(3,'0');
         return `<div class="news-item">
           <div class="news-meta">
+            <span class="news-fileref">TF / DISP / ${fileNum}</span>
             <span class="news-date">${dateStr}</span>
             ${timeStr?`<span class="news-time">${timeStr}</span>`:''}
             <span class="news-veil ${veil}">${veilMap[veil]||veil}</span>
@@ -509,6 +804,8 @@ function renderNews(entries) {
 
 async function loadWorldState() {
   initBubbleChart(DEFAULT_GOIS, DEFAULT_RELS);
+  startCornerClock();
+
   try {
     const {data} = await db.from('world_state').select('*');
     if (!data||!data.length) return;
@@ -521,17 +818,25 @@ async function loadWorldState() {
       document.querySelectorAll('.tension-box').forEach(el=>{
         el.classList.toggle('active', parseInt(el.dataset.level)===tl.level);
       });
-      const auto = ['Calm — relations between all factions are stable. No significant anomalous activity.',
-        'Uneasy — minor friction between groups. Isolated anomalous incidents being reported.',
-        'Volatile — active hostilities between multiple factions. Escalating anomalous events.',
-        'Critical — large-scale conflict imminent or ongoing. Foundation on high alert.',
-        'Collapse — existential-level events in motion. Emergency protocols active across all sites.'];
+      const labels = ['Calm','Uneasy','Volatile','Critical','Collapse'];
+      const auto = ['Calm. Relations between all factions are stable. No significant anomalous activity.',
+        'Uneasy. Minor friction between groups. Isolated anomalous incidents being reported.',
+        'Volatile. Active hostilities between multiple factions. Escalating anomalous events.',
+        'Critical. Large-scale conflict imminent or ongoing. Foundation on high alert.',
+        'Collapse. Existential-level events in motion. Emergency protocols active across all sites.'];
       document.getElementById('tension-desc').textContent = tl.note || auto[tl.level-1] || '';
+      document.getElementById('ts-current').textContent = tl.level;
+      document.getElementById('ts-word').textContent = labels[tl.level-1] || '';
+      document.getElementById('cm-tension').textContent = 'L' + tl.level;
     }
 
     // News
     const news = kv.world_news;
-    if (news && news.entries && news.entries.length) renderNews(news.entries);
+    if (news && news.entries && news.entries.length) {
+      renderNews(news.entries);
+      const cmDispatches = document.getElementById('cm-dispatches');
+      if (cmDispatches) cmDispatches.textContent = news.entries.length;
+    }
 
     // GOI bubble chart
     const gois = kv.gois;
@@ -539,6 +844,20 @@ async function loadWorldState() {
     if (gois && gois.list && goi_rels && goi_rels.list) initBubbleChart(gois.list, goi_rels.list);
 
   } catch(e) { console.log('World state not yet configured:', e); }
+}
+
+function startCornerClock(){
+  const el = document.getElementById('goi-corner-time');
+  if (!el) return;
+  function tick(){
+    const now = new Date();
+    const hh = String(now.getUTCHours()).padStart(2,'0');
+    const mm = String(now.getUTCMinutes()).padStart(2,'0');
+    const ss = String(now.getUTCSeconds()).padStart(2,'0');
+    el.textContent = `${hh}:${mm}:${ss} UTC`;
+  }
+  tick();
+  setInterval(tick, 1000);
 }
 
 document.addEventListener('DOMContentLoaded', loadWorldState);

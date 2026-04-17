@@ -429,6 +429,13 @@ body::after {
       <li><button onclick="showPanel('staff-mgmt')" id="nav-staff-mgmt">Staff Members</button></li>
     </ul>
 
+    <span class="sidebar-section">World State</span>
+    <ul class="sidebar-nav">
+      <li><button onclick="showPanel('ws-news')" id="nav-ws-news">World News</button></li>
+      <li><button onclick="showPanel('ws-tensions')" id="nav-ws-tensions">Global Tensions</button></li>
+      <li><button onclick="showPanel('ws-goi')" id="nav-ws-goi">GOI Relations</button></li>
+    </ul>
+
     <span class="sidebar-section">Characters</span>
     <ul class="sidebar-nav">
       <li><button onclick="showPanel('chars-all')" id="nav-chars-all">All Submissions</button></li>
@@ -638,6 +645,139 @@ body::after {
       <div class="empty-state" id="staff-empty" style="display:none;">No staff members found.</div>
     </div>
 
+
+  <!-- ═══════════════════════════════
+       WORLD STATE — NEWS
+  ═══════════════════════════════ -->
+  <div class="panel" id="panel-ws-news">
+    <div class="panel-header">
+      <h1>World News</h1>
+      <p>Add, edit, and remove news dispatches. Each entry is timestamped, tagged above/below the veil, and appears on the public World State page in reverse-chronological order.</p>
+    </div>
+
+    <!-- Add news form -->
+    <div style="border:1px solid var(--border);background:var(--deep);padding:1.5rem;margin-bottom:2rem;">
+      <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-bottom:1.25rem;display:flex;align-items:center;gap:.75rem;">Add New Dispatch<span style="flex:1;height:1px;background:var(--border);display:block;"></span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+        <div><label style="font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.35rem;">Headline *</label>
+          <input type="text" id="news-headline" placeholder="e.g. Unusual seismic activity reported near Norton Sound" style="width:100%;background:var(--dark);border:1px solid var(--border);color:var(--pale);font-family:var(--body);font-size:13px;padding:8px 12px;outline:none;"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;">
+          <div><label style="font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.35rem;">Tag</label>
+            <select id="news-tag" style="width:100%;background:var(--dark);border:1px solid var(--border);color:var(--pale);font-family:var(--mono);font-size:11px;padding:8px 10px;outline:none;">
+              <option value="other">Other</option>
+              <option value="anomalous">Anomalous</option>
+              <option value="conflict">Conflict</option>
+              <option value="political">Political</option>
+              <option value="natural">Natural</option>
+              <option value="foundation">Foundation</option>
+            </select></div>
+          <div><label style="font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.35rem;">Veil</label>
+            <select id="news-veil" style="width:100%;background:var(--dark);border:1px solid var(--border);color:var(--pale);font-family:var(--mono);font-size:11px;padding:8px 10px;outline:none;">
+              <option value="both">Both</option>
+              <option value="above">Above Veil</option>
+              <option value="below">Below Veil</option>
+            </select></div>
+        </div>
+      </div>
+      <div style="margin-bottom:1rem;"><label style="font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.35rem;">Body *</label>
+        <textarea id="news-body" rows="3" placeholder="Brief summary of the dispatch..." style="width:100%;background:var(--dark);border:1px solid var(--border);color:var(--pale);font-family:var(--body);font-size:13px;padding:8px 12px;outline:none;resize:vertical;line-height:1.7;"></textarea></div>
+      <div style="display:flex;align-items:center;gap:1rem;">
+        <button onclick="addNewsEntry()" style="font-family:var(--mono);font-size:9.5px;letter-spacing:0.2em;text-transform:uppercase;background:var(--pale);color:var(--black);border:none;padding:9px 20px;cursor:pointer;">Publish Dispatch</button>
+        <span id="news-msg" style="font-family:var(--mono);font-size:10px;color:var(--muted);"></span>
+      </div>
+    </div>
+
+    <!-- Existing entries -->
+    <div id="news-entries-list"><div style="font-family:var(--mono);font-size:10px;color:var(--border);letter-spacing:0.1em;">Loading...</div></div>
+  </div>
+
+  <!-- ═══════════════════════════════
+       WORLD STATE — TENSIONS
+  ═══════════════════════════════ -->
+  <div class="panel" id="panel-ws-tensions">
+    <div class="panel-header">
+      <h1>Global Tensions</h1>
+      <p>Set the current global tension level (1–5) and provide a short note explaining the current state of world affairs. Shown prominently on the public World State page.</p>
+    </div>
+    <div style="border:1px solid var(--border);background:var(--deep);padding:1.5rem;max-width:600px;">
+      <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-bottom:1.25rem;display:flex;align-items:center;gap:.75rem;">Set Tension Level<span style="flex:1;height:1px;background:var(--border);display:block;"></span></div>
+      <div style="display:flex;gap:.4rem;margin-bottom:1.25rem;" id="tension-picker">
+        <div class="tpick" data-lv="1" onclick="pickTension(1,this)" style="flex:1;border:1px solid var(--border);padding:.75rem .5rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--dark);">
+          <div style="font-family:var(--display);font-size:26px;font-weight:700;color:#2a8a2a;">1</div>
+          <div style="font-family:var(--mono);font-size:7px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);">Calm</div></div>
+        <div class="tpick" data-lv="2" onclick="pickTension(2,this)" style="flex:1;border:1px solid var(--border);padding:.75rem .5rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--dark);">
+          <div style="font-family:var(--display);font-size:26px;font-weight:700;color:#9a9a2a;">2</div>
+          <div style="font-family:var(--mono);font-size:7px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);">Uneasy</div></div>
+        <div class="tpick" data-lv="3" onclick="pickTension(3,this)" style="flex:1;border:1px solid var(--border);padding:.75rem .5rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--dark);">
+          <div style="font-family:var(--display);font-size:26px;font-weight:700;color:#ba7a2a;">3</div>
+          <div style="font-family:var(--mono);font-size:7px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);">Volatile</div></div>
+        <div class="tpick" data-lv="4" onclick="pickTension(4,this)" style="flex:1;border:1px solid var(--border);padding:.75rem .5rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--dark);">
+          <div style="font-family:var(--display);font-size:26px;font-weight:700;color:#ba2a2a;">4</div>
+          <div style="font-family:var(--mono);font-size:7px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);">Critical</div></div>
+        <div class="tpick" data-lv="5" onclick="pickTension(5,this)" style="flex:1;border:1px solid var(--border);padding:.75rem .5rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--dark);">
+          <div style="font-family:var(--display);font-size:26px;font-weight:700;color:#7a0a0a;">5</div>
+          <div style="font-family:var(--mono);font-size:7px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);">Collapse</div></div>
+      </div>
+      <input type="hidden" id="tension-level-val" value="">
+      <div style="margin-bottom:1rem;"><label style="font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.35rem;">Custom Note (optional — leave blank for default text)</label>
+        <input type="text" id="tension-note" placeholder="e.g. CI forces reportedly amassing near Site-7 perimeter." style="width:100%;background:var(--dark);border:1px solid var(--border);color:var(--pale);font-family:var(--body);font-size:13px;padding:8px 12px;outline:none;"></div>
+      <div style="display:flex;align-items:center;gap:1rem;">
+        <button onclick="saveTension()" style="font-family:var(--mono);font-size:9.5px;letter-spacing:0.2em;text-transform:uppercase;background:var(--pale);color:var(--black);border:none;padding:9px 20px;cursor:pointer;">Save Tension Level</button>
+        <span id="tension-msg" style="font-family:var(--mono);font-size:10px;color:var(--muted);"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════
+       WORLD STATE — GOI RELATIONS
+  ═══════════════════════════════ -->
+  <div class="panel" id="panel-ws-goi">
+    <div class="panel-header">
+      <h1>GOI Relations</h1>
+      <p>Manage Groups of Interest, their logos, and their relations with each other. Only PNG logos are accepted. Images are force-cropped to 64×64px on display.</p>
+    </div>
+
+    <!-- Add GOI -->
+    <div style="border:1px solid var(--border);background:var(--deep);padding:1.5rem;margin-bottom:2rem;">
+      <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-bottom:1.25rem;display:flex;align-items:center;gap:.75rem;">Add New GOI<span style="flex:1;height:1px;background:var(--border);display:block;"></span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:.75rem;align-items:end;margin-bottom:.75rem;">
+        <div><label style="font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.35rem;">Full Name *</label>
+          <input type="text" id="goi-name" placeholder="e.g. Serpent's Hand" style="width:100%;background:var(--dark);border:1px solid var(--border);color:var(--pale);font-family:var(--body);font-size:13px;padding:8px 12px;outline:none;"></div>
+        <div><label style="font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.35rem;">Abbreviation *</label>
+          <input type="text" id="goi-abbr" placeholder="e.g. SH" style="width:100%;background:var(--dark);border:1px solid var(--border);color:var(--pale);font-family:var(--mono);font-size:13px;padding:8px 12px;outline:none;text-transform:uppercase;" oninput="this.value=this.value.toUpperCase()"></div>
+        <div><label style="font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.35rem;">Logo (PNG only, max 256KB)</label>
+          <input type="file" id="goi-logo-file" accept=".png" style="font-family:var(--mono);font-size:10px;color:var(--muted);width:100%;"></div>
+        <button onclick="addGOI()" style="font-family:var(--mono);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;background:var(--pale);color:var(--black);border:none;padding:9px 14px;cursor:pointer;white-space:nowrap;">Add GOI</button>
+      </div>
+      <div id="goi-add-msg" style="font-family:var(--mono);font-size:10px;color:var(--muted);"></div>
+    </div>
+
+    <!-- GOI list + relation editor -->
+    <div id="goi-list-wrap"><div style="font-family:var(--mono);font-size:10px;color:var(--border);letter-spacing:0.1em;">Loading...</div></div>
+
+    <!-- Relation editor -->
+    <div style="border:1px solid var(--border);background:var(--deep);padding:1.5rem;margin-top:2rem;">
+      <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-bottom:1.25rem;display:flex;align-items:center;gap:.75rem;">Edit Relation<span style="flex:1;height:1px;background:var(--border);display:block;"></span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:.75rem;align-items:end;">
+        <div><label style="font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.35rem;">From</label>
+          <select id="rel-from" style="width:100%;background:var(--dark);border:1px solid var(--border);color:var(--pale);font-family:var(--mono);font-size:11px;padding:8px 10px;outline:none;"></select></div>
+        <div><label style="font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.35rem;">To</label>
+          <select id="rel-to" style="width:100%;background:var(--dark);border:1px solid var(--border);color:var(--pale);font-family:var(--mono);font-size:11px;padding:8px 10px;outline:none;"></select></div>
+        <div><label style="font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.35rem;">Status</label>
+          <select id="rel-status" style="width:100%;background:var(--dark);border:1px solid var(--border);color:var(--pale);font-family:var(--mono);font-size:11px;padding:8px 10px;outline:none;">
+            <option value="enemy">Enemy</option>
+            <option value="hostile">Hostile</option>
+            <option value="neutral" selected>Neutral</option>
+            <option value="indiff">Indifferent</option>
+            <option value="friendly">Friendly</option>
+            <option value="allied">Allied</option>
+          </select></div>
+        <button onclick="saveRelation()" style="font-family:var(--mono);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;background:var(--pale);color:var(--black);border:none;padding:9px 14px;cursor:pointer;">Set</button>
+      </div>
+      <div id="rel-msg" style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:.75rem;"></div>
+    </div>
+  </div>
+
   </main>
 </div>
 
@@ -702,6 +842,7 @@ async function initShell() {
   await loadPositions();
   await loadStaffMembers();
   await loadAllChars();
+  await loadWSData();
 }
 
 /* =========================================================
@@ -717,6 +858,7 @@ function showPanel(id) {
 
   const titles = {
     'dash':'Dashboard','apps-all':'All Applications',
+    'ws-news':'World News','ws-tensions':'Global Tensions','ws-goi':'GOI Relations',
     'apps-lore':'Lore Team Applications','apps-staff':'Staff Applications',
     'apps-gm':'GM Applications','positions':'Open / Close Positions',
     'staff-mgmt':'Staff Members',
@@ -984,6 +1126,214 @@ async function loadStaffMembers() {
 async function changeRole(userId, role) {
   if (!CAN_MANAGE_STAFF.includes(currentProfile?.role)) return;
   await updateStaffRole(userId, role);
+}
+
+/* =========================================================
+   WORLD STATE — NEWS
+========================================================= */
+let _wsNews   = [];
+let _wsGOIs   = [];
+let _wsRels   = [];
+
+async function loadWSData() {
+  try {
+    const { data } = await db.from('world_state').select('*');
+    if (!data) return;
+    const kv = {};
+    data.forEach(r => kv[r.key] = r.value);
+
+    // Tensions
+    const tl = kv.tensions;
+    if (tl && tl.level) {
+      pickTension(tl.level, document.querySelector('.tpick[data-lv="'+tl.level+'"]'));
+      if (tl.note) document.getElementById('tension-note').value = tl.note;
+    }
+
+    // News
+    _wsNews = (kv.world_news && kv.world_news.entries) || [];
+    renderNewsAdmin();
+
+    // GOIs
+    _wsGOIs = (kv.gois && kv.gois.list) || DEFAULT_WS_GOIS;
+    _wsRels = (kv.goi_relations && kv.goi_relations.list) || DEFAULT_WS_RELS;
+    renderGOIAdmin();
+  } catch(e) { console.error('WS load error:', e); }
+}
+
+const DEFAULT_WS_GOIS = [
+  {id:'foundation',name:'SCP Foundation',abbr:'SCPF',logo:'img/Base.png'},
+  {id:'ci',name:'Chaos Insurgency',abbr:'CI',logo:'img/CI.png'},
+  {id:'goc',name:'Global Occult Coalition',abbr:'GOC',logo:'img/GOC.png'},
+  {id:'gr',name:'Goldbaker-Reinz Ltd.',abbr:'GR',logo:'img/GR.png'},
+  {id:'hmfscp',name:'HM Foundation',abbr:'HMFSCP',logo:'img/HMFSCP.png'},
+  {id:'sc',name:'Sarkic Cults',abbr:'SC',logo:'img/SC.png'},
+  {id:'uiu',name:'UIU',abbr:'UIU',logo:'img/UIU.png'},
+];
+const DEFAULT_WS_RELS = [
+  {from:'foundation',to:'ci',status:'enemy'},{from:'foundation',to:'goc',status:'enemy'},
+  {from:'foundation',to:'gr',status:'neutral'},{from:'foundation',to:'hmfscp',status:'enemy'},
+  {from:'foundation',to:'sc',status:'enemy'},{from:'foundation',to:'uiu',status:'friendly'},
+  {from:'goc',to:'ci',status:'enemy'},{from:'goc',to:'gr',status:'friendly'},
+  {from:'goc',to:'hmfscp',status:'friendly'},{from:'goc',to:'sc',status:'enemy'},
+  {from:'goc',to:'uiu',status:'friendly'},{from:'ci',to:'gr',status:'friendly'},
+  {from:'ci',to:'hmfscp',status:'indiff'},{from:'ci',to:'sc',status:'enemy'},
+  {from:'ci',to:'uiu',status:'enemy'},{from:'gr',to:'hmfscp',status:'friendly'},
+  {from:'gr',to:'sc',status:'neutral'},{from:'gr',to:'uiu',status:'neutral'},
+  {from:'hmfscp',to:'sc',status:'enemy'},{from:'hmfscp',to:'uiu',status:'enemy'},
+  {from:'sc',to:'uiu',status:'enemy'},
+];
+
+function renderNewsAdmin() {
+  const wrap = document.getElementById('news-entries-list');
+  if (!_wsNews.length) { wrap.innerHTML = '<div style="font-family:var(--mono);font-size:10px;color:var(--border);letter-spacing:0.1em;">No dispatches yet.</div>'; return; }
+  const sorted = [..._wsNews].sort((a,b)=>new Date(b.timestamp||0)-new Date(a.timestamp||0));
+  wrap.innerHTML = sorted.map((e,i) => {
+    const ts = e.timestamp ? new Date(e.timestamp).toLocaleString('en-GB',{timeZone:'UTC'}) + ' UTC' : (e.date||'—');
+    return `<div style="border:1px solid var(--border);background:var(--deep);padding:1rem 1.25rem;margin-bottom:.5rem;display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;">
+      <div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:0.1em;margin-bottom:.25rem;">${ts} &bull; ${e.tag||'other'} &bull; ${e.veil||'both'}</div>
+        <div style="font-family:var(--display);font-size:17px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:var(--pale);">${e.headline||'Untitled'}</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:.25rem;">${(e.body||'').substring(0,120)}${(e.body||'').length>120?'…':''}</div>
+      </div>
+      <button onclick="deleteNewsEntry(${i})" style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--muted);padding:5px 10px;cursor:pointer;flex-shrink:0;" onmouseover="this.style.borderColor='#7a1a1a';this.style.color='#aa3a3a';" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)';">Delete</button>
+    </div>`;
+  }).join('');
+}
+
+async function addNewsEntry() {
+  const canEdit = currentProfile && (currentProfile.role==='owner'||currentProfile.role==='head_lore'||currentProfile.role==='admin');
+  if (!canEdit) { document.getElementById('news-msg').textContent='Permission denied.'; return; }
+  const headline = document.getElementById('news-headline').value.trim();
+  const body     = document.getElementById('news-body').value.trim();
+  const tag      = document.getElementById('news-tag').value;
+  const veil     = document.getElementById('news-veil').value;
+  if (!headline || !body) { document.getElementById('news-msg').textContent='Headline and body are required.'; return; }
+  document.getElementById('news-msg').textContent = 'Saving...';
+  const entry = { headline, body, tag, veil, timestamp: new Date().toISOString() };
+  _wsNews.push(entry);
+  const { error } = await db.from('world_state').upsert({ key:'world_news', value:{ entries: _wsNews }, updated_at: new Date().toISOString(), updated_by: currentProfile.display_name });
+  if (error) { document.getElementById('news-msg').textContent='Error: '+error.message; _wsNews.pop(); return; }
+  document.getElementById('news-headline').value='';
+  document.getElementById('news-body').value='';
+  document.getElementById('news-msg').textContent='Published.';
+  renderNewsAdmin();
+  setTimeout(()=>{ document.getElementById('news-msg').textContent=''; },3000);
+}
+
+async function deleteNewsEntry(idx) {
+  const canEdit = currentProfile && (currentProfile.role==='owner'||currentProfile.role==='head_lore'||currentProfile.role==='admin');
+  if (!canEdit) return;
+  if (!confirm('Delete this dispatch?')) return;
+  const sorted = [..._wsNews].sort((a,b)=>new Date(b.timestamp||0)-new Date(a.timestamp||0));
+  const entry = sorted[idx];
+  _wsNews = _wsNews.filter(e => e !== entry);
+  await db.from('world_state').upsert({ key:'world_news', value:{ entries: _wsNews }, updated_at: new Date().toISOString() });
+  renderNewsAdmin();
+}
+
+/* ── TENSIONS ── */
+function pickTension(lv, el) {
+  document.querySelectorAll('.tpick').forEach(b => b.style.outline='none');
+  if (el) el.style.outline = '2px solid var(--pale)';
+  document.getElementById('tension-level-val').value = lv;
+}
+
+async function saveTension() {
+  const canEdit = currentProfile && (currentProfile.role==='owner'||currentProfile.role==='head_lore'||currentProfile.role==='admin');
+  if (!canEdit) { document.getElementById('tension-msg').textContent='Permission denied.'; return; }
+  const level = parseInt(document.getElementById('tension-level-val').value);
+  if (!level) { document.getElementById('tension-msg').textContent='Select a tension level first.'; return; }
+  const note = document.getElementById('tension-note').value.trim();
+  document.getElementById('tension-msg').textContent='Saving...';
+  const { error } = await db.from('world_state').upsert({ key:'tensions', value:{ level, note }, updated_at: new Date().toISOString(), updated_by: currentProfile.display_name });
+  document.getElementById('tension-msg').textContent = error ? 'Error: '+error.message : 'Saved.';
+  setTimeout(()=>{ document.getElementById('tension-msg').textContent=''; },3000);
+}
+
+/* ── GOI ── */
+function renderGOIAdmin() {
+  const wrap = document.getElementById('goi-list-wrap');
+  wrap.innerHTML = `<div style="font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:.75rem;display:flex;align-items:center;gap:.75rem;">Registered GOIs<span style="flex:1;height:1px;background:var(--border);display:block;"></span></div>
+    <div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem;">
+      ${_wsGOIs.map((g,i) => `<div style="border:1px solid var(--border);background:var(--deep);padding:.5rem .75rem;display:flex;align-items:center;gap:.5rem;">
+        <img src="${g.logo}" style="width:28px;height:28px;object-fit:contain;mix-blend-mode:screen;flex-shrink:0;" onerror="this.style.display='none'">
+        <span style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--pale);">${g.abbr}</span>
+        ${g.id!=='foundation'?`<button onclick="removeGOI(${i})" style="background:none;border:none;color:var(--muted);cursor:pointer;font-family:var(--mono);font-size:11px;padding:0 3px;" title="Remove">✕</button>`:''}
+      </div>`).join('')}
+    </div>`;
+  // Populate relation dropdowns
+  const opts = _wsGOIs.map(g=>`<option value="${g.id}">${g.abbr} — ${g.name}</option>`).join('');
+  document.getElementById('rel-from').innerHTML = opts;
+  document.getElementById('rel-to').innerHTML   = opts;
+}
+
+async function addGOI() {
+  const canEdit = currentProfile && (currentProfile.role==='owner'||currentProfile.role==='head_lore'||currentProfile.role==='admin');
+  if (!canEdit) { document.getElementById('goi-add-msg').textContent='Permission denied.'; return; }
+  const name   = document.getElementById('goi-name').value.trim();
+  const abbr   = document.getElementById('goi-abbr').value.trim().toUpperCase();
+  const fileEl = document.getElementById('goi-logo-file');
+  const file   = fileEl.files[0];
+  if (!name || !abbr) { document.getElementById('goi-add-msg').textContent='Name and abbreviation are required.'; return; }
+  if (file && file.type !== 'image/png') { document.getElementById('goi-add-msg').textContent='Logo must be a PNG file.'; return; }
+  if (file && file.size > 256*1024) { document.getElementById('goi-add-msg').textContent='Logo must be under 256KB.'; return; }
+
+  document.getElementById('goi-add-msg').textContent='Saving...';
+  let logoPath = 'img/Base.png';
+
+  if (file) {
+    // Upload to Supabase storage
+    const fname = 'goi-' + abbr.toLowerCase() + '-' + Date.now() + '.png';
+    const { error: upErr } = await db.storage.from('character-images').upload('goi/' + fname, file, { cacheControl:'3600', upsert:true, contentType:'image/png' });
+    if (upErr) { document.getElementById('goi-add-msg').textContent='Logo upload failed: '+upErr.message; return; }
+    const { data: urlData } = db.storage.from('character-images').getPublicUrl('goi/' + fname);
+    logoPath = urlData.publicUrl;
+  }
+
+  const id = abbr.toLowerCase().replace(/[^a-z0-9]/g,'');
+  _wsGOIs.push({ id, name, abbr, logo: logoPath });
+  await saveGOIs();
+  document.getElementById('goi-name').value='';
+  document.getElementById('goi-abbr').value='';
+  fileEl.value='';
+  document.getElementById('goi-add-msg').textContent='GOI added.';
+  renderGOIAdmin();
+  setTimeout(()=>{ document.getElementById('goi-add-msg').textContent=''; },3000);
+}
+
+async function removeGOI(idx) {
+  const canEdit = currentProfile && (currentProfile.role==='owner'||currentProfile.role==='head_lore'||currentProfile.role==='admin');
+  if (!canEdit) return;
+  const g = _wsGOIs[idx];
+  if (!confirm('Remove '+g.name+' from the GOI list? This will also remove all their relations.')) return;
+  _wsGOIs = _wsGOIs.filter((_,i)=>i!==idx);
+  _wsRels = _wsRels.filter(r=>r.from!==g.id&&r.to!==g.id);
+  await saveGOIs();
+  await saveRelations();
+  renderGOIAdmin();
+}
+
+async function saveRelation() {
+  const canEdit = currentProfile && (currentProfile.role==='owner'||currentProfile.role==='head_lore'||currentProfile.role==='admin');
+  if (!canEdit) { document.getElementById('rel-msg').textContent='Permission denied.'; return; }
+  const from   = document.getElementById('rel-from').value;
+  const to     = document.getElementById('rel-to').value;
+  const status = document.getElementById('rel-status').value;
+  if (from===to) { document.getElementById('rel-msg').textContent='Cannot set relation with self.'; return; }
+  // Remove any existing forward or backward relation
+  _wsRels = _wsRels.filter(r=>!((r.from===from&&r.to===to)||(r.from===to&&r.to===from)));
+  _wsRels.push({ from, to, status });
+  document.getElementById('rel-msg').textContent='Saving...';
+  await saveRelations();
+  document.getElementById('rel-msg').textContent='Relation saved.';
+  setTimeout(()=>{ document.getElementById('rel-msg').textContent=''; },3000);
+}
+
+async function saveGOIs() {
+  await db.from('world_state').upsert({ key:'gois', value:{ list: _wsGOIs }, updated_at: new Date().toISOString(), updated_by: currentProfile?.display_name });
+}
+async function saveRelations() {
+  await db.from('world_state').upsert({ key:'goi_relations', value:{ list: _wsRels }, updated_at: new Date().toISOString(), updated_by: currentProfile?.display_name });
 }
 
 /* =========================================================

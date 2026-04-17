@@ -497,13 +497,19 @@ footer {
    PORTAL SECTION
 ═══════════════════════════════════════ */
 .portal-section {
-  padding: 0 0 6rem;
+  padding: 4rem 0 7rem;
   background: var(--black);
+}
+
+.portal-wrap {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 2.5rem;
 }
 
 .portal-divider {
   display: flex; align-items: center; gap: 1.5rem;
-  padding: 3.5rem 3rem 3rem;
+  margin-bottom: 3rem;
 }
 .portal-divider-line {
   flex: 1; height: 1px; background: var(--border);
@@ -513,28 +519,40 @@ footer {
   text-transform: uppercase; color: var(--muted); white-space: nowrap;
 }
 
-/* GRID ROWS */
+/* GRID ROWS — reconnected borders, constrained width */
 .portal-top-row {
   display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 0; border-top: 1px solid var(--border); border-left: 1px solid var(--border);
+  border: 1px solid var(--border);
+}
+.portal-top-row .pcard {
+  border-right: 1px solid var(--border);
+}
+.portal-top-row .pcard:last-child {
+  border-right: none;
 }
 .portal-map-row {
-  border-top: 1px solid var(--border); border-left: 1px solid var(--border);
+  border: 1px solid var(--border);
+  border-top: none;
 }
+.portal-map-row .pcard { border-right: none; }
 .portal-bottom-row {
   display: grid; grid-template-columns: 1fr 1fr;
-  gap: 0; border-top: 1px solid var(--border); border-left: 1px solid var(--border);
+  border: 1px solid var(--border);
+  border-top: none;
 }
-.portal-top-row .pcard,
-.portal-bottom-row .pcard { border-right: 1px solid var(--border); }
-.portal-map-row .pcard { border-right: 1px solid var(--border); }
+.portal-bottom-row .pcard {
+  border-right: 1px solid var(--border);
+}
+.portal-bottom-row .pcard:last-child {
+  border-right: none;
+}
 
 /* BASE CARD */
 .pcard {
   position: relative; overflow: hidden;
   display: block; text-decoration: none; color: inherit;
-  padding: 2.75rem 2.5rem 2.5rem;
-  min-height: 320px;
+  padding: 2rem 1.75rem 2rem;
+  min-height: 240px;
   background: var(--deep);
   transition: background .35s;
   cursor: pointer;
@@ -734,12 +752,13 @@ footer {
 .pcard-submit-ticker {
   position: absolute; bottom: 0; left: 0; right: 0; z-index: 3;
   overflow: hidden; border-top: 1px solid var(--border);
-  padding: 6px 0; background: var(--black);
+  padding: 6px 0; background: var(--deep);
 }
+.pcard-submit:hover .pcard-submit-ticker { background: var(--dark); }
 .pcard-submit-ticker span {
   display: inline-block; white-space: nowrap;
   font-family: var(--mono); font-size: 8px; letter-spacing: 0.2em;
-  color: var(--border); text-transform: uppercase;
+  color: var(--muted); text-transform: uppercase;
   animation: tickerScroll 18s linear infinite;
 }
 @keyframes tickerScroll {
@@ -776,9 +795,9 @@ footer {
 }
 @media(max-width:600px) {
   .portal-top-row { grid-template-columns: 1fr; }
-  .portal-divider { padding: 2.5rem 1.5rem 2rem; }
-  .pcard { padding: 2rem 1.5rem 2rem; min-height: 240px; }
-  .pcard-map-inner { padding: 2rem 1.5rem; }
+  .portal-wrap { padding: 0 1.2rem; }
+  .pcard { padding: 1.75rem 1.5rem; min-height: 180px; }
+  .pcard-map-inner { padding: 1.75rem 1.5rem; }
 }
 
 /* ===== RESPONSIVE ===== */
@@ -841,6 +860,7 @@ footer {
   </div>
   <!-- ═══ PORTAL SECTION ═══ -->
   <div class="portal-section">
+    <div class="portal-wrap">
     <div class="portal-divider">
       <span class="portal-divider-line"></span>
       <span class="portal-divider-label">EXPLORE THE SERVER</span>
@@ -934,7 +954,7 @@ footer {
       <a href="submission.html" class="pcard pcard-submit">
         <div class="pcard-noise"></div>
         <div class="pcard-glow"></div>
-        <div class="pcard-inner">
+        <div class="pcard-inner" style="padding-bottom:2.5rem">
           <div class="pcard-tag">05 — INTAKE</div>
           <div class="pcard-icon">
             <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><rect x="4" y="6" width="24" height="20" rx="1" stroke="currentColor" stroke-width="1.2"/><line x1="10" y1="13" x2="22" y2="13" stroke="currentColor" stroke-width="1.2"/><line x1="10" y1="17" x2="19" y2="17" stroke="currentColor" stroke-width="1.2"/><polyline points="15,22 18,25 25,18" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -965,6 +985,7 @@ footer {
       </a>
 
     </div>
+    </div><!-- end portal-wrap -->
   </div>
   <!-- END PORTAL SECTION -->
   <footer>

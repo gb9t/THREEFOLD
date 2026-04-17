@@ -603,6 +603,18 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
 .dept-box-abbr{font-family:var(--mono);font-size:7.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-top:1px;}
 .dept-desc{margin-top:.75rem;font-size:11px;color:var(--muted);font-family:var(--mono);letter-spacing:0.08em;min-height:28px;border-left:2px solid var(--border);padding-left:.75rem;}
 
+/* ── ROLE PICKER ── */
+.role-picker{display:flex;flex-direction:column;gap:.35rem;margin-top:.25rem;}
+.role-box{border:1px solid var(--border);background:var(--deep);cursor:pointer;padding:.65rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem;transition:all .2s;}
+.role-box:hover{border-color:var(--border-hi);background:var(--dark);}
+.role-box.selected{border-color:var(--gold-dim);border-width:2px;background:rgba(200,150,10,.04);}
+.role-box-left{flex:1;min-width:0;}
+.role-box-name{font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--pale);line-height:1.2;}
+.role-box-note{font-size:11px;color:var(--muted);margin-top:.2rem;font-family:var(--body);font-weight:300;letter-spacing:0;}
+.role-box-badges{display:flex;align-items:center;gap:.4rem;flex-shrink:0;}
+.role-badge{font-family:var(--mono);font-size:8px;letter-spacing:0.12em;text-transform:uppercase;padding:2px 7px;border:1px solid;white-space:nowrap;}
+.role-picker-hint{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;color:var(--muted);margin-top:.5rem;font-style:italic;}
+
 /* ── SUBUNIT PICKER ── */
 .subunit-wrap{display:none;margin-top:1rem;animation:fadeSlide .25s ease;}
 .subunit-wrap.visible{display:block;}
@@ -861,10 +873,15 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
           </div>
         </div>
       </div>
-      <div class="three-col">
+      <div class="two-col">
         <div class="field"><label>Age <span class="req">*</span></label><input type="text" id="fn-age" placeholder="e.g. 34"></div>
         <div class="field"><label>Nationality <span class="req">*</span></label><input type="text" id="fn-nationality" placeholder="e.g. American"></div>
-        <div class="field"><label>Role / Position <span class="req">*</span></label><input type="text" id="fn-role" placeholder="e.g. Senior Researcher"></div>
+      </div>
+      <div class="field" id="fn-role-field" style="display:none;">
+        <label>Role / Position <span class="req">*</span></label>
+        <div class="role-picker" id="fn-role-picker"></div>
+        <div class="role-desc" id="fn-role-desc"></div>
+        <input type="hidden" id="fn-role" value="">
       </div>
       <div class="three-col">
         <div class="field"><label>Gender <span style="color:var(--muted);font-size:8px">(optional)</span></label><input type="text" id="fn-gender" placeholder="e.g. Male"></div>
@@ -975,11 +992,6 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
         <div class="field"><input type="text" id="fn-cover-dept" placeholder="e.g. Science Department — Senior Researcher"></div>
       </div>
 
-      <div class="field" style="margin-top:1rem;">
-        <label>Sub-Departments <span style="color:var(--muted);font-size:8px">(optional)</span></label>
-        <div class="subdept-list" id="fn-subdept-list"></div>
-        <button class="add-link" onclick="addSubDept('fn-subdept-list')">+ Add Sub-Department</button>
-      </div>
     </div>
 
     <!-- SECTION 4: PSYCHOLOGICAL PROFILE -->
@@ -1666,6 +1678,128 @@ const DEPT_DESC = {
   'Engineering Department': 'Eng — Design and maintain the physical infrastructure that makes containment possible.',
   'Internal Security Department': 'ISD — Identifies and neutralises internal threats. Existence classified. Reports directly to O5.',
 };
+
+/* Role data keyed by department — clearance (cl) and classification (cls) per rank */
+const DEPT_ROLES = {
+  'Science Department': [
+    {name:'Research Director',   cl:4, cls:'B', note:'Department head. Final authority on all research projects and staffing decisions.'},
+    {name:'Head of Research',    cl:4, cls:'B', note:'Oversees multiple research teams and cross-departmental collaboration.'},
+    {name:'Research Supervisor', cl:3, cls:'B', note:'Manages individual research teams and approves experimental proposals.'},
+    {name:'Lead Researcher',     cl:3, cls:'C', note:'Conducts advanced research and mentors junior staff.'},
+    {name:'Senior Researcher',   cl:2, cls:'C', note:'Experienced researcher with independent project authority.'},
+    {name:'Researcher',          cl:2, cls:'C', note:'Core research personnel. Cleared for most standard experiments.'},
+    {name:'Junior Researcher',   cl:1, cls:'C', note:'Newly assigned staff. Works under direct supervision at all times.'},
+    {name:'Research Intern',     cl:0, cls:'C', note:'Probationary status. Restricted access. Supervised at all times.'},
+  ],
+  'Security Department': [
+    {name:'Security Director',   cl:4, cls:'B', note:'Department head. Coordinates all SD operations across the site.'},
+    {name:'Security Major',      cl:3, cls:'B', note:'Senior command officer. Manages unit commanders and site-wide response.'},
+    {name:'Security Captain',    cl:2, cls:'C', note:'Commands a specialist unit. Responsible for deployment decisions.'},
+    {name:'Security Lieutenant', cl:2, cls:'C', note:'Assists command. Leads small-unit operations and briefings.'},
+    {name:'Security Sergeant',   cl:2, cls:'C', note:'Non-commissioned officer. Leads fireteams and supervises junior personnel.'},
+    {name:'Security Corporal',   cl:1, cls:'C', note:'Experienced officer with minor supervisory duties.'},
+    {name:'Security Officer',    cl:0, cls:'C', note:'Core security personnel. Standard deployment roles.'},
+    {name:'Security Cadet',      cl:0, cls:'C', note:'In training. Supervised at all times. No independent duty assignment.'},
+  ],
+  'Ethics Committee': [
+    {name:'Head of Ethics',        cl:6, cls:'A', note:'Operates at O5 Council level. A peer authority — not subordinate to O5, site command, or the Administrator on ethical matters.'},
+    {name:'Ethics Commissioner',   cl:4, cls:'B', note:'Senior EC authority. Coordinates cross-site investigations and policy enforcement.'},
+    {name:'Senior Ethics Liaison', cl:4, cls:'B', note:'Leads complex investigations and formal disciplinary proceedings.'},
+    {name:'Ethics Liaison',        cl:3, cls:'C', note:'Conducts inquiries and compliance reviews. First point of contact for reported violations.'},
+  ],
+  'Mobile Task Forces': [
+    {name:'MTF Commander',  cl:4, cls:'B', note:'Leads an entire task force. Appointed by O5 mandate.'},
+    {name:'MTF Captain',    cl:3, cls:'C', note:'Field command of multi-team operations within a task force.'},
+    {name:'MTF Lieutenant', cl:3, cls:'C', note:'Team leader. Coordinates unit-level tactics during operations.'},
+    {name:'MTF Sergeant',   cl:2, cls:'C', note:'Non-commissioned leader. Manages squad operations in the field.'},
+    {name:'MTF Specialist', cl:2, cls:'C', note:'Trained in a specific discipline — demolitions, anomaly handling, etc.'},
+    {name:'MTF Operative',  cl:2, cls:'C', note:'Core MTF personnel. Field-deployed following full selection and training.'},
+  ],
+  'Medical Department': [
+    {name:'Director of Medicine',   cl:4, cls:'B', note:'Department head. Oversees all medical operations across the site.'},
+    {name:'Chief Medical Officer',  cl:3, cls:'B', note:'Senior physician. Heads specialist medical teams and protocols.'},
+    {name:'Senior Medical Officer', cl:2, cls:'C', note:'Experienced clinician with authority over standard medical decisions.'},
+    {name:'Medical Officer',        cl:2, cls:'C', note:'Qualified physician. Handles day-to-day medical operations.'},
+    {name:'Medic',                  cl:1, cls:'C', note:'Field-trained first responder. Deployed during active incidents and breaches.'},
+    {name:'Medical Intern',         cl:0, cls:'C', note:'Probationary status. Works under supervision in non-critical environments only.'},
+  ],
+  'Intelligence Agency': [
+    {name:'Intelligence Director', cl:4, cls:'B', note:'Heads the agency. Reports directly to the O5 Council.'},
+    {name:'Intelligence Officer',  cl:3, cls:'B', note:'Senior field authority. Coordinates multi-agent operations and strategy.'},
+    {name:'Senior Field Agent',    cl:3, cls:'C', note:'Experienced operative with expanded mission authority and autonomy.'},
+    {name:'Field Agent',           cl:3, cls:'C', note:'Core IA personnel. Conducts field operations and intelligence gathering.'},
+  ],
+  'Administrator\'s Office': [
+    {name:'Administrator',     cl:6, cls:'A', note:'Above the O5 Council. The singular executive authority of the Foundation. Identity known only to O5 members.'},
+    {name:'O5 Council Member', cl:6, cls:'A', note:'The thirteen. Final policy authority on all Foundation matters. Identities classified at every clearance level.'},
+    {name:'Factotum',          cl:5, cls:'A', note:'Personal staff of the O5 Council. Selected for absolute loyalty. Carry full O5 authority in the field.'},
+  ],
+  'Site Directorship': [
+    {name:'Site Director',           cl:4, cls:'B', note:'Commanding officer of the installation. Reports to the Administrator\'s Office.'},
+    {name:'Assistant Site Director', cl:4, cls:'B', note:'Deputy command. Manages day-to-day operations and assumes full authority during the Director\'s absence.'},
+  ],
+  'Engineering Department': [
+    {name:'Director of Engineering', cl:4, cls:'B', note:'Department head. Oversees all engineering projects and personnel allocation.'},
+    {name:'Chief Engineer',          cl:3, cls:'B', note:'Lead technical authority. Approves designs and manages senior project teams.'},
+    {name:'Lead Engineer',           cl:3, cls:'C', note:'Heads specialised engineering teams on major containment or infrastructure projects.'},
+    {name:'Senior Engineer',         cl:2, cls:'C', note:'Experienced engineer with independent project authority.'},
+    {name:'Engineer',                cl:2, cls:'C', note:'Core engineering personnel. Handles standard construction and maintenance.'},
+    {name:'Engineering Technician',  cl:1, cls:'C', note:'Handles equipment maintenance, calibration, and technical support.'},
+    {name:'Engineering Apprentice',  cl:0, cls:'C', note:'Probationary status. Works under direct supervision at all times.'},
+  ],
+  'Internal Security Department': [
+    {name:'ISD Director',     cl:5,    cls:'A', note:'Reports directly to the O5 Council. All operations withheld from site command structure.'},
+    {name:'ISD Handler',      cl:4,    cls:'B', note:'Manages active investigations and coordinates field agent deployments.'},
+    {name:'Senior ISD Agent', cl:null, cls:'—', note:'Operates under cover role clearance. True ISD affiliation is not recorded in accessible files.'},
+    {name:'ISD Agent',        cl:null, cls:'—', note:'Operates under cover role clearance. True ISD affiliation is not recorded in accessible files.'},
+    {name:'Junior ISD Agent', cl:null, cls:'—', note:'Operates under cover role clearance. Works under direct supervision of a Handler.'},
+  ],
+};
+
+const CL_BADGE_COLORS = {0:'#444',1:'#1a6a1a',2:'#1a3a8a',3:'#8a7a1a',4:'#8a3a1a',5:'#8a1a1a',6:'#222'};
+const CL_BADGE_TEXT   = {0:'#666',1:'#4a9a4a',2:'#4a6aaa',3:'#baa03a',4:'#ba6a3a',5:'#ba3a3a',6:'#444'};
+const CLS_BADGE_COLORS = {A:'#7a1a1a',B:'#1a3a6a',C:'#2a5a2a',D:'#555','—':'#2a2a2a'};
+const CLS_BADGE_TEXT   = {A:'#aa3a3a',B:'#3a6aaa',C:'#4a8a4a',D:'#888','—':'#555'};
+
+function renderRolePicker(dept) {
+  const roles = DEPT_ROLES[dept] || [];
+  const picker = document.getElementById('fn-role-picker');
+  const field  = document.getElementById('fn-role-field');
+  if (!roles.length) { field.style.display = 'none'; return; }
+  field.style.display = 'block';
+  document.getElementById('fn-role').value = '';
+  picker.innerHTML = roles.map((r, i) => {
+    const clLabel = r.cl === null ? '—' : r.cl === 6 ? '██' : `L${r.cl}`;
+    const clBorder = r.cl === null ? '#2a2a2a' : (CL_BADGE_COLORS[r.cl] || '#444');
+    const clColor  = r.cl === null ? '#555'    : (CL_BADGE_TEXT[r.cl]   || '#666');
+    const clsBorder = CLS_BADGE_COLORS[r.cls] || '#2a2a2a';
+    const clsColor  = CLS_BADGE_TEXT[r.cls]   || '#555';
+    const clsLabel  = r.cls === '—' ? 'Cover CL' : `Class ${r.cls}`;
+    return `<div class="role-box" data-role="${escHtml(r.name)}" data-cl="${r.cl !== null ? r.cl : ''}" data-cls="${escHtml(r.cls)}" onclick="selectRole(${i},'${escHtml(dept)}')">
+      <div class="role-box-left">
+        <div class="role-box-name">${escHtml(r.name)}</div>
+        <div class="role-box-note">${escHtml(r.note)}</div>
+      </div>
+      <div class="role-box-badges">
+        <span class="role-badge" style="border-color:${clBorder};color:${clColor}">CL ${clLabel}</span>
+        <span class="role-badge" style="border-color:${clsBorder};color:${clsColor}">${clsLabel}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function selectRole(idx, dept) {
+  const roles = DEPT_ROLES[dept] || [];
+  const r = roles[idx];
+  if (!r) return;
+  document.querySelectorAll('.role-box').forEach(b => b.classList.remove('selected'));
+  document.querySelectorAll('.role-box')[idx]?.classList.add('selected');
+  document.getElementById('fn-role').value = r.name;
+  // Auto-set clearance and classification if they haven't been manually chosen
+  if (r.cl !== null && r.cl !== undefined) { selectClearance(r.cl); }
+  if (r.cls && r.cls !== '—') { selectClass(r.cls); }
+}
+
 function selectDept(dept, abbr) {
   document.querySelectorAll('.dept-box').forEach(b => b.classList.remove('selected'));
   const box = document.querySelector('.dept-box[data-dept="'+dept+'"]');
@@ -1678,6 +1812,10 @@ function selectDept(dept, abbr) {
   document.getElementById('isd-cover-wrap').classList.toggle('visible', dept === 'Internal Security Department');
   // Reset subunit if dept changed
   if (dept !== 'Security Department') { document.getElementById('fn-sd-unit').value = ''; document.querySelectorAll('.subunit-box').forEach(b=>b.classList.remove('selected')); }
+  // Render role picker for this department
+  renderRolePicker(dept);
+  // Reset role selection
+  document.getElementById('fn-role').value = '';
 }
 
 /* ── SUBUNIT PICKER ── */
@@ -1717,7 +1855,7 @@ async function submitFoundation() {
         role = g('fn-role'), age = g('fn-age'), nationality = g('fn-nationality'),
         scipnet = g('fn-scipnet');
   if (!discord||!name||!clearance||!classification||!dept||!role||!age||!nationality||!scipnet) {
-    setMsg(msg,'error','Please fill in all required fields — including SCiPNET Handle, Clearance Level, Classification, and Department.');
+    setMsg(msg,'error','Please fill in all required fields — including SCiPNET Handle, Role / Position, Clearance Level, Classification, and Department.');
     return;
   }
   // SD subunit required
@@ -1760,7 +1898,7 @@ async function submitFoundation() {
     personnel_id: g('fn-personnel-id'),
     mbti: g('fn-mbti'), loyalty: g('fn-loyalty'), mars: g('fn-mars'),
     education: g('fn-education'), experience: g('fn-experience'),
-    sub_departments: getSubDepts('fn-subdept-list'),
+    sub_departments: [],
     virtues, vices, motives, fears,
     connections: getListItems('fn-connection-list','connection'),
     addendum: getListItems('fn-addendum-list','bullet'),

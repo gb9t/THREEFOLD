@@ -393,17 +393,20 @@ const SITES = [
     status: 'Operational', statusColor: '#2a8a2a',
     clearance: 'Level 3 minimum',
     classified: true,
+    showIcon: true,
     icon: 'img/Site-19.png',
   },
   {
     id: 'area314', name: 'Area-314',
-    tag: 'Foundation Black Site',
-    coords: [25.5, 46.8],
-    location: '[LOCATION REDACTED], Eastern European Theatre',
-    status: 'Restricted', statusColor: '#8a7a1a',
+    tag: 'Foundation Research &amp; Containment',
+    coords: [-68.5, 63.75],
+    location: 'A few hours outside Iqaluit, Nunavut, Canada',
+    status: 'Operational', statusColor: '#2a8a2a',
     clearance: 'Level 4 minimum',
-    classified: true,
+    classified: false,
+    showIcon: true,
     icon: 'img/Area-314.png',
+    note: 'HQ of the Accounting Department. Research, development, and application of esoteric financial assets.',
   },
 ];
 
@@ -536,7 +539,7 @@ const EVENTS = [
     type: 'dispatch',
     title: 'Unattributed Intrusion at Area-314',
     sub: 'Archive-Delta / First confirmed physical intrusion attributed to the Third',
-    focus: [25.5, 46.8],     // Area-314
+    focus: [-68.5, 63.75],     // Area-314, outside Iqaluit
     stamps: [{cls:'red',text:'THE THIRD'},{cls:'amber',text:'ACTIVE'}],
     hotspots: [],
     graphic: 'area314',
@@ -654,15 +657,16 @@ function plotSites() {
       .style('display','flex').style('align-items','center').style('justify-content','center')
       .style('background','rgba(10,10,10,.85)').style('border','1px solid').style('border-color',col);
 
-    if (site.classified) {
-      div.append('xhtml:span')
-        .style('font-family','Share Tech Mono,monospace').style('font-size','14px').style('color','#444')
-        .text('?');
-    } else {
+    const showIcon = site.icon && (site.showIcon || !site.classified);
+    if (showIcon) {
       div.append('xhtml:img').attr('src', site.icon).attr('alt', site.name)
         .style('width','24px').style('height','24px')
         .style('object-fit','contain').style('mix-blend-mode','screen')
         .on('error', function(){ this.style.display='none'; });
+    } else {
+      div.append('xhtml:span')
+        .style('font-family','Share Tech Mono,monospace').style('font-size','14px').style('color','#444')
+        .text('?');
     }
 
     m.append('text').attr('class','site-label').attr('x',10).attr('y',4)

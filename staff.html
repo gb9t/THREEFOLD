@@ -378,6 +378,15 @@ body::after {
 }
 .callout-ico { font-family:var(--mono); font-size:12px; color:var(--muted); white-space:nowrap; margin-top:2px; }
 .callout p { font-size:13px; color:var(--muted); line-height:1.75; }
+
+/* ===== GOI BUBBLE PREVIEW ===== */
+.goi-bubble-wrap{position:relative;width:100%;background:var(--deep);border:1px solid var(--border);overflow:hidden;margin-top:1.5rem;}
+#goi-canvas-staff{display:block;width:100%;cursor:grab;}
+#goi-canvas-staff:active{cursor:grabbing;}
+.goi-tooltip-staff{position:absolute;pointer-events:none;background:rgba(10,10,10,0.97);border:1px solid var(--border);padding:.6rem 1rem;font-family:var(--mono);font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--pale);white-space:nowrap;z-index:50;opacity:0;transition:opacity .15s;}
+.goi-tooltip-staff .tt-name{font-family:var(--display);font-size:14px;font-weight:600;letter-spacing:0.1em;color:var(--white);display:block;margin-bottom:.3rem;}
+.goi-tooltip-staff .tt-rel{display:flex;align-items:center;gap:.5rem;margin-top:.25rem;}
+.goi-tooltip-staff .tt-dot{width:8px;height:8px;border:1px solid;flex-shrink:0;}
 </style>
 </head>
 <body>
@@ -754,6 +763,14 @@ body::after {
 
     <!-- GOI list + relation editor -->
     <div id="goi-list-wrap"><div style="font-family:var(--mono);font-size:10px;color:var(--border);letter-spacing:0.1em;">Loading...</div></div>
+
+    <!-- Bubble chart preview -->
+    <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-top:2rem;margin-bottom:.75rem;display:flex;align-items:center;gap:.75rem;">Live Relation Preview<span style="flex:1;height:1px;background:var(--border);display:block;"></span></div>
+    <div class="goi-bubble-wrap" id="goi-bubble-wrap-staff">
+      <canvas id="goi-canvas-staff"></canvas>
+      <div class="goi-tooltip-staff" id="goi-tooltip-staff"><span class="tt-name"></span><div id="tt-rels-staff"></div></div>
+    </div>
+    <div style="font-family:var(--mono);font-size:8.5px;letter-spacing:0.12em;color:var(--muted);text-transform:uppercase;margin-top:.5rem;">Drag nodes to rearrange — hover to highlight connections — updates after saving</div>
 
     <!-- Relation editor -->
     <div style="border:1px solid var(--border);background:var(--deep);padding:1.5rem;margin-top:2rem;">
@@ -1265,6 +1282,8 @@ function renderGOIAdmin() {
   const opts = _wsGOIs.map(g=>`<option value="${g.id}">${g.abbr} — ${g.name}</option>`).join('');
   document.getElementById('rel-from').innerHTML = opts;
   document.getElementById('rel-to').innerHTML   = opts;
+  // Refresh bubble chart
+  setTimeout(()=>initStaffBubble(_wsGOIs, _wsRels), 50);
 }
 
 async function addGOI() {
@@ -1327,6 +1346,7 @@ async function saveRelation() {
   await saveRelations();
   document.getElementById('rel-msg').textContent='Relation saved.';
   setTimeout(()=>{ document.getElementById('rel-msg').textContent=''; },3000);
+  initStaffBubble(_wsGOIs, _wsRels);
 }
 
 async function saveGOIs() {
@@ -1351,6 +1371,162 @@ function roleName(r) {
 }
 function escHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* =========================================================
+   GOI BUBBLE CHART (staff preview)
+========================================================= */
+const STAFF_REL_COLORS = {
+  allied:  {stroke:'#3a6aaa',fill:'rgba(10,50,80,0.55)',label:'#3a6aaa'},
+  friendly:{stroke:'#3a9a3a',fill:'rgba(15,65,20,0.55)',label:'#3a9a3a'},
+  neutral: {stroke:'#555',   fill:'rgba(40,40,40,0.55)',label:'#666'},
+  indiff:  {stroke:'#4a4a7a',fill:'rgba(25,25,50,0.55)',label:'#5a5a8a'},
+  hostile: {stroke:'#aa6a3a',fill:'rgba(100,50,10,0.55)',label:'#aa6a3a'},
+  enemy:   {stroke:'#aa3a3a',fill:'rgba(120,20,20,0.55)',label:'#aa3a3a'},
+};
+
+let _sNodes=[], _sEdges=[], _sHov=null, _sDrag=null, _sDragOX=0, _sDragOY=0;
+let _sAnimFrame=null, _sLogoCache={};
+
+function initStaffBubble(gois, rels) {
+  const wrap=document.getElementById('goi-bubble-wrap-staff');
+  const canvas=document.getElementById('goi-canvas-staff');
+  if(!wrap||!canvas) return;
+  const W=wrap.clientWidth||700, H=Math.max(380, W*0.55);
+  canvas.width=W; canvas.height=H; wrap.style.height=H+'px';
+  const cx=W/2, cy=H/2, r=Math.min(W,H)*0.33, n=gois.length;
+  _sNodes=gois.map((g,i)=>{
+    const a=(2*Math.PI*i/n)-Math.PI/2;
+    return {id:g.id,name:g.name,abbr:g.abbr,logo:g.logo,x:cx+r*Math.cos(a),y:cy+r*Math.sin(a),vx:0,vy:0,radius:40};
+  });
+  _sEdges=rels.map(r=>({from:r.from,to:r.to,status:r.status||'neutral'}));
+  _sLogoCache={};
+  gois.forEach(g=>{
+    if(!g.logo) return;
+    const img=new Image(); img.src=g.logo;
+    img.onload=()=>{ _sLogoCache[g.id]=img; };
+  });
+  canvas.onmousedown=sDown; canvas.onmousemove=sMove; canvas.onmouseup=sUp; canvas.onmouseleave=sLeave;
+  canvas.ontouchstart=e=>{e.preventDefault();const t=e.touches[0];sDown({currentTarget:e.currentTarget,clientX:t.clientX,clientY:t.clientY});};
+  canvas.ontouchmove=e=>{e.preventDefault();const t=e.touches[0];sMove({currentTarget:e.currentTarget,clientX:t.clientX,clientY:t.clientY});};
+  canvas.ontouchend=sUp;
+  if(_sAnimFrame) cancelAnimationFrame(_sAnimFrame);
+  sTick();
+}
+
+function sTick(){
+  const canvas=document.getElementById('goi-canvas-staff');
+  if(!canvas) return;
+  sSimulate(); sDraw(canvas);
+  _sAnimFrame=requestAnimationFrame(sTick);
+}
+
+function sSimulate(){
+  const canvas=document.getElementById('goi-canvas-staff');
+  const W=parseInt(canvas.width), H=parseInt(canvas.height);
+  for(let i=0;i<_sNodes.length;i++){
+    for(let j=i+1;j<_sNodes.length;j++){
+      const a=_sNodes[i],b=_sNodes[j];
+      let dx=b.x-a.x,dy=b.y-a.y,d=Math.sqrt(dx*dx+dy*dy)||1;
+      const minD=(a.radius+b.radius)*1.6;
+      if(d<minD){const f=(minD-d)/d*0.12;a.vx-=dx*f;a.vy-=dy*f;b.vx+=dx*f;b.vy+=dy*f;}
+    }
+  }
+  const cx=W/2,cy=H/2;
+  _sNodes.forEach(n=>{
+    if(n===_sDrag) return;
+    n.vx+=(cx-n.x)*0.008; n.vy+=(cy-n.y)*0.008;
+    n.vx*=0.82; n.vy*=0.82; n.x+=n.vx; n.y+=n.vy;
+    n.x=Math.max(n.radius+4,Math.min(W-n.radius-4,n.x));
+    n.y=Math.max(n.radius+4,Math.min(H-n.radius-4,n.y));
+  });
+}
+
+function sDraw(canvas){
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.strokeStyle='rgba(255,255,255,0.025)'; ctx.lineWidth=1;
+  for(let x=0;x<W;x+=60){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=0;y<H;y+=60){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  const nm={};_sNodes.forEach(n=>nm[n.id]=n);
+  _sEdges.forEach(e=>{
+    const a=nm[e.from],b=nm[e.to]; if(!a||!b) return;
+    const col=STAFF_REL_COLORS[e.status]||STAFF_REL_COLORS.neutral;
+    const isH=_sHov&&(e.from===_sHov.id||e.to===_sHov.id);
+    const alpha=_sHov?(isH?1:0.08):(e.status==='neutral'?0.18:0.45);
+    ctx.save(); ctx.globalAlpha=alpha; ctx.strokeStyle=col.stroke; ctx.lineWidth=isH?2.5:1.5;
+    if(e.status==='enemy') ctx.setLineDash([6,4]);
+    else if(e.status==='hostile') ctx.setLineDash([10,4]);
+    else ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+    ctx.setLineDash([]);
+    if(isH){
+      const mx=(a.x+b.x)/2,my=(a.y+b.y)/2;
+      ctx.globalAlpha=0.95; ctx.font='bold 8px "Share Tech Mono",monospace';
+      const tw=ctx.measureText(e.status).width+10;
+      ctx.fillStyle='rgba(10,10,10,0.85)'; ctx.fillRect(mx-tw/2,my-8,tw,16);
+      ctx.strokeStyle=col.stroke; ctx.lineWidth=1; ctx.strokeRect(mx-tw/2,my-8,tw,16);
+      ctx.fillStyle=col.label; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(e.status.toUpperCase(),mx,my);
+    }
+    ctx.restore();
+  });
+  _sNodes.forEach(node=>{
+    const isH=node===_sHov; const r=node.radius; ctx.save();
+    if(isH){ctx.shadowBlur=24;ctx.shadowColor='rgba(240,240,240,0.3)';}
+    ctx.beginPath(); ctx.arc(node.x,node.y,r,0,Math.PI*2); ctx.fillStyle='#111'; ctx.fill();
+    ctx.strokeStyle=isH?'rgba(240,240,240,0.7)':'rgba(60,60,60,0.9)'; ctx.lineWidth=isH?2:1.5; ctx.stroke();
+    if(_sLogoCache[node.id]){
+      ctx.save(); ctx.beginPath(); ctx.arc(node.x,node.y,r-3,0,Math.PI*2); ctx.clip();
+      ctx.globalAlpha=0.9; const sz=(r-3)*2;
+      ctx.drawImage(_sLogoCache[node.id],node.x-r+3,node.y-r+3,sz,sz); ctx.restore();
+    } else {
+      ctx.fillStyle=isH?'#f0f0f0':'#999';
+      ctx.font=`bold ${Math.floor(r*0.38)}px "Barlow Condensed",sans-serif`;
+      ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(node.abbr,node.x,node.y);
+    }
+    ctx.shadowBlur=0; ctx.font='bold 9px "Share Tech Mono",monospace';
+    const lw=ctx.measureText(node.abbr).width+14;
+    ctx.fillStyle='rgba(10,10,10,0.75)'; ctx.fillRect(node.x-lw/2,node.y+r+3,lw,14);
+    ctx.fillStyle=isH?'#f0f0f0':'#888'; ctx.textAlign='center'; ctx.textBaseline='top';
+    ctx.fillText(node.abbr,node.x,node.y+r+5); ctx.restore();
+  });
+}
+
+function sCanvasPos(canvas,e){const rect=canvas.getBoundingClientRect();return {x:(e.clientX-rect.left)*(canvas.width/rect.width),y:(e.clientY-rect.top)*(canvas.height/rect.height)};}
+function sNodeAt(x,y){return _sNodes.find(n=>Math.hypot(n.x-x,n.y-y)<n.radius+4)||null;}
+function sDown(e){const {x,y}=sCanvasPos(e.currentTarget,e);const n=sNodeAt(x,y);if(n){_sDrag=n;_sDragOX=x-n.x;_sDragOY=y-n.y;}}
+function sMove(e){
+  const canvas=e.currentTarget;const {x,y}=sCanvasPos(canvas,e);
+  if(_sDrag){_sDrag.x=x-_sDragOX;_sDrag.y=y-_sDragOY;_sDrag.vx=0;_sDrag.vy=0;}
+  const hov=sNodeAt(x,y);
+  if(hov!==_sHov){_sHov=hov;sShowTooltip(canvas,hov,x,y);}
+  else if(hov) sMoveTooltip(canvas,x,y);
+}
+function sUp(){_sDrag=null;}
+function sLeave(){_sDrag=null;_sHov=null;const tt=document.getElementById('goi-tooltip-staff');if(tt)tt.style.opacity='0';}
+
+function sShowTooltip(canvas,node,x,y){
+  const tt=document.getElementById('goi-tooltip-staff');
+  if(!node){tt.style.opacity='0';return;}
+  tt.querySelector('.tt-name').textContent=node.name;
+  const relsHtml=_sEdges.filter(e=>e.from===node.id||e.to===node.id).map(e=>{
+    const oid=e.from===node.id?e.to:e.from;
+    const other=_wsGOIs.find(g=>g.id===oid)||DEFAULT_WS_GOIS.find(g=>g.id===oid);
+    const col=STAFF_REL_COLORS[e.status]||STAFF_REL_COLORS.neutral;
+    return `<div class="tt-rel"><div class="tt-dot" style="border-color:${col.stroke};background:${col.fill}"></div><span style="color:${col.label}">${e.status.toUpperCase()}</span><span style="color:#666"> — </span><span style="color:#ccc">${other?other.abbr:oid}</span></div>`;
+  }).join('');
+  document.getElementById('tt-rels-staff').innerHTML=relsHtml||'<span style="color:#666">No relations</span>';
+  sMoveTooltip(canvas,x,y); tt.style.opacity='1';
+}
+function sMoveTooltip(canvas,x,y){
+  const tt=document.getElementById('goi-tooltip-staff');
+  const cR=canvas.getBoundingClientRect();
+  const sx=canvas.width/cR.width,sy=canvas.height/cR.height;
+  let lx=x/sx+16,ly=y/sy+16;
+  if(lx+200>cR.width) lx=x/sx-220;
+  tt.style.left=lx+'px'; tt.style.top=ly+'px';
 }
 
 /* =========================================================

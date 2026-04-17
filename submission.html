@@ -558,6 +558,79 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
   .step-header{padding:1.5rem 1.5rem 0;}
   .breadcrumb{padding:.5rem 1.5rem;}
 }
+
+/* ── CLEARANCE PICKER ── */
+.cl-picker{display:flex;gap:.35rem;flex-wrap:wrap;}
+.cl-box{width:52px;height:52px;border:1px solid var(--border);background:var(--deep);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:all .2s;flex-shrink:0;}
+.cl-box:hover{border-color:var(--border-hi);}
+.cl-box.selected{border-width:2px;}
+.cl-box-num{font-family:var(--mono);font-size:15px;font-weight:700;line-height:1;}
+.cl-box-label{font-family:var(--mono);font-size:7px;letter-spacing:0.1em;text-transform:uppercase;opacity:.7;}
+.cl-0.selected{border-color:#555;background:rgba(85,85,85,.12);}.cl-0.selected .cl-box-num{color:#888;}
+.cl-1.selected{border-color:#1a6a1a;background:rgba(26,106,26,.1);}.cl-1.selected .cl-box-num{color:#4a9a4a;}
+.cl-2.selected{border-color:#1a3a8a;background:rgba(26,58,138,.1);}.cl-2.selected .cl-box-num{color:#4a6aaa;}
+.cl-3.selected{border-color:#8a7a1a;background:rgba(138,122,26,.1);}.cl-3.selected .cl-box-num{color:#baa03a;}
+.cl-4.selected{border-color:#8a3a1a;background:rgba(138,58,26,.1);}.cl-4.selected .cl-box-num{color:#ba6a3a;}
+.cl-5.selected{border-color:#8a1a1a;background:rgba(138,26,26,.1);}.cl-5.selected .cl-box-num{color:#ba3a3a;}
+.cl-6.selected{border-color:#0a0a0a;background:rgba(10,10,10,.5);}.cl-6.selected .cl-box-num{color:#333;}
+.cl-desc{margin-top:.6rem;font-size:11px;color:var(--muted);font-family:var(--mono);letter-spacing:0.08em;min-height:32px;transition:opacity .2s;border-left:2px solid var(--border);padding-left:.75rem;}
+
+/* ── CLASSIFICATION PICKER ── */
+.cls-picker{display:flex;gap:.35rem;flex-wrap:wrap;}
+.cls-box{min-width:52px;padding:0 .5rem;height:52px;border:1px solid var(--border);background:var(--deep);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:all .2s;}
+.cls-box:hover{border-color:var(--border-hi);}
+.cls-box.selected{border-width:2px;}
+.cls-E.selected{border-color:#555;background:rgba(85,85,85,.12);}.cls-E.selected .cls-box-letter{color:#888;}
+.cls-D.selected{border-color:#555;background:rgba(85,85,85,.12);}.cls-D.selected .cls-box-letter{color:#888;}
+.cls-C.selected{border-color:#1a6a1a;background:rgba(26,106,26,.1);}.cls-C.selected .cls-box-letter{color:#4a9a4a;}
+.cls-B.selected{border-color:#1a3a8a;background:rgba(26,58,138,.1);}.cls-B.selected .cls-box-letter{color:#4a6aaa;}
+.cls-A.selected{border-color:#8a1a1a;background:rgba(138,26,26,.1);}.cls-A.selected .cls-box-letter{color:#ba3a3a;}
+.cls-box-letter{font-family:var(--mono);font-size:18px;font-weight:700;line-height:1;}
+.cls-box-label{font-family:var(--mono);font-size:7px;letter-spacing:0.1em;text-transform:uppercase;opacity:.7;}
+.cls-desc{margin-top:.6rem;font-size:11px;color:var(--muted);font-family:var(--mono);letter-spacing:0.08em;min-height:32px;transition:opacity .2s;border-left:2px solid var(--border);padding-left:.75rem;}
+
+/* ── DEPT PICKER ── */
+.dept-picker{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.5rem;}
+.dept-box{border:1px solid var(--border);background:var(--deep);cursor:pointer;padding:.75rem 1rem;display:flex;align-items:center;gap:.75rem;transition:all .2s;}
+.dept-box:hover{border-color:var(--border-hi);background:var(--dark);}
+.dept-box.selected{border-width:2px;}
+.dept-box img{width:28px;height:28px;object-fit:contain;mix-blend-mode:screen;flex-shrink:0;opacity:.7;transition:opacity .2s;}
+.dept-box:hover img,.dept-box.selected img{opacity:1;}
+.dept-box-info{}
+.dept-box-name{font-family:var(--mono);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--pale);line-height:1.2;}
+.dept-box-abbr{font-family:var(--mono);font-size:7.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-top:1px;}
+.dept-desc{margin-top:.75rem;font-size:11px;color:var(--muted);font-family:var(--mono);letter-spacing:0.08em;min-height:28px;border-left:2px solid var(--border);padding-left:.75rem;}
+
+/* ── SUBUNIT PICKER ── */
+.subunit-wrap{display:none;margin-top:1rem;animation:fadeSlide .25s ease;}
+.subunit-wrap.visible{display:block;}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.subunit-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.5rem;}
+.subunit-box{border:1px solid var(--border);background:var(--deep);cursor:pointer;padding:.75rem 1rem;transition:all .2s;}
+.subunit-box:hover{border-color:var(--border-hi);background:var(--dark);}
+.subunit-box.selected{border-color:var(--gold-dim);border-width:2px;background:rgba(200,150,10,.04);}
+.subunit-name{font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--pale);}
+.subunit-full{font-size:11px;color:var(--muted);margin-top:.2rem;}
+
+/* ── ISD COVER ROLE ── */
+.isd-cover-wrap{display:none;margin-top:1rem;animation:fadeSlide .25s ease;}
+.isd-cover-wrap.visible{display:block;}
+.isd-cover-note{background:rgba(100,0,0,.08);border:1px solid rgba(100,0,0,.2);padding:.75rem 1rem;font-family:var(--mono);font-size:9.5px;letter-spacing:0.1em;color:rgba(200,80,80,.8);margin-bottom:.75rem;line-height:1.7;}
+
+/* ── SCIPNET SUFFIX ── */
+.scipnet-wrap{display:flex;align-items:stretch;gap:0;}
+.scipnet-wrap input{flex:1;border-right:none;}
+.scipnet-suffix{background:var(--mid);border:1px solid var(--border);padding:0 .75rem;font-family:var(--mono);font-size:11px;color:var(--muted);display:flex;align-items:center;white-space:nowrap;}
+
+/* ── VIRTUE/VICE REQUIRED COUNT ── */
+.list-req-note{font-family:var(--mono);font-size:8.5px;letter-spacing:0.12em;color:var(--muted);margin-bottom:.5rem;}
+.list-req-note span{color:var(--gold);}
+
+/* ── PERSONNEL ID ── */
+.pid-wrap{display:flex;align-items:stretch;gap:.5rem;}
+.pid-wrap input{flex:1;}
+.pid-gen{font-family:var(--mono);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--muted);padding:0 1rem;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.pid-gen:hover{border-color:var(--border-hi);color:var(--pale);}
 </style>
 </head>
 <body>
@@ -740,26 +813,28 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
 ══════════════════════════════════════════════ -->
 <div id="v-foundation" class="view">
   <div class="ph">
-    <div class="ph-stamp">FNDTN</div>
-    <div class="ph-eyebrow"><div class="ph-eyebrow-line"></div><div class="ph-eyebrow-text">Foundation Personnel — Character Sheet</div></div>
-    <h1>Personnel<br><em>File</em></h1>
-    <p class="ph-desc">Fields marked <span style="color:var(--gold)">*</span> are required. Focus any rich text field to bring up the formatting toolbar.</p>
+    <div class="ph-stamp">RAISA</div>
+    <div class="ph-eyebrow"><div class="ph-eyebrow-line"></div><div class="ph-eyebrow-text">RAISA — Updated Personnel Dossier</div></div>
+    <h1>Personnel<br><em>Dossier</em></h1>
+    <p class="ph-desc">Fields marked <span style="color:var(--gold)">*</span> are required. Use the toolbar to format rich text sections.</p>
   </div>
-  <div class="breadcrumb"><span class="breadcrumb-item">Method</span><span class="breadcrumb-sep">/</span><span class="breadcrumb-item">Type</span><span class="breadcrumb-sep">/</span><span class="breadcrumb-item active">Sheet</span></div>
-  <div class="form-wrap" style="max-width:800px;">
+  <div class="breadcrumb"><span class="breadcrumb-item">Method</span><span class="breadcrumb-sep">/</span><span class="breadcrumb-item">Type</span><span class="breadcrumb-sep">/</span><span class="breadcrumb-item active">Dossier</span></div>
+  <div class="form-wrap" style="max-width:820px;">
     <button class="back-btn" onclick="showView('v-type')">Back</button>
 
+    <!-- SUBMITTER -->
     <div class="form-section" style="margin-top:0;border-top:none;">
-      <div class="form-section-label">Submitter Info</div>
+      <div class="form-section-label">Submitter</div>
       <div class="field"><label>Discord Username <span class="req">*</span></label><input type="text" id="fn-discord" placeholder="yourname or yourname#0000"></div>
     </div>
 
+    <!-- SECTION 1: BASIC INFO -->
     <div class="form-section">
-      <div class="form-section-label">Personnel File — Basic Info</div>
+      <div class="form-section-label">Section 1 — Basic Information</div>
       <div class="field"><label>Character Image <span style="color:var(--muted);font-size:8px">(optional — max 5MB)</span></label>
         <div class="img-zone" id="fn-img-area">
           <input type="file" id="fn-img-input" accept="image/*" onchange="handleImg('fn-img-input','fn-img-preview','fn-img-area')">
-          <div class="img-zone-label">Click to upload image</div>
+          <div class="img-zone-label">Click to upload portrait image</div>
           <div class="img-zone-sub">JPG, PNG, GIF, WebP — Max 5MB</div>
           <img id="fn-img-preview" class="img-preview" alt="Preview">
         </div>
@@ -768,73 +843,235 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
         <div class="field"><label>Full Name <span class="req">*</span></label><input type="text" id="fn-name" placeholder="Government name"></div>
         <div class="field"><label>Alias / Codename <span style="color:var(--muted);font-size:8px">(optional)</span></label><input type="text" id="fn-alias" placeholder="If applicable"></div>
       </div>
+      <div class="two-col">
+        <div class="field">
+          <label>SCiPNET Handle <span class="req">*</span></label>
+          <div class="scipnet-wrap">
+            <input type="text" id="fn-scipnet" placeholder="e.g. ASHWOOD" style="text-transform:uppercase;" oninput="this.value=this.value.toUpperCase()">
+            <span class="scipnet-suffix">@SCiP.net</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Personnel ID# <span style="color:var(--muted);font-size:8px">(auto-generated)</span></label>
+          <div class="pid-wrap">
+            <input type="text" id="fn-personnel-id" placeholder="Click generate →" readonly>
+            <button class="pid-gen" type="button" onclick="genPersonnelId()">Generate</button>
+          </div>
+        </div>
+      </div>
       <div class="three-col">
         <div class="field"><label>Age <span class="req">*</span></label><input type="text" id="fn-age" placeholder="e.g. 34"></div>
-        <div class="field"><label>Nationality <span class="req">*</span></label><input type="text" id="fn-nationality" placeholder="e.g. British"></div>
+        <div class="field"><label>Nationality <span class="req">*</span></label><input type="text" id="fn-nationality" placeholder="e.g. American"></div>
         <div class="field"><label>Role / Position <span class="req">*</span></label><input type="text" id="fn-role" placeholder="e.g. Senior Researcher"></div>
       </div>
-    </div>
-
-    <div class="form-section">
-      <div class="form-section-label">Clearance &amp; Classification</div>
-      <div class="two-col">
-        <div class="field"><label>Clearance Level <span class="req">*</span></label>
-          <select id="fn-clearance">
-            <option value="">Select level...</option>
-            <option value="0">Level 0 — Unrestricted</option>
-            <option value="1">Level 1 — Confidential</option>
-            <option value="2">Level 2 — Restricted</option>
-            <option value="3">Level 3 — Secret</option>
-            <option value="4">Level 4 — Top Secret</option>
-            <option value="5">Level 5 — Thaumiel</option>
-            <option value="6">Level 6 — ██████████</option>
-          </select>
-          <span class="field-hint">Level 6 is reserved for O5 Council members.</span>
-        </div>
-        <div class="field"><label>Classification <span class="req">*</span></label>
-          <select id="fn-classification">
-            <option value="">Select class...</option>
-            <option value="E">Class E — Unrestricted</option>
-            <option value="D">Class D — Restricted</option>
-            <option value="C">Class C — Confidential</option>
-            <option value="B">Class B — Secret</option>
-            <option value="A">Class A — Top Secret</option>
-          </select>
-        </div>
+      <div class="three-col">
+        <div class="field"><label>Gender <span style="color:var(--muted);font-size:8px">(optional)</span></label><input type="text" id="fn-gender" placeholder="e.g. Male"></div>
+        <div class="field"><label>Height <span style="color:var(--muted);font-size:8px">(optional)</span></label><input type="text" id="fn-height" placeholder="e.g. 1.8M"></div>
+        <div class="field"><label>Blood Type <span style="color:var(--muted);font-size:8px">(optional)</span></label><input type="text" id="fn-blood" placeholder="e.g. O-"></div>
       </div>
     </div>
 
+    <!-- SECTION 2: CLEARANCE & CLASSIFICATION -->
     <div class="form-section">
-      <div class="form-section-label">Department</div>
-      <div class="field"><label>Primary Department <span class="req">*</span></label><input type="text" id="fn-dept" placeholder="e.g. Department of Anomalous Objects"></div>
+      <div class="form-section-label">Section 2 — Clearance &amp; Classification</div>
+
       <div class="field">
-        <label>Sub-Departments <span style="color:var(--muted);font-size:8px">(optional — add as many as needed)</span></label>
+        <label>Clearance Level <span class="req">*</span></label>
+        <div class="cl-picker">
+          <div class="cl-box cl-0" onclick="selectClearance(0)" data-cl="0"><span class="cl-box-num">0</span><span class="cl-box-label">Unrestr.</span></div>
+          <div class="cl-box cl-1" onclick="selectClearance(1)" data-cl="1"><span class="cl-box-num">1</span><span class="cl-box-label">Confid.</span></div>
+          <div class="cl-box cl-2" onclick="selectClearance(2)" data-cl="2"><span class="cl-box-num">2</span><span class="cl-box-label">Restrict.</span></div>
+          <div class="cl-box cl-3" onclick="selectClearance(3)" data-cl="3"><span class="cl-box-num">3</span><span class="cl-box-label">Secret</span></div>
+          <div class="cl-box cl-4" onclick="selectClearance(4)" data-cl="4"><span class="cl-box-num">4</span><span class="cl-box-label">Top Sec.</span></div>
+          <div class="cl-box cl-5" onclick="selectClearance(5)" data-cl="5"><span class="cl-box-num">5</span><span class="cl-box-label">Thaumiel</span></div>
+        </div>
+        <div class="cl-desc" id="cl-desc">Select a clearance level.</div>
+        <input type="hidden" id="fn-clearance" value="">
+      </div>
+
+      <div class="field" style="margin-top:1.25rem;">
+        <label>Personnel Classification <span class="req">*</span></label>
+        <div class="cls-picker">
+          <div class="cls-box cls-E" onclick="selectClass('E')" data-cls="E"><span class="cls-box-letter">E</span><span class="cls-box-label">Provis.</span></div>
+          <div class="cls-box cls-D" onclick="selectClass('D')" data-cls="D"><span class="cls-box-letter">D</span><span class="cls-box-label">Expend.</span></div>
+          <div class="cls-box cls-C" onclick="selectClass('C')" data-cls="C"><span class="cls-box-letter">C</span><span class="cls-box-label">Standard</span></div>
+          <div class="cls-box cls-B" onclick="selectClass('B')" data-cls="B"><span class="cls-box-letter">B</span><span class="cls-box-label">Essential</span></div>
+          <div class="cls-box cls-A" onclick="selectClass('A')" data-cls="A"><span class="cls-box-letter">A</span><span class="cls-box-label">Strategic</span></div>
+        </div>
+        <div class="cls-desc" id="cls-desc">Select a classification.</div>
+        <input type="hidden" id="fn-classification" value="">
+      </div>
+    </div>
+
+    <!-- SECTION 3: DEPARTMENT -->
+    <div class="form-section">
+      <div class="form-section-label">Section 3 — Department</div>
+      <div class="field">
+        <label>Primary Department <span class="req">*</span></label>
+        <div class="dept-picker" id="dept-picker">
+          <div class="dept-box" onclick="selectDept('Science Department','ScD')" data-dept="Science Department">
+            <img src="img/Science.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Science Dept.</div><div class="dept-box-abbr">ScD</div></div>
+          </div>
+          <div class="dept-box" onclick="selectDept('Security Department','SD')" data-dept="Security Department">
+            <img src="img/Security.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Security Dept.</div><div class="dept-box-abbr">SD</div></div>
+          </div>
+          <div class="dept-box" onclick="selectDept('Ethics Committee','EC')" data-dept="Ethics Committee">
+            <img src="img/Ethics.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Ethics Committee</div><div class="dept-box-abbr">EC</div></div>
+          </div>
+          <div class="dept-box" onclick="selectDept('Mobile Task Forces','MTF')" data-dept="Mobile Task Forces">
+            <img src="img/MTF.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Mobile Task Forces</div><div class="dept-box-abbr">MTF</div></div>
+          </div>
+          <div class="dept-box" onclick="selectDept('Medical Department','MD')" data-dept="Medical Department">
+            <img src="img/Medical.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Medical Dept.</div><div class="dept-box-abbr">MD</div></div>
+          </div>
+          <div class="dept-box" onclick="selectDept('Intelligence Agency','IA')" data-dept="Intelligence Agency">
+            <img src="img/Intelligence.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Intelligence Agency</div><div class="dept-box-abbr">IA</div></div>
+          </div>
+          <div class="dept-box" onclick="selectDept('Administrator's Office','AO')" data-dept="Administrator's Office">
+            <img src="img/AdministratorsOffice.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Administrator's Office</div><div class="dept-box-abbr">AO</div></div>
+          </div>
+          <div class="dept-box" onclick="selectDept('Site Directorship','SDir')" data-dept="Site Directorship">
+            <img src="img/SiteDirectorship.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Site Directorship</div><div class="dept-box-abbr">SDir</div></div>
+          </div>
+          <div class="dept-box" onclick="selectDept('Engineering Department','Eng')" data-dept="Engineering Department">
+            <img src="img/Engineering.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Engineering Dept.</div><div class="dept-box-abbr">Eng</div></div>
+          </div>
+          <div class="dept-box" onclick="selectDept('Internal Security Department','ISD')" data-dept="Internal Security Department">
+            <img src="img/ISD.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Int. Security Dept.</div><div class="dept-box-abbr">ISD</div></div>
+          </div>
+        </div>
+        <div class="dept-desc" id="dept-desc">Select a department.</div>
+        <input type="hidden" id="fn-dept" value="">
+      </div>
+
+      <!-- SD Sub-units (fades in) -->
+      <div class="subunit-wrap" id="sd-subunit-wrap">
+        <label style="font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;display:block;">Security Unit <span class="req">*</span></label>
+        <div class="subunit-grid">
+          <div class="subunit-box" onclick="selectSubunit('SRU')" data-unit="SRU"><div class="subunit-name">SRU</div><div class="subunit-full">Security Response Unit — Active threat response, breach containment, site defence.</div></div>
+          <div class="subunit-box" onclick="selectSubunit('SCU')" data-unit="SCU"><div class="subunit-name">SCU</div><div class="subunit-full">Security Containment Unit — Anomaly containment oversight, test security, researcher protection.</div></div>
+          <div class="subunit-box" onclick="selectSubunit('SEU')" data-unit="SEU"><div class="subunit-name">SEU</div><div class="subunit-full">Security Enforcement Unit — Internal violations, Ethics oversight, D-Class welfare enforcement.</div></div>
+          <div class="subunit-box" onclick="selectSubunit('SIU')" data-unit="SIU"><div class="subunit-name">SIU</div><div class="subunit-full">Security Intelligence Unit — Off-site operations, HVIP security, IA &amp; ISD cooperation. (Level 3+ only.)</div></div>
+        </div>
+        <input type="hidden" id="fn-sd-unit" value="">
+      </div>
+
+      <!-- MTF Sub-units (fades in — empty for now) -->
+      <div class="subunit-wrap" id="mtf-subunit-wrap">
+        <label style="font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;display:block;">Task Force <span style="color:var(--muted);font-size:8px;text-transform:none;">(optional — assigned by staff)</span></label>
+        <div style="border:1px dashed var(--border);padding:1rem 1.25rem;font-family:var(--mono);font-size:9.5px;color:var(--muted);letter-spacing:0.1em;">No task forces are currently registered. Your MTF assignment will be confirmed by staff during review.</div>
+        <input type="hidden" id="fn-mtf-unit" value="">
+      </div>
+
+      <!-- ISD cover role (fades in) -->
+      <div class="isd-cover-wrap" id="isd-cover-wrap">
+        <div class="isd-cover-note">
+          ◼ &nbsp;ISD affiliation is classified. Publicly, your character will appear under their cover department. Only staff with appropriate clearance will see the ISD designation.<br>
+          ◼ &nbsp;Select the department your character uses as their cover assignment below.
+        </div>
+        <label style="font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;display:block;">Cover Department <span class="req">*</span></label>
+        <div class="field"><input type="text" id="fn-cover-dept" placeholder="e.g. Science Department — Senior Researcher"></div>
+      </div>
+
+      <div class="field" style="margin-top:1rem;">
+        <label>Sub-Departments <span style="color:var(--muted);font-size:8px">(optional)</span></label>
         <div class="subdept-list" id="fn-subdept-list"></div>
         <button class="add-link" onclick="addSubDept('fn-subdept-list')">+ Add Sub-Department</button>
       </div>
     </div>
 
+    <!-- SECTION 4: PSYCHOLOGICAL PROFILE -->
     <div class="form-section">
-      <div class="form-section-label">Rich Text Sections</div>
-      <div class="field"><label>Physical Description <span class="req">*</span></label>
-        <div class="rich-field" id="fn-physical" contenteditable="true" data-placeholder="Describe your character's physical appearance..."></div>
+      <div class="form-section-label">Section 4 — Psychological Profile</div>
+      <div class="three-col">
+        <div class="field">
+          <label>Myers-Briggs <span style="color:var(--muted);font-size:8px">(optional)</span></label>
+          <select id="fn-mbti">
+            <option value="">Select type...</option>
+            <option>INTJ</option><option>INTP</option><option>ENTJ</option><option>ENTP</option>
+            <option>INFJ</option><option>INFP</option><option>ENFJ</option><option>ENFP</option>
+            <option>ISTJ</option><option>ISFJ</option><option>ESTJ</option><option>ESFJ</option>
+            <option>ISTP</option><option>ISFP</option><option>ESTP</option><option>ESFP</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Loyalty Index <span style="color:var(--muted);font-size:8px">(0–100)</span></label>
+          <input type="number" id="fn-loyalty" min="0" max="100" placeholder="e.g. 72">
+        </div>
+        <div class="field">
+          <label>MARS Score <span style="color:var(--muted);font-size:8px">Mind-Affect Resist. (0–10)</span></label>
+          <input type="number" id="fn-mars" min="0" max="10" placeholder="e.g. 6">
+        </div>
       </div>
-      <div class="field"><label>Psychological Profile <span class="req">*</span></label>
-        <div class="rich-field" id="fn-psych" contenteditable="true" data-placeholder="Personality, mental state, notable behaviours..."></div>
+      <div class="two-col">
+        <div class="field">
+          <div class="list-req-note">Virtues <span class="req">*</span> — <span>Minimum 3 required</span></div>
+          <div id="fn-virtue-list" class="virtue-list"></div>
+          <button class="add-link" onclick="addListItem('fn-virtue-list','virtue','e.g. Patience — Knows when to hold back...')">+ Add Virtue</button>
+        </div>
+        <div class="field">
+          <div class="list-req-note">Vices <span class="req">*</span> — <span>Minimum 3 required</span></div>
+          <div id="fn-vice-list" class="vice-list"></div>
+          <button class="add-link" onclick="addListItem('fn-vice-list','vice','e.g. Withdrawn — Lives mostly in their head...')">+ Add Vice</button>
+        </div>
       </div>
-      <div class="field"><label>Employment History <span class="req">*</span></label>
-        <div class="rich-field" id="fn-employment" contenteditable="true" data-placeholder="Prior positions, how they came to the Foundation..."></div>
-      </div>
-      <div class="field"><label>Notable Incidents / Logs <span style="color:var(--muted);font-size:8px">(optional)</span></label>
-        <div class="rich-field" id="fn-incidents" contenteditable="true" data-placeholder="Any significant incidents, missions, or logged events..."></div>
-      </div>
-      <div class="field"><label>Additional Notes <span style="color:var(--muted);font-size:8px">(optional)</span></label>
-        <div class="rich-field" id="fn-notes" contenteditable="true" data-placeholder="Anything else worth noting..."></div>
+      <div class="two-col">
+        <div class="field">
+          <div class="list-req-note">Motives <span class="req">*</span> — <span>Minimum 3 required</span></div>
+          <div id="fn-motive-list" class="motive-list"></div>
+          <button class="add-link" onclick="addListItem('fn-motive-list','motive','e.g. Truth — It must all be for a reason...')">+ Add Motive</button>
+        </div>
+        <div class="field">
+          <div class="list-req-note">Fears <span class="req">*</span> — <span>Minimum 2 required</span></div>
+          <div id="fn-fear-list" class="fear-list"></div>
+          <button class="add-link" onclick="addListItem('fn-fear-list','fear','e.g. Divine Judgment — ...')">+ Add Fear</button>
+        </div>
       </div>
     </div>
 
-    <div class="submit-row">
-      <button class="btn btn-fill" onclick="submitFoundation()">Submit for Review</button>
+    <!-- SECTION 5: BACKGROUND -->
+    <div class="form-section">
+      <div class="form-section-label">Section 5 — Background</div>
+      <div class="two-col">
+        <div class="field"><label>Education <span style="color:var(--muted);font-size:8px">(optional)</span></label><input type="text" id="fn-education" placeholder="e.g. PhD Neuroscience, BA Psychology"></div>
+        <div class="field"><label>Experience <span style="color:var(--muted);font-size:8px">(optional)</span></label><input type="text" id="fn-experience" placeholder="e.g. 7 years postdoc neurology"></div>
+      </div>
+      <div class="field"><label>Backstory / Background <span class="req">*</span></label>
+        <div class="rich-field" id="fn-backstory" contenteditable="true" data-placeholder="Full background narrative — prior life, how they came to the Foundation, notable events. The more detail the better."></div>
+      </div>
+      <div class="field">
+        <label>Connections <span style="color:var(--muted);font-size:8px">(optional — organisations, groups, individuals)</span></label>
+        <div class="connection-list" id="fn-connection-list"></div>
+        <button class="add-link" onclick="addListItem('fn-connection-list','connection','e.g. The Chaos Insurgency — Description...')">+ Add Connection</button>
+      </div>
+    </div>
+
+    <!-- SECTION 6: PHYSICAL DESCRIPTION -->
+    <div class="form-section">
+      <div class="form-section-label">Section 6 — Physical Description</div>
+      <div class="field">
+        <div class="rich-field" id="fn-physical" contenteditable="true" data-placeholder="Physical appearance — build, colouring, distinguishing features, general presentation..."></div>
+      </div>
+    </div>
+
+    <!-- SECTION 7: ADDENDUM -->
+    <div class="form-section">
+      <div class="form-section-label">Section 7 — Addendum</div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:.75rem;font-family:var(--mono);letter-spacing:0.08em;">Miscellaneous notes — anomalous properties, medical conditions, restrictions, pending requests.</p>
+      <div class="bullet-list" id="fn-addendum-list"></div>
+      <button class="add-link" onclick="addListItem('fn-addendum-list','bullet','e.g. All requests for [SCP-148] are to be denied.')">+ Add Entry</button>
+    </div>
+
+    <!-- SECTION 8: RP SAMPLE -->
+    <div class="form-section">
+      <div class="form-section-label">Section 8 — RP Sample</div>
+      <div class="field">
+        <div class="rich-field" id="fn-rp-sample" contenteditable="true" data-placeholder="A short RP sample (3–5 paragraphs) demonstrating your writing style and how you play this character. Third-person past tense preferred."></div>
+      </div>
+    </div>
+
+    <div class="submit-row" style="margin-top:2.5rem;">
+      <button class="btn btn-fill" onclick="submitFoundation()">Submit Dossier for Review</button>
       <div class="form-msg" id="fn-msg"></div>
     </div>
   </div>
@@ -1371,29 +1608,154 @@ async function submitGDoc() {
   showView('v-success');
 }
 
+
+/* ── CLEARANCE PICKER ── */
+const CL_DESC = {
+  0: 'Level 0 — Unrestricted. Non-sensitive access only. No anomalous contact permitted.',
+  1: 'Level 1 — Confidential. Basic on-site access. Contact with non-hazardous anomalies only.',
+  2: 'Level 2 — Restricted. Standard research and security clearance. Most containment areas accessible.',
+  3: 'Level 3 — Secret. Access to most Euclid and some Keter-class anomalies. Senior personnel.',
+  4: 'Level 4 — Top Secret. Department heads and senior command. Broad containment access.',
+  5: 'Level 5 — Thaumiel. O5-adjacent. Near-complete site access. Extremely rare.',
+};
+function selectClearance(level) {
+  document.querySelectorAll('.cl-box').forEach(b => b.classList.remove('selected'));
+  const box = document.querySelector('.cl-box[data-cl="'+level+'"]');
+  if (box) box.classList.add('selected');
+  document.getElementById('fn-clearance').value = level;
+  document.getElementById('cl-desc').textContent = CL_DESC[level] || '';
+}
+
+/* ── CLASSIFICATION PICKER ── */
+const CLS_DESC = {
+  E: 'Class E — Provisional. Applied to personnel recently exposed to anomalous phenomena. Quarantine status pending clearance.',
+  D: 'Class D — Expendable. Used in direct contact with extreme hazards. Typically convicted criminals. Not permitted near Class A/B.',
+  C: 'Class C — Standard. Direct anomaly access permitted for non-hostile entities. Standard personnel classification.',
+  B: 'Class B — Essential. Limited to quarantine-cleared anomalies only. Evacuated first during emergencies.',
+  A: 'Class A — Strategic. No direct anomaly access under any circumstances. Immediately evacuated in all emergencies. O5 Council are always Class A.',
+};
+function selectClass(cls) {
+  document.querySelectorAll('.cls-box').forEach(b => b.classList.remove('selected'));
+  const box = document.querySelector('.cls-box[data-cls="'+cls+'"]');
+  if (box) box.classList.add('selected');
+  document.getElementById('fn-classification').value = cls;
+  document.getElementById('cls-desc').textContent = CLS_DESC[cls] || '';
+}
+
+/* ── DEPARTMENT PICKER ── */
+const DEPT_DESC = {
+  'Science Department': 'ScD — Study, catalogue, and test anomalous phenomena. The intellectual backbone of Foundation operations.',
+  'Security Department': 'SD — Maintain physical order, enforce containment, and neutralise on-site threats. Divided into specialist units.',
+  'Ethics Committee': 'EC — Independent oversight body. Ensures containment and research practices remain within the Foundation's code of conduct.',
+  'Mobile Task Forces': 'MTF — Elite field units deployed for operations beyond standard site security capability.',
+  'Medical Department': 'MD — Maintain the health and operational capability of Foundation personnel. Includes anomalous pathology.',
+  'Intelligence Agency': 'IA — External intelligence gathering. Embedded in governments and rival organisations worldwide.',
+  'Administrator's Office': 'AO — The highest tier of Foundation governance. Administrator, O5 Council, and Factotum.',
+  'Site Directorship': 'SDir — Commanding officers of Foundation installations. Accountable for all site operations.',
+  'Engineering Department': 'Eng — Design and maintain the physical infrastructure that makes containment possible.',
+  'Internal Security Department': 'ISD — Identifies and neutralises internal threats. Existence classified. Reports directly to O5.',
+};
+function selectDept(dept, abbr) {
+  document.querySelectorAll('.dept-box').forEach(b => b.classList.remove('selected'));
+  const box = document.querySelector('.dept-box[data-dept="'+dept+'"]');
+  if (box) box.classList.add('selected');
+  document.getElementById('fn-dept').value = dept;
+  document.getElementById('dept-desc').textContent = DEPT_DESC[dept] || '';
+  // Show/hide subunit pickers
+  document.getElementById('sd-subunit-wrap').classList.toggle('visible', dept === 'Security Department');
+  document.getElementById('mtf-subunit-wrap').classList.toggle('visible', dept === 'Mobile Task Forces');
+  document.getElementById('isd-cover-wrap').classList.toggle('visible', dept === 'Internal Security Department');
+  // Reset subunit if dept changed
+  if (dept !== 'Security Department') { document.getElementById('fn-sd-unit').value = ''; document.querySelectorAll('.subunit-box').forEach(b=>b.classList.remove('selected')); }
+}
+
+/* ── SUBUNIT PICKER ── */
+function selectSubunit(unit) {
+  document.querySelectorAll('.subunit-box').forEach(b => b.classList.remove('selected'));
+  const box = document.querySelector('.subunit-box[data-unit="'+unit+'"]');
+  if (box) box.classList.add('selected');
+  document.getElementById('fn-sd-unit').value = unit;
+}
+
+/* ── PERSONNEL ID GENERATOR ── */
+function genPersonnelId() {
+  const seg = () => Math.floor(Math.random() * 90000 + 10000);
+  const id = seg() + ' ' + seg() + ' ' + seg();
+  document.getElementById('fn-personnel-id').value = id;
+}
+
+/* ── GENERIC LIST BUILDER ── */
+function addListItem(listId, className, placeholder) {
+  const list = document.getElementById(listId);
+  if (!list) return;
+  const item = document.createElement('div');
+  item.className = className + '-item';
+  item.innerHTML = '<input type="text" class="'+className+'-input" placeholder="'+placeholder+'"><button class="item-remove" onclick="this.parentElement.remove()">✕</button>';
+  list.appendChild(item);
+}
+function getListItems(listId, className) {
+  return Array.from(document.querySelectorAll('#'+listId+' .'+className+'-input')).map(i=>i.value.trim()).filter(Boolean);
+}
+
 async function submitFoundation() {
   const msg = document.getElementById('fn-msg');
-  const discord = g('fn-discord');
-  const name = g('fn-name');
-  const clearance = g('fn-clearance');
-  const classification = g('fn-classification');
-  const dept = g('fn-dept');
-  const role = g('fn-role');
-  const age = g('fn-age');
-  const nationality = g('fn-nationality');
-  if (!discord||!name||!clearance||!classification||!dept||!role||!age||!nationality) { setMsg(msg,'error','Please fill in all required fields.'); return; }
-  if (!document.getElementById('fn-physical').innerHTML.trim()||!document.getElementById('fn-psych').innerHTML.trim()||!document.getElementById('fn-employment').innerHTML.trim()) { setMsg(msg,'error','Physical Description, Psychological Profile, and Employment History are required.'); return; }
+  const discord = g('fn-discord'), name = g('fn-name'),
+        clearance = document.getElementById('fn-clearance').value,
+        classification = document.getElementById('fn-classification').value,
+        dept = document.getElementById('fn-dept').value,
+        role = g('fn-role'), age = g('fn-age'), nationality = g('fn-nationality'),
+        scipnet = g('fn-scipnet');
+  if (!discord||!name||!clearance||!classification||!dept||!role||!age||!nationality||!scipnet) {
+    setMsg(msg,'error','Please fill in all required fields — including SCiPNET Handle, Clearance Level, Classification, and Department.');
+    return;
+  }
+  // SD subunit required
+  if (dept === 'Security Department' && !document.getElementById('fn-sd-unit').value) {
+    setMsg(msg,'error','Please select a Security unit (SRU, SCU, SEU, or SIU).');
+    return;
+  }
+  // ISD cover dept required
+  if (dept === 'Internal Security Department' && !g('fn-cover-dept')) {
+    setMsg(msg,'error','Please provide a cover department for your ISD character.');
+    return;
+  }
+  // Virtue/Vice/Motive/Fear minimums
+  const virtues  = getListItems('fn-virtue-list','virtue');
+  const vices    = getListItems('fn-vice-list','vice');
+  const motives  = getListItems('fn-motive-list','motive');
+  const fears    = getListItems('fn-fear-list','fear');
+  if (virtues.length < 3)  { setMsg(msg,'error','Please provide at least 3 Virtues.'); return; }
+  if (vices.length < 3)    { setMsg(msg,'error','Please provide at least 3 Vices.'); return; }
+  if (motives.length < 3)  { setMsg(msg,'error','Please provide at least 3 Motives.'); return; }
+  if (fears.length < 2)    { setMsg(msg,'error','Please provide at least 2 Fears.'); return; }
+  if (!document.getElementById('fn-backstory').innerHTML.trim()) {
+    setMsg(msg,'error','Backstory / Background is required.'); return;
+  }
   setMsg(msg,'loading','Uploading...');
   const imgUrl = await doUploadImg('_pendingImgFile_fn');
+  const isISD = dept === 'Internal Security Department';
   const data = {
-    image_url: imgUrl, full_name: name, alias: g('fn-alias'),
-    age, nationality, role, clearance: parseInt(clearance), classification,
-    department: dept, sub_departments: getSubDepts('fn-subdept-list'),
+    image_url: imgUrl,
+    full_name: name, alias: g('fn-alias'),
+    age, nationality, role,
+    gender: g('fn-gender'), height: g('fn-height'), blood_type: g('fn-blood'),
+    clearance: parseInt(clearance), classification,
+    department: isISD ? (g('fn-cover-dept') || dept) : dept,
+    actual_department: dept,
+    is_isd: isISD,
+    cover_dept: isISD ? g('fn-cover-dept') : null,
+    sd_unit: document.getElementById('fn-sd-unit')?.value || null,
+    scipnet: scipnet + '@SCiP.net',
+    personnel_id: g('fn-personnel-id'),
+    mbti: g('fn-mbti'), loyalty: g('fn-loyalty'), mars: g('fn-mars'),
+    education: g('fn-education'), experience: g('fn-experience'),
+    sub_departments: getSubDepts('fn-subdept-list'),
+    virtues, vices, motives, fears,
+    connections: getListItems('fn-connection-list','connection'),
+    addendum: getListItems('fn-addendum-list','bullet'),
+    backstory: document.getElementById('fn-backstory').innerHTML,
     physical_desc: document.getElementById('fn-physical').innerHTML,
-    psych_profile: document.getElementById('fn-psych').innerHTML,
-    employment: document.getElementById('fn-employment').innerHTML,
-    incidents: document.getElementById('fn-incidents').innerHTML,
-    notes: document.getElementById('fn-notes').innerHTML,
+    rp_sample: document.getElementById('fn-rp-sample')?.innerHTML || '',
   };
   setMsg(msg,'loading','Submitting...');
   const {data:result,error} = await submitCharacter('foundation','website',discord,data,null);

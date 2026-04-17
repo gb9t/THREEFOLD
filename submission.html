@@ -645,6 +645,49 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
 .pid-wrap input{flex:1;}
 .pid-gen{font-family:var(--mono);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--muted);padding:0 1rem;cursor:pointer;transition:all .2s;white-space:nowrap;}
 .pid-gen:hover{border-color:var(--border-hi);color:var(--pale);}
+
+/* ── CLASS O / LEVEL 6 SECRET ── */
+.cl-6-secret,.cls-O-secret {
+  position:relative;
+  border-color:#1a0a2a !important;
+  background:rgba(80,0,80,.08) !important;
+  cursor:default;
+}
+.cl-6-secret .cl-box-num { color:#5a0a8a !important; animation:secretGlitch 2.5s infinite; }
+.cls-O-secret .cls-box-letter { color:#5a0a8a !important; animation:secretGlitch 2.5s infinite; }
+.cl-6-secret .cl-box-label,.cls-O-secret .cls-box-label { color:#3a0a5a !important; }
+.cl-6-secret.selected,.cls-O-secret.selected { border-color:#6a0aaa !important; background:rgba(100,0,160,.15) !important; }
+.cl-6-secret.selected .cl-box-num,.cls-O-secret.selected .cls-box-letter { color:#aa3aff !important; }
+
+@keyframes secretGlitch {
+  0%,88%,100% { transform:translate(0); opacity:1; }
+  89% { transform:translate(-1px,1px); opacity:.7; clip-path:polygon(0 30%,100% 30%,100% 60%,0 60%); }
+  90% { transform:translate(1px,-1px); opacity:1; clip-path:none; }
+  91% { transform:translate(-2px,0); opacity:.5; }
+  92% { transform:translate(0); opacity:1; }
+}
+
+.secret-glitch-in { animation:secretReveal .5s ease forwards; }
+.secret-glitch-out { animation:secretHide .35s ease forwards; }
+@keyframes secretReveal {
+  0%   { opacity:0; transform:scaleX(0.2) translateY(4px); filter:blur(4px); }
+  40%  { opacity:.6; transform:scaleX(1.05) translateY(-1px); filter:blur(1px); }
+  60%  { opacity:.4; transform:scaleX(0.95); filter:blur(2px); }
+  80%  { opacity:.9; transform:scaleX(1.02); filter:blur(0); }
+  100% { opacity:1; transform:scaleX(1) translateY(0); filter:blur(0); }
+}
+@keyframes secretHide {
+  0%   { opacity:1; transform:scaleX(1); filter:blur(0); }
+  30%  { opacity:.5; transform:scaleX(1.05); filter:blur(1px); }
+  100% { opacity:0; transform:scaleX(0.1) translateY(3px); filter:blur(4px); }
+}
+
+/* ── ROLE PICKER (moved here, display:none default handled by JS) ── */
+.role-picker-empty { font-family:var(--mono); font-size:9.5px; color:var(--muted); letter-spacing:0.1em; }
+
+/* ── CL/CLS picker non-interactive look ── */
+.cl-picker,.cls-picker { opacity:.85; }
+.cl-box:hover,.cls-box:hover { border-color:var(--border) !important; }
 </style>
 </head>
 <body>
@@ -877,12 +920,6 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
         <div class="field"><label>Age <span class="req">*</span></label><input type="text" id="fn-age" placeholder="e.g. 34"></div>
         <div class="field"><label>Nationality <span class="req">*</span></label><input type="text" id="fn-nationality" placeholder="e.g. American"></div>
       </div>
-      <div class="field" id="fn-role-field" style="display:none;">
-        <label>Role / Position <span class="req">*</span></label>
-        <div class="role-picker" id="fn-role-picker"></div>
-        <div class="role-desc" id="fn-role-desc"></div>
-        <input type="hidden" id="fn-role" value="">
-      </div>
       <div class="three-col">
         <div class="field"><label>Gender <span style="color:var(--muted);font-size:8px">(optional)</span></label><input type="text" id="fn-gender" placeholder="e.g. Male"></div>
         <div class="field"><label>Height <span style="color:var(--muted);font-size:8px">(optional)</span></label><input type="text" id="fn-height" placeholder="e.g. 1.8M"></div>
@@ -896,28 +933,30 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
 
       <div class="field">
         <label>Clearance Level <span class="req">*</span></label>
-        <div class="cl-picker">
-          <div class="cl-box cl-0" onclick="selectClearance(0)" data-cl="0"><span class="cl-box-num">0</span><span class="cl-box-label">Unrestr.</span></div>
-          <div class="cl-box cl-1" onclick="selectClearance(1)" data-cl="1"><span class="cl-box-num">1</span><span class="cl-box-label">Confid.</span></div>
-          <div class="cl-box cl-2" onclick="selectClearance(2)" data-cl="2"><span class="cl-box-num">2</span><span class="cl-box-label">Restrict.</span></div>
-          <div class="cl-box cl-3" onclick="selectClearance(3)" data-cl="3"><span class="cl-box-num">3</span><span class="cl-box-label">Secret</span></div>
-          <div class="cl-box cl-4" onclick="selectClearance(4)" data-cl="4"><span class="cl-box-num">4</span><span class="cl-box-label">Top Sec.</span></div>
-          <div class="cl-box cl-5" onclick="selectClearance(5)" data-cl="5"><span class="cl-box-num">5</span><span class="cl-box-label">C. Top Sec.</span></div>
+        <div class="cl-picker" id="cl-picker" style="pointer-events:none;">
+          <div class="cl-box cl-0" data-cl="0"><span class="cl-box-num">0</span><span class="cl-box-label">Unrestr.</span></div>
+          <div class="cl-box cl-1" data-cl="1"><span class="cl-box-num">1</span><span class="cl-box-label">Confid.</span></div>
+          <div class="cl-box cl-2" data-cl="2"><span class="cl-box-num">2</span><span class="cl-box-label">Restrict.</span></div>
+          <div class="cl-box cl-3" data-cl="3"><span class="cl-box-num">3</span><span class="cl-box-label">Secret</span></div>
+          <div class="cl-box cl-4" data-cl="4"><span class="cl-box-num">4</span><span class="cl-box-label">Top Sec.</span></div>
+          <div class="cl-box cl-5" data-cl="5"><span class="cl-box-num">5</span><span class="cl-box-label">C. Top Sec.</span></div>
+          <div class="cl-box cl-6 cl-6-secret" id="cl-6-box" data-cl="6" style="display:none;"><span class="cl-box-num">6</span><span class="cl-box-label">O5 Only</span></div>
         </div>
-        <div class="cl-desc" id="cl-desc">Select a clearance level.</div>
+        <div class="cl-desc" id="cl-desc" style="font-style:italic;color:var(--border);">Auto-set by your role selection above.</div>
         <input type="hidden" id="fn-clearance" value="">
       </div>
 
       <div class="field" style="margin-top:1.25rem;">
         <label>Personnel Classification <span class="req">*</span></label>
-        <div class="cls-picker">
-          <div class="cls-box cls-E" onclick="selectClass('E')" data-cls="E"><span class="cls-box-letter">E</span><span class="cls-box-label">Provis.</span></div>
-          <div class="cls-box cls-D" onclick="selectClass('D')" data-cls="D"><span class="cls-box-letter">D</span><span class="cls-box-label">Expend.</span></div>
-          <div class="cls-box cls-C" onclick="selectClass('C')" data-cls="C"><span class="cls-box-letter">C</span><span class="cls-box-label">Standard</span></div>
-          <div class="cls-box cls-B" onclick="selectClass('B')" data-cls="B"><span class="cls-box-letter">B</span><span class="cls-box-label">Essential</span></div>
-          <div class="cls-box cls-A" onclick="selectClass('A')" data-cls="A"><span class="cls-box-letter">A</span><span class="cls-box-label">Strategic</span></div>
+        <div class="cls-picker" id="cls-picker" style="pointer-events:none;">
+          <div class="cls-box cls-E" data-cls="E"><span class="cls-box-letter">E</span><span class="cls-box-label">Provis.</span></div>
+          <div class="cls-box cls-D" data-cls="D"><span class="cls-box-letter">D</span><span class="cls-box-label">Expend.</span></div>
+          <div class="cls-box cls-C" data-cls="C"><span class="cls-box-letter">C</span><span class="cls-box-label">Standard</span></div>
+          <div class="cls-box cls-B" data-cls="B"><span class="cls-box-letter">B</span><span class="cls-box-label">Essential</span></div>
+          <div class="cls-box cls-A" data-cls="A"><span class="cls-box-letter">A</span><span class="cls-box-label">Strategic</span></div>
+          <div class="cls-box cls-O cls-O-secret" id="cls-O-box" data-cls="O" style="display:none;"><span class="cls-box-letter">O</span><span class="cls-box-label">Overseer</span></div>
         </div>
-        <div class="cls-desc" id="cls-desc">Select a classification.</div>
+        <div class="cls-desc" id="cls-desc" style="font-style:italic;color:var(--border);">Auto-set by your role selection above.</div>
         <input type="hidden" id="fn-classification" value="">
       </div>
     </div>
@@ -946,9 +985,6 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
           <div class="dept-box" onclick="selectDept('Intelligence Agency','IA')" data-dept="Intelligence Agency">
             <img src="img/Intelligence.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Intelligence Agency</div><div class="dept-box-abbr">IA</div></div>
           </div>
-          <div class="dept-box" onclick="selectDept('Administrator&#39;s Office','AO')" data-dept="Administrator&#39;s Office">
-            <img src="img/AdministratorsOffice.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Administrator's Office</div><div class="dept-box-abbr">AO</div></div>
-          </div>
           <div class="dept-box" onclick="selectDept('Site Directorship','SDir')" data-dept="Site Directorship">
             <img src="img/SiteDirectorship.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Site Directorship</div><div class="dept-box-abbr">SDir</div></div>
           </div>
@@ -959,7 +995,6 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
             <img src="img/ISD.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Int. Security Dept.</div><div class="dept-box-abbr">ISD</div></div>
           </div>
         </div>
-        <div class="dept-desc" id="dept-desc">Select a department.</div>
         <input type="hidden" id="fn-dept" value="">
       </div>
 
@@ -990,6 +1025,14 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
         </div>
         <label style="font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;display:block;">Cover Department <span class="req">*</span></label>
         <div class="field"><input type="text" id="fn-cover-dept" placeholder="e.g. Science Department — Senior Researcher"></div>
+      </div>
+
+      <!-- Dept description + Role picker (appears after dept is chosen) -->
+      <div class="dept-desc" id="dept-desc" style="margin-top:.75rem;">Select a department above.</div>
+      <div class="field" id="fn-role-field" style="display:none;margin-top:1.25rem;">
+        <label>Role / Position <span class="req">*</span> <span style="font-family:var(--mono);font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;">— Clearance &amp; Classification auto-set by role</span></label>
+        <div class="role-picker" id="fn-role-picker"></div>
+        <input type="hidden" id="fn-role" value="">
       </div>
 
     </div>
@@ -1634,35 +1677,102 @@ async function submitGDoc() {
 
 /* ── CLEARANCE PICKER ── */
 const CL_DESC = {
-  0: 'Level 0 — Unrestricted. Non-sensitive access only. No anomalous contact permitted.',
-  1: 'Level 1 — Confidential. Basic on-site access. Contact with non-hazardous anomalies only.',
-  2: 'Level 2 — Restricted. Standard research and security clearance. Most containment areas accessible.',
-  3: 'Level 3 — Secret. Access to most Euclid and some Keter-class anomalies. Senior personnel.',
-  4: 'Level 4 — Top Secret. Department heads and senior command. Broad containment access.',
-  5: 'Level 5 — Cosmic Top-Secret. O5-adjacent. Near-complete site access. Extremely rare.',
+  0: 'Level 0 — No Clearance. Personnel in low-security positions or Foundation front companies. May not know the Foundation exists.',
+  1: 'Level 1 — Unrestricted. Requires knowledge of anomalies but no access to research or technical data. Minimum for high-security sites.',
+  2: 'Level 2 — Restricted. Research and technical data access for specific documents. Granted to researchers, engineers, guards, and agents.',
+  3: 'Level 3 — Confidential. Senior personnel managing teams or projects. Includes supervisors, project managers, and tactical response teams.',
+  4: 'Level 4 — Secret. Highly sensitive strategic data. Site directors, department heads, project leads, and strategic commanders.',
+  5: 'Level 5 — Top Secret. Maximum access. Reserved for high-level regional directors, Ethics Committee members, and Overseers.',
+  6: '[ LEVEL 6 — COSMIC TOP SECRET ] No personnel hold this clearance. Used only for documents and specific projects of the highest sensitivity.',
 };
+
+const CLS_DESC = {
+  E: 'Class E — Provisional. Applied to personnel recently exposed to anomalous phenomena. Quarantine and clearance pending.',
+  D: 'Class D — Expendable. Used in direct contact with extreme hazards. Typically convicted criminals.',
+  C: 'Class C — Average. Standard personnel handling day-to-day Foundation operations.',
+  B: 'Class B — Important. Handles local or facility operations. Must be escorted off-site during containment breaches.',
+  A: 'Class A — Highly Valuable. Essential to operations. Cannot enter facilities with hazardous anomalies without security override.',
+  O: '[ CLASS O — OVERSEER ] For the O5 Council and Administrator only. Highest-ranking administrative personnel in the Foundation.',
+};
+
+let _secretUnlocked = false;
+
 function selectClearance(level) {
-  document.querySelectorAll('.cl-box').forEach(b => b.classList.remove('selected'));
+  document.querySelectorAll('.cl-box:not(.cl-6-secret)').forEach(b => b.classList.remove('selected'));
   const box = document.querySelector('.cl-box[data-cl="'+level+'"]');
   if (box) box.classList.add('selected');
   document.getElementById('fn-clearance').value = level;
-  document.getElementById('cl-desc').textContent = CL_DESC[level] || '';
+  const desc = document.getElementById('cl-desc');
+  desc.textContent = CL_DESC[level] ?? '';
+  desc.style.fontStyle = level == 6 ? 'italic' : 'italic';
+  desc.style.color = level == 6 ? '#5a0a8a' : 'var(--border)';
+  // Secret Level 6 unlock
+  toggleSecretClass(level == 6);
 }
 
-/* ── CLASSIFICATION PICKER ── */
-const CLS_DESC = {
-  E: 'Class E — Provisional. Applied to personnel recently exposed to anomalous phenomena. Quarantine status pending clearance.',
-  D: 'Class D — Expendable. Used in direct contact with extreme hazards. Typically convicted criminals. Not permitted near Class A/B.',
-  C: 'Class C — Standard. Direct anomaly access permitted for non-hostile entities. Standard personnel classification.',
-  B: 'Class B — Essential. Limited to quarantine-cleared anomalies only. Evacuated first during emergencies.',
-  A: 'Class A — Strategic. No direct anomaly access under any circumstances. Immediately evacuated in all emergencies. O5 Council are always Class A.',
-};
 function selectClass(cls) {
-  document.querySelectorAll('.cls-box').forEach(b => b.classList.remove('selected'));
+  document.querySelectorAll('.cls-box:not(.cls-O-secret)').forEach(b => b.classList.remove('selected'));
   const box = document.querySelector('.cls-box[data-cls="'+cls+'"]');
   if (box) box.classList.add('selected');
   document.getElementById('fn-classification').value = cls;
-  document.getElementById('cls-desc').textContent = CLS_DESC[cls] || '';
+  const desc = document.getElementById('cls-desc');
+  desc.textContent = CLS_DESC[cls] ?? '';
+  desc.style.color = cls === 'O' ? '#5a0a8a' : 'var(--border)';
+}
+
+function toggleSecretClass(show) {
+  const cl6  = document.getElementById('cl-6-box');
+  const clsO = document.getElementById('cls-O-box');
+  if (!cl6 || !clsO) return;
+  if (show && !_secretUnlocked) {
+    _secretUnlocked = true;
+    cl6.style.display  = 'flex';
+    clsO.style.display = 'flex';
+    // small delay so display:flex takes effect before animation
+    requestAnimationFrame(() => {
+      cl6.classList.add('secret-glitch-in');
+      clsO.classList.add('secret-glitch-in');
+      cl6.classList.remove('secret-glitch-out');
+      clsO.classList.remove('secret-glitch-out');
+    });
+    // auto-select them
+    setTimeout(() => { selectClearanceSecret(); selectClassSecret(); }, 120);
+  } else if (!show && _secretUnlocked) {
+    _secretUnlocked = false;
+    cl6.classList.add('secret-glitch-out');
+    clsO.classList.add('secret-glitch-out');
+    cl6.classList.remove('secret-glitch-in');
+    clsO.classList.remove('secret-glitch-in');
+    cl6.classList.remove('selected');
+    clsO.classList.remove('selected');
+    setTimeout(() => { cl6.style.display='none'; clsO.style.display='none'; }, 380);
+    // revert clearance/class to what role dictates (no secret)
+    document.getElementById('fn-clearance').value = '';
+    document.getElementById('fn-classification').value = '';
+    document.getElementById('cl-desc').textContent = '';
+    document.getElementById('cls-desc').textContent = '';
+    document.querySelectorAll('.cl-box,.cls-box').forEach(b => b.classList.remove('selected'));
+  }
+}
+
+function selectClearanceSecret() {
+  document.querySelectorAll('.cl-box').forEach(b => b.classList.remove('selected'));
+  const box = document.getElementById('cl-6-box');
+  if (box) box.classList.add('selected');
+  document.getElementById('fn-clearance').value = 6;
+  const desc = document.getElementById('cl-desc');
+  desc.textContent = CL_DESC[6];
+  desc.style.color = '#5a0a8a';
+}
+
+function selectClassSecret() {
+  document.querySelectorAll('.cls-box').forEach(b => b.classList.remove('selected'));
+  const box = document.getElementById('cls-O-box');
+  if (box) box.classList.add('selected');
+  document.getElementById('fn-classification').value = 'O';
+  const desc = document.getElementById('cls-desc');
+  desc.textContent = CLS_DESC['O'];
+  desc.style.color = '#5a0a8a';
 }
 
 /* ── DEPARTMENT PICKER ── */
@@ -1673,7 +1783,6 @@ const DEPT_DESC = {
   'Mobile Task Forces': 'MTF — Elite field units deployed for operations beyond standard site security capability.',
   'Medical Department': 'MD — Maintain the health and operational capability of Foundation personnel. Includes anomalous pathology.',
   'Intelligence Agency': 'IA — External intelligence gathering. Embedded in governments and rival organisations worldwide.',
-  'Administrator\'s Office': 'AO — The highest tier of Foundation governance. Administrator, O5 Council, and Factotum.',
   'Site Directorship': 'SDir — Commanding officers of Foundation installations. Accountable for all site operations.',
   'Engineering Department': 'Eng — Design and maintain the physical infrastructure that makes containment possible.',
   'Internal Security Department': 'ISD — Identifies and neutralises internal threats. Existence classified. Reports directly to O5.',
@@ -1729,11 +1838,7 @@ const DEPT_ROLES = {
     {name:'Senior Field Agent',    cl:3, cls:'C', note:'Experienced operative with expanded mission authority and autonomy.'},
     {name:'Field Agent',           cl:3, cls:'C', note:'Core IA personnel. Conducts field operations and intelligence gathering.'},
   ],
-  'Administrator\'s Office': [
-    {name:'Administrator',     cl:6, cls:'A', note:'Above the O5 Council. The singular executive authority of the Foundation. Identity known only to O5 members.'},
-    {name:'O5 Council Member', cl:6, cls:'A', note:'The thirteen. Final policy authority on all Foundation matters. Identities classified at every clearance level.'},
-    {name:'Factotum',          cl:5, cls:'A', note:'Personal staff of the O5 Council. Selected for absolute loyalty. Carry full O5 authority in the field.'},
-  ],
+
   'Site Directorship': [
     {name:'Site Director',           cl:4, cls:'B', note:'Commanding officer of the installation. Reports to the Administrator\'s Office.'},
     {name:'Assistant Site Director', cl:4, cls:'B', note:'Deputy command. Manages day-to-day operations and assumes full authority during the Director\'s absence.'},
@@ -1795,8 +1900,17 @@ function selectRole(idx, dept) {
   document.querySelectorAll('.role-box').forEach(b => b.classList.remove('selected'));
   document.querySelectorAll('.role-box')[idx]?.classList.add('selected');
   document.getElementById('fn-role').value = r.name;
-  // Auto-set clearance and classification if they haven't been manually chosen
-  if (r.cl !== null && r.cl !== undefined) { selectClearance(r.cl); }
+  // Auto-set clearance — handles secret Level 6 unlock
+  if (r.cl !== null && r.cl !== undefined) {
+    if (r.cl === 6) {
+      // Trigger the secret glitch-in sequence
+      selectClearance(6);
+    } else {
+      // Ensure secret is dismissed if previously selected
+      if (_secretUnlocked) toggleSecretClass(false);
+      selectClearance(r.cl);
+    }
+  }
   if (r.cls && r.cls !== '—') { selectClass(r.cls); }
 }
 

@@ -885,7 +885,7 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
           <div class="cl-box cl-2" onclick="selectClearance(2)" data-cl="2"><span class="cl-box-num">2</span><span class="cl-box-label">Restrict.</span></div>
           <div class="cl-box cl-3" onclick="selectClearance(3)" data-cl="3"><span class="cl-box-num">3</span><span class="cl-box-label">Secret</span></div>
           <div class="cl-box cl-4" onclick="selectClearance(4)" data-cl="4"><span class="cl-box-num">4</span><span class="cl-box-label">Top Sec.</span></div>
-          <div class="cl-box cl-5" onclick="selectClearance(5)" data-cl="5"><span class="cl-box-num">5</span><span class="cl-box-label">Cosmic Top Sec.</span></div>
+          <div class="cl-box cl-5" onclick="selectClearance(5)" data-cl="5"><span class="cl-box-num">5</span><span class="cl-box-label">Cos. Top Sec.</span></div>
         </div>
         <div class="cl-desc" id="cl-desc">Select a clearance level.</div>
         <input type="hidden" id="fn-clearance" value="">
@@ -1627,7 +1627,7 @@ const CL_DESC = {
   2: 'Level 2 — Restricted. Standard research and security clearance. Most containment areas accessible.',
   3: 'Level 3 — Secret. Access to most Euclid and some Keter-class anomalies. Senior personnel.',
   4: 'Level 4 — Top Secret. Department heads and senior command. Broad containment access.',
-  5: 'Level 5 — Thaumiel. O5-adjacent. Near-complete site access. Extremely rare.',
+  5: 'Level 5 — Cosmic Top-Secret. O5-adjacent. Near-complete site access. Extremely rare.',
 };
 function selectClearance(level) {
   document.querySelectorAll('.cl-box').forEach(b => b.classList.remove('selected'));

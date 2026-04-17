@@ -3,38 +3,50 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>THREEFOLD — World Map</title>
+<title>THREEFOLD / World Map</title>
 <link rel="icon" type="image/png" href="img/Base.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;800&family=Barlow:wght@300;400&family=Special+Elite&display=swap" rel="stylesheet">
 <style>
-:root{--black:#0a0a0a;--deep:#111;--dark:#1a1a1a;--mid:#2e2e2e;--border:#3a3a3a;--muted:#666;--light:#999;--pale:#ccc;--white:#f0f0f0;--mono:'Share Tech Mono',monospace;--display:'Barlow Condensed',sans-serif;--body:'Barlow',sans-serif;}
+:root{
+  --black:#0a0a0a;--deep:#111;--dark:#1a1a1a;--mid:#2e2e2e;--border:#3a3a3a;
+  --muted:#666;--light:#999;--pale:#ccc;--white:#f0f0f0;
+  --red:#8a2a2a;--red-bright:#bb3a3a;
+  --amber:#9a7a2a;--amber-bright:#d4a52c;
+  --blue:#2a4a7a;--blue-bright:#3a6aaa;
+  --green:#2a6a2a;--green-bright:#3a8a3a;
+  --mono:'Share Tech Mono',monospace;
+  --display:'Barlow Condensed',sans-serif;
+  --typewriter:'Special Elite',monospace;
+  --body:'Barlow',sans-serif;
+}
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 html,body{height:100%;overflow:hidden;}
 body{background:var(--black);color:var(--pale);font-family:var(--body);font-weight:300;}
 body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.07) 2px,rgba(0,0,0,0.07) 4px);pointer-events:none;z-index:9999;}
 
-nav{position:fixed;top:0;left:0;right:0;z-index:500;height:56px;background:rgba(10,10,10,0.97);border-bottom:1px solid var(--border);padding:0 3rem;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(6px);}
-.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
-.nav-logo img{width:30px;height:30px;object-fit:contain;mix-blend-mode:screen;flex-shrink:0;}
-.nav-logo-name{font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:0.3em;color:var(--white);text-transform:uppercase;display:block;line-height:1.1;}
-.nav-logo-sub{font-family:var(--mono);font-size:9px;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;display:block;}
-.nav-right{display:flex;gap:.75rem;align-items:center;}
-.nav-link{font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:5px 12px;border:1px solid transparent;transition:all .2s;}
-.nav-link:hover{color:var(--pale);border-color:var(--border);}
-.nav-link.active{color:var(--pale);border-color:var(--border);}
+/* ============ NAV ============ */
+nav{position:fixed;top:0;left:0;right:0;z-index:500;height:56px;background:rgba(10,10,10,0.97);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(6px);}
+nav a.logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+nav a.logo img{width:30px;height:30px;object-fit:contain;mix-blend-mode:screen;}
+nav a.logo .n{font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:0.3em;color:var(--white);text-transform:uppercase;display:block;line-height:1.1;}
+nav a.logo .s{font-family:var(--mono);font-size:9px;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;display:block;}
+nav ul{display:flex;list-style:none;align-items:center;flex-wrap:wrap;}
+nav ul a{font-family:var(--mono);font-size:9.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--light);text-decoration:none;padding:8px 12px;display:block;transition:color .2s;}
+nav ul a:hover{color:var(--white);}
 
-/* MAP CONTAINER */
+/* ============ MAP ============ */
 #map-wrap{position:fixed;inset:0;padding-top:56px;background:var(--black);}
 #map-svg{width:100%;height:100%;display:block;}
 
-/* Country paths */
-.country{fill:#111;stroke:#1e1e1e;stroke-width:.4;transition:fill .2s;}
+.country{fill:#111;stroke:#1e1e1e;stroke-width:.4;transition:fill .3s;}
+.country.dimmed{fill:#0b0b0b;}
+.country.hotspot{fill:#2a1a1a;}
 .graticule{fill:none;stroke:#141414;stroke-width:.3;}
 .sphere{fill:#0a0a0a;}
 
-/* Site markers */
+/* ============ INSTALLATION MARKERS ============ */
 .site-marker{cursor:pointer;}
 .site-ring{fill:none;stroke-width:1;opacity:.6;}
 .site-ring-outer{animation:ringPulse 2.5s ease-out infinite;}
@@ -42,15 +54,81 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:56px;background:rgba(
 @keyframes ringPulse{0%{r:8;opacity:.8}100%{r:22;opacity:0}}
 .site-core{stroke-width:1;}
 .site-icon-frame{pointer-events:none;}
-.site-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.12em;pointer-events:none;text-transform:uppercase;}
+.site-label{font-family:var(--mono);font-size:10px;letter-spacing:0.12em;pointer-events:none;text-transform:uppercase;}
 
-/* Classified site */
 .site-classified .site-ring{animation:classifiedPulse 3s ease-in-out infinite;}
 @keyframes classifiedPulse{0%,100%{opacity:.3}50%{opacity:.7}}
 .site-classified .site-core{animation:classifiedCorePulse 1.5s step-end infinite;}
 @keyframes classifiedCorePulse{0%,100%{opacity:1}50%{opacity:.4}}
 
-/* POPUP */
+/* ============ EVENT GRAPHICS ============ */
+.evt-g{pointer-events:none;}
+.evt-g.active{pointer-events:auto;}
+
+/* Generic event pulse */
+@keyframes evtPulse{
+  0%{r:6;opacity:.9;}
+  80%{opacity:0;}
+  100%{r:90;opacity:0;}
+}
+@keyframes evtPulseBig{
+  0%{r:10;opacity:.85;}
+  100%{r:180;opacity:0;}
+}
+.evt-pulse{fill:none;stroke-width:1.5;animation:evtPulse 2.4s ease-out infinite;}
+.evt-pulse.delay1{animation-delay:.8s;}
+.evt-pulse.delay2{animation-delay:1.6s;}
+.evt-pulse-big{fill:none;stroke-width:1;animation:evtPulseBig 4s ease-out infinite;opacity:.6;}
+.evt-pulse-big.delay1{animation-delay:1.3s;}
+.evt-pulse-big.delay2{animation-delay:2.6s;}
+
+@keyframes evtCoreBlink{0%,100%{opacity:1;}50%{opacity:.35;}}
+.evt-core-blink{animation:evtCoreBlink 1.1s ease-in-out infinite;}
+
+@keyframes crossFlicker{0%,100%{opacity:.95;}45%{opacity:.4;}55%{opacity:.95;}60%{opacity:.5;}}
+.evt-crosshair{animation:crossFlicker 1.8s ease-in-out infinite;}
+
+/* Transmission web lines */
+@keyframes webDraw{0%{stroke-dashoffset:300;opacity:0;}10%{opacity:.8;}100%{stroke-dashoffset:0;opacity:.5;}}
+.evt-web-line{stroke-dasharray:300;animation:webDraw 2.8s ease-out infinite;}
+.evt-web-line.d1{animation-delay:.3s;}.evt-web-line.d2{animation-delay:.7s;}
+.evt-web-line.d3{animation-delay:1.1s;}.evt-web-line.d4{animation-delay:1.5s;}
+.evt-web-line.d5{animation-delay:1.9s;}.evt-web-line.d6{animation-delay:2.3s;}
+
+/* Naval cordon: rotating ring with ship markers */
+@keyframes cordonSpin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+.evt-cordon-ring{transform-origin:center;transform-box:fill-box;}
+.evt-cordon-ring.spin{animation:cordonSpin 60s linear infinite;}
+@keyframes shipBlink{0%,100%{opacity:.85;}50%{opacity:.3;}}
+.evt-ship{animation:shipBlink 2.4s ease-in-out infinite;}
+
+/* Infiltration dashed path */
+@keyframes pathDash{to{stroke-dashoffset:-24;}}
+.evt-infil{stroke-dasharray:6 4;animation:pathDash 1.2s linear infinite;}
+
+/* Broadcast concentric waves */
+@keyframes bcWave{0%{r:4;opacity:.9;stroke-width:2;}100%{r:55;opacity:0;stroke-width:.5;}}
+.evt-bc-wave{fill:none;animation:bcWave 2.2s ease-out infinite;}
+.evt-bc-wave.d1{animation-delay:.55s;}
+.evt-bc-wave.d2{animation-delay:1.1s;}
+.evt-bc-wave.d3{animation-delay:1.65s;}
+
+/* Converging lines (Reykjavík) */
+@keyframes converge{0%{stroke-dashoffset:300;}100%{stroke-dashoffset:0;}}
+.evt-converge{stroke-dasharray:300;animation:converge 3s ease-in-out infinite;}
+.evt-converge.d1{animation-delay:.3s;}
+.evt-converge.d2{animation-delay:.6s;}
+
+/* Event labels */
+.evt-label-bg{fill:rgba(10,10,10,.9);stroke:var(--border);stroke-width:.5;}
+.evt-label-text{font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;fill:var(--pale);}
+.evt-label-text.red{fill:var(--red-bright);}
+.evt-label-text.amber{fill:var(--amber-bright);}
+.evt-label-text.blue{fill:var(--blue-bright);}
+.evt-label-text.green{fill:var(--green-bright);}
+.evt-callout-line{stroke:var(--border);stroke-width:.5;}
+
+/* ============ POPUP (installations) ============ */
 #map-popup{
   position:fixed;z-index:600;
   background:rgba(10,10,10,.97);border:1px solid var(--border);
@@ -60,66 +138,193 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:56px;background:rgba(
 }
 #map-popup::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);}
 .popup-tag{font-size:8.5px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-bottom:.35rem;}
-.popup-name{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--white);line-height:1;margin-bottom:.6rem;}
+.popup-name{font-family:var(--display);font-size:26px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--white);line-height:1;margin-bottom:.6rem;}
 .popup-row{display:flex;gap:.5rem;align-items:flex-start;margin-bottom:.3rem;}
 .popup-key{font-size:8px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);width:70px;flex-shrink:0;padding-top:2px;}
 .popup-val{font-size:11px;color:var(--light);line-height:1.5;}
 .popup-classified{color:var(--muted);letter-spacing:0.1em;}
 .popup-status-dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:5px;vertical-align:middle;}
 
-/* INFO BAR */
+/* ============ MODE SWITCH ============ */
+#mode-switch{
+  position:fixed;top:72px;left:50%;transform:translateX(-50%);z-index:410;
+  display:flex;background:rgba(10,10,10,.95);border:1px solid var(--border);
+}
+.mode-btn{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.25em;text-transform:uppercase;
+  background:none;border:none;color:var(--muted);padding:10px 22px;cursor:pointer;
+  border-right:1px solid var(--border);transition:all .2s;display:flex;align-items:center;gap:.5rem;
+}
+.mode-btn:last-child{border-right:none;}
+.mode-btn:hover{color:var(--pale);}
+.mode-btn.active{background:var(--pale);color:var(--black);}
+.mode-btn .dot{width:6px;height:6px;background:currentColor;display:inline-block;}
+
+/* ============ TIMELINE PANEL ============ */
+#timeline-panel{
+  position:fixed;top:72px;left:1.5rem;z-index:400;
+  width:360px;max-height:calc(100vh - 170px);
+  background:rgba(10,10,10,.97);border:1px solid var(--border);
+  display:none;flex-direction:column;overflow:hidden;
+  backdrop-filter:blur(4px);
+}
+#timeline-panel.visible{display:flex;animation:panelIn .35s ease-out;}
+@keyframes panelIn{from{opacity:0;transform:translateX(-10px);}to{opacity:1;transform:translateX(0);}}
+
+.tp-head{padding:1rem 1.25rem .85rem;border-bottom:1px solid var(--border);background:linear-gradient(to bottom,rgba(187,58,58,0.08),transparent);}
+.tp-head.t-incident{background:linear-gradient(to bottom,rgba(212,165,44,0.08),transparent);}
+.tp-head.t-document{background:linear-gradient(to bottom,rgba(58,106,170,0.08),transparent);}
+.tp-head.t-dispatch{background:linear-gradient(to bottom,rgba(153,153,153,0.06),transparent);}
+
+.tp-stamps{display:flex;gap:.35rem;margin-bottom:.5rem;flex-wrap:wrap;}
+.tp-stamp{font-family:var(--mono);font-size:8px;letter-spacing:0.22em;text-transform:uppercase;padding:2px 7px;border:1px solid;}
+.tp-stamp.red{border-color:var(--red);color:var(--red-bright);}
+.tp-stamp.amber{border-color:var(--amber);color:var(--amber-bright);}
+.tp-stamp.blue{border-color:var(--blue);color:var(--blue-bright);}
+.tp-stamp.grey{border-color:var(--border);color:var(--muted);}
+.tp-stamp.green{border-color:var(--green);color:var(--green-bright);}
+
+.tp-date{font-family:var(--mono);font-size:9.5px;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;margin-bottom:.25rem;}
+.tp-title{font-family:var(--display);font-size:24px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--white);line-height:1.05;}
+.tp-sub{font-family:var(--mono);font-size:9.5px;letter-spacing:0.08em;color:var(--light);margin-top:.45rem;text-transform:uppercase;}
+
+.tp-body{padding:1rem 1.25rem;overflow-y:auto;flex:1;}
+.tp-body::-webkit-scrollbar{width:4px;}
+.tp-body::-webkit-scrollbar-track{background:transparent;}
+.tp-body::-webkit-scrollbar-thumb{background:var(--border);}
+.tp-body p{font-size:13px;color:var(--light);line-height:1.8;margin-bottom:.85rem;}
+.tp-body p:last-child{margin-bottom:0;}
+.tp-body strong{color:var(--pale);font-weight:600;}
+.tp-body em{color:var(--pale);font-style:italic;}
+
+.tp-fields{display:grid;grid-template-columns:auto 1fr;gap:.35rem .85rem;font-family:var(--mono);font-size:9px;letter-spacing:0.08em;margin:.75rem 0;padding:.7rem .85rem;background:rgba(0,0,0,.4);border:1px solid var(--border);}
+.tp-fields dt{color:var(--muted);text-transform:uppercase;letter-spacing:0.18em;font-size:8.5px;padding-top:1px;}
+.tp-fields dd{color:var(--pale);font-size:10.5px;}
+
+.tp-foot{padding:.85rem 1.25rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:9px;letter-spacing:0.15em;color:var(--muted);text-transform:uppercase;background:rgba(0,0,0,.3);}
+.tp-progress{color:var(--pale);}
+
+/* ============ TIMELINE CONTROLS (bottom) ============ */
+#tl-controls{
+  position:fixed;bottom:38px;left:1.5rem;right:1.5rem;z-index:400;
+  display:none;align-items:center;gap:1rem;
+  background:rgba(10,10,10,.97);border:1px solid var(--border);
+  padding:.85rem 1.25rem;backdrop-filter:blur(4px);
+}
+#tl-controls.visible{display:flex;}
+
+.tl-btn{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;
+  background:none;border:1px solid var(--border);color:var(--pale);
+  padding:8px 14px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.4rem;
+  flex-shrink:0;
+}
+.tl-btn:hover:not(:disabled){border-color:var(--pale);background:rgba(255,255,255,.03);}
+.tl-btn:disabled{opacity:.3;cursor:not-allowed;}
+.tl-btn.play{background:var(--pale);color:var(--black);border-color:var(--pale);}
+.tl-btn.play:hover:not(:disabled){background:var(--white);border-color:var(--white);}
+
+.tl-track{flex:1;position:relative;height:40px;display:flex;align-items:center;min-width:0;}
+.tl-track::before{content:'';position:absolute;left:0;right:0;top:50%;height:1px;background:var(--border);}
+.tl-marker{
+  position:absolute;top:50%;transform:translate(-50%,-50%);
+  width:12px;height:12px;background:var(--dark);border:1px solid var(--border);
+  cursor:pointer;transition:all .2s;z-index:2;
+}
+.tl-marker::after{content:attr(data-year);position:absolute;top:14px;left:50%;transform:translateX(-50%);
+  font-family:var(--mono);font-size:8px;letter-spacing:0.12em;color:var(--muted);white-space:nowrap;}
+.tl-marker:hover{border-color:var(--pale);}
+.tl-marker.visited{background:var(--muted);border-color:var(--muted);}
+.tl-marker.current{background:var(--pale);border-color:var(--pale);transform:translate(-50%,-50%) scale(1.3);z-index:3;}
+.tl-marker.current::after{color:var(--pale);font-weight:600;}
+.tl-marker.t-milestone{border-left:2px solid var(--red-bright);}
+.tl-marker.t-incident{border-left:2px solid var(--amber-bright);}
+.tl-marker.t-document{border-left:2px solid var(--blue-bright);}
+.tl-marker.t-dispatch{border-left:2px solid var(--light);}
+
+.tl-progress{
+  position:absolute;left:0;top:50%;transform:translateY(-50%);
+  height:1px;background:var(--pale);z-index:1;transition:width .4s ease-out;
+}
+
+.tl-counter{font-family:var(--mono);font-size:9px;letter-spacing:0.18em;color:var(--muted);text-transform:uppercase;flex-shrink:0;min-width:70px;text-align:center;}
+.tl-counter strong{color:var(--pale);}
+
+/* ============ INFO BAR ============ */
 #info-bar{
   position:fixed;bottom:0;left:0;right:0;z-index:400;
   background:rgba(10,10,10,.95);border-top:1px solid var(--border);
-  padding:.6rem 2rem;
+  padding:.55rem 2rem;
   display:flex;align-items:center;justify-content:space-between;
   font-family:var(--mono);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--border);
 }
-#info-bar span+span::before{content:'&bull;';margin:0 .75rem;color:var(--dark);}
+#info-bar span+span::before{content:'\2022';margin:0 .75rem;color:var(--dark);}
 
-/* LEGEND */
+/* ============ LEGEND ============ */
 #legend{
   position:fixed;top:72px;right:1.5rem;z-index:400;
   background:rgba(10,10,10,.95);border:1px solid var(--border);
-  padding:1rem 1.25rem;
+  padding:.85rem 1.1rem;
 }
-.legend-title{font-family:var(--mono);font-size:8px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-bottom:.75rem;}
-.legend-item{display:flex;align-items:center;gap:.6rem;margin-bottom:.4rem;font-family:var(--mono);font-size:9px;letter-spacing:0.1em;color:var(--light);}
+.legend-title{font-family:var(--mono);font-size:8px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem;}
+.legend-item{display:flex;align-items:center;gap:.55rem;margin-bottom:.35rem;font-family:var(--mono);font-size:8.5px;letter-spacing:0.1em;color:var(--light);}
 .legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.legend-dot.sq{border-radius:0;transform:rotate(45deg);}
 
-@media(max-width:768px){nav{padding:0 1.2rem;}.nav-logo-sub{display:none;}#legend{display:none;}}
+@media(max-width:900px){
+  #legend{display:none;}
+  #timeline-panel{width:300px;}
+}
+@media(max-width:640px){
+  nav{padding:0 1rem;}
+  #timeline-panel{left:.75rem;right:.75rem;width:auto;max-height:45vh;}
+  #tl-controls{left:.75rem;right:.75rem;padding:.65rem .85rem;gap:.5rem;}
+  .tl-btn{padding:6px 10px;font-size:8.5px;}
+  .tl-counter{display:none;}
+  #mode-switch{top:64px;}
+}
 </style>
 </head>
 <body>
+
 <nav>
-  <a href="index.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
-    <img src="img/Base.png" alt="" style="width:30px;height:30px;object-fit:contain;mix-blend-mode:screen;flex-shrink:0;">
-    <div>
-      <span style="font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:0.3em;color:var(--white);text-transform:uppercase;display:block;line-height:1.1;">THREEFOLD</span>
-      <span style="font-family:var(--mono);font-size:9px;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;display:block;">SCP Foundation RP</span>
-    </div>
+  <a href="index.html" class="logo">
+    <img src="img/Base.png" alt="">
+    <div><span class="n">THREEFOLD</span><span class="s">SCP Foundation RP</span></div>
   </a>
-  <ul style="display:flex;gap:0;list-style:none;align-items:center;flex-wrap:wrap;">
-    <li><a href="index.html" style="font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--light);text-decoration:none;padding:8px 14px;display:block;transition:color .2s;">Home</a></li>
-    <li><a href="departments.html" style="font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--light);text-decoration:none;padding:8px 14px;display:block;transition:color .2s;">Departments</a></li>
-    <li><a href="worldstate.html" style="font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--light);text-decoration:none;padding:8px 14px;display:block;transition:color .2s;">World State</a></li>
-    <li><a href="lore.html" style="font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--light);text-decoration:none;padding:8px 14px;display:block;transition:color .2s;">Lore</a></li>
-    <li><a href="worldmap.html" style="font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--light);text-decoration:none;padding:8px 14px;display:block;transition:color .2s;">World Map</a></li>
-    <li><a href="submission.html" style="font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--light);text-decoration:none;padding:8px 14px;display:block;transition:color .2s;">Submission</a></li>
-    <li><a href="staff.html" target="_blank" style="font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:8px 14px;display:block;transition:color .2s;">Staff Login</a></li>
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="departments.html">Departments</a></li>
+    <li><a href="worldstate.html">World State</a></li>
+    <li><a href="lore.html">Lore</a></li>
+    <li><a href="worldmap.html">World Map</a></li>
+    <li><a href="submission.html">Submission</a></li>
+    <li><a href="staff.html" target="_blank">Staff Login</a></li>
   </ul>
 </nav>
 
+<!-- Mode switch -->
+<div id="mode-switch">
+  <button class="mode-btn active" data-mode="installations" onclick="setMode('installations')">
+    <span class="dot"></span>Installations
+  </button>
+  <button class="mode-btn" data-mode="timeline" onclick="setMode('timeline')">
+    <span class="dot"></span>Timeline
+  </button>
+</div>
+
 <div id="map-wrap"><svg id="map-svg"></svg></div>
 
+<!-- Installation popup -->
 <div id="map-popup">
   <div class="popup-tag" id="popup-tag">Foundation Installation</div>
   <div class="popup-name" id="popup-name">Site-00</div>
-  <div class="popup-row"><span class="popup-key">Location</span><span class="popup-val" id="popup-loc">—</span></div>
-  <div class="popup-row"><span class="popup-key">Status</span><span class="popup-val" id="popup-status">—</span></div>
-  <div class="popup-row"><span class="popup-key">Clearance</span><span class="popup-val" id="popup-cl">—</span></div>
+  <div class="popup-row"><span class="popup-key">Location</span><span class="popup-val" id="popup-loc">...</span></div>
+  <div class="popup-row"><span class="popup-key">Status</span><span class="popup-val" id="popup-status">...</span></div>
+  <div class="popup-row"><span class="popup-key">Clearance</span><span class="popup-val" id="popup-cl">...</span></div>
 </div>
 
+<!-- Legend (installations mode) -->
 <div id="legend">
   <div class="legend-title">Site Status</div>
   <div class="legend-item"><div class="legend-dot" style="background:#2a8a2a"></div>Operational</div>
@@ -128,67 +333,238 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:56px;background:rgba(
   <div class="legend-item"><div class="legend-dot" style="background:#444;border:1px solid #555"></div>Classified</div>
 </div>
 
+<!-- Timeline narrative panel -->
+<div id="timeline-panel">
+  <div class="tp-head" id="tp-head">
+    <div class="tp-stamps" id="tp-stamps"></div>
+    <div class="tp-date" id="tp-date"></div>
+    <div class="tp-title" id="tp-title"></div>
+    <div class="tp-sub" id="tp-sub"></div>
+  </div>
+  <div class="tp-body" id="tp-body"></div>
+  <div class="tp-foot">
+    <span id="tp-type">Event</span>
+    <span class="tp-progress" id="tp-progress">0 / 0</span>
+  </div>
+</div>
+
+<!-- Timeline controls -->
+<div id="tl-controls">
+  <button class="tl-btn" id="tl-prev" onclick="stepEvent(-1)">&#9664; Prev</button>
+  <button class="tl-btn play" id="tl-play" onclick="togglePlay()">&#9658; Play</button>
+  <button class="tl-btn" id="tl-next" onclick="stepEvent(1)">Next &#9654;</button>
+  <div class="tl-counter"><strong id="tl-counter-cur">1</strong> / <span id="tl-counter-tot">1</span></div>
+  <div class="tl-track" id="tl-track">
+    <div class="tl-progress" id="tl-progress"></div>
+  </div>
+  <button class="tl-btn" onclick="resetTimeline()">Reset</button>
+</div>
+
+<!-- Info bar -->
 <div id="info-bar">
-  <span>THREEFOLD &mdash; Foundation Installation Map</span>
-  <span>Hover sites for details</span>
-  <span id="coord-display">Coordinates: —</span>
+  <span id="ib-mode-label">THREEFOLD / Installation Map</span>
+  <span id="ib-hint">Hover sites for details</span>
+  <span id="coord-display">Coordinates: ...</span>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
 <script>
-/* =============================================
-   SITE DATA — add new sites here as the server grows
-============================================= */
+/* =====================================================================
+   SITE DATA (installations mode)
+   To add a new site: append to this array. Use /img/SiteName.png for the icon.
+===================================================================== */
 const SITES = [
   {
-    id: 'site7',
-    name: 'Site-7',
+    id: 'site7', name: 'Site-7',
     tag: 'Foundation Installation',
-    coords: [-162.5, 63.8],   // Norton Sound, Alaska
+    coords: [-162.5, 63.8],
     location: 'Norton Sound, 80km off the Alaskan coast, USA',
-    status: 'Operational',
-    statusColor: '#2a8a2a',
+    status: 'Operational', statusColor: '#2a8a2a',
     clearance: 'Level 2 minimum',
     classified: false,
     icon: 'img/Site-7.png',
-    note: 'Primary northern containment site.',
   },
   {
-    id: 'site19',
-    name: 'Site-19',
+    id: 'site19', name: 'Site-19',
     tag: 'Foundation Installation',
-    coords: [-72.5, 41.8],    // Visually placed, actual coords redacted
+    coords: [-72.5, 41.8],
     location: '[LOCATION REDACTED]',
-    status: 'Operational',
-    statusColor: '#2a8a2a',
+    status: 'Operational', statusColor: '#2a8a2a',
     clearance: 'Level 3 minimum',
     classified: true,
     icon: 'img/Site-19.png',
-    note: null,
+  },
+  {
+    id: 'area314', name: 'Area-314',
+    tag: 'Foundation Black Site',
+    coords: [25.5, 46.8],
+    location: '[LOCATION REDACTED], Eastern European Theatre',
+    status: 'Restricted', statusColor: '#8a7a1a',
+    clearance: 'Level 4 minimum',
+    classified: true,
+    icon: 'img/Area-314.png',
   },
 ];
 
-/* =============================================
-   MAP SETUP
-============================================= */
+/* =====================================================================
+   TIMELINE EVENTS
+   Each event has geographic coordinates, a graphic generator, and
+   narrative text. Graphics are rendered as layered SVG groups.
+===================================================================== */
+const EVENTS = [
+  {
+    id: 'crimea-2014',
+    year: 2014, date: 'February 2014',
+    type: 'milestone',
+    title: 'The Crimean Spark',
+    sub: 'Annexation of Crimea / GRU-P resurfaces after twenty years dormant',
+    focus: [34.0, 45.0],     // Crimea
+    stamps: [{cls:'red',text:'GRU-P ACTIVE'},{cls:'grey',text:'2014'}],
+    hotspots: ['Russia','Ukraine'],
+    graphic: 'crimea',
+    body: `Russia's annexation of Crimea provided political cover for the reactivation of <strong>GRU-P</strong> (the Main Directorate's Paranormal Section) after nearly twenty years of effective dormancy. Within weeks, both SCPF and GOC analytical divisions concluded GRU-P was not merely reconstituting, but <em>pre-positioning</em>.
+      <p>Overseer-04 authored an early position paper recommending immediate pre-emption. The Council voted to wait. That decision shaped the next twelve years.</p>`,
+  },
+  {
+    id: 'cistern-2016',
+    year: 2016, date: '17 March 2016, 04:12 local',
+    type: 'incident',
+    title: 'The Cistern',
+    sub: 'Saratov, Russia / Joint strike against a presumed GRU-P facility',
+    focus: [46.0, 51.5],     // Saratov
+    stamps: [{cls:'amber',text:'INCIDENT'},{cls:'red',text:'347 KIA'}],
+    hotspots: ['Russia'],
+    graphic: 'cistern',
+    fields: [
+      ['Operation','CISTERN, FULCRUM-coordinated'],
+      ['Unit','MTF Xi-13 under GOC command'],
+      ['Actual target','GOC Forward Site Teleios'],
+      ['Attribution','UNRESOLVED. Forged intelligence.'],
+    ],
+    body: `Xi-13 elements engaged what they believed to be GRU-P perimeter defences. Forty-seven minutes in, revised intelligence reached the strike coordinator. The facility was not GRU-P. It was a <strong>GOC containment site</strong>. The "defences" were GOC garrison troops.
+      <p>By the time orders were reversed, <strong>347 GOC personnel were dead</strong>. The revised intelligence was forged, and passed all RAISA verification. No attribution has ever been established. FULCRUM dissolved within 72 hours.</p>`,
+  },
+  {
+    id: 'wuhan-2019',
+    year: 2019, date: 'December 2019',
+    type: 'milestone',
+    title: 'The Wuhan Release',
+    sub: 'GRU-P bioweapons division / Project TAIGA / Article K',
+    focus: [114.3, 30.6],    // Wuhan
+    stamps: [{cls:'red',text:'BIOHAZARD'},{cls:'red',text:'ARTICLE K'}],
+    hotspots: ['China'],
+    graphic: 'wuhan',
+    body: `Under cover of the December 2019 Hong Kong crisis, a GRU-P field team conducted the first live-population deployment of <strong>Article K</strong> at a wet market in Wuhan. The anomalous payload failed on contact with actual human genetic diversity. What survived was the carrier virus. <strong>The world knows it as COVID-19.</strong>
+      <p>Seven million dead. Had Article K propagated as designed, genomics estimates the toll would have exceeded <strong>two billion inside eighteen months</strong>.</p>`,
+  },
+  {
+    id: 'disclosure-2021',
+    year: 2021, date: '19 September 2021, 07:00 GMT',
+    type: 'milestone',
+    title: 'The Breaking of the Veil',
+    sub: 'HMSCP Disclosure / Naval cordon established',
+    focus: [-2.5, 54.5],     // UK centre
+    stamps: [{cls:'red',text:'VEIL BREACH'},{cls:'red',text:'MTF THETA-5'}],
+    hotspots: ['United Kingdom','Ireland'],
+    graphic: 'disclosure',
+    body: `At 07:00 GMT, the BBC broadcast a pre-recorded address from King Charles III. At 07:04, HMSCP released a prepared information package: verified footage of three low-Euclid anomalies, redacted classifications for twelve entities, and the articulation of what became the <strong>Acclimatization Doctrine</strong>.
+      <p>By midnight, <strong>MTF Theta-5</strong> held a complete naval cordon. The GOC contributed a full fleet element without signing anything. Cover story: cascading meltdown at Hinkley Point C.</p>`,
+  },
+  {
+    id: 'queen-2022',
+    year: 2022, date: '08 September 2022',
+    type: 'milestone',
+    title: 'The Passing of the Queen',
+    sub: 'Elizabeth II / Balmoral, inside the cordon / State funeral simulated',
+    focus: [-3.25, 57.0],    // Balmoral
+    stamps: [{cls:'grey',text:'GAMMA-5 OPERATION'},{cls:'amber',text:'SIMULATED'}],
+    hotspots: ['United Kingdom'],
+    graphic: 'queen',
+    body: `Queen Elizabeth II died at Balmoral, inside the cordon. The state funeral became the largest coordinated disinformation operation of the modern era: a simulated Westminster Abbey interior, composited foreign dignitaries, and a parallel ceremonial track held at Windsor attended only by those already inside.
+      <p>The world saw a funeral. The world mourned. Every foreign dignitary in the broadcast was either a long-duration HMFSCP asset, a body double, or composited in post. For HMFSCP, the succession consolidated the Crown's authority in a way the Windsor Accord alone had not.</p>`,
+  },
+  {
+    id: 'roscoff-2023',
+    year: 2023, date: '14 January 2023',
+    type: 'incident',
+    title: 'The Roscoff Incident',
+    sub: 'PARAWATCH cell successfully breaches the cordon / Brittany to Plymouth',
+    focus: [-4.1, 49.5],     // Between Brittany and Plymouth
+    stamps: [{cls:'amber',text:'PARAWATCH'},{cls:'grey',text:'CORDON BREACH'}],
+    hotspots: ['France','United Kingdom'],
+    graphic: 'roscoff',
+    fields: [
+      ['Cell','PARAWATCH Baker-3'],
+      ['Method','Modified fishing vessel'],
+      ['Inside','11 days'],
+      ['Missing','1 operative, Élise Nocart'],
+      ['Material','~40 hours of footage unaccounted for'],
+    ],
+    body: `Baker-3 proved the cordon could be crossed with sufficient preparation, knowledge of Theta-5 patrol patterns, and local maritime expertise. They spent eleven days inside the Isles. Two operatives were recovered. Élise Nocart was not with them. The footage has not surfaced.
+      <p>The Foundation's working assumption is that the footage exists, is genuine, and will eventually be released.</p>`,
+  },
+  {
+    id: 'piraeus-2024',
+    year: 2024, date: 'Q4 2024',
+    type: 'milestone',
+    title: 'Piraeus / Novi Sad / Kotor',
+    sub: 'First SCPF-GOC field cooperation since Cistern',
+    focus: [21.0, 42.5],     // Centred on the three
+    stamps: [{cls:'green',text:'FIRST THAW'},{cls:'blue',text:'JOINT OPS'}],
+    hotspots: ['Greece','Serbia','Montenegro'],
+    graphic: 'piraeus',
+    body: `Three simultaneous Chaos Insurgency extraction attempts, at Piraeus, Novi Sad, and Kotor, were intercepted across a forty-eight hour window. Two by the Foundation, one by the GOC. Each intercepting organization voluntarily shared its operational intelligence with the other.
+      <p>No treaty governed this. No working group authorised it. Field officers made the call, and nobody above them reversed it. Within internal Foundation communications, this is the <em>first thaw</em>.</p>`,
+  },
+  {
+    id: 'reykjavik-2026',
+    year: 2026, date: 'February 2026',
+    type: 'milestone',
+    title: 'The Reykjavík Accords',
+    sub: 'First open tripartite session / SCPF, GOC, HMFSCP',
+    focus: [-21.9, 64.1],    // Reykjavík
+    stamps: [{cls:'green',text:'ACCORDS'},{cls:'blue',text:'TRIPARTITE'}],
+    hotspots: ['Iceland'],
+    graphic: 'reykjavik',
+    body: `For the first time since 2016, Foundation and GOC delegations sat at the same table without Veil cover. For the first time ever, HMFSCP Director-General Aoife Roche sat with them.
+      <p>The Accords did not end the Eighth Occult War. They did not reopen the British Isles. They established that the three organizations would coordinate on existential-level threats. The first such threat they formally agreed to coordinate on was <strong>the Third</strong>.</p>`,
+  },
+  {
+    id: 'area314-2026',
+    year: 2026, date: 'April 2026',
+    type: 'dispatch',
+    title: 'Unattributed Intrusion at Area-314',
+    sub: 'Archive-Delta / First confirmed physical intrusion attributed to the Third',
+    focus: [25.5, 46.8],     // Area-314
+    stamps: [{cls:'red',text:'THE THIRD'},{cls:'amber',text:'ACTIVE'}],
+    hotspots: [],
+    graphic: 'area314',
+    body: `At 02:41 local time, perimeter sensors registered an unauthorized physical intrusion. No personnel were harmed. No containment breaches were reported.
+      <p>A single item was removed from Archive-Delta: a sealed folder of 2014-2016 FULCRUM operational correspondence. <strong>Classified post-incident assessment: first confirmed physical intrusion attributable to the Third.</strong></p>`,
+  },
+];
+
+/* =====================================================================
+   CORE MAP SETUP
+===================================================================== */
 const svg    = d3.select('#map-svg');
 const wrap   = document.getElementById('map-wrap');
 const popup  = document.getElementById('map-popup');
 const coords = document.getElementById('coord-display');
 
 let W, H, projection, path;
+let _currentMode = 'installations';
+let _currentEventIdx = -1;
+let _visitedEvents = new Set();
+let _playInterval = null;
+let _worldData = null;
 
 function resize() {
   W = wrap.clientWidth;
-  H = wrap.clientHeight - 32; // subtract info bar
-
+  H = wrap.clientHeight - 32;
   const scale = Math.min(W / 6.2, H / 3.1);
-
-  projection = d3.geoNaturalEarth1()
-    .scale(scale)
-    .translate([W / 2, H / 2]);
-
+  projection = d3.geoNaturalEarth1().scale(scale).translate([W / 2, H / 2]);
   path = d3.geoPath().projection(projection);
   redraw();
 }
@@ -197,66 +573,65 @@ async function init() {
   resize();
   window.addEventListener('resize', resize);
 
-  // Track mouse coordinates
   svg.on('mousemove', function(event) {
     const [x,y] = d3.pointer(event);
     const inv = projection.invert([x,y]);
     if (inv) {
       const lon = inv[0].toFixed(2);
       const lat = inv[1].toFixed(2);
-      coords.textContent = `${lat > 0 ? lat+'°N' : Math.abs(lat)+'°S'}  ${lon > 0 ? lon+'°E' : Math.abs(lon)+'°W'}`;
+      coords.textContent = `${lat > 0 ? lat+'\u00B0N' : Math.abs(lat)+'\u00B0S'}  ${lon > 0 ? lon+'\u00B0E' : Math.abs(lon)+'\u00B0W'}`;
     }
-  }).on('mouseleave', () => { coords.textContent = 'Coordinates: —'; });
+  }).on('mouseleave', () => { coords.textContent = 'Coordinates: ...'; });
 
   try {
-    const world = await d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json');
-    const countries = topojson.feature(world, world.objects.countries);
-    const borders   = topojson.mesh(world, world.objects.countries, (a,b) => a !== b);
-    const graticule = d3.geoGraticule();
-
-    svg.select('.graticule').datum(graticule()).attr('d', path);
-    svg.select('.sphere').attr('d', path({type:'Sphere'}));
-    svg.select('#countries').selectAll('path')
-      .data(countries.features)
-      .join('path').attr('class','country').attr('d', path);
-    svg.select('.borders').attr('d', path(borders));
-
+    _worldData = await d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json');
+    renderBase();
     plotSites();
+    buildTimelineTrack();
   } catch(e) {
     console.error('Map data failed to load:', e);
   }
 }
 
-function redraw() {
-  if (!projection) return;
+function renderBase() {
+  if (!_worldData) return;
+  const countries = topojson.feature(_worldData, _worldData.objects.countries);
+  const borders   = topojson.mesh(_worldData, _worldData.objects.countries, (a,b) => a !== b);
   const graticule = d3.geoGraticule();
-  svg.select('.graticule').attr('d', path(graticule()));
+
+  svg.select('.graticule').datum(graticule()).attr('d', path);
   svg.select('.sphere').attr('d', path({type:'Sphere'}));
-  svg.selectAll('.country').attr('d', path);
-  svg.select('.borders').attr('d', d => d ? path(d) : null);
-  plotSites();
+  const sel = svg.select('#countries').selectAll('path').data(countries.features, d => d.id);
+  sel.join(
+    enter => enter.append('path').attr('class','country').attr('d', path),
+    update => update.attr('d', path),
+    exit => exit.remove()
+  );
+  svg.select('.borders').datum(borders).attr('d', path);
 }
 
-/* =============================================
-   INITIAL SVG STRUCTURE
-============================================= */
-// Ocean
+function redraw() {
+  if (!projection) return;
+  renderBase();
+  if (_currentMode === 'installations') plotSites();
+  else renderEvent(_currentEventIdx, true);
+}
+
+/* Initial SVG layering */
 svg.append('path').attr('class','sphere');
-// Graticule
 svg.append('path').attr('class','graticule');
-// Countries group
 svg.append('g').attr('id','countries');
-// Country borders
 svg.append('path').attr('class','borders').attr('fill','none').attr('stroke','#1a1a1a').attr('stroke-width',.3);
-// Sites group (on top)
+svg.append('g').attr('id','event-layer');    // event graphics go here
 svg.append('g').attr('id','sites');
 
-/* =============================================
-   SITE MARKERS
-============================================= */
+/* =====================================================================
+   INSTALLATION MARKERS
+===================================================================== */
 function plotSites() {
   const g = svg.select('#sites');
   g.selectAll('*').remove();
+  if (_currentMode !== 'installations') return;
 
   SITES.forEach(site => {
     const [x, y] = projection(site.coords);
@@ -267,47 +642,32 @@ function plotSites() {
       .attr('class', `site-marker ${site.classified ? 'site-classified' : ''}`)
       .attr('transform', `translate(${x},${y})`);
 
-    // Pulse rings
     m.append('circle').attr('class','site-ring site-ring-outer').attr('r',8).attr('stroke',col);
     m.append('circle').attr('class','site-ring site-ring-inner').attr('r',8).attr('stroke',col);
-
-    // Core dot
-    m.append('circle')
-      .attr('class','site-core')
-      .attr('r', 5)
+    m.append('circle').attr('class','site-core').attr('r',5)
       .attr('fill', site.classified ? '#1a1a1a' : '#111')
-      .attr('stroke', col)
-      .attr('stroke-width', 1.2);
+      .attr('stroke', col).attr('stroke-width', 1.2);
 
-    // Icon (white-on-black — use mix-blend-mode:screen in foreignObject)
-    const fo = m.append('foreignObject')
-      .attr('class','site-icon-frame')
-      .attr('x', -16).attr('y', -46)
-      .attr('width', 32).attr('height', 32);
-
+    const fo = m.append('foreignObject').attr('class','site-icon-frame')
+      .attr('x',-16).attr('y',-46).attr('width',32).attr('height',32);
     const div = fo.append('xhtml:div').style('width','32px').style('height','32px')
       .style('display','flex').style('align-items','center').style('justify-content','center')
-      .style('background','rgba(10,10,10,.85)').style('border','1px solid').style('border-color', col);
+      .style('background','rgba(10,10,10,.85)').style('border','1px solid').style('border-color',col);
 
     if (site.classified) {
       div.append('xhtml:span')
         .style('font-family','Share Tech Mono,monospace').style('font-size','14px').style('color','#444')
         .text('?');
     } else {
-      div.append('xhtml:img')
-        .attr('src', site.icon).attr('alt', site.name)
+      div.append('xhtml:img').attr('src', site.icon).attr('alt', site.name)
         .style('width','24px').style('height','24px')
-        .style('object-fit','contain').style('mix-blend-mode','screen');
+        .style('object-fit','contain').style('mix-blend-mode','screen')
+        .on('error', function(){ this.style.display='none'; });
     }
 
-    // Label
-    m.append('text')
-      .attr('class','site-label')
-      .attr('x', 10).attr('y', 4)
-      .attr('fill', col)
-      .text(site.name);
+    m.append('text').attr('class','site-label').attr('x',10).attr('y',4)
+      .attr('fill', col).text(site.name);
 
-    // Hover / click
     m.on('mouseenter', function(event) { showPopup(event, site); })
      .on('mousemove',  function(event) { movePopup(event); })
      .on('mouseleave', hidePopup)
@@ -315,14 +675,11 @@ function plotSites() {
   });
 }
 
-/* =============================================
-   POPUP
-============================================= */
 function showPopup(event, site) {
   document.getElementById('popup-tag').textContent  = site.tag;
   document.getElementById('popup-name').textContent = site.name;
   document.getElementById('popup-loc').innerHTML    = site.classified
-    ? '<span class="popup-classified">&#9608;&#9608;&#9608;&#9608; LOCATION REDACTED &#9608;&#9608;&#9608;&#9608;</span>'
+    ? '<span class="popup-classified">\u2588\u2588\u2588\u2588 LOCATION REDACTED \u2588\u2588\u2588\u2588</span>'
     : site.location;
   document.getElementById('popup-status').innerHTML =
     `<span class="popup-status-dot" style="background:${site.statusColor}"></span>${site.status}`;
@@ -330,7 +687,6 @@ function showPopup(event, site) {
   popup.style.display = 'block';
   movePopup(event);
 }
-
 function movePopup(event) {
   const pw = popup.offsetWidth + 20;
   const ph = popup.offsetHeight + 20;
@@ -341,14 +697,442 @@ function movePopup(event) {
   popup.style.left = lx + 'px';
   popup.style.top  = ly + 'px';
 }
-
 function hidePopup() { popup.style.display = 'none'; }
-
 svg.on('click', hidePopup);
 
-/* =============================================
+/* =====================================================================
+   MODE SWITCHING
+===================================================================== */
+function setMode(mode) {
+  _currentMode = mode;
+  document.querySelectorAll('.mode-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.mode === mode);
+  });
+
+  const legend = document.getElementById('legend');
+  const panel  = document.getElementById('timeline-panel');
+  const ctl    = document.getElementById('tl-controls');
+  const lbl    = document.getElementById('ib-mode-label');
+  const hint   = document.getElementById('ib-hint');
+
+  if (mode === 'installations') {
+    legend.style.display = '';
+    panel.classList.remove('visible');
+    ctl.classList.remove('visible');
+    clearEventLayer();
+    plotSites();
+    lbl.textContent = 'THREEFOLD / Installation Map';
+    hint.textContent = 'Hover sites for details';
+    stopPlay();
+  } else {
+    legend.style.display = 'none';
+    panel.classList.add('visible');
+    ctl.classList.add('visible');
+    svg.select('#sites').selectAll('*').remove();
+    lbl.textContent = 'THREEFOLD / Timeline Mode';
+    hint.textContent = 'Use Prev / Next to step through the record';
+    if (_currentEventIdx < 0) goToEvent(0);
+    else renderEvent(_currentEventIdx);
+  }
+}
+
+/* =====================================================================
+   TIMELINE CONTROLS
+===================================================================== */
+function buildTimelineTrack() {
+  const track = document.getElementById('tl-track');
+  // Clear anything but progress bar
+  track.querySelectorAll('.tl-marker').forEach(el => el.remove());
+
+  const years = EVENTS.map(e => e.year);
+  const minY = Math.min(...years);
+  const maxY = Math.max(...years);
+  const span = Math.max(1, maxY - minY);
+
+  EVENTS.forEach((e, i) => {
+    const pct = span > 0 ? ((e.year - minY) / span) * 100 : 50;
+    const m = document.createElement('button');
+    m.className = `tl-marker t-${e.type}`;
+    m.style.left = pct + '%';
+    m.dataset.year = e.year;
+    m.dataset.idx = i;
+    m.title = `${e.date}: ${e.title}`;
+    m.onclick = () => goToEvent(i);
+    track.appendChild(m);
+  });
+
+  document.getElementById('tl-counter-tot').textContent = EVENTS.length;
+}
+
+function updateTrackUI() {
+  const markers = document.querySelectorAll('.tl-marker');
+  markers.forEach((m, i) => {
+    m.classList.toggle('current', i === _currentEventIdx);
+    m.classList.toggle('visited', _visitedEvents.has(i) && i !== _currentEventIdx);
+  });
+  const prog = document.getElementById('tl-progress');
+  if (_currentEventIdx >= 0 && markers[_currentEventIdx]) {
+    prog.style.width = markers[_currentEventIdx].style.left;
+  } else {
+    prog.style.width = '0%';
+  }
+  document.getElementById('tl-counter-cur').textContent = _currentEventIdx + 1;
+  document.getElementById('tl-prev').disabled = _currentEventIdx <= 0;
+  document.getElementById('tl-next').disabled = _currentEventIdx >= EVENTS.length - 1;
+}
+
+function stepEvent(delta) {
+  const next = _currentEventIdx + delta;
+  if (next < 0 || next >= EVENTS.length) return;
+  goToEvent(next);
+}
+
+function goToEvent(idx) {
+  _currentEventIdx = idx;
+  _visitedEvents.add(idx);
+  renderEvent(idx);
+  updateTrackUI();
+}
+
+function resetTimeline() {
+  stopPlay();
+  _visitedEvents.clear();
+  goToEvent(0);
+}
+
+function togglePlay() {
+  if (_playInterval) stopPlay();
+  else startPlay();
+}
+function startPlay() {
+  document.getElementById('tl-play').innerHTML = '&#9632; Pause';
+  _playInterval = setInterval(() => {
+    if (_currentEventIdx >= EVENTS.length - 1) { stopPlay(); return; }
+    stepEvent(1);
+  }, 4500);
+}
+function stopPlay() {
+  if (_playInterval) { clearInterval(_playInterval); _playInterval = null; }
+  document.getElementById('tl-play').innerHTML = '&#9658; Play';
+}
+
+/* =====================================================================
+   EVENT RENDERING
+===================================================================== */
+function clearEventLayer() {
+  svg.select('#event-layer').selectAll('*').remove();
+  svg.selectAll('.country').classed('hotspot', false).classed('dimmed', false);
+}
+
+function renderEvent(idx, keepPanel) {
+  clearEventLayer();
+  if (idx < 0 || idx >= EVENTS.length) return;
+  const e = EVENTS[idx];
+
+  // Hotspot tinting (on country paths)
+  const countries = svg.selectAll('.country');
+  if (e.hotspots && e.hotspots.length) {
+    countries.each(function(d) {
+      const name = (d && d.properties && d.properties.name) || '';
+      d3.select(this).classed('hotspot', e.hotspots.some(h => name === h));
+    });
+  }
+
+  const [cx, cy] = projection(e.focus);
+  const layer = svg.select('#event-layer');
+
+  // Dispatch to graphic generator
+  const GFX = {
+    crimea: gfxCrimea, cistern: gfxCistern, wuhan: gfxWuhan,
+    disclosure: gfxDisclosure, queen: gfxQueen, roscoff: gfxRoscoff,
+    piraeus: gfxPiraeus, reykjavik: gfxReykjavik, area314: gfxArea314,
+  };
+  const fn = GFX[e.graphic];
+  if (fn) fn(layer, cx, cy, e);
+
+  // Narrative panel
+  if (!keepPanel) populatePanel(e);
+}
+
+function populatePanel(e) {
+  const head = document.getElementById('tp-head');
+  head.classList.remove('t-milestone','t-incident','t-document','t-dispatch');
+  head.classList.add('t-' + e.type);
+  document.getElementById('tp-stamps').innerHTML =
+    (e.stamps || []).map(s => `<span class="tp-stamp ${s.cls}">${s.text}</span>`).join('');
+  document.getElementById('tp-date').textContent = e.date;
+  document.getElementById('tp-title').textContent = e.title;
+  document.getElementById('tp-sub').textContent = e.sub || '';
+  const fields = e.fields
+    ? `<dl class="tp-fields">${e.fields.map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl>`
+    : '';
+  document.getElementById('tp-body').innerHTML = fields + e.body;
+  document.getElementById('tp-type').textContent = e.type.toUpperCase() + ' RECORD';
+  document.getElementById('tp-progress').textContent = `${_currentEventIdx+1} / ${EVENTS.length}`;
+}
+
+/* =====================================================================
+   EVENT GRAPHIC GENERATORS
+   Each gets (svg layer group, x, y, event) and appends SVG elements.
+===================================================================== */
+
+// Helper: tagged callout label at (x,y) pointing to (cx,cy)
+function addCallout(layer, cx, cy, dx, dy, text, cls){
+  const lx = cx + dx, ly = cy + dy;
+  const g = layer.append('g').attr('class','evt-callout');
+  g.append('line').attr('class','evt-callout-line')
+    .attr('x1',cx).attr('y1',cy).attr('x2',lx).attr('y2',ly);
+  const w = Math.max(60, text.length * 6.5);
+  g.append('rect').attr('class','evt-label-bg')
+    .attr('x', lx - w/2).attr('y', ly - 9).attr('width', w).attr('height', 18);
+  g.append('text').attr('class','evt-label-text '+(cls||''))
+    .attr('x', lx).attr('y', ly + 3).attr('text-anchor','middle').text(text);
+}
+
+/* ---- 2014 Crimea: red pulse + GRU-P callout ---- */
+function gfxCrimea(layer, cx, cy, e){
+  const col = '#bb3a3a';
+  [0,1,2].forEach(i => {
+    layer.append('circle').attr('class', `evt-pulse ${i===1?'delay1':i===2?'delay2':''}`)
+      .attr('cx',cx).attr('cy',cy).attr('stroke',col);
+  });
+  layer.append('circle').attr('class','evt-core-blink')
+    .attr('cx',cx).attr('cy',cy).attr('r',4).attr('fill',col);
+  addCallout(layer, cx, cy, -90, -55, 'GRU-P REACTIVATED', 'red');
+  addCallout(layer, cx, cy, 100, 40, 'CRIMEA 2014', 'red');
+}
+
+/* ---- 2016 Cistern: crosshair + 347 KIA ---- */
+function gfxCistern(layer, cx, cy, e){
+  const col = '#d4a52c';
+  const g = layer.append('g').attr('class','evt-crosshair');
+  // Crosshair rings
+  g.append('circle').attr('cx',cx).attr('cy',cy).attr('r',22).attr('fill','none').attr('stroke',col).attr('stroke-width',1).attr('opacity',.8);
+  g.append('circle').attr('cx',cx).attr('cy',cy).attr('r',14).attr('fill','none').attr('stroke',col).attr('stroke-width',.6).attr('opacity',.7);
+  // Ticks
+  [[0,-28],[0,28],[-28,0],[28,0]].forEach(([dx,dy]) => {
+    g.append('line').attr('x1',cx+dx*.5).attr('y1',cy+dy*.5)
+      .attr('x2',cx+dx).attr('y2',cy+dy).attr('stroke',col).attr('stroke-width',1);
+  });
+  // Red centre dot
+  g.append('circle').attr('cx',cx).attr('cy',cy).attr('r',3).attr('fill','#bb3a3a');
+  // Pulse
+  layer.append('circle').attr('class','evt-pulse')
+    .attr('cx',cx).attr('cy',cy).attr('stroke','#bb3a3a');
+  addCallout(layer, cx, cy, -100, -55, 'SARATOV, RUSSIA', 'amber');
+  addCallout(layer, cx, cy, 100, -30, 'GOC 347 KIA', 'red');
+  addCallout(layer, cx, cy, 110, 50, 'FULCRUM COLLAPSE', 'amber');
+}
+
+/* ---- 2019 Wuhan: biohazard pulse + transmission web to major hubs ---- */
+function gfxWuhan(layer, cx, cy, e){
+  const col = '#bb3a3a';
+  // Transmission web to major hubs (approximate, in geographic coords)
+  const hubs = [
+    [-73.9, 40.7], [-0.1, 51.5], [2.35, 48.85],
+    [37.6, 55.75], [139.6, 35.7], [28.9, 41.0],
+  ];
+  hubs.forEach((p, i) => {
+    const [hx, hy] = projection(p);
+    if (isNaN(hx) || isNaN(hy)) return;
+    layer.append('line').attr('class', `evt-web-line d${(i%6)+1}`)
+      .attr('x1',cx).attr('y1',cy).attr('x2',hx).attr('y2',hy)
+      .attr('stroke',col).attr('stroke-width',.7).attr('opacity',.6);
+    layer.append('circle').attr('class','evt-core-blink')
+      .attr('cx',hx).attr('cy',hy).attr('r',2.2).attr('fill',col).attr('opacity',.75);
+  });
+  // Epicentre pulse
+  [0,1,2].forEach(i => {
+    layer.append('circle').attr('class', `evt-pulse-big ${i===1?'delay1':i===2?'delay2':''}`)
+      .attr('cx',cx).attr('cy',cy).attr('stroke',col);
+  });
+  // Biohazard-like trefoil
+  const bio = layer.append('g').attr('transform',`translate(${cx},${cy})`);
+  bio.append('circle').attr('r',6).attr('fill','none').attr('stroke',col).attr('stroke-width',1.2);
+  [0,120,240].forEach(a => {
+    const rad = a*Math.PI/180;
+    bio.append('circle').attr('cx',Math.cos(rad)*7).attr('cy',Math.sin(rad)*7)
+      .attr('r',3.5).attr('fill','none').attr('stroke',col).attr('stroke-width',1);
+  });
+  bio.append('circle').attr('r',1.8).attr('fill',col);
+  addCallout(layer, cx, cy, -110, -55, 'WUHAN, CHINA', 'red');
+  addCallout(layer, cx, cy, 100, 50, 'ARTICLE K RELEASE', 'red');
+}
+
+/* ---- 2021 Disclosure: naval cordon + rotating ring + ships ---- */
+function gfxDisclosure(layer, cx, cy, e){
+  const col = '#bb3a3a';
+  // Cordon ring (static outer, rotating inner with ship markers)
+  const R = 50;
+  layer.append('circle').attr('cx',cx).attr('cy',cy).attr('r',R+4)
+    .attr('fill','none').attr('stroke','rgba(187,58,58,.15)').attr('stroke-width',6);
+  layer.append('circle').attr('cx',cx).attr('cy',cy).attr('r',R)
+    .attr('fill','none').attr('stroke',col).attr('stroke-width',1).attr('stroke-dasharray','4 3').attr('opacity',.8);
+
+  // Rotating ship ring
+  const ring = layer.append('g').attr('class','evt-cordon-ring spin')
+    .attr('transform',`translate(${cx},${cy})`);
+  // Rotate around its own centre
+  const N = 10;
+  for (let i=0;i<N;i++){
+    const a = (2*Math.PI*i/N);
+    const x = Math.cos(a)*R, y = Math.sin(a)*R;
+    const g = ring.append('g').attr('transform',`translate(${x},${y}) rotate(${a*180/Math.PI + 90})`);
+    // Simple ship chevron
+    g.append('path')
+      .attr('d','M -3,2 L 0,-4 L 3,2 Z')
+      .attr('fill',col).attr('opacity',.85).attr('class','evt-ship');
+  }
+  // Centre broadcast waves
+  [0,1,2].forEach(i => {
+    layer.append('circle').attr('class',`evt-bc-wave ${i?'d'+i:''}`)
+      .attr('cx',cx).attr('cy',cy).attr('stroke','#d4a52c');
+  });
+  // Centre marker
+  layer.append('circle').attr('cx',cx).attr('cy',cy).attr('r',3).attr('fill','#d4a52c');
+
+  addCallout(layer, cx, cy, -110, -70, 'BBC 07:00 GMT', 'amber');
+  addCallout(layer, cx, cy, 110, 0, 'MTF THETA-5', 'red');
+  addCallout(layer, cx, cy, -100, 75, 'COVER: HINKLEY', 'red');
+}
+
+/* ---- 2022 Queen's Passing: Balmoral marker + Gamma-5 simulation waves ---- */
+function gfxQueen(layer, cx, cy, e){
+  const col = '#d4a52c';
+  const muted = '#888';
+  // Balmoral marker: hollow square, funereal
+  layer.append('rect').attr('x',cx-5).attr('y',cy-5).attr('width',10).attr('height',10)
+    .attr('fill','none').attr('stroke',col).attr('stroke-width',1.5);
+  layer.append('rect').attr('x',cx-2).attr('y',cy-2).attr('width',4).attr('height',4)
+    .attr('fill',col);
+  // Soft pulse
+  [0,1].forEach(i => {
+    layer.append('circle').attr('class',`evt-pulse ${i?'delay1':''}`)
+      .attr('cx',cx).attr('cy',cy).attr('stroke',col).attr('opacity',.7);
+  });
+  // Disinformation waves outward (dashed, irregular)
+  [18, 32, 48, 64].forEach((r, i) => {
+    layer.append('circle').attr('cx',cx).attr('cy',cy).attr('r',r)
+      .attr('fill','none').attr('stroke',muted).attr('stroke-width',.6)
+      .attr('stroke-dasharray','2 3').attr('opacity', .55 - i*0.1);
+  });
+  // Ghost "composited" markers at three world-capital positions (Washington, Berlin, Paris)
+  [[-77.0, 38.9], [13.4, 52.5], [2.35, 48.85]].forEach(p => {
+    const [gx, gy] = projection(p);
+    if (isNaN(gx) || isNaN(gy)) return;
+    layer.append('circle').attr('cx',gx).attr('cy',gy).attr('r',2.5)
+      .attr('fill','none').attr('stroke',muted).attr('stroke-width',.8).attr('stroke-dasharray','1 2');
+    layer.append('line')
+      .attr('x1',cx).attr('y1',cy).attr('x2',gx).attr('y2',gy)
+      .attr('stroke',muted).attr('stroke-width',.4).attr('stroke-dasharray','1 4').attr('opacity',.35);
+  });
+  addCallout(layer, cx, cy, -110, -40, 'BALMORAL', 'amber');
+  addCallout(layer, cx, cy, 100, 30, 'GAMMA-5 SIM', 'grey');
+}
+
+/* ---- 2023 Roscoff: dashed infiltration path Brittany → Plymouth ---- */
+function gfxRoscoff(layer, cx, cy, e){
+  const col = '#d4a52c';
+  const [bx, by] = projection([-3.98, 48.72]); // Roscoff, Brittany
+  const [px, py] = projection([-4.14, 50.37]); // Plymouth
+  // Infiltration path
+  layer.append('line').attr('class','evt-infil')
+    .attr('x1',bx).attr('y1',by).attr('x2',px).attr('y2',py)
+    .attr('stroke',col).attr('stroke-width',1.2).attr('opacity',.85);
+  // Origin marker (Brittany)
+  layer.append('circle').attr('cx',bx).attr('cy',by).attr('r',3.5)
+    .attr('fill','none').attr('stroke',col).attr('stroke-width',1.2);
+  layer.append('circle').attr('cx',bx).attr('cy',by).attr('r',1.5).attr('fill',col);
+  // Destination marker (Plymouth), redacted square
+  layer.append('rect').attr('x',px-3.5).attr('y',py-3.5).attr('width',7).attr('height',7)
+    .attr('fill','none').attr('stroke',col).attr('stroke-width',1).attr('stroke-dasharray','1 2');
+  layer.append('text').attr('x',px).attr('y',py+1).attr('text-anchor','middle')
+    .attr('font-family','Share Tech Mono,monospace').attr('font-size','6px').attr('fill',col).text('?');
+  addCallout(layer, bx, by, -80, 20, 'ROSCOFF', 'amber');
+  addCallout(layer, px, py, 80, -40, 'PLYMOUTH BREACH', 'amber');
+}
+
+/* ---- 2024 Piraeus/Novi Sad/Kotor: three pulses flashing together ---- */
+function gfxPiraeus(layer, cx, cy, e){
+  const col = '#3a8a3a';
+  const pts = [
+    {p:[23.65, 37.94], name:'PIRAEUS'},
+    {p:[19.83, 45.26], name:'NOVI SAD'},
+    {p:[18.77, 42.43], name:'KOTOR'},
+  ];
+  // Connect them into a triangle
+  for (let i=0;i<pts.length;i++){
+    const [ax,ay] = projection(pts[i].p);
+    const [bx,by] = projection(pts[(i+1)%pts.length].p);
+    if (isNaN(ax)) continue;
+    layer.append('line').attr('x1',ax).attr('y1',ay).attr('x2',bx).attr('y2',by)
+      .attr('stroke',col).attr('stroke-width',.5).attr('opacity',.4).attr('stroke-dasharray','2 3');
+  }
+  pts.forEach((p, i) => {
+    const [x, y] = projection(p.p);
+    if (isNaN(x)) return;
+    layer.append('circle').attr('class',`evt-pulse ${i===1?'delay1':i===2?'delay2':''}`)
+      .attr('cx',x).attr('cy',y).attr('stroke',col);
+    layer.append('circle').attr('cx',x).attr('cy',y).attr('r',3).attr('fill',col);
+    addCallout(layer, x, y, (i===0?70:i===1?50:-70), (i===0?0:i===1?-45:20), p.name, 'green');
+  });
+}
+
+/* ---- 2026 Reykjavík: three converging lines meeting at Iceland ---- */
+function gfxReykjavik(layer, cx, cy, e){
+  const col = '#3a6aaa';
+  // SCPF (Washington-ish), GOC (Brussels), HMFSCP (London)
+  const origins = [
+    {p:[-77.0, 38.9], label:'SCPF', cls:'blue'},
+    {p:[4.35, 50.85], label:'GOC', cls:'blue'},
+    {p:[-0.13, 51.5], label:'HMFSCP', cls:'amber'},
+  ];
+  origins.forEach((o, i) => {
+    const [ox, oy] = projection(o.p);
+    if (isNaN(ox)) return;
+    layer.append('line').attr('class',`evt-converge ${i?'d'+i:''}`)
+      .attr('x1',ox).attr('y1',oy).attr('x2',cx).attr('y2',cy)
+      .attr('stroke',col).attr('stroke-width',1).attr('opacity',.7);
+    layer.append('circle').attr('cx',ox).attr('cy',oy).attr('r',2.5).attr('fill',col);
+    addCallout(layer, ox, oy, 30, -20, o.label, o.cls);
+  });
+  // Meeting point (3-pointed star)
+  const star = layer.append('g').attr('transform',`translate(${cx},${cy})`);
+  for (let i=0;i<3;i++){
+    const a = (i*120 - 90) * Math.PI/180;
+    star.append('line')
+      .attr('x1',0).attr('y1',0)
+      .attr('x2',Math.cos(a)*10).attr('y2',Math.sin(a)*10)
+      .attr('stroke','#3a8a3a').attr('stroke-width',1.5);
+  }
+  star.append('circle').attr('r',3).attr('fill','#3a8a3a');
+  // Pulse
+  layer.append('circle').attr('class','evt-pulse').attr('cx',cx).attr('cy',cy).attr('stroke','#3a8a3a');
+  addCallout(layer, cx, cy, 0, 45, 'REYKJAVIK ACCORDS', 'green');
+}
+
+/* ---- 2026 Area-314: intrusion pulse + classified mark ---- */
+function gfxArea314(layer, cx, cy, e){
+  const col = '#bb3a3a';
+  // Pulse
+  [0,1,2].forEach(i => {
+    layer.append('circle').attr('class',`evt-pulse ${i===1?'delay1':i===2?'delay2':''}`)
+      .attr('cx',cx).attr('cy',cy).attr('stroke',col);
+  });
+  // Box with diagonal slash (intrusion)
+  layer.append('rect').attr('x',cx-8).attr('y',cy-8).attr('width',16).attr('height',16)
+    .attr('fill','none').attr('stroke',col).attr('stroke-width',1.2);
+  layer.append('line').attr('x1',cx-8).attr('y1',cy-8).attr('x2',cx+8).attr('y2',cy+8)
+    .attr('stroke',col).attr('stroke-width',1.2);
+  layer.append('circle').attr('class','evt-core-blink')
+    .attr('cx',cx).attr('cy',cy).attr('r',2).attr('fill',col);
+  addCallout(layer, cx, cy, -110, -40, 'AREA-314', 'red');
+  addCallout(layer, cx, cy, 100, 40, 'THE THIRD', 'red');
+}
+
+/* =====================================================================
    INIT
-============================================= */
+===================================================================== */
 init();
 </script>
 </body>

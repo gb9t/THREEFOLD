@@ -133,43 +133,115 @@ nav ul a:hover{color:var(--white);}
 .no-news{border:1px dashed var(--border);padding:3.5rem;text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:var(--border);background:var(--deep);}
 .no-news::before{content:'▓ ▓ ▓ ▓ ▓ ▓';display:block;font-size:14px;color:var(--border);margin-bottom:.75rem;letter-spacing:0.3em;opacity:.4;}
 
-/* ========== GOI RELATIONS CHART ========== */
-.goi-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;padding:.85rem 1.25rem;border:1px solid var(--border);background:var(--deep);}
-.goi-head-left{display:flex;align-items:center;gap:.9rem;font-family:var(--mono);font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);}
-.goi-head-count{font-family:var(--display);font-size:14px;font-weight:700;color:var(--red-bright);letter-spacing:0.05em;}
-.goi-reset-btn{font-family:var(--mono);font-size:9px;letter-spacing:0.22em;text-transform:uppercase;background:transparent;border:1px solid var(--border);color:var(--muted);padding:7px 14px;cursor:pointer;transition:all .2s;}
-.goi-reset-btn:hover{border-color:var(--red);color:var(--red-bright);}
+/* ========== GOI RELATIONS (directory + dossier) ========== */
+.goi-layout{display:grid;grid-template-columns:280px 1fr;gap:1rem;align-items:start;}
 
-.goi-bubble-wrap{position:relative;width:100%;background:radial-gradient(ellipse at center, rgba(138,42,42,0.04), transparent 70%),var(--deep);border:1px solid var(--border);overflow:hidden;}
-.goi-bubble-wrap::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);background-size:40px 40px;pointer-events:none;}
-.goi-bubble-wrap::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.08) 2px,rgba(0,0,0,.08) 4px);pointer-events:none;z-index:3;}
-#goi-canvas{display:block;width:100%;cursor:grab;position:relative;z-index:2;}
-#goi-canvas:active{cursor:grabbing;}
-.goi-corner{position:absolute;font-family:var(--mono);font-size:8.5px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);z-index:4;pointer-events:none;}
-.goi-corner.tl{top:.9rem;left:1rem;}
-.goi-corner.tr{top:.9rem;right:1rem;color:var(--red-bright);display:flex;align-items:center;gap:.5rem;}
-.goi-corner.tr::before{content:'';width:6px;height:6px;background:var(--red-bright);border-radius:50%;animation:livePulse 1.8s ease-in-out infinite;}
-.goi-corner.bl{bottom:.9rem;left:1rem;}
-.goi-corner.br{bottom:.9rem;right:1rem;}
+/* Directory list (left) */
+.goi-dir{border:1px solid var(--border);background:var(--deep);}
+.goi-dir-hdr{padding:.85rem 1rem;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;letter-spacing:0.28em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:.5rem;}
+.goi-dir-hdr::before{content:'';width:6px;height:6px;background:var(--red-bright);flex-shrink:0;}
+.goi-dir-list{display:flex;flex-direction:column;max-height:620px;overflow-y:auto;}
+.goi-dir-list::-webkit-scrollbar{width:6px;}
+.goi-dir-list::-webkit-scrollbar-track{background:var(--black);}
+.goi-dir-list::-webkit-scrollbar-thumb{background:var(--border);}
+.goi-dir-btn{position:relative;display:grid;grid-template-columns:42px 1fr auto;gap:.85rem;align-items:center;padding:.85rem 1rem;border:none;background:transparent;border-bottom:1px solid var(--dark);color:inherit;cursor:pointer;text-align:left;transition:background .2s;}
+.goi-dir-btn:last-child{border-bottom:none;}
+.goi-dir-btn::before{content:'';position:absolute;left:0;top:0;bottom:0;width:0;background:var(--red-bright);transition:width .22s;}
+.goi-dir-btn:hover{background:rgba(255,255,255,.02);}
+.goi-dir-btn.is-active{background:linear-gradient(90deg, rgba(138,42,42,0.1), transparent 70%);}
+.goi-dir-btn.is-active::before{width:3px;}
+.goi-dir-logo{width:42px;height:42px;background:rgba(0,0,0,.35);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;}
+.goi-dir-logo img{width:34px;height:34px;object-fit:contain;mix-blend-mode:screen;opacity:.85;transition:opacity .2s;}
+.goi-dir-logo::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.15) 2px,rgba(0,0,0,.15) 4px);pointer-events:none;}
+.goi-dir-btn.is-active .goi-dir-logo img,.goi-dir-btn:hover .goi-dir-logo img{opacity:1;}
+.goi-dir-body{min-width:0;}
+.goi-dir-abbr{font-family:var(--display);font-size:16px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--pale);line-height:1;margin-bottom:.25rem;}
+.goi-dir-btn.is-active .goi-dir-abbr{color:var(--white);}
+.goi-dir-name{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;color:var(--muted);line-height:1.3;text-transform:none;}
+.goi-dir-arrow{font-family:var(--mono);font-size:14px;color:var(--border);transition:color .2s,transform .2s;}
+.goi-dir-btn:hover .goi-dir-arrow,.goi-dir-btn.is-active .goi-dir-arrow{color:var(--red-bright);transform:translateX(3px);}
 
-.goi-tooltip{position:absolute;pointer-events:none;background:rgba(10,10,10,0.97);border:1px solid var(--red);padding:.9rem 1.2rem;font-family:var(--mono);font-size:9.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--pale);white-space:nowrap;z-index:50;opacity:0;transition:opacity .15s;min-width:180px;}
-.goi-tooltip::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--red-bright);}
-.goi-tooltip .tt-head{font-family:var(--mono);font-size:8px;letter-spacing:0.3em;color:var(--red-bright);margin-bottom:.4rem;}
-.goi-tooltip .tt-name{font-family:var(--display);font-size:16px;font-weight:700;letter-spacing:0.05em;color:var(--white);display:block;margin-bottom:.6rem;padding-bottom:.5rem;border-bottom:1px dashed var(--border);}
-.goi-tooltip .tt-rel{display:grid;grid-template-columns:14px auto 1fr;gap:.55rem;align-items:center;margin-top:.3rem;}
-.goi-tooltip .tt-dot{width:12px;height:12px;border:1px solid;flex-shrink:0;}
+/* Dossier pane (right) */
+.goi-doss{border:1px solid var(--border);background:var(--deep);min-height:620px;position:relative;}
+.goi-doss-corner{position:absolute;top:.9rem;right:1.25rem;font-family:var(--mono);font-size:8.5px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:.5rem;}
+.goi-doss-corner::before{content:'';width:6px;height:6px;background:var(--red-bright);border-radius:50%;animation:livePulse 1.8s ease-in-out infinite;}
 
-.goi-legend{display:flex;flex-wrap:wrap;gap:.85rem;margin-top:1.25rem;align-items:center;padding:1rem 1.25rem;background:var(--deep);border:1px solid var(--border);}
-.goi-legend-label{font-family:var(--mono);font-size:8.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);margin-right:.5rem;}
-.gli{display:flex;align-items:center;gap:.5rem;font-family:var(--mono);font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--light);}
-.gli-dot{width:18px;height:3px;flex-shrink:0;}
-.gli-dot.enemy   {background:var(--red-bright);box-shadow:inset 0 0 0 1px var(--red);}
-.gli-dot.hostile {background:linear-gradient(to right, var(--amber-bright) 0, var(--amber-bright) 60%, transparent 60%, transparent 100%), var(--amber);background-size:8px 100%;}
-.gli-dot.neutral {background:var(--muted);}
-.gli-dot.indiff  {background:#6a6a8a;opacity:.6;}
-.gli-dot.friendly{background:var(--green-bright);}
-.gli-dot.allied  {background:var(--blue-bright);box-shadow:0 0 4px var(--blue-bright);}
-.goi-hint{font-family:var(--typewriter);font-size:12px;color:var(--muted);margin-top:.9rem;line-height:1.7;}
+/* Dossier header */
+.goi-doss-hdr{padding:2rem 2rem 1.5rem;border-bottom:1px solid var(--border);display:grid;grid-template-columns:88px 1fr;gap:1.5rem;align-items:center;position:relative;}
+.goi-doss-hdr::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--red-bright);}
+.goi-doss-logo{width:88px;height:88px;background:var(--dark);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;}
+.goi-doss-logo img{width:72px;height:72px;object-fit:contain;mix-blend-mode:screen;}
+.goi-doss-logo::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.15) 2px,rgba(0,0,0,.15) 4px);pointer-events:none;}
+.goi-doss-ident{min-width:0;}
+.goi-doss-fileref{font-family:var(--mono);font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);margin-bottom:.3rem;}
+.goi-doss-name{font-family:var(--display);font-weight:800;font-size:clamp(24px,3.2vw,34px);letter-spacing:0.04em;text-transform:uppercase;color:var(--white);line-height:.95;margin-bottom:.4rem;}
+.goi-doss-abbr{font-family:var(--mono);font-size:10px;letter-spacing:0.25em;color:var(--pale);}
+
+/* Summary row */
+.goi-doss-summary{display:flex;gap:0;border-bottom:1px solid var(--border);}
+.goi-sum-item{flex:1;padding:1rem 1.25rem;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:.25rem;}
+.goi-sum-item:last-child{border-right:none;}
+.goi-sum-k{font-family:var(--mono);font-size:8px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);}
+.goi-sum-v{font-family:var(--display);font-size:22px;font-weight:700;line-height:1;color:var(--white);}
+.goi-sum-item.rel-allied .goi-sum-v{color:var(--blue-bright);}
+.goi-sum-item.rel-friendly .goi-sum-v{color:var(--green-bright);}
+.goi-sum-item.rel-neutral .goi-sum-v{color:var(--light);}
+.goi-sum-item.rel-hostile .goi-sum-v{color:var(--amber-bright);}
+.goi-sum-item.rel-enemy .goi-sum-v{color:var(--red-bright);}
+
+/* Relations list */
+.goi-doss-section{padding:1.5rem 2rem;}
+.goi-doss-section-hdr{font-family:var(--mono);font-size:9px;letter-spacing:0.28em;text-transform:uppercase;color:var(--muted);padding-bottom:.65rem;border-bottom:1px solid var(--border);margin-bottom:1rem;display:flex;align-items:center;gap:.65rem;}
+.goi-doss-section-hdr::before{content:'';width:6px;height:6px;background:var(--red-bright);flex-shrink:0;}
+.goi-rel-list{display:flex;flex-direction:column;gap:.5rem;}
+.goi-rel-row{display:grid;grid-template-columns:44px 1fr 140px auto;gap:1rem;align-items:center;padding:.85rem 1rem;background:rgba(0,0,0,.2);border:1px solid var(--border);border-left:3px solid;transition:background .2s,border-color .2s;}
+.goi-rel-row:hover{background:rgba(255,255,255,.025);}
+.goi-rel-row.rel-allied   {border-left-color:var(--blue-bright);}
+.goi-rel-row.rel-friendly {border-left-color:var(--green-bright);}
+.goi-rel-row.rel-neutral  {border-left-color:var(--muted);}
+.goi-rel-row.rel-indiff   {border-left-color:#6a6a8a;}
+.goi-rel-row.rel-hostile  {border-left-color:var(--amber-bright);}
+.goi-rel-row.rel-enemy    {border-left-color:var(--red-bright);}
+
+.goi-rel-logo{width:44px;height:44px;background:rgba(0,0,0,.4);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;}
+.goi-rel-logo img{width:36px;height:36px;object-fit:contain;mix-blend-mode:screen;opacity:.85;}
+.goi-rel-logo::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.15) 2px,rgba(0,0,0,.15) 4px);pointer-events:none;}
+.goi-rel-info{min-width:0;}
+.goi-rel-name{font-family:var(--display);font-size:16px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--white);line-height:1.1;margin-bottom:.2rem;}
+.goi-rel-sub{font-family:var(--mono);font-size:9px;letter-spacing:0.14em;color:var(--muted);}
+
+/* 6-step tier scale (Allied ← → Enemy) */
+.goi-rel-scale{display:grid;grid-template-columns:repeat(6,1fr);gap:2px;align-items:end;height:22px;}
+.goi-rel-scale-cell{height:100%;background:var(--dark);border:1px solid var(--border);position:relative;transition:all .2s;}
+.goi-rel-scale-cell.on.pos-0{background:var(--blue-bright);border-color:var(--blue);}
+.goi-rel-scale-cell.on.pos-1{background:var(--green-bright);border-color:var(--green);}
+.goi-rel-scale-cell.on.pos-2{background:var(--muted);border-color:var(--border);}
+.goi-rel-scale-cell.on.pos-3{background:#6a6a8a;border-color:#4a4a6a;}
+.goi-rel-scale-cell.on.pos-4{background:var(--amber-bright);border-color:var(--amber);}
+.goi-rel-scale-cell.on.pos-5{background:var(--red-bright);border-color:var(--red);}
+
+.goi-rel-badge{font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;padding:4px 12px;border:1px solid;white-space:nowrap;}
+.goi-rel-badge.rel-allied   {border-color:var(--blue);color:var(--blue-bright);background:rgba(42,74,122,.08);}
+.goi-rel-badge.rel-friendly {border-color:var(--green);color:var(--green-bright);background:rgba(42,106,42,.08);}
+.goi-rel-badge.rel-neutral  {border-color:var(--border);color:var(--light);background:rgba(60,60,60,.2);}
+.goi-rel-badge.rel-indiff   {border-color:#4a4a6a;color:#8a8aba;background:rgba(60,60,100,.12);}
+.goi-rel-badge.rel-hostile  {border-color:var(--amber);color:var(--amber-bright);background:rgba(154,122,42,.08);}
+.goi-rel-badge.rel-enemy    {border-color:var(--red);color:var(--red-bright);background:rgba(138,42,42,.08);}
+
+.goi-rel-empty{padding:2.5rem 1rem;text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:var(--border);border:1px dashed var(--border);}
+
+/* Scale legend below */
+.goi-scale-legend{margin-top:1.25rem;padding:1rem 1.25rem;border:1px solid var(--border);background:var(--deep);display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+.goi-scale-legend-label{font-family:var(--mono);font-size:8.5px;letter-spacing:0.28em;text-transform:uppercase;color:var(--muted);}
+.goi-scale-legend-bar{display:flex;flex:1;min-width:240px;height:14px;}
+.goi-scale-legend-bar > span{flex:1;position:relative;}
+.goi-scale-legend-bar > span:nth-child(1){background:var(--blue-bright);}
+.goi-scale-legend-bar > span:nth-child(2){background:var(--green-bright);}
+.goi-scale-legend-bar > span:nth-child(3){background:var(--muted);}
+.goi-scale-legend-bar > span:nth-child(4){background:#6a6a8a;}
+.goi-scale-legend-bar > span:nth-child(5){background:var(--amber-bright);}
+.goi-scale-legend-bar > span:nth-child(6){background:var(--red-bright);}
+.goi-scale-endpoints{display:flex;justify-content:space-between;flex:1;min-width:240px;font-family:var(--mono);font-size:8px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-top:.35rem;}
 
 /* ========== FOOTER ========== */
 footer{border-top:1px solid var(--border);padding:2rem 3rem;display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:9.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--border);}
@@ -177,7 +249,9 @@ footer{border-top:1px solid var(--border);padding:2rem 3rem;display:flex;justify
 @media(max-width:900px){
   .cover-grid{grid-template-columns:1fr;gap:1.5rem;}
   .cover-right{align-items:flex-start;}
-  .goi-legend{gap:.6rem;}
+  .goi-layout{grid-template-columns:1fr;}
+  .goi-dir-list{max-height:none;flex-direction:row;overflow-x:auto;}
+  .goi-dir-btn{flex-shrink:0;min-width:200px;border-bottom:none;border-right:1px solid var(--dark);}
 }
 @media(max-width:768px){
   nav{padding:0 1rem;}
@@ -191,6 +265,14 @@ footer{border-top:1px solid var(--border);padding:2rem 3rem;display:flex;justify
   .ts-fileref{text-align:left;}
   .ws-tabs{overflow-x:auto;flex-wrap:nowrap;}
   .ws-tab{flex-shrink:0;padding:.7rem 1rem;}
+  .goi-doss-hdr{grid-template-columns:64px 1fr;gap:1rem;padding:1.5rem 1.25rem;}
+  .goi-doss-logo{width:64px;height:64px;}
+  .goi-doss-logo img{width:50px;height:50px;}
+  .goi-doss-section{padding:1.25rem;}
+  .goi-rel-row{grid-template-columns:40px 1fr auto;gap:.75rem;}
+  .goi-rel-scale{display:none;}
+  .goi-doss-summary{flex-wrap:wrap;}
+  .goi-sum-item{flex:1 1 50%;border-bottom:1px solid var(--border);}
   footer{flex-direction:column;gap:.5rem;text-align:center;}
 }
 </style>
@@ -286,35 +368,37 @@ footer{border-top:1px solid var(--border);padding:2rem 3rem;display:flex;justify
 
     <!-- GOI RELATIONS -->
     <div class="ws-panel" id="ws-relations">
-      <div class="stag">Network Topology <strong>&middot; Active Groups of Interest</strong></div>
-      <div class="goi-head">
-        <div class="goi-head-left">
-          <span>Nodes on Record:</span>
-          <span class="goi-head-count" id="goi-count">0</span>
-          <span>/</span>
-          <span>Relations Plotted:</span>
-          <span class="goi-head-count" id="goi-rel-count">0</span>
+      <div class="stag">Groups of Interest <strong>&middot; Select a GOI to view its diplomatic posture</strong></div>
+
+      <div class="goi-layout">
+        <!-- Left: directory of GOIs -->
+        <div class="goi-dir">
+          <div class="goi-dir-hdr">GOI Directory</div>
+          <div class="goi-dir-list" id="goi-dir-list">
+            <!-- Rendered by JS -->
+          </div>
         </div>
-        <button type="button" onclick="resetBubbleLayout()" class="goi-reset-btn">Reset Layout</button>
+
+        <!-- Right: dossier for selected GOI -->
+        <div class="goi-doss">
+          <div class="goi-doss-corner">Live Dossier</div>
+          <div id="goi-doss-body">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
       </div>
-      <div class="goi-bubble-wrap" id="goi-bubble-wrap">
-        <div class="goi-corner tl">TF / GOI / NET</div>
-        <div class="goi-corner tr">Live Topology</div>
-        <div class="goi-corner bl">Heading: 000&deg;</div>
-        <div class="goi-corner br" id="goi-corner-time">--:--:-- UTC</div>
-        <canvas id="goi-canvas"></canvas>
-        <div class="goi-tooltip" id="goi-tooltip"><div class="tt-head">Network Node</div><span class="tt-name"></span><div id="tt-rels"></div></div>
+
+      <div class="goi-scale-legend">
+        <div class="goi-scale-legend-label">Relation Scale</div>
+        <div style="flex:1;min-width:260px;">
+          <div class="goi-scale-legend-bar">
+            <span title="Allied"></span><span title="Friendly"></span><span title="Neutral"></span><span title="Indifferent"></span><span title="Hostile"></span><span title="Enemy"></span>
+          </div>
+          <div class="goi-scale-endpoints">
+            <span>Allied</span><span>Enemy</span>
+          </div>
+        </div>
       </div>
-      <div class="goi-legend">
-        <span class="goi-legend-label">Relation Key</span>
-        <div class="gli"><div class="gli-dot allied"></div>Allied</div>
-        <div class="gli"><div class="gli-dot friendly"></div>Friendly</div>
-        <div class="gli"><div class="gli-dot neutral"></div>Neutral</div>
-        <div class="gli"><div class="gli-dot indiff"></div>Indifferent</div>
-        <div class="gli"><div class="gli-dot hostile"></div>Hostile</div>
-        <div class="gli"><div class="gli-dot enemy"></div>Enemy</div>
-      </div>
-      <div class="goi-hint">Hover any node to highlight its relations. Drag to reposition. The layout persists until you reset.</div>
     </div>
   </div>
 
@@ -357,421 +441,140 @@ function getRelation(rels, a, b) {
   return (rels.find(r=>(r.from===a&&r.to===b)||(r.from===b&&r.to===a)) || {}).status || null;
 }
 
-/* ── GOI BUBBLE CHART ENGINE ── */
-const REL_COLORS = {
-  allied:  {stroke:'#3a6aaa',fill:'rgba(42,74,122,0.5)',label:'#3a6aaa',glow:'rgba(58,106,170,0.4)'},
-  friendly:{stroke:'#3a8a3a',fill:'rgba(42,106,42,0.5)',label:'#3a8a3a',glow:'rgba(58,138,58,0.35)'},
-  neutral: {stroke:'#666',   fill:'rgba(60,60,60,0.45)',label:'#999',  glow:'rgba(153,153,153,0.2)'},
-  indiff:  {stroke:'#6a6a8a',fill:'rgba(60,60,100,0.45)',label:'#8a8aba',glow:'rgba(138,138,186,0.22)'},
-  hostile: {stroke:'#d4a52c',fill:'rgba(154,122,42,0.5)',label:'#d4a52c',glow:'rgba(212,165,44,0.35)'},
-  enemy:   {stroke:'#bb3a3a',fill:'rgba(138,42,42,0.5)',label:'#bb3a3a',glow:'rgba(187,58,58,0.45)'},
+/* ============================================
+   GOI DIRECTORY + DOSSIER ENGINE
+============================================ */
+const REL_META = {
+  allied:   {label:'Allied',      pos:0, severity:0, note:'Formal cooperation. Shared intelligence and, where possible, shared operations.'},
+  friendly: {label:'Friendly',    pos:1, severity:1, note:'Positive relations. Occasional coordination. No standing treaty.'},
+  neutral:  {label:'Neutral',     pos:2, severity:2, note:'No active cooperation or hostility. Professional interactions only.'},
+  indiff:   {label:'Indifferent', pos:3, severity:3, note:'Limited contact. Neither side considers the other a priority.'},
+  hostile:  {label:'Hostile',     pos:4, severity:4, note:'Active opposition short of open conflict. Proxy actions common.'},
+  enemy:    {label:'Enemy',       pos:5, severity:5, note:'Open hostility. Lethal engagement authorised when encountered.'},
 };
 
-let _bubbleGois=[], _bubbleRels=[], _nodes=[], _edges=[];
-let _hoveredNode=null, _dragNode=null, _dragOX=0, _dragOY=0;
-let _animFrame=null, _logoCache={};
+let _goiGois = [], _goiRels = [], _goiSelected = null;
 
-function initBubbleChart(gois, rels) {
-  _bubbleGois=gois; _bubbleRels=rels;
-  const wrap=document.getElementById('goi-bubble-wrap');
-  const canvas=document.getElementById('goi-canvas');
-  if(!wrap||!canvas) return;
+function initGoiDirectory(gois, rels) {
+  _goiGois = gois || [];
+  _goiRels = rels || [];
 
-  // Update counters
-  const countEl = document.getElementById('goi-count');
-  const relCountEl = document.getElementById('goi-rel-count');
-  const coverGois = document.getElementById('cm-gois');
-  if (countEl) countEl.textContent = gois.length;
-  if (relCountEl) relCountEl.textContent = rels.length;
-  if (coverGois) coverGois.textContent = gois.length;
+  // Update cover counters
+  const cmGois = document.getElementById('cm-gois');
+  if (cmGois) cmGois.textContent = _goiGois.length;
 
-  const W=wrap.clientWidth||800, H=Math.max(520, W*0.62);
-  canvas.width=W; canvas.height=H;
-  wrap.style.height=H+'px';
+  // Render left directory
+  renderGoiDirectory();
 
-  const n=Math.max(gois.length,1);
-  // Ring radius scales slightly with count so big sets breathe
-  const ringR=Math.min(W,H)*(n>9?0.38:n>6?0.35:0.33);
-  // Node radius shrinks gracefully as count grows
-  const nodeR=Math.max(26, Math.min(46, 140/Math.sqrt(n)));
-  const cx=W/2, cy=H/2;
-  _nodes=gois.map((g,i)=>{
-    const angle=(2*Math.PI*i/n)-Math.PI/2;
-    return {id:g.id,name:g.name,abbr:g.abbr,logo:g.logo,
-      x:cx+ringR*Math.cos(angle), y:cy+ringR*Math.sin(angle),
-      vx:0,vy:0, radius:nodeR};
-  });
-  _edges=rels.map(r=>({from:r.from,to:r.to,status:r.status||'neutral'}));
-
-  // Preload logos
-  _logoCache={};
-  gois.forEach(g=>{
-    if(!g.logo) return;
-    const img=new Image(); img.src=g.logo;
-    img.onload=()=>{ _logoCache[g.id]=img; };
-  });
-
-  // Events
-  canvas.onmousedown=onDown; canvas.onmousemove=onMove; canvas.onmouseup=onUp; canvas.onmouseleave=onLeave;
-  canvas.ontouchstart=onTouchStart; canvas.ontouchmove=onTouchMove; canvas.ontouchend=onTouchEnd;
-
-  if(_animFrame) cancelAnimationFrame(_animFrame);
-  tick();
+  // Select the first GOI by default (or keep current selection if still present)
+  const current = _goiSelected && _goiGois.find(g => g.id === _goiSelected) ? _goiSelected : (_goiGois[0] ? _goiGois[0].id : null);
+  if (current) selectGoi(current);
+  else document.getElementById('goi-doss-body').innerHTML = '<div class="goi-rel-empty">No GOIs on record yet.</div>';
 }
 
-// Reset all nodes to the default circular layout
-function resetBubbleLayout(){
-  if(!_nodes.length) return;
-  const canvas=document.getElementById('goi-canvas');
-  if(!canvas) return;
-  const W=canvas.width, H=canvas.height;
-  const n=_nodes.length;
-  const ringR=Math.min(W,H)*(n>9?0.38:n>6?0.35:0.33);
-  const cx=W/2, cy=H/2;
-  _nodes.forEach((node,i)=>{
-    const angle=(2*Math.PI*i/n)-Math.PI/2;
-    node.x=cx+ringR*Math.cos(angle);
-    node.y=cy+ringR*Math.sin(angle);
-    node.vx=0; node.vy=0;
-  });
+function renderGoiDirectory() {
+  const list = document.getElementById('goi-dir-list');
+  if (!list) return;
+  list.innerHTML = _goiGois.map(g => `
+    <button type="button" class="goi-dir-btn" data-id="${g.id}" onclick="selectGoi('${g.id}')">
+      <div class="goi-dir-logo">
+        <img src="${g.logo || 'img/Base.png'}" alt="${g.abbr || g.name}" onerror="this.style.display='none'">
+      </div>
+      <div class="goi-dir-body">
+        <div class="goi-dir-abbr">${g.abbr || '---'}</div>
+        <div class="goi-dir-name">${g.name || ''}</div>
+      </div>
+      <span class="goi-dir-arrow">&#8250;</span>
+    </button>
+  `).join('');
 }
 
-function tick() {
-  const canvas=document.getElementById('goi-canvas');
-  if(!canvas){return;}
-  simulate();
-  draw(canvas);
-  _animFrame=requestAnimationFrame(tick);
+function selectGoi(id) {
+  _goiSelected = id;
+  // Update active state on buttons
+  document.querySelectorAll('.goi-dir-btn').forEach(btn => {
+    btn.classList.toggle('is-active', btn.dataset.id === id);
+  });
+  renderGoiDossier(id);
 }
 
-function simulate() {
-  // Static layout: nodes hold their positions. Dragging still works
-  // (onMove updates node.x/y directly), but nothing bounces or drifts.
-  // Clamp all nodes inside the canvas in case a drag overshoots.
-  const canvas=document.getElementById('goi-canvas');
-  if(!canvas) return;
-  const W=canvas.width, H=canvas.height;
-  _nodes.forEach(n=>{
-    n.x=Math.max(n.radius+4,Math.min(W-n.radius-4,n.x));
-    n.y=Math.max(n.radius+4,Math.min(H-n.radius-4,n.y));
-  });
-}
+function renderGoiDossier(id) {
+  const goi = _goiGois.find(g => g.id === id);
+  const body = document.getElementById('goi-doss-body');
+  if (!goi || !body) return;
 
-let _sweepAngle = 0;
-
-function draw(canvas) {
-  const ctx=canvas.getContext('2d');
-  const W=canvas.width,H=canvas.height;
-  ctx.clearRect(0,0,W,H);
-
-  const cx = W/2, cy = H/2;
-  const ringOuter = Math.min(W,H) * 0.42;
-  const ringInner = Math.min(W,H) * 0.14;
-
-  // ── Background concentric rings (subtle target)
-  ctx.save();
-  ctx.strokeStyle='rgba(187,58,58,0.06)';
-  ctx.lineWidth=1;
-  [ringInner, ringInner*1.6, ringOuter*0.65, ringOuter*0.85, ringOuter].forEach(r => {
-    ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.stroke();
-  });
-  // Compass cross
-  ctx.strokeStyle='rgba(255,255,255,0.035)';
-  ctx.lineWidth=1;
-  ctx.setLineDash([3,5]);
-  ctx.beginPath(); ctx.moveTo(cx-ringOuter-10,cy); ctx.lineTo(cx+ringOuter+10,cy); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(cx,cy-ringOuter-10); ctx.lineTo(cx,cy+ringOuter+10); ctx.stroke();
-  ctx.setLineDash([]);
-  ctx.restore();
-
-  // ── Radar sweep
-  _sweepAngle = (_sweepAngle + 0.004) % (Math.PI * 2);
-  ctx.save();
-  const sweepGrad = ctx.createRadialGradient(cx,cy,ringInner,cx,cy,ringOuter+20);
-  sweepGrad.addColorStop(0,'rgba(187,58,58,0)');
-  sweepGrad.addColorStop(0.85,'rgba(187,58,58,0.04)');
-  sweepGrad.addColorStop(1,'rgba(187,58,58,0.12)');
-  ctx.translate(cx,cy);
-  ctx.rotate(_sweepAngle);
-  ctx.fillStyle = sweepGrad;
-  ctx.beginPath();
-  ctx.moveTo(0,0);
-  ctx.arc(0,0,ringOuter+20,-0.35,0.05);
-  ctx.closePath();
-  ctx.fill();
-  ctx.restore();
-
-  // ── Center compass emblem
-  ctx.save();
-  ctx.strokeStyle='rgba(187,58,58,0.3)';
-  ctx.lineWidth=1;
-  ctx.beginPath(); ctx.arc(cx,cy,ringInner*0.6,0,Math.PI*2); ctx.stroke();
-  ctx.strokeStyle='rgba(187,58,58,0.18)';
-  ctx.beginPath(); ctx.arc(cx,cy,ringInner,0,Math.PI*2); ctx.stroke();
-  // Tick marks on the inner ring
-  for (let i=0;i<8;i++){
-    const a = (i/8)*Math.PI*2;
-    const r1 = ringInner*0.85, r2 = ringInner*1.05;
-    ctx.strokeStyle='rgba(187,58,58,0.35)';
-    ctx.lineWidth=1;
-    ctx.beginPath();
-    ctx.moveTo(cx+Math.cos(a)*r1, cy+Math.sin(a)*r1);
-    ctx.lineTo(cx+Math.cos(a)*r2, cy+Math.sin(a)*r2);
-    ctx.stroke();
-  }
-  // Center label
-  ctx.fillStyle='rgba(187,58,58,0.85)';
-  ctx.font='bold 9px "Share Tech Mono",monospace';
-  ctx.textAlign='center';
-  ctx.textBaseline='middle';
-  ctx.fillText('GOI', cx, cy - 6);
-  ctx.fillStyle='rgba(153,153,153,0.7)';
-  ctx.font='7px "Share Tech Mono",monospace';
-  ctx.fillText('NETWORK', cx, cy + 6);
-  ctx.restore();
-
-  const nodeMap={};
-  _nodes.forEach(n=>nodeMap[n.id]=n);
-
-  // ── Draw edges as curved arcs
-  // Depth-order: neutral/indiff underneath, then friendly/allied, then hostile/enemy, hovered always on top
-  const layerOrder = ['neutral','indiff','friendly','allied','hostile','enemy'];
-  const sortedEdges = [..._edges].sort((a,b) => layerOrder.indexOf(a.status) - layerOrder.indexOf(b.status));
-
-  sortedEdges.forEach(e => {
-    const a = nodeMap[e.from], b = nodeMap[e.to];
-    if(!a||!b) return;
-    const col = REL_COLORS[e.status] || REL_COLORS.neutral;
-    const isHovered = _hoveredNode && (e.from===_hoveredNode.id || e.to===_hoveredNode.id);
-    const hasHover = !!_hoveredNode;
-
-    let alpha;
-    if (hasHover) alpha = isHovered ? 1 : 0.06;
-    else alpha = (e.status==='neutral' || e.status==='indiff') ? 0.22 : 0.55;
-
-    ctx.save();
-    ctx.globalAlpha = alpha;
-
-    // Curve control point: midpoint pulled toward the center
-    // Inward bow makes long edges loop nicely through the center ring
-    const mx = (a.x + b.x)/2, my = (a.y + b.y)/2;
-    const dx = mx - cx, dy = my - cy;
-    const distFromCenter = Math.hypot(dx, dy) || 1;
-    // Pull midpoint toward center by ~25% for a gentle concave arc
-    const pullStrength = 0.35;
-    const ctrlX = mx - (dx/distFromCenter) * (distFromCenter * pullStrength);
-    const ctrlY = my - (dy/distFromCenter) * (distFromCenter * pullStrength);
-
-    // Styling per relation tier
-    ctx.strokeStyle = col.stroke;
-    ctx.lineCap = 'round';
-
-    if (isHovered) {
-      // Glow underlay
-      ctx.save();
-      ctx.strokeStyle = col.glow;
-      ctx.lineWidth = 7;
-      ctx.shadowColor = col.stroke;
-      ctx.shadowBlur = 12;
-      ctx.beginPath();
-      ctx.moveTo(a.x, a.y);
-      ctx.quadraticCurveTo(ctrlX, ctrlY, b.x, b.y);
-      ctx.stroke();
-      ctx.restore();
-      ctx.lineWidth = 2;
-    } else {
-      ctx.lineWidth = 1.3;
+  // Collect all relations involving this GOI
+  const myRels = [];
+  _goiRels.forEach(r => {
+    let otherId = null;
+    if (r.from === id) otherId = r.to;
+    else if (r.to === id) otherId = r.from;
+    if (otherId) {
+      const other = _goiGois.find(g => g.id === otherId);
+      if (other) myRels.push({ other, status: r.status || 'neutral', note: r.note || null });
     }
-
-    if (e.status === 'enemy')         ctx.setLineDash([]);
-    else if (e.status === 'hostile')  ctx.setLineDash([8, 5]);
-    else if (e.status === 'allied')   ctx.setLineDash([]);
-    else if (e.status === 'friendly') ctx.setLineDash([]);
-    else if (e.status === 'indiff')   ctx.setLineDash([2, 4]);
-    else                              ctx.setLineDash([1, 3]);
-
-    ctx.beginPath();
-    ctx.moveTo(a.x, a.y);
-    ctx.quadraticCurveTo(ctrlX, ctrlY, b.x, b.y);
-    ctx.stroke();
-    ctx.setLineDash([]);
-
-    // Tick marks along enemy edges (for the "broken line" sharp look)
-    if (e.status === 'enemy' && !isHovered) {
-      const n = 3;
-      ctx.lineWidth = 1;
-      for (let i = 1; i <= n; i++) {
-        const t = i/(n+1);
-        // Quadratic point at t
-        const px = (1-t)*(1-t)*a.x + 2*(1-t)*t*ctrlX + t*t*b.x;
-        const py = (1-t)*(1-t)*a.y + 2*(1-t)*t*ctrlY + t*t*b.y;
-        // Tangent direction
-        const tx = 2*(1-t)*(ctrlX - a.x) + 2*t*(b.x - ctrlX);
-        const ty = 2*(1-t)*(ctrlY - a.y) + 2*t*(b.y - ctrlY);
-        const tlen = Math.hypot(tx, ty) || 1;
-        // Perpendicular
-        const perpX = -ty/tlen * 4, perpY = tx/tlen * 4;
-        ctx.beginPath();
-        ctx.moveTo(px - perpX, py - perpY);
-        ctx.lineTo(px + perpX, py + perpY);
-        ctx.stroke();
-      }
-    }
-
-    ctx.restore();
   });
 
-  // ── Draw nodes
-  _nodes.forEach(node => {
-    const isHov = node === _hoveredNode;
-    ctx.save();
-    const r = node.radius;
+  // Sort by severity descending (most concerning first)
+  myRels.sort((a, b) => (REL_META[b.status]?.severity ?? 2) - (REL_META[a.status]?.severity ?? 2));
 
-    // Outer glow on hover
-    if (isHov) {
-      ctx.shadowBlur = 28;
-      ctx.shadowColor = 'rgba(187,58,58,0.55)';
-    }
+  // Build summary counts
+  const counts = { allied: 0, friendly: 0, neutral: 0, indiff: 0, hostile: 0, enemy: 0 };
+  myRels.forEach(r => { counts[r.status] = (counts[r.status] || 0) + 1; });
 
-    // Outer ring (accent)
-    ctx.beginPath(); ctx.arc(node.x, node.y, r+3, 0, Math.PI*2);
-    ctx.strokeStyle = isHov ? 'rgba(187,58,58,0.9)' : 'rgba(80,80,80,0.55)';
-    ctx.lineWidth = 1;
-    ctx.stroke();
+  const summaryHtml = `
+    <div class="goi-doss-summary">
+      <div class="goi-sum-item rel-allied"><div class="goi-sum-k">Allied</div><div class="goi-sum-v">${counts.allied}</div></div>
+      <div class="goi-sum-item rel-friendly"><div class="goi-sum-k">Friendly</div><div class="goi-sum-v">${counts.friendly}</div></div>
+      <div class="goi-sum-item rel-neutral"><div class="goi-sum-k">Neutral</div><div class="goi-sum-v">${counts.neutral + counts.indiff}</div></div>
+      <div class="goi-sum-item rel-hostile"><div class="goi-sum-k">Hostile</div><div class="goi-sum-v">${counts.hostile}</div></div>
+      <div class="goi-sum-item rel-enemy"><div class="goi-sum-k">Enemy</div><div class="goi-sum-v">${counts.enemy}</div></div>
+    </div>
+  `;
 
-    ctx.shadowBlur = 0;
+  const relsHtml = myRels.length
+    ? myRels.map(r => {
+        const meta = REL_META[r.status] || REL_META.neutral;
+        const scaleCells = Array.from({length: 6}, (_, i) => {
+          const isOn = i === meta.pos;
+          return `<div class="goi-rel-scale-cell${isOn ? ' on pos-' + meta.pos : ''}"></div>`;
+        }).join('');
+        const noteText = r.note || meta.note;
+        return `
+          <div class="goi-rel-row rel-${r.status}">
+            <div class="goi-rel-logo">
+              <img src="${r.other.logo || 'img/Base.png'}" alt="${r.other.abbr || r.other.name}" onerror="this.style.display='none'">
+            </div>
+            <div class="goi-rel-info">
+              <div class="goi-rel-name">${r.other.name || r.other.abbr}</div>
+              <div class="goi-rel-sub">${r.other.abbr || ''}${noteText ? ' / ' + noteText : ''}</div>
+            </div>
+            <div class="goi-rel-scale" title="Position on the Allied to Enemy scale">${scaleCells}</div>
+            <div class="goi-rel-badge rel-${r.status}">${meta.label}</div>
+          </div>`;
+      }).join('')
+    : '<div class="goi-rel-empty">No relations on record for this GOI.</div>';
 
-    // Solid inner disc
-    ctx.beginPath(); ctx.arc(node.x, node.y, r, 0, Math.PI*2);
-    ctx.fillStyle = '#0e0e0e';
-    ctx.fill();
-    ctx.strokeStyle = isHov ? 'rgba(240,240,240,0.85)' : 'rgba(90,90,90,0.85)';
-    ctx.lineWidth = isHov ? 2 : 1.3;
-    ctx.stroke();
-
-    // Inner soft ring
-    ctx.beginPath(); ctx.arc(node.x, node.y, r-4, 0, Math.PI*2);
-    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
-    ctx.lineWidth = 1;
-    ctx.stroke();
-
-    // Logo
-    if (_logoCache[node.id]) {
-      ctx.save();
-      ctx.beginPath(); ctx.arc(node.x, node.y, r-6, 0, Math.PI*2); ctx.clip();
-      ctx.globalAlpha = isHov ? 1 : 0.85;
-      const sz = (r-6) * 2;
-      ctx.drawImage(_logoCache[node.id], node.x-r+6, node.y-r+6, sz, sz);
-      ctx.restore();
-    } else {
-      // Fallback abbr
-      ctx.fillStyle = isHov ? '#f0f0f0' : '#bbb';
-      ctx.font = `bold ${Math.floor(r*0.36)}px "Barlow Condensed",sans-serif`;
-      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillText(node.abbr, node.x, node.y);
-    }
-
-    // Radial tick marks around the outside (subtle tactical look)
-    const tickCount = 12;
-    for (let i = 0; i < tickCount; i++) {
-      const a = (i/tickCount) * Math.PI * 2;
-      const r1 = r + 4, r2 = r + (isHov ? 9 : 6);
-      ctx.strokeStyle = isHov ? 'rgba(187,58,58,0.7)' : 'rgba(90,90,90,0.3)';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(node.x + Math.cos(a)*r1, node.y + Math.sin(a)*r1);
-      ctx.lineTo(node.x + Math.cos(a)*r2, node.y + Math.sin(a)*r2);
-      ctx.stroke();
-    }
-
-    // Abbr label below
-    const labelY = node.y + r + 18;
-    ctx.font = 'bold 10px "Barlow Condensed",sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    const lw = ctx.measureText(node.abbr).width + 16;
-    // Label background
-    ctx.fillStyle = 'rgba(10,10,10,0.85)';
-    ctx.fillRect(node.x - lw/2, labelY - 8, lw, 16);
-    ctx.strokeStyle = isHov ? 'rgba(187,58,58,0.8)' : 'rgba(80,80,80,0.6)';
-    ctx.lineWidth = 1;
-    ctx.strokeRect(node.x - lw/2, labelY - 8, lw, 16);
-    ctx.fillStyle = isHov ? '#f0f0f0' : '#aaa';
-    ctx.letterSpacing = '0.15em';
-    ctx.fillText(node.abbr, node.x, labelY);
-
-    ctx.restore();
-  });
+  body.innerHTML = `
+    <div class="goi-doss-hdr">
+      <div class="goi-doss-logo">
+        <img src="${goi.logo || 'img/Base.png'}" alt="${goi.abbr || goi.name}" onerror="this.style.display='none'">
+      </div>
+      <div class="goi-doss-ident">
+        <div class="goi-doss-fileref">TF / GOI / ${(goi.abbr || goi.id).toUpperCase()}</div>
+        <div class="goi-doss-name">${goi.name || goi.abbr}</div>
+        <div class="goi-doss-abbr">${goi.abbr || ''}${goi.name && goi.abbr ? ' &middot; ' : ''}${myRels.length} Relations on Record</div>
+      </div>
+    </div>
+    ${summaryHtml}
+    <div class="goi-doss-section">
+      <div class="goi-doss-section-hdr">Relations / Sorted by Threat Descending</div>
+      <div class="goi-rel-list">${relsHtml}</div>
+    </div>
+  `;
 }
 
-function canvasPos(canvas,e){
-  const rect=canvas.getBoundingClientRect();
-  const scaleX=canvas.width/rect.width, scaleY=canvas.height/rect.height;
-  return {x:(e.clientX-rect.left)*scaleX, y:(e.clientY-rect.top)*scaleY};
-}
-function nodeAt(x,y){
-  return _nodes.find(n=>Math.hypot(n.x-x,n.y-y)<n.radius+4)||null;
-}
 
-function onDown(e){
-  const canvas=e.currentTarget;
-  const {x,y}=canvasPos(canvas,e);
-  const n=nodeAt(x,y);
-  if(n){_dragNode=n;_dragOX=x-n.x;_dragOY=y-n.y;}
-}
-function onMove(e){
-  const canvas=e.currentTarget;
-  const {x,y}=canvasPos(canvas,e);
-  if(_dragNode){
-    _dragNode.x=x-_dragOX; _dragNode.y=y-_dragOY;
-    _dragNode.vx=0; _dragNode.vy=0;
-  }
-  const hov=nodeAt(x,y);
-  if(hov!==_hoveredNode){
-    _hoveredNode=hov;
-    showTooltip(canvas,hov,x,y);
-  } else if(hov){
-    moveTooltip(canvas,x,y);
-  }
-}
-function onUp(){_dragNode=null;}
-function onLeave(){_dragNode=null;_hoveredNode=null;hideTooltip();}
-
-function onTouchStart(e){e.preventDefault();const t=e.touches[0];onDown({currentTarget:e.currentTarget,clientX:t.clientX,clientY:t.clientY});}
-function onTouchMove(e){e.preventDefault();const t=e.touches[0];onMove({currentTarget:e.currentTarget,clientX:t.clientX,clientY:t.clientY});}
-function onTouchEnd(){onUp();}
-
-function showTooltip(canvas,node,x,y){
-  const tt=document.getElementById('goi-tooltip');
-  if(!node){tt.style.opacity='0';return;}
-  const nodeMap={};
-  _nodes.forEach(n=>nodeMap[n.id]=n);
-  tt.querySelector('.tt-head').textContent = 'Network Node';
-  tt.querySelector('.tt-name').textContent=node.name;
-  const relsHtml=_edges.filter(e=>e.from===node.id||e.to===node.id).map(e=>{
-    const otherId=e.from===node.id?e.to:e.from;
-    const other=_bubbleGois.find(g=>g.id===otherId);
-    const col=REL_COLORS[e.status]||REL_COLORS.neutral;
-    return `<div class="tt-rel"><div class="tt-dot" style="border-color:${col.stroke};background:${col.fill}"></div><span style="color:${col.label};font-weight:700">${e.status.toUpperCase()}</span><span style="color:#ccc;padding-left:.4rem;border-left:1px solid #3a3a3a">${other?other.abbr:otherId}</span></div>`;
-  }).join('');
-  document.getElementById('tt-rels').innerHTML=relsHtml||'<span style="color:#666">No relations defined</span>';
-  moveTooltip(canvas,x,y);
-  tt.style.opacity='1';
-}
-function moveTooltip(canvas,x,y){
-  const tt=document.getElementById('goi-tooltip');
-  const wrap=canvas.parentElement;
-  const rect=wrap.getBoundingClientRect();
-  const canvasRect=canvas.getBoundingClientRect();
-  const scaleX=canvasRect.width/canvas.width;
-  let lx=x*scaleX+16, ly=y*(canvasRect.height/canvas.height)+16;
-  if(lx+200>canvasRect.width) lx=x*scaleX-220;
-  tt.style.left=lx+'px'; tt.style.top=ly+'px';
-}
-function hideTooltip(){
-  const tt=document.getElementById('goi-tooltip');
-  if(tt) tt.style.opacity='0';
-}
 
 function renderNews(entries) {
   const veilMap = {above:'Above the Veil',below:'Below the Veil',both:'Both'};
@@ -803,8 +606,7 @@ function renderNews(entries) {
 }
 
 async function loadWorldState() {
-  initBubbleChart(DEFAULT_GOIS, DEFAULT_RELS);
-  startCornerClock();
+  initGoiDirectory(DEFAULT_GOIS, DEFAULT_RELS);
 
   try {
     const {data} = await db.from('world_state').select('*');
@@ -838,26 +640,12 @@ async function loadWorldState() {
       if (cmDispatches) cmDispatches.textContent = news.entries.length;
     }
 
-    // GOI bubble chart
+    // GOI directory + dossier
     const gois = kv.gois;
     const goi_rels = kv.goi_relations;
-    if (gois && gois.list && goi_rels && goi_rels.list) initBubbleChart(gois.list, goi_rels.list);
+    if (gois && gois.list && goi_rels && goi_rels.list) initGoiDirectory(gois.list, goi_rels.list);
 
   } catch(e) { console.log('World state not yet configured:', e); }
-}
-
-function startCornerClock(){
-  const el = document.getElementById('goi-corner-time');
-  if (!el) return;
-  function tick(){
-    const now = new Date();
-    const hh = String(now.getUTCHours()).padStart(2,'0');
-    const mm = String(now.getUTCMinutes()).padStart(2,'0');
-    const ss = String(now.getUTCSeconds()).padStart(2,'0');
-    el.textContent = `${hh}:${mm}:${ss} UTC`;
-  }
-  tick();
-  setInterval(tick, 1000);
 }
 
 document.addEventListener('DOMContentLoaded', loadWorldState);

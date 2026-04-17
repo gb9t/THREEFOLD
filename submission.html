@@ -307,6 +307,8 @@ nav{
 .subdept-remove:hover{border-color:var(--danger);color:var(--danger);}
 .add-link{font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);background:none;border:none;cursor:pointer;padding:0;transition:color .2s;}
 .add-link:hover{color:var(--white);}
+.item-remove{background:none;border:1px solid var(--border);color:var(--muted);padding:0 10px;cursor:pointer;font-family:var(--mono);font-size:11px;transition:all .2s;}
+.item-remove:hover{border-color:var(--danger);color:var(--danger);}
 
 /* Rich text field */
 .rich-field{
@@ -1039,6 +1041,12 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
       <div class="field"><label>Backstory / Background <span class="req">*</span></label>
         <div class="rich-field" id="fn-backstory" contenteditable="true" data-placeholder="Full background narrative — prior life, how they came to the Foundation, notable events. The more detail the better."></div>
       </div>
+      <div class="field"><label>Employment History <span style="color:var(--muted);font-size:8px">(optional)</span></label>
+        <div class="rich-field" id="fn-employment" contenteditable="true" data-placeholder="Professional timeline — positions, institutions, key projects, career trajectory..."></div>
+      </div>
+      <div class="field"><label>Notable Incidents / Logs <span style="color:var(--muted);font-size:8px">(optional)</span></label>
+        <div class="rich-field" id="fn-incidents" contenteditable="true" data-placeholder="Significant events, anomalous occurrences, disciplinary records, commendations, or other notable incidents..."></div>
+      </div>
       <div class="field">
         <label>Connections <span style="color:var(--muted);font-size:8px">(optional — organisations, groups, individuals)</span></label>
         <div class="connection-list" id="fn-connection-list"></div>
@@ -1051,6 +1059,9 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
       <div class="form-section-label">Section 6 — Physical Description</div>
       <div class="field">
         <div class="rich-field" id="fn-physical" contenteditable="true" data-placeholder="Physical appearance — build, colouring, distinguishing features, general presentation..."></div>
+      </div>
+      <div class="field"><label>Additional Notes <span style="color:var(--muted);font-size:8px">(optional)</span></label>
+        <div class="rich-field" id="fn-notes" contenteditable="true" data-placeholder="Medical conditions, allergies, psychological observations, security notes, or anything else relevant to the dossier..."></div>
       </div>
     </div>
 
@@ -1755,6 +1766,9 @@ async function submitFoundation() {
     addendum: getListItems('fn-addendum-list','bullet'),
     backstory: document.getElementById('fn-backstory').innerHTML,
     physical_desc: document.getElementById('fn-physical').innerHTML,
+    employment: document.getElementById('fn-employment')?.innerHTML || '',
+    incidents: document.getElementById('fn-incidents')?.innerHTML || '',
+    notes: document.getElementById('fn-notes')?.innerHTML || '',
     rp_sample: document.getElementById('fn-rp-sample')?.innerHTML || '',
   };
   setMsg(msg,'loading','Submitting...');

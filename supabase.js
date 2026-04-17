@@ -1,11 +1,9 @@
 /* ============================================================
    supabase.js — shared config + helpers
-   Replace SUPABASE_URL and SUPABASE_ANON_KEY with your own.
-   You get these from: Supabase dashboard → Settings → API
    ============================================================ */
 
-const SUPABASE_URL  = 'https://gcyrfrbkqxnkdbsbcppa.supabase.co';   // e.g. https://xyzxyz.supabase.co
-const SUPABASE_ANON = 'sb_publishable_NrC_oU2QqkS5YLrG0W5u-A_eP4lRni_';       // long JWT string
+const SUPABASE_URL  = 'https://gcyrfrbkqxnkdbsbcppa.supabase.co';
+const SUPABASE_ANON = 'sb_publishable_NrC_oU2QqkS5YLrG0W5u-A_eP4lRni_';
 
 const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_ANON);
@@ -21,17 +19,8 @@ const ROLES = {
   TRIAL_MOD:      'trial_mod',
 };
 
-/* Roles that can MANAGE (approve/deny/delete) applications */
-const CAN_MANAGE = [ROLES.OWNER, ROLES.ADMIN];
-
-/* Roles that can VIEW applications */
-const CAN_VIEW = [
-  ROLES.OWNER, ROLES.ADMIN,
-  ROLES.HEAD_LORE, ROLES.LORE, ROLES.TRIAL_LORE,
-  ROLES.MOD, ROLES.TRIAL_MOD,
-];
-
-/* Roles that can change another user's role (owner only in practice) */
+const CAN_MANAGE       = [ROLES.OWNER, ROLES.ADMIN];
+const CAN_VIEW         = [ROLES.OWNER, ROLES.ADMIN, ROLES.HEAD_LORE, ROLES.LORE, ROLES.TRIAL_LORE, ROLES.MOD, ROLES.TRIAL_MOD];
 const CAN_MANAGE_STAFF = [ROLES.OWNER];
 
 /* ------- Auth helpers ------- */
@@ -41,11 +30,7 @@ async function getSession() {
 }
 
 async function getProfile(userId) {
-  const { data } = await db
-    .from('profiles')
-    .select('*')
-    .eq('id', userId)
-    .single();
+  const { data } = await db.from('profiles').select('*').eq('id', userId).single();
   return data;
 }
 
@@ -59,42 +44,60 @@ function hasRole(profile, allowedRoles) {
   return profile && allowedRoles.includes(profile.role);
 }
 
-/* ------- Application helpers ------- */
-async function submitApplication(type, formData) {
-  const { data, error } = await db
-    .from('applications')
-    .insert([{ type, form_data: formData, status: 'pending' }])
+/* ------- Character helpers (used by submission.html) ------- */
+async function submitCharacter(type, method, discord, data, gdocUrl) {
+  const { data: r, error } = await db
+    .from('characters')
+    .insert([{
+      type,
+      method,
+      discord_username: discord,
+      character_data: data || {},
+      gdoc_url: gdocUrl || null,
+      status: 'pending',
+    }])
     .select()
     .single();
-  return { data, error };
+  return { data: r, error };
 }
 
-async function getApplications(type = null) {
+async function getCharacters(filters = {}) {
   let q = db
-    .from('applications')
-    .select('*')
+    .from('characters')
+    .select('id, seq, type, method, discord_username, status, staff_reason, created_at, character_data, gdoc_url')
     .order('seq', { ascending: true });
-  if (type) q = q.eq('type', type);
+  if (filters.status) q = q.eq('status', filters.status);
+  if (filters.type)   q = q.eq('type', filters.type);
   const { data, error } = await q;
   return { data, error };
 }
 
-async function updateApplicationStatus(id, status) {
-  const { error } = await db
-    .from('applications')
-    .update({ status, updated_at: new Date().toISOString() })
-    .eq('id', id);
-  return { error };
+async function getCharacterById(id) {
+  const { data, error } = await db.from('characters').select('*').eq('id', id).single();
+  return { data, error };
 }
 
-async function deleteApplication(id) {
-  const { error } = await db
-    .from('applications')
-    .delete()
-    .eq('id', id);
-  return { error };
+async function getCharactersByDiscord(username) {
+  const { data, error } = await db
+    .from('characters')
+    .select('id, seq, type, method, discord_username, status, staff_reason, created_at, character_data, gdoc_url')
+    .eq('discord_username', username)
+    .order('seq');
+  return { data, error };
 }
 
+async function uploadCharacterImage(file) {
+  const ext  = file.name.split('.').pop().toLowerCase();
+  const name = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+  const { error } = await db.storage
+    .from('character-images')
+    .upload(name, file, { cacheControl: '3600', upsert: false });
+  if (error) throw error;
+  const { data } = db.storage.from('character-images').getPublicUrl(name);
+  return data.publicUrl;
+}
+
+/* ------- Staff / profile helpers ------- */
 async function getStaffMembers() {
   const { data, error } = await db
     .from('profiles')
@@ -104,10 +107,7 @@ async function getStaffMembers() {
 }
 
 async function updateStaffRole(userId, role) {
-  const { error } = await db
-    .from('profiles')
-    .update({ role })
-    .eq('id', userId);
+  const { error } = await db.from('profiles').update({ role }).eq('id', userId);
   return { error };
 }
 

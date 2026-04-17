@@ -65,6 +65,13 @@ nav ul a:hover{color:var(--white);}
 .evt-g{pointer-events:none;}
 .evt-g.active{pointer-events:auto;}
 
+/* Persistent overlay: rotating cordon ring */
+@keyframes cordonSlowSpin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+.persist-cordon-ring{transform-origin:center;transform-box:fill-box;animation:cordonSlowSpin 180s linear infinite;}
+
+/* Clock */
+.clock{font-family:var(--mono);font-size:9.5px;letter-spacing:0.18em;color:var(--pale);}
+
 /* Generic event pulse */
 @keyframes evtPulse{
   0%{r:6;opacity:.9;}
@@ -362,8 +369,9 @@ nav ul a:hover{color:var(--white);}
 
 <!-- Info bar -->
 <div id="info-bar">
-  <span id="ib-mode-label">THREEFOLD / Installation Map</span>
-  <span id="ib-hint">Hover sites for details</span>
+  <span id="ib-mode-label">THREEFOLD / Current Situation / Apr 2026</span>
+  <span id="ib-hint">Hover anything for details</span>
+  <span id="ib-clock" class="clock">00:00:00 UTC</span>
   <span id="coord-display">Coordinates: ...</span>
 </div>
 
@@ -441,7 +449,7 @@ const EVENTS = [
     graphic: 'cistern',
     fields: [
       ['Operation','CISTERN, FULCRUM-coordinated'],
-      ['Unit','MTF Xi-13 under GOC command'],
+      ['Unit','MTF Xi-13 "Sequere Nos" under GOC command'],
       ['Actual target','GOC Forward Site Teleios'],
       ['Attribution','UNRESOLVED. Forged intelligence.'],
     ],
@@ -549,6 +557,95 @@ const EVENTS = [
 ];
 
 /* =====================================================================
+   PERSISTENT OVERLAYS (Installations mode, "current time")
+   Things that are ongoing right now. Each has geometry + hover metadata.
+===================================================================== */
+
+/* Fixed-position markers for ongoing situations, rendered as hoverable regions. */
+const PERSIST_OVERLAYS = [
+  {
+    id: 'uk-cordon',
+    kind: 'cordon',
+    centre: [-2.5, 54.5],
+    radiusKm: 900,
+    tooltip: {
+      tag: 'ACTIVE NAVAL CORDON',
+      name: 'British Isles Quarantine',
+      rows: [
+        ['Units','MTF Theta-5 &bull; GOC Fleet Element'],
+        ['Since','19 September 2021'],
+        ['Cover','Hinkley Point C meltdown'],
+        ['Status','Sealed. Entry punishable by death.'],
+      ],
+      note: 'Total cordon around the British Isles following HMFSCP disclosure. Joint Foundation-GOC operation. Cover story maintained by MTF Gamma-5.',
+    },
+  },
+  {
+    id: 'xi13-crimea',
+    kind: 'deployment',
+    centre: [34.0, 45.1],
+    bbox: [[31.5, 44.2], [36.8, 46.3]],   // Crimea region patrol bounds
+    tooltip: {
+      tag: 'MTF XI-13 / ACTIVE DEPLOYMENT',
+      name: 'MTF Xi-13 "Sequere Nos"',
+      rows: [
+        ['Theatre','Crimean Peninsula / Eastern European'],
+        ['Mandate','GRU-P remnant suppression'],
+        ['Authority','SCPF, under GOC liaison'],
+        ['Strength','Approx. 120 personnel, three patrol elements'],
+        ['Recruitment','OPEN. First joinable MTF on the server.'],
+      ],
+      note: 'Xi-13 "Sequere Nos" is the Foundation\'s standing counter-GRU-P force in the region. Active since 2014. Currently the only MTF accepting open character transfers.',
+    },
+  },
+  {
+    id: 'gru-shadow',
+    kind: 'threat-zone',
+    bbox: [[37.0, 43.0], [60.0, 59.0]],   // Russia remnant territory
+    tooltip: {
+      tag: 'UNVERIFIED / REMNANT ACTIVITY',
+      name: 'GRU-P Remnant Territory',
+      rows: [
+        ['Status','Dispersed, not directed'],
+        ['Unaccounted','~60 named operatives'],
+        ['Current Threat','Low but persistent'],
+      ],
+      note: 'Former GRU-P operational zone. The Directorate dispersed after 2020 but individual assets, caches, and operatives remain in the field.',
+    },
+  },
+  {
+    id: 'area314-intrusion',
+    kind: 'fresh-scar',
+    centre: [-68.5, 63.75],
+    tooltip: {
+      tag: 'RECENT INCURSION',
+      name: 'Area-314 Intrusion Site',
+      rows: [
+        ['Date','April 2026 (current)'],
+        ['Material taken','FULCRUM correspondence, 2014-2016'],
+        ['Attribution','The Third (suspected)'],
+      ],
+      note: 'First confirmed physical intrusion attributable to the Third. Investigation ongoing.',
+    },
+  },
+  {
+    id: 'reykjavik-nexus',
+    kind: 'diplomatic',
+    centre: [-21.9, 64.1],
+    tooltip: {
+      tag: 'TRIPARTITE ACCORD LOCATION',
+      name: 'Reykjavík Framework',
+      rows: [
+        ['Parties','SCPF &bull; GOC &bull; HMFSCP'],
+        ['Since','February 2026'],
+        ['Purpose','Coordination on existential threats'],
+      ],
+      note: 'Standing tripartite working group. The Third is the first threat formally coordinated against.',
+    },
+  },
+];
+
+/* =====================================================================
    CORE MAP SETUP
 ===================================================================== */
 const svg    = d3.select('#map-svg');
@@ -589,8 +686,10 @@ async function init() {
   try {
     _worldData = await d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json');
     renderBase();
+    plotPersistent();
     plotSites();
     buildTimelineTrack();
+    startClock();
   } catch(e) {
     console.error('Map data failed to load:', e);
   }
@@ -616,8 +715,12 @@ function renderBase() {
 function redraw() {
   if (!projection) return;
   renderBase();
-  if (_currentMode === 'installations') plotSites();
-  else renderEvent(_currentEventIdx, true);
+  if (_currentMode === 'installations') {
+    plotPersistent();
+    plotSites();
+  } else {
+    renderEvent(_currentEventIdx, true);
+  }
 }
 
 /* Initial SVG layering */
@@ -625,7 +728,8 @@ svg.append('path').attr('class','sphere');
 svg.append('path').attr('class','graticule');
 svg.append('g').attr('id','countries');
 svg.append('path').attr('class','borders').attr('fill','none').attr('stroke','#1a1a1a').attr('stroke-width',.3);
-svg.append('g').attr('id','event-layer');    // event graphics go here
+svg.append('g').attr('id','event-layer');      // timeline event graphics
+svg.append('g').attr('id','persist-layer');    // persistent "current time" overlays
 svg.append('g').attr('id','sites');
 
 /* =====================================================================
@@ -705,6 +809,253 @@ function hidePopup() { popup.style.display = 'none'; }
 svg.on('click', hidePopup);
 
 /* =====================================================================
+   PERSISTENT OVERLAYS ("current time" layer)
+   Rendered in Installations mode. Each has hover-popup metadata.
+===================================================================== */
+
+function plotPersistent() {
+  const g = svg.select('#persist-layer');
+  g.selectAll('*').remove();
+  if (_currentMode !== 'installations') return;
+
+  PERSIST_OVERLAYS.forEach(o => {
+    if (o.kind === 'cordon')       renderCordon(g, o);
+    else if (o.kind === 'deployment')   renderDeployment(g, o);
+    else if (o.kind === 'threat-zone')  renderThreatZone(g, o);
+    else if (o.kind === 'fresh-scar')   renderFreshScar(g, o);
+    else if (o.kind === 'diplomatic')   renderDiplomaticNexus(g, o);
+  });
+}
+
+function clearPersistent() {
+  svg.select('#persist-layer').selectAll('*').remove();
+}
+
+/* Attach hover handling (reuses the site popup) */
+function attachPersistHover(sel, meta) {
+  const popupEl = document.getElementById('map-popup');
+  sel.style('cursor','help')
+     .on('mouseenter', function(ev){
+        document.getElementById('popup-tag').textContent  = meta.tag;
+        document.getElementById('popup-name').textContent = meta.name;
+        const rowsHtml = meta.rows.map(([k,v]) =>
+          `<div class="popup-row"><span class="popup-key">${k}</span><span class="popup-val">${v}</span></div>`
+        ).join('');
+        const noteHtml = meta.note
+          ? `<div style="margin-top:.6rem;padding-top:.6rem;border-top:1px solid var(--border);font-size:10.5px;color:var(--light);line-height:1.6;font-family:var(--body);font-weight:300;letter-spacing:0;text-transform:none;">${meta.note}</div>`
+          : '';
+        // Rebuild popup body around rows+note
+        const tag  = document.getElementById('popup-tag');
+        const name = document.getElementById('popup-name');
+        // Clear existing rows (the three default ones are kept as IDs but we overwrite the whole thing)
+        let host = document.querySelector('#map-popup .persist-body');
+        if (!host) {
+          host = document.createElement('div');
+          host.className = 'persist-body';
+          popupEl.appendChild(host);
+        }
+        // Hide the default rows
+        document.querySelectorAll('#map-popup > .popup-row').forEach(el => el.style.display='none');
+        host.innerHTML = rowsHtml + noteHtml;
+        popupEl.style.display = 'block';
+        movePopup(ev);
+     })
+     .on('mousemove', function(ev){ movePopup(ev); })
+     .on('mouseleave', function(){
+        hidePopup();
+        const host = document.querySelector('#map-popup .persist-body');
+        if (host) host.innerHTML = '';
+        document.querySelectorAll('#map-popup > .popup-row').forEach(el => el.style.display='');
+     });
+}
+
+/* UK naval cordon: hatched ring + slow-spinning ship chevrons + hover zone */
+function renderCordon(g, o) {
+  const [cx, cy] = projection(o.centre);
+  // Use two projection samples to derive on-screen radius from radiusKm
+  const latOffset = o.radiusKm / 111;
+  const [ex, ey] = projection([o.centre[0], o.centre[1] + latOffset]);
+  const R = Math.abs(ey - cy);
+
+  const grp = g.append('g').attr('class','persist-cordon');
+
+  // Outer translucent halo
+  grp.append('circle').attr('cx',cx).attr('cy',cy).attr('r',R+5)
+    .attr('fill','rgba(187,58,58,.03)').attr('stroke','none');
+  // Main dashed ring
+  grp.append('circle').attr('cx',cx).attr('cy',cy).attr('r',R)
+    .attr('fill','none').attr('stroke','#bb3a3a').attr('stroke-width',.8)
+    .attr('stroke-dasharray','4 3').attr('opacity',.7);
+  // Inner thin ring
+  grp.append('circle').attr('cx',cx).attr('cy',cy).attr('r',R-4)
+    .attr('fill','none').attr('stroke','#bb3a3a').attr('stroke-width',.3)
+    .attr('opacity',.4);
+  // Rotating chevron ring
+  const ring = grp.append('g').attr('class','persist-cordon-ring').attr('transform',`translate(${cx},${cy})`);
+  const N = 14;
+  for (let i=0;i<N;i++){
+    const a = (2*Math.PI*i/N);
+    const x = Math.cos(a)*R, y = Math.sin(a)*R;
+    const sh = ring.append('g').attr('transform',`translate(${x},${y}) rotate(${a*180/Math.PI + 90})`);
+    sh.append('path').attr('d','M -2.5,1.5 L 0,-3 L 2.5,1.5 Z')
+      .attr('fill','#bb3a3a').attr('opacity',.75);
+  }
+  // "CORDON" text label
+  grp.append('rect').attr('x',cx-36).attr('y',cy-R-22).attr('width',72).attr('height',16)
+    .attr('fill','rgba(10,10,10,.9)').attr('stroke','#bb3a3a').attr('stroke-width',.6);
+  grp.append('text').attr('x',cx).attr('y',cy-R-11).attr('text-anchor','middle')
+    .attr('font-family','Share Tech Mono,monospace').attr('font-size','8.5px')
+    .attr('letter-spacing','.18em').attr('fill','#bb3a3a').text('CORDON ACTIVE');
+
+  // Invisible hit target for hover
+  grp.append('circle').attr('cx',cx).attr('cy',cy).attr('r',R+4)
+    .attr('fill','transparent').attr('stroke','transparent').attr('stroke-width',12)
+    .attr('pointer-events','stroke').call(sel => attachPersistHover(sel, o.tooltip));
+}
+
+/* Xi-13 Crimean deployment: dashed rectangle + patrol units + label */
+function renderDeployment(g, o) {
+  const col = '#d4a52c';
+  const [[lon1,lat1],[lon2,lat2]] = o.bbox;
+  const [x1,y1] = projection([lon1, lat2]);    // top-left
+  const [x2,y2] = projection([lon2, lat1]);    // bottom-right
+  const bx = Math.min(x1,x2), by = Math.min(y1,y2);
+  const bw = Math.abs(x2-x1), bh = Math.abs(y2-y1);
+
+  const grp = g.append('g').attr('class','persist-deployment');
+
+  // Patrol bounding box
+  grp.append('rect').attr('x',bx).attr('y',by).attr('width',bw).attr('height',bh)
+    .attr('fill','rgba(212,165,44,.04)').attr('stroke',col).attr('stroke-width',.7)
+    .attr('stroke-dasharray','5 3').attr('opacity',.8);
+
+  // Corner ticks (bracket style)
+  const tickLen = 8;
+  [[bx,by],[bx+bw,by],[bx,by+bh],[bx+bw,by+bh]].forEach(([px,py],i)=>{
+    const dx = (i%2===0) ? 1 : -1;
+    const dy = (i<2) ? 1 : -1;
+    grp.append('line').attr('x1',px).attr('y1',py).attr('x2',px+tickLen*dx).attr('y2',py)
+      .attr('stroke',col).attr('stroke-width',1.2);
+    grp.append('line').attr('x1',px).attr('y1',py).attr('x2',px).attr('y2',py+tickLen*dy)
+      .attr('stroke',col).attr('stroke-width',1.2);
+  });
+
+  // Label
+  const lblW = 110;
+  grp.append('rect').attr('x',bx).attr('y',by-18).attr('width',lblW).attr('height',16)
+    .attr('fill','rgba(10,10,10,.95)').attr('stroke',col).attr('stroke-width',.6);
+  grp.append('text').attr('x',bx+lblW/2).attr('y',by-6).attr('text-anchor','middle')
+    .attr('font-family','Share Tech Mono,monospace').attr('font-size','8.5px')
+    .attr('letter-spacing','.2em').attr('fill',col).text('MTF XI-13');
+
+  // Hit region = the whole bbox
+  grp.append('rect').attr('x',bx).attr('y',by).attr('width',bw).attr('height',bh)
+    .attr('fill','transparent').attr('pointer-events','all')
+    .call(sel => attachPersistHover(sel, o.tooltip));
+}
+
+/* GRU-P remnant territory: faint red-tinted zone with diagonal hatching */
+function renderThreatZone(g, o) {
+  const col = '#8a2a2a';
+  const [[lon1,lat1],[lon2,lat2]] = o.bbox;
+  const [x1,y1] = projection([lon1, lat2]);
+  const [x2,y2] = projection([lon2, lat1]);
+  const bx = Math.min(x1,x2), by = Math.min(y1,y2);
+  const bw = Math.abs(x2-x1), bh = Math.abs(y2-y1);
+
+  const grp = g.append('g').attr('class','persist-threat');
+
+  // Ensure pattern def exists
+  let defs = svg.select('defs');
+  if (defs.empty()) defs = svg.insert('defs', ':first-child');
+  if (defs.select('#hatch-threat').empty()) {
+    const pat = defs.append('pattern').attr('id','hatch-threat')
+      .attr('patternUnits','userSpaceOnUse')
+      .attr('width',8).attr('height',8)
+      .attr('patternTransform','rotate(45)');
+    pat.append('line').attr('x1',0).attr('y1',0).attr('x2',0).attr('y2',8)
+      .attr('stroke',col).attr('stroke-width',.5).attr('opacity',.2);
+  }
+  grp.append('rect').attr('x',bx).attr('y',by).attr('width',bw).attr('height',bh)
+    .attr('fill','url(#hatch-threat)').attr('stroke',col).attr('stroke-width',.4)
+    .attr('stroke-dasharray','2 4').attr('opacity',.6);
+
+  // Faint label
+  grp.append('text').attr('x',bx+12).attr('y',by+16)
+    .attr('font-family','Share Tech Mono,monospace').attr('font-size','8px')
+    .attr('letter-spacing','.18em').attr('fill',col).attr('opacity',.6)
+    .text('GRU-P REMNANT');
+
+  grp.append('rect').attr('x',bx).attr('y',by).attr('width',bw).attr('height',bh)
+    .attr('fill','transparent').attr('pointer-events','all')
+    .call(sel => attachPersistHover(sel, o.tooltip));
+}
+
+/* Area-314 intrusion: fresh red scar / pulse near the site */
+function renderFreshScar(g, o) {
+  const col = '#bb3a3a';
+  const [cx, cy] = projection(o.centre);
+  const grp = g.append('g').attr('class','persist-scar');
+
+  // Offset the scar slightly so it doesn't sit on top of the site icon
+  const sx = cx + 22, sy = cy - 18;
+
+  grp.append('circle').attr('class','evt-pulse')
+    .attr('cx',sx).attr('cy',sy).attr('stroke',col);
+  grp.append('rect').attr('x',sx-5).attr('y',sy-5).attr('width',10).attr('height',10)
+    .attr('fill','none').attr('stroke',col).attr('stroke-width',1);
+  grp.append('line').attr('x1',sx-5).attr('y1',sy-5).attr('x2',sx+5).attr('y2',sy+5)
+    .attr('stroke',col).attr('stroke-width',1);
+
+  // Connector line to the site
+  grp.append('line').attr('x1',cx).attr('y1',cy).attr('x2',sx).attr('y2',sy)
+    .attr('stroke',col).attr('stroke-width',.4).attr('stroke-dasharray','1 2').attr('opacity',.5);
+
+  // Hit region
+  grp.append('circle').attr('cx',sx).attr('cy',sy).attr('r',10)
+    .attr('fill','transparent').attr('pointer-events','all')
+    .call(sel => attachPersistHover(sel, o.tooltip));
+}
+
+/* Reykjavík diplomatic nexus: small tripartite star with subtle label */
+function renderDiplomaticNexus(g, o) {
+  const col = '#3a8a3a';
+  const [cx, cy] = projection(o.centre);
+  const grp = g.append('g').attr('class','persist-nexus');
+
+  for (let i=0;i<3;i++){
+    const a = (i*120 - 90) * Math.PI/180;
+    grp.append('line')
+      .attr('x1',cx).attr('y1',cy)
+      .attr('x2',cx+Math.cos(a)*8).attr('y2',cy+Math.sin(a)*8)
+      .attr('stroke',col).attr('stroke-width',1.2);
+  }
+  grp.append('circle').attr('cx',cx).attr('cy',cy).attr('r',2.2).attr('fill',col);
+
+  // Hit region
+  grp.append('circle').attr('cx',cx).attr('cy',cy).attr('r',12)
+    .attr('fill','transparent').attr('pointer-events','all')
+    .call(sel => attachPersistHover(sel, o.tooltip));
+}
+
+/* =====================================================================
+   LIVE CLOCK
+===================================================================== */
+function startClock() {
+  const el = document.getElementById('ib-clock');
+  if (!el) return;
+  function tick() {
+    const now = new Date();
+    const hh = String(now.getUTCHours()).padStart(2,'0');
+    const mm = String(now.getUTCMinutes()).padStart(2,'0');
+    const ss = String(now.getUTCSeconds()).padStart(2,'0');
+    el.textContent = `${hh}:${mm}:${ss} UTC`;
+  }
+  tick();
+  setInterval(tick, 1000);
+}
+
+/* =====================================================================
    MODE SWITCHING
 ===================================================================== */
 function setMode(mode) {
@@ -718,20 +1069,25 @@ function setMode(mode) {
   const ctl    = document.getElementById('tl-controls');
   const lbl    = document.getElementById('ib-mode-label');
   const hint   = document.getElementById('ib-hint');
+  const clock  = document.getElementById('ib-clock');
 
   if (mode === 'installations') {
     legend.style.display = '';
+    clock.style.display = '';
     panel.classList.remove('visible');
     ctl.classList.remove('visible');
     clearEventLayer();
+    plotPersistent();
     plotSites();
-    lbl.textContent = 'THREEFOLD / Installation Map';
-    hint.textContent = 'Hover sites for details';
+    lbl.textContent = 'THREEFOLD / Current Situation / Apr 2026';
+    hint.textContent = 'Hover anything for details';
     stopPlay();
   } else {
     legend.style.display = 'none';
+    clock.style.display = 'none';
     panel.classList.add('visible');
     ctl.classList.add('visible');
+    clearPersistent();
     svg.select('#sites').selectAll('*').remove();
     lbl.textContent = 'THREEFOLD / Timeline Mode';
     hint.textContent = 'Use Prev / Next to step through the record';

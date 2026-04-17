@@ -7,7 +7,7 @@
 <link rel="icon" type="image/png" href="img/Base.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;800&family=Barlow:wght@300;400;500&family=Special+Elite&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="supabase.js"></script>
 <style>
@@ -25,6 +25,11 @@
   --mono:     'Share Tech Mono', monospace;
   --display:  'Barlow Condensed', sans-serif;
   --body:     'Barlow', sans-serif;
+  --typewriter: 'Special Elite', monospace;
+  --red:      #8a2a2a;
+  --red-bright: #bb3a3a;
+  --amber:    #9a7a2a;
+  --amber-bright: #d4a52c;
 }
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 html { scroll-behavior:smooth; }
@@ -38,7 +43,6 @@ body {
   line-height: 1.7;
   min-height: 100vh;
   overflow-x: hidden;
-  cursor: crosshair;
 }
 
 /* Scanlines */
@@ -101,113 +105,218 @@ nav {
 .page { display:none; min-height:100vh; padding-top:56px; }
 .page.active { display:block; }
 
-/* ===== HOME ===== */
-.hero {
-  position:relative; min-height:calc(100vh - 56px);
-  display:flex; flex-direction:column;
-  align-items:center; justify-content:center;
-  overflow:hidden; text-align:center; padding:4rem 2rem 6rem;
-}
-/* Grid bg from v1 */
-.hero-grid {
-  position:absolute; inset:0;
-  background-image:
-    linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px);
-  background-size:60px 60px;
-  pointer-events:none;
-}
-.hero-content { position:relative; z-index:2; max-width:900px; }
-
-.hero-eyebrow {
-  font-family:var(--mono); font-size:10px; letter-spacing:0.35em;
-  text-transform:uppercase; color:var(--muted); margin-bottom:1.5rem;
-  animation:riseIn .8s ease both;
-}
-.hero-title-wrap { position:relative; display:inline-block; animation:riseIn .9s ease both .1s; }
-.hero-title {
-  font-family:var(--display); font-weight:700;
-  font-size:clamp(90px,17vw,200px); letter-spacing:0.08em;
-  line-height:.88; color:var(--white); text-transform:uppercase;
-  position:relative; z-index:1;
-}
-.hero-ghost {
-  font-family:var(--display); font-weight:700;
-  font-size:clamp(90px,17vw,200px); letter-spacing:0.08em;
-  line-height:.88; text-transform:uppercase;
-  position:absolute; top:5px; left:5px;
-  color:transparent; -webkit-text-stroke:1px var(--border);
-  z-index:0; pointer-events:none; user-select:none;
-}
-/* Glitch */
-.hero-title::before,.hero-title::after {
-  content:attr(data-text); position:absolute; top:0; left:0;
-  font-family:inherit; font-size:inherit; font-weight:inherit;
-  letter-spacing:inherit; line-height:inherit; color:var(--white);
-}
-.hero-title::before { animation:gA 5s infinite; clip-path:polygon(0 18%,100% 18%,100% 42%,0 42%); }
-.hero-title::after  { animation:gB 5s infinite; clip-path:polygon(0 62%,100% 62%,100% 80%,0 80%); }
-@keyframes gA{0%,85%,100%{transform:translate(0);opacity:0}87%{transform:translate(-5px,2px);opacity:1}89%{transform:translate(5px,-2px);opacity:1}91%{transform:translate(0);opacity:0}}
-@keyframes gB{0%,85%,100%{transform:translate(0);opacity:0}88%{transform:translate(5px,2px);opacity:1}90%{transform:translate(-4px,-2px);opacity:1}92%{transform:translate(0);opacity:0}}
-
-.hero-divider {
-  display:flex; align-items:center; gap:1rem;
-  margin:2rem auto; max-width:500px; animation:riseIn .9s ease both .25s;
-}
-.hero-divider::before,.hero-divider::after { content:''; flex:1; height:1px; background:var(--border); }
-.hero-divider span {
-  font-family:var(--mono); font-size:9px; letter-spacing:0.3em;
-  color:var(--muted); text-transform:uppercase; white-space:nowrap;
-}
-.hero-sub {
-  font-size:18px; font-weight:300; color:var(--light);
-  max-width:520px; margin:0 auto 2.5rem;
-  animation:riseIn .9s ease both .35s;
-}
-.hero-sub strong { color:var(--pale); font-weight:400; }
-.hero-ctas {
-  display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;
-  animation:riseIn .9s ease both .45s;
-}
-.hero-ticker {
-  position:absolute; bottom:2rem; left:0; right:0;
-  font-family:var(--mono); font-size:10px; letter-spacing:0.15em;
-  color:var(--border); text-align:center; text-transform:uppercase;
-  animation:riseIn 1s ease both .8s;
+/* ===== HOME / COVER SHEET ===== */
+.cover {
+  position: relative;
+  min-height: calc(100vh - 56px);
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 4rem;
+  align-items: stretch;
+  padding: 4rem 3rem 5rem;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 25%, rgba(138,42,42,0.07), transparent 60%),
+    radial-gradient(ellipse 70% 50% at 85% 75%, rgba(42,74,122,0.05), transparent 60%),
+    linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px),
+    var(--black);
+  background-size: auto, auto, 48px 48px, 48px 48px, auto;
 }
 
-/* Typewriter */
-.tw {
-  display:inline-block; overflow:hidden; border-right:2px solid var(--light);
-  white-space:nowrap; width:0; vertical-align:bottom;
-  animation:twT 2.8s steps(40,end) .6s forwards, twB .8s step-end infinite;
-}
-@keyframes twT{from{width:0}to{width:100%}}
-@keyframes twB{0%,100%{border-color:transparent}50%{border-color:var(--light)}}
+.cover-main { display: flex; flex-direction: column; justify-content: center; min-width: 0; }
 
-/* Feature strip */
-.fstrip {
-  display:grid; grid-template-columns:repeat(3,1fr);
-  border-top:1px solid var(--border); border-bottom:1px solid var(--border);
-  background:var(--deep);
+.cover-stamps { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1.75rem; animation: riseIn .6s ease both; }
+.stamp {
+  font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.28em;
+  text-transform: uppercase; padding: 4px 10px; border: 1px solid;
 }
-.fi {
-  padding:3rem 2.5rem; border-right:1px solid var(--border);
-  transition:background .3s;
+.stamp.red    { border-color: var(--red); color: var(--red-bright); background: rgba(138,42,42,.08); }
+.stamp.amber  { border-color: var(--amber); color: var(--amber-bright); background: rgba(154,122,42,.06); }
+.stamp.border { border-color: var(--border); color: var(--muted); }
+
+.cover-tag {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.3em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 1rem;
+  animation: riseIn .7s ease both .1s;
 }
-.fi:last-child { border-right:none; }
-.fi:hover { background:var(--dark); }
-.fi-n {
-  font-family:var(--display); font-size:64px; letter-spacing:0.02em;
-  color:var(--border); line-height:1; display:block; margin-bottom:.5rem;
-  transition:color .3s;
+
+.cover-title {
+  font-family: var(--display); font-weight: 800;
+  font-size: clamp(80px, 13vw, 180px); letter-spacing: 0.01em;
+  line-height: .82; color: var(--white); text-transform: uppercase;
+  margin-bottom: 1.75rem;
+  animation: riseIn .8s ease both .15s;
 }
-.fi:hover .fi-n { color:var(--mid); }
-.fi-title {
-  font-family:var(--display); font-size:24px; font-weight:600;
-  letter-spacing:0.06em; text-transform:uppercase; color:var(--pale); margin-bottom:.75rem;
+.cover-title em { font-style: normal; color: var(--red-bright); font-weight: 800; }
+
+.cover-lede {
+  font-family: var(--typewriter); font-size: 16px; color: var(--pale);
+  line-height: 1.85; max-width: 560px; margin-bottom: 1.25rem;
+  animation: riseIn .8s ease both .25s;
 }
-.fi-body { font-size:14px; color:var(--muted); line-height:1.8; }
+.cover-sub {
+  font-size: 15px; color: var(--light); line-height: 1.8;
+  max-width: 560px; margin-bottom: 2.5rem;
+  animation: riseIn .8s ease both .3s;
+}
+
+.cover-ctas { display: flex; gap: 1rem; flex-wrap: wrap; animation: riseIn .8s ease both .4s; }
+
+/* Status panel on the right */
+.cover-status {
+  display: flex; flex-direction: column; gap: 1rem;
+  border-left: 1px solid var(--border); padding-left: 2.5rem;
+  animation: riseIn .9s ease both .3s;
+}
+.cover-status-title {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.3em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: .5rem;
+  display: flex; align-items: center; gap: .6rem;
+}
+.cover-status-title::before {
+  content: ''; width: 6px; height: 6px; background: var(--red-bright);
+  border-radius: 50%; animation: statusPulse 1.8s ease-in-out infinite;
+}
+@keyframes statusPulse { 0%,100% { opacity: 1 } 50% { opacity: .35 } }
+
+.status-block {
+  border: 1px solid var(--border); background: rgba(17,17,17,.6);
+  padding: 1rem 1.15rem; display: flex; flex-direction: column; gap: .3rem;
+}
+.status-block .k {
+  font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--muted);
+}
+.status-block .v {
+  font-family: var(--display); font-size: 20px; font-weight: 600;
+  letter-spacing: 0.05em; color: var(--white); text-transform: uppercase;
+}
+.status-block .sub {
+  font-family: var(--typewriter); font-size: 11px; color: var(--light);
+  line-height: 1.5; margin-top: .15rem;
+}
+.status-block.warn { border-color: var(--amber); background: rgba(154,122,42,.06); }
+.status-block.warn .v { color: var(--amber-bright); }
+.status-block.alert { border-color: var(--red); background: rgba(138,42,42,.07); }
+.status-block.alert .v { color: var(--red-bright); }
+
+.cover-clock {
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.2em;
+  color: var(--pale); text-align: right;
+  padding-top: .75rem; border-top: 1px dashed var(--border);
+}
+
+/* ───────────────────────────────
+   CURRENT SITUATION STRIP
+   A live "TV lower-third" style band of info between cover and portal.
+─────────────────────────────── */
+.situation {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--deep);
+  padding: 2.25rem 3rem;
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+.sit-item {
+  padding: 0 2rem; border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: .55rem;
+}
+.sit-item:first-child { padding-left: 0; }
+.sit-item:last-child  { padding-right: 0; border-right: none; }
+.sit-hdr {
+  font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.3em;
+  color: var(--muted); text-transform: uppercase;
+  display: flex; align-items: center; gap: .55rem;
+}
+.sit-dot { width: 6px; height: 6px; display: inline-block; }
+.sit-dot.r { background: var(--red-bright); }
+.sit-dot.a { background: var(--amber-bright); }
+.sit-dot.g { background: #3a8a3a; }
+.sit-title {
+  font-family: var(--display); font-size: 22px; font-weight: 700;
+  letter-spacing: 0.04em; text-transform: uppercase; color: var(--white); line-height: 1.1;
+}
+.sit-body {
+  font-family: var(--typewriter); font-size: 12.5px; color: var(--light);
+  line-height: 1.65;
+}
+
+/* ───────────────────────────────
+   XI-13 RECRUITMENT NOTICE
+   Big, clearly a recruitment call. Players should not miss this.
+─────────────────────────────── */
+.recruit {
+  position: relative; overflow: hidden;
+  margin: 0 3rem; margin-top: 3rem;
+  border: 1px solid var(--amber);
+  background:
+    repeating-linear-gradient(0deg, transparent 0, transparent 26px, rgba(255,255,255,0.012) 26px, rgba(255,255,255,0.012) 27px),
+    radial-gradient(ellipse 60% 80% at 100% 50%, rgba(154,122,42,.08), transparent 70%),
+    var(--deep);
+  padding: 2.5rem 3rem;
+  display: grid; grid-template-columns: 1fr auto; gap: 3rem; align-items: center;
+}
+.recruit::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+  background: linear-gradient(to bottom, var(--amber-bright), var(--red));
+}
+.recruit-mark {
+  position: absolute; top: 1rem; right: 1.25rem;
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.25em;
+  color: var(--amber-bright); border: 1px solid var(--amber);
+  padding: 4px 10px; text-transform: uppercase;
+  background: rgba(10,10,10,.7);
+}
+.recruit-main { min-width: 0; }
+.recruit-tag {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.3em;
+  color: var(--amber-bright); text-transform: uppercase; margin-bottom: .75rem;
+}
+.recruit-title {
+  font-family: var(--display); font-size: clamp(34px, 4.5vw, 52px);
+  font-weight: 800; letter-spacing: 0.03em; text-transform: uppercase;
+  color: var(--white); line-height: .95; margin-bottom: .75rem;
+}
+.recruit-title .motto {
+  color: var(--amber-bright); font-style: italic;
+  font-size: clamp(22px, 3vw, 34px); display: inline-block; margin-left: .5rem;
+}
+.recruit-lede {
+  font-family: var(--typewriter); font-size: 15px; color: var(--pale);
+  line-height: 1.8; max-width: 640px; margin-bottom: 1rem;
+}
+.recruit-meta {
+  display: flex; gap: 1.75rem; flex-wrap: wrap;
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--light); padding-top: 1rem;
+  border-top: 1px dashed rgba(154,122,42,.35);
+}
+.recruit-meta strong { color: var(--white); font-weight: 600; }
+.recruit-aside {
+  font-family: var(--mono); text-align: center; min-width: 180px;
+}
+.recruit-aside-num {
+  font-family: var(--display); font-size: 76px; font-weight: 800;
+  color: var(--amber-bright); line-height: 1; letter-spacing: 0.02em;
+}
+.recruit-aside-label {
+  font-size: 9.5px; letter-spacing: 0.28em; color: var(--muted);
+  text-transform: uppercase; margin-top: .25rem;
+}
+.recruit-aside .btn { margin-top: 1.25rem; }
+
+/* ===== Responsive cover ===== */
+@media(max-width: 960px) {
+  .cover { grid-template-columns: 1fr; gap: 2.5rem; padding: 2.5rem 1.5rem 3rem; }
+  .cover-status { border-left: none; padding-left: 0; border-top: 1px solid var(--border); padding-top: 2rem; }
+  .situation { grid-template-columns: 1fr; padding: 1.75rem 1.5rem; gap: 1.25rem; }
+  .sit-item { padding: 0; padding-bottom: 1.25rem; border-right: none; border-bottom: 1px solid var(--border); }
+  .sit-item:last-child { padding-bottom: 0; border-bottom: none; }
+  .recruit { margin: 2rem 1.5rem 0; grid-template-columns: 1fr; padding: 2rem 1.75rem; gap: 1.75rem; }
+  .recruit-aside { text-align: left; }
+}
 
 /* ===== BUTTONS ===== */
 .btn {
@@ -493,311 +602,294 @@ footer {
 /* ===== ANIM ===== */
 @keyframes riseIn { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
 
-/* ═══════════════════════════════════════
-   PORTAL SECTION
-═══════════════════════════════════════ */
-.portal-section {
-  padding: 4rem 0 7rem;
+
+/* ═══════════════════════════════════════════════════════
+   DIRECTORY INDEX (Explore the Server replacement)
+═══════════════════════════════════════════════════════ */
+.dir {
   background: var(--black);
+  padding: 5rem 3rem 4rem;
+  position: relative;
+  border-top: 1px solid var(--border);
+}
+.dir::before {
+  content: ''; position: absolute; left: 0; right: 0; top: 0;
+  height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+.dir-wrap { max-width: 1180px; margin: 0 auto; }
+
+.dir-head { margin-bottom: 3rem; max-width: 720px; }
+.dir-head-label {
+  display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem;
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+.dir-head-num {
+  color: var(--red-bright); border: 1px solid var(--red);
+  padding: 3px 10px; letter-spacing: 0.2em;
+  background: rgba(138, 42, 42, 0.08);
+}
+.dir-head-txt { color: var(--muted); }
+.dir-title {
+  font-family: var(--display); font-weight: 800;
+  font-size: clamp(44px, 6vw, 78px); letter-spacing: 0.02em;
+  line-height: .9; color: var(--white); text-transform: uppercase;
+  margin-bottom: .75rem;
+}
+.dir-title em { font-style: normal; color: var(--red-bright); font-weight: 800; }
+.dir-sub {
+  font-family: var(--typewriter); font-size: 14px; color: var(--light);
+  line-height: 1.7;
 }
 
-.portal-wrap {
-  max-width: 860px;
-  margin: 0 auto;
-  padding: 0 2.5rem;
+.dir-grid {
+  display: grid; grid-template-columns: 1fr 440px; gap: 3rem;
+  align-items: start;
 }
 
-.portal-divider {
-  display: flex; align-items: center; gap: 1.5rem;
-  margin-bottom: 3rem;
+/* ─── Directory list ─── */
+.dir-list {
+  list-style: none; margin: 0; padding: 0;
+  border-top: 1px solid var(--border);
 }
-.portal-divider-line {
-  flex: 1; height: 1px; background: var(--border);
+.dir-row {
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  transition: background .22s;
 }
-.portal-divider-label {
-  font-family: var(--mono); font-size: 9px; letter-spacing: 0.4em;
-  text-transform: uppercase; color: var(--muted); white-space: nowrap;
+.dir-row::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 0;
+  background: var(--red-bright); transition: width .25s;
 }
+.dir-row:hover, .dir-row.is-active {
+  background: linear-gradient(90deg, rgba(138, 42, 42, 0.06), transparent 60%);
+}
+.dir-row:hover::before, .dir-row.is-active::before { width: 3px; }
 
-/* GRID ROWS — reconnected borders, constrained width */
-.portal-top-row {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  border: 1px solid var(--border);
+.dir-row-link {
+  display: grid; grid-template-columns: 52px 1fr auto auto;
+  gap: 1.25rem; align-items: center;
+  padding: 1.4rem 1.5rem 1.4rem 1.75rem;
+  text-decoration: none; color: inherit;
 }
-.portal-top-row .pcard {
-  border-right: 1px solid var(--border);
+.dir-row-num {
+  font-family: var(--display); font-weight: 800;
+  font-size: 28px; letter-spacing: 0.02em;
+  color: var(--border); line-height: 1;
+  transition: color .25s;
 }
-.portal-top-row .pcard:last-child {
-  border-right: none;
-}
-.portal-map-row {
-  border: 1px solid var(--border);
-  border-top: none;
-}
-.portal-map-row .pcard { border-right: none; }
-.portal-bottom-row {
-  display: grid; grid-template-columns: 1fr 1fr;
-  border: 1px solid var(--border);
-  border-top: none;
-}
-.portal-bottom-row .pcard {
-  border-right: 1px solid var(--border);
-}
-.portal-bottom-row .pcard:last-child {
-  border-right: none;
-}
+.dir-row:hover .dir-row-num, .dir-row.is-active .dir-row-num { color: var(--red-bright); }
 
-/* BASE CARD */
-.pcard {
-  position: relative; overflow: hidden;
-  display: block; text-decoration: none; color: inherit;
-  padding: 2rem 1.75rem 2rem;
-  min-height: 240px;
-  background: var(--deep);
-  transition: background .35s;
-  cursor: pointer;
-}
-.pcard:hover { background: var(--dark); }
-
-/* Noise texture overlay */
-.pcard-noise {
-  position: absolute; inset: 0; pointer-events: none; z-index: 1;
-  opacity: .04;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 256px;
-}
-
-.pcard-glow {
-  position: absolute; inset: 0; pointer-events: none; z-index: 1;
-  opacity: 0; transition: opacity .4s;
-}
-.pcard:hover .pcard-glow { opacity: 1; }
-
-.pcard-inner {
-  position: relative; z-index: 5;
-  display: flex; flex-direction: column; height: 100%;
-}
-
-.pcard-tag {
-  font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.35em;
-  text-transform: uppercase; color: var(--muted); margin-bottom: 2rem;
-  transition: color .3s;
-}
-.pcard:hover .pcard-tag { color: var(--light); }
-
-.pcard-icon {
-  margin-bottom: 1.5rem; color: var(--border);
-  transition: color .3s;
-}
-.pcard:hover .pcard-icon { color: var(--muted); }
-
-.pcard-title {
+.dir-row-body { display: flex; flex-direction: column; gap: .25rem; min-width: 0; }
+.dir-row-title {
   font-family: var(--display); font-weight: 700;
-  font-size: clamp(28px, 3vw, 38px); letter-spacing: 0.04em;
-  text-transform: uppercase; color: var(--white); line-height: .95;
-  margin-bottom: 1rem; flex: 1;
+  font-size: 22px; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--pale);
+  line-height: 1.05; transition: color .25s;
+}
+.dir-row:hover .dir-row-title, .dir-row.is-active .dir-row-title { color: var(--white); }
+.dir-row-sub {
+  font-family: var(--typewriter); font-size: 11.5px;
+  color: var(--muted); line-height: 1.5; transition: color .25s;
+}
+.dir-row:hover .dir-row-sub { color: var(--light); }
+
+.dir-row-tag {
+  font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--muted);
+  padding: 3px 9px; border: 1px solid var(--border);
+  transition: all .25s;
+}
+.dir-row:hover .dir-row-tag, .dir-row.is-active .dir-row-tag {
+  color: var(--red-bright); border-color: var(--red);
 }
 
-.pcard-desc {
-  font-size: 13px; color: var(--muted); line-height: 1.85;
-  margin-bottom: 1.75rem; flex: 2; transition: color .3s;
+.dir-row-arrow {
+  font-family: var(--mono); font-size: 18px; color: var(--border);
+  transition: color .25s, transform .25s;
 }
-.pcard:hover .pcard-desc { color: var(--light); }
-
-.pcard-arrow {
-  font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.2em;
-  text-transform: uppercase; color: var(--border);
-  transition: color .3s, letter-spacing .3s;
-}
-.pcard:hover .pcard-arrow { color: var(--pale); letter-spacing: 0.3em; }
-
-/* ── DEPARTMENTS card ── purple/indigo accent */
-.pcard-dept { border-top: 2px solid #4a3a8a; }
-.pcard-dept .pcard-glow {
-  background: radial-gradient(ellipse at 20% 80%, rgba(80,60,160,.12) 0%, transparent 70%);
-}
-.pcard-dept .pcard-icon { color: #5a4a9a; }
-.pcard-dept:hover .pcard-icon { color: #7a6aba; }
-.pcard-dept-accent {
-  position: absolute; bottom: -60px; right: -60px; z-index: 2;
-  width: 180px; height: 180px; pointer-events: none;
-  border: 1px solid rgba(74, 58, 138, 0.2);
-  border-radius: 50%;
-  transition: transform .5s;
-}
-.pcard-dept-accent::after {
-  content: ''; position: absolute; inset: 20px;
-  border: 1px solid rgba(74, 58, 138, 0.15); border-radius: 50%;
-}
-.pcard-dept:hover .pcard-dept-accent { transform: scale(1.1); }
-
-/* ── WORLD STATE card ── red/amber threat pulse ── */
-.pcard-state { border-top: 2px solid #7a1a1a; }
-.pcard-state .pcard-glow {
-  background: radial-gradient(ellipse at 80% 20%, rgba(150,30,20,.1) 0%, transparent 65%);
-}
-.pcard-state .pcard-icon { color: #7a2020; }
-.pcard-state:hover .pcard-icon { color: #aa3030; }
-.pcard-pulse {
-  position: absolute; top: 2rem; right: 2rem; z-index: 3;
-  width: 10px; height: 10px;
-}
-.pcard-pulse::before {
-  content: ''; position: absolute; inset: 0; border-radius: 50%;
-  background: #cc3030;
-  animation: pulseCore 2s ease-in-out infinite;
-}
-.pcard-pulse::after {
-  content: ''; position: absolute; inset: -8px; border-radius: 50%;
-  border: 1px solid #cc3030;
-  animation: pulseRing 2s ease-in-out infinite;
-}
-@keyframes pulseCore { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
-@keyframes pulseRing { 0%{opacity:.6;transform:scale(1)} 100%{opacity:0;transform:scale(2.5)} }
-
-/* ── LORE card ── aged paper / sepia ── */
-.pcard-lore { border-top: 2px solid #5a4a2a; }
-.pcard-lore .pcard-glow {
-  background: radial-gradient(ellipse at 50% 100%, rgba(100,80,30,.1) 0%, transparent 60%);
-}
-.pcard-lore .pcard-icon { color: #5a4a2a; }
-.pcard-lore:hover .pcard-icon { color: #8a7040; }
-.pcard-lore-lines {
-  position: absolute; inset: 0; z-index: 2; pointer-events: none;
-  background-image: repeating-linear-gradient(
-    0deg, transparent, transparent 28px,
-    rgba(90,74,42,.07) 28px, rgba(90,74,42,.07) 29px
-  );
+.dir-row:hover .dir-row-arrow, .dir-row.is-active .dir-row-arrow {
+  color: var(--red-bright); transform: translateX(4px);
 }
 
-/* ── WORLD MAP card ── tactical / military ── */
-.pcard-map {
-  min-height: 260px; padding: 0;
-  border-top: 2px solid #1a3a1a;
+/* ─── Preview pane ─── */
+.dir-preview {
+  position: sticky; top: 80px;
+  border: 1px solid var(--border);
+  background: var(--deep);
+  min-height: 520px;
 }
-.pcard-map .pcard-glow {
-  background: radial-gradient(ellipse at 30% 50%, rgba(20,60,20,.12) 0%, transparent 60%);
+.dir-preview-inner { position: relative; min-height: 520px; }
+.dp-card {
+  position: absolute; inset: 0;
+  padding: 2rem 2.25rem;
+  display: none;
+  animation: dpFade .35s ease-out;
+}
+.dp-card.is-active { display: flex; flex-direction: column; }
+@keyframes dpFade {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.pcard-map-grid {
-  position: absolute; inset: 0; z-index: 2; pointer-events: none;
-  background-image:
-    linear-gradient(rgba(30,80,30,.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(30,80,30,.08) 1px, transparent 1px);
-  background-size: 40px 40px;
-  transition: opacity .4s;
+.dp-stamp {
+  position: absolute; top: 1.25rem; right: 1.5rem;
+  font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.25em;
+  color: var(--muted); border: 1px solid var(--border);
+  padding: 3px 9px; text-transform: uppercase;
 }
-.pcard-map:hover .pcard-map-grid { opacity: 1.5; }
+.dp-tag {
+  font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.3em;
+  text-transform: uppercase; color: var(--red-bright);
+  margin-bottom: .85rem;
+}
+.dp-title {
+  font-family: var(--display); font-weight: 800;
+  font-size: 42px; letter-spacing: 0.03em;
+  line-height: .95; color: var(--white); text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+.dp-title em { font-style: normal; color: var(--red-bright); }
+.dp-body {
+  font-family: var(--typewriter); font-size: 13px;
+  color: var(--light); line-height: 1.85;
+  margin-bottom: 1.5rem;
+}
 
-.pcard-map-crosshair {
-  position: absolute; z-index: 3; pointer-events: none;
-  width: 16px; height: 16px;
+.dp-viz {
+  position: relative;
+  min-height: 120px; margin-bottom: 1.5rem;
+  border: 1px dashed var(--border);
+  padding: 1rem;
+  flex: 1;
 }
-.pcard-map-crosshair::before,
-.pcard-map-crosshair::after {
-  content: ''; position: absolute; background: rgba(40,120,40,.5);
-}
-.pcard-map-crosshair::before { top: 7px; left: 0; right: 0; height: 1px; }
-.pcard-map-crosshair::after  { left: 7px; top: 0; bottom: 0; width: 1px; }
-.pcard-map-ch1 { top: 30%; left: 25%; }
-.pcard-map-ch2 { top: 55%; left: 60%; }
-.pcard-map-ch3 { top: 20%; left: 75%; }
 
-.pcard-map-inner {
-  flex-direction: row; align-items: center;
-  padding: 3rem 3.5rem; min-height: 260px;
+/* Timeline viz (lore) */
+.dp-viz-spine {
+  position: absolute; left: 24px; top: 1rem; bottom: 1rem;
+  width: 1px; background: linear-gradient(to bottom, var(--red), var(--border));
 }
-.pcard-map-left { flex: 1; }
-.pcard-map-right {
-  flex: 0 0 240px; display: flex; flex-direction: column;
-  align-items: flex-end; justify-content: center; gap: 1rem;
+.dp-viz-node {
+  position: absolute; left: 16px; width: 17px; height: 17px;
+  background: var(--deep); border: 1px solid var(--red-bright);
+  transform: rotate(45deg);
 }
-.pcard-map-tag { margin-bottom: 1.25rem; }
-.pcard-map-title { font-size: clamp(44px, 5vw, 64px); margin-bottom: .75rem; flex: 0; }
-.pcard-map-desc { max-width: 400px; flex: 0; }
+.dp-viz-node span {
+  position: absolute; left: 26px; top: 2px; width: 60px;
+  font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.18em;
+  color: var(--pale); transform: rotate(-45deg);
+  transform-origin: 0 50%;
+}
 
-.pcard-map-coords {
-  font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em;
-  color: rgba(40,120,40,.5); display: flex; align-items: center; gap: .75rem;
-  transition: color .3s;
-}
-.pcard-map:hover .pcard-map-coords { color: rgba(60,180,60,.7); }
-.map-coord { display: block; }
-.map-coord-div { color: var(--border); }
+/* Map viz */
+.dp-viz-map { padding: 0; overflow: hidden; }
+.dp-viz-map svg { width: 100%; height: 100%; display: block; }
 
-.pcard-map-scan {
-  width: 120px; height: 120px; border: 1px solid rgba(40,120,40,.2);
-  border-radius: 50%; position: relative;
+/* Stacked bars (world state) */
+.dp-viz-stack { display: flex; flex-direction: column; gap: .6rem; }
+.dp-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: .5rem .75rem; background: rgba(0,0,0,.3);
+  border-left: 2px solid var(--border);
 }
-.pcard-map-scan::before {
-  content: ''; position: absolute; inset: 15px;
-  border: 1px solid rgba(40,120,40,.15); border-radius: 50%;
-}
-.pcard-map-scan::after {
-  content: ''; position: absolute; top: 50%; left: 50%;
-  width: 50%; height: 1px; background: rgba(40,120,40,.4);
-  transform-origin: left center;
-  animation: radarSpin 4s linear infinite;
-}
-@keyframes radarSpin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-
-/* ── SUBMISSION card ── clinical/bureaucratic ── */
-.pcard-submit { border-top: 2px solid #3a3a3a; overflow: hidden; }
-.pcard-submit .pcard-glow {
-  background: linear-gradient(135deg, rgba(255,255,255,.02) 0%, transparent 60%);
-}
-.pcard-submit .pcard-icon { color: var(--muted); }
-.pcard-submit:hover .pcard-icon { color: var(--light); }
-
-.pcard-submit-ticker {
-  position: absolute; bottom: 0; left: 0; right: 0; z-index: 3;
-  overflow: hidden; border-top: 1px solid var(--border);
-  padding: 6px 0; background: var(--deep);
-}
-.pcard-submit:hover .pcard-submit-ticker { background: var(--dark); }
-.pcard-submit-ticker span {
-  display: inline-block; white-space: nowrap;
-  font-family: var(--mono); font-size: 8px; letter-spacing: 0.2em;
+.dp-bar-k {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.22em;
   color: var(--muted); text-transform: uppercase;
-  animation: tickerScroll 18s linear infinite;
 }
-@keyframes tickerScroll {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
+.dp-bar-v {
+  font-family: var(--display); font-size: 14px; color: var(--pale);
+  letter-spacing: 0.08em;
+}
+.dp-bar-v.mono { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.15em; }
+.dp-pip {
+  display: inline-block; width: 10px; height: 10px;
+  background: var(--red-bright); margin-right: 3px; vertical-align: middle;
+}
+.dp-pip.off { background: transparent; border: 1px solid var(--border); }
+
+/* Tree viz (departments) */
+.dp-viz-tree {
+  display: flex; flex-direction: column; justify-content: space-around;
+  align-items: center; gap: 1rem;
+}
+.dp-tier {
+  display: flex; justify-content: center; gap: .75rem;
+}
+.dp-tier span {
+  display: block; width: 24px; height: 24px;
+  border: 1px solid var(--border); background: rgba(0,0,0,.2);
+}
+.dp-tier-1 span { border-color: var(--red); background: rgba(138,42,42,.15); }
+.dp-tier-2 span { border-color: var(--amber); background: rgba(154,122,42,.1); }
+
+/* File viz (database) */
+.dp-viz-files { display: flex; flex-direction: column; gap: .4rem; }
+.dp-file {
+  display: grid; grid-template-columns: 60px 1fr;
+  padding: .55rem .85rem; background: rgba(0,0,0,.3);
+  border-left: 2px solid var(--red);
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em;
+}
+.dp-file-id { color: var(--red-bright); }
+.dp-file-name { color: var(--pale); text-transform: uppercase; letter-spacing: 0.15em; }
+
+/* Form viz (submission) */
+.dp-viz-form { display: flex; flex-direction: column; gap: .65rem; }
+.dp-field { display: flex; align-items: center; gap: .75rem; }
+.dp-field-k {
+  font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--muted); width: 80px; flex-shrink: 0;
+}
+.dp-field-line {
+  flex: 1; height: 1px; background: var(--border); position: relative;
+}
+.dp-field-line::after {
+  content: ''; position: absolute; left: 0; top: -4px;
+  width: 60%; height: 1px; background: var(--pale);
+}
+.dp-field-line.long::after { width: 85%; }
+
+/* Badges viz (applications) */
+.dp-viz-badges {
+  display: flex; gap: .65rem; flex-wrap: wrap;
+  align-items: center; justify-content: center;
+}
+.dp-badge {
+  border: 1px solid var(--border); padding: .75rem .9rem;
+  display: flex; flex-direction: column; gap: .2rem; flex: 1; min-width: 90px;
+  background: rgba(0,0,0,.2);
+}
+.dp-badge-t {
+  font-family: var(--display); font-size: 14px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--pale);
+}
+.dp-badge-d {
+  font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.2em;
+  color: var(--muted); text-transform: uppercase;
 }
 
-/* ── DATABASE card ── neon/cyber ── */
-.pcard-db { border-top: 2px solid #0a2a3a; }
-.pcard-db .pcard-glow {
-  background: radial-gradient(ellipse at 80% 80%, rgba(10,50,80,.15) 0%, transparent 60%);
+.dp-cta {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--pale); text-decoration: none;
+  padding: 10px 16px; border: 1px solid var(--border);
+  align-self: flex-start; transition: all .2s;
 }
-.pcard-db .pcard-icon { color: #0a3a5a; }
-.pcard-db:hover .pcard-icon { color: #1a5a8a; }
-
-.pcard-db-lines {
-  position: absolute; bottom: 0; right: 0; z-index: 2;
-  width: 160px; height: 160px; pointer-events: none;
-  background:
-    repeating-linear-gradient(
-      90deg, transparent, transparent 18px,
-      rgba(10,60,100,.1) 18px, rgba(10,60,100,.1) 19px
-    );
+.dp-cta:hover {
+  background: var(--pale); color: var(--black); border-color: var(--pale);
 }
 
-/* ═══════════════════════════════════════
-   RESPONSIVE ─ PORTAL
-═══════════════════════════════════════ */
-@media(max-width:900px) {
-  .portal-top-row { grid-template-columns: 1fr 1fr; }
-  .portal-bottom-row { grid-template-columns: 1fr; }
-  .pcard-map-inner { flex-direction: column; align-items: flex-start; padding: 2.5rem; }
-  .pcard-map-right { display: none; }
+/* ─── Responsive: stack list above preview, hide preview on narrow ─── */
+@media(max-width: 980px) {
+  .dir { padding: 3rem 1.5rem 2.5rem; }
+  .dir-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .dir-preview { position: static; min-height: 420px; }
 }
-@media(max-width:600px) {
-  .portal-top-row { grid-template-columns: 1fr; }
-  .portal-wrap { padding: 0 1.2rem; }
-  .pcard { padding: 1.75rem 1.5rem; min-height: 180px; }
-  .pcard-map-inner { padding: 1.75rem 1.5rem; }
+@media(max-width: 600px) {
+  .dir-row-link { grid-template-columns: 42px 1fr auto; padding: 1.1rem 1rem; gap: .75rem; }
+  .dir-row-tag { display: none; }
+  .dir-row-num { font-size: 22px; }
+  .dir-row-title { font-size: 18px; }
+  .dir-preview { display: none; }
 }
 
 /* ===== RESPONSIVE ===== */
@@ -827,170 +919,308 @@ footer {
   </div>
   <ul class="nav-links">
     <li><button onclick="showPage('about')">About</button></li>
-    <li><button onclick="showPage('rules')">Rules</button></li>
     <li><button onclick="showPage('join')">How to Join</button></li>
     <li><button onclick="showPage('staff')">Staff</button></li>
-    <li><button onclick="window.open('staff.html','_blank')" style="font-family:var(--mono);font-size:10.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);background:none;border:none;padding:8px 16px;cursor:pointer;transition:color .2s;">Staff Login</button></li>
     <li><button class="nav-discord" onclick="showPage('discord')">Discord</button></li>
   </ul>
 </nav>
 
 <!-- ======== HOME ======== -->
 <section id="page-home" class="page active">
-  <div class="hero">
-    <div class="hero-grid"></div>
-    <div class="hero-content">
-      <div class="hero-eyebrow">Text-Based Roleplay &nbsp;/&nbsp; SCP Universe &nbsp;/&nbsp; Community Server</div>
-      <div class="hero-title-wrap">
-        <div class="hero-ghost">THREEFOLD</div>
-        <h1 class="hero-title" data-text="THREEFOLD">THREEFOLD</h1>
+
+  <!-- ═══ COVER SHEET ═══ -->
+  <div class="cover">
+    <div class="cover-main">
+      <div class="cover-stamps">
+        <span class="stamp red">Secure / Contain / Protect</span>
+        <span class="stamp amber">Recruitment Open</span>
+        <span class="stamp border">Est. 2026</span>
       </div>
-      <div class="hero-divider">
-        <span><span class="tw">SCP Foundation RP — Text-Based</span></span>
-      </div>
-      <p class="hero-sub">
-        A <strong>text-based SCP roleplay</strong> server where the story actually reacts to what you do.
-        Good writing welcome. Elitism not.
+      <h1 class="cover-title"><em>Three</em>fold</h1>
+      <p class="cover-lede">
+        A text-based SCP roleplay server where the story actually reacts to what you do.
       </p>
-      <div class="hero-ctas">
+      <div class="cover-ctas">
         <button class="btn btn-fill" onclick="showPage('join')">Get Involved</button>
         <button class="btn btn-ghost" onclick="showPage('about')">What's This About</button>
+        <button class="btn btn-ghost" onclick="location.href='lore.html'">Read the Lore</button>
       </div>
     </div>
+
+    <aside class="cover-status">
+      <div class="cover-status-title">Current Situation</div>
+
+      <div class="status-block alert">
+        <span class="k">Global Tensions</span>
+        <span class="v">Level 3 / Volatile</span>
+        <span class="sub">Eighth Occult War sustained. Reykj&aacute;vik framework holds.</span>
+      </div>
+
+      <div class="status-block warn">
+        <span class="k">Recruitment</span>
+        <span class="v">MTF Xi-13 Open</span>
+        <span class="sub">"Sequere Nos". First joinable MTF.</span>
+      </div>
+
+      <div class="status-block">
+        <span class="k">British Isles</span>
+        <span class="v">Quarantined</span>
+        <span class="sub">Theta-5 / GOC cordon. 5 years active.</span>
+      </div>
+
+      <div class="cover-clock" id="cover-clock">00:00:00 UTC</div>
+    </aside>
   </div>
-  <!-- ═══ PORTAL SECTION ═══ -->
-  <div class="portal-section">
-    <div class="portal-wrap">
-    <div class="portal-divider">
-      <span class="portal-divider-line"></span>
-      <span class="portal-divider-label">EXPLORE THE SERVER</span>
-      <span class="portal-divider-line"></span>
-    </div>
 
-    <!-- TOP ROW: 3 cards -->
-    <div class="portal-top-row">
-
-      <!-- DEPARTMENTS -->
-      <a href="departments.html" class="pcard pcard-dept">
-        <div class="pcard-noise"></div>
-        <div class="pcard-glow"></div>
-        <div class="pcard-inner">
-          <div class="pcard-tag">01 — STRUCTURE</div>
-          <div class="pcard-icon">
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><rect x="2" y="2" width="12" height="12" stroke="currentColor" stroke-width="1.2"/><rect x="18" y="2" width="12" height="12" stroke="currentColor" stroke-width="1.2"/><rect x="10" y="18" width="12" height="12" stroke="currentColor" stroke-width="1.2"/><line x1="8" y1="14" x2="16" y2="18" stroke="currentColor" stroke-width="1.2"/><line x1="24" y1="14" x2="16" y2="18" stroke="currentColor" stroke-width="1.2"/></svg>
-          </div>
-          <h2 class="pcard-title">Departments</h2>
-          <p class="pcard-desc">Factions, divisions, clearance hierarchies. Understand the power structures before you pick a side.</p>
-          <div class="pcard-arrow">Enter &rarr;</div>
+  <!-- ═══ XI-13 RECRUITMENT NOTICE ═══ -->
+  <!-- ═══ DIRECTORY INDEX ═══ -->
+  <section class="dir">
+    <div class="dir-wrap">
+      <div class="dir-head">
+        <div class="dir-head-label">
+          <span class="dir-head-num">0.1</span>
+          <span class="dir-head-txt">Directory Index</span>
         </div>
-        <div class="pcard-dept-accent"></div>
-      </a>
+        <h2 class="dir-title">Explore the <em>Server</em></h2>
+        <p class="dir-sub">Seven destinations. Hover a row to preview, click to enter.</p>
+      </div>
 
-      <!-- WORLD STATE -->
-      <a href="worldstate.html" class="pcard pcard-state">
-        <div class="pcard-noise"></div>
-        <div class="pcard-glow"></div>
-        <div class="pcard-inner">
-          <div class="pcard-tag">02 — STATUS</div>
-          <div class="pcard-icon">
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="13" stroke="currentColor" stroke-width="1.2"/><circle cx="16" cy="16" r="5" stroke="currentColor" stroke-width="1.2"/><line x1="16" y1="3" x2="16" y2="9" stroke="currentColor" stroke-width="1.2"/><line x1="16" y1="23" x2="16" y2="29" stroke="currentColor" stroke-width="1.2"/><line x1="3" y1="16" x2="9" y2="16" stroke="currentColor" stroke-width="1.2"/><line x1="23" y1="16" x2="29" y2="16" stroke="currentColor" stroke-width="1.2"/></svg>
-          </div>
-          <h2 class="pcard-title">World State</h2>
-          <p class="pcard-desc">Current faction tensions, active anomalies, threat levels. The living pulse of Threefold right now.</p>
-          <div class="pcard-arrow">Enter &rarr;</div>
-        </div>
-        <div class="pcard-pulse"></div>
-      </a>
+      <div class="dir-grid">
+        <!-- Directory list (clickable rows) -->
+        <ol class="dir-list" id="dir-list">
 
-      <!-- LORE -->
-      <a href="lore.html" class="pcard pcard-lore">
-        <div class="pcard-noise"></div>
-        <div class="pcard-glow"></div>
-        <div class="pcard-inner">
-          <div class="pcard-tag">03 — CANON</div>
-          <div class="pcard-icon">
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><rect x="6" y="3" width="20" height="26" rx="1" stroke="currentColor" stroke-width="1.2"/><line x1="10" y1="10" x2="22" y2="10" stroke="currentColor" stroke-width="1.2"/><line x1="10" y1="14" x2="22" y2="14" stroke="currentColor" stroke-width="1.2"/><line x1="10" y1="18" x2="17" y2="18" stroke="currentColor" stroke-width="1.2"/><line x1="6" y1="7" x2="26" y2="7" stroke="currentColor" stroke-width="1.2"/></svg>
-          </div>
-          <h2 class="pcard-title">Server Lore</h2>
-          <p class="pcard-desc">Incident reports, canon events, in-world documents. The history that shapes every scene.</p>
-          <div class="pcard-arrow">Enter &rarr;</div>
-        </div>
-        <div class="pcard-lore-lines"></div>
-      </a>
+          <li class="dir-row is-active" data-key="lore">
+            <a href="lore.html" class="dir-row-link">
+              <span class="dir-row-num">01</span>
+              <span class="dir-row-body">
+                <span class="dir-row-title">Server Lore</span>
+                <span class="dir-row-sub">Canon, timelines, declassified dossiers</span>
+              </span>
+              <span class="dir-row-tag">Dossier</span>
+              <span class="dir-row-arrow">&rarr;</span>
+            </a>
+          </li>
 
-    </div>
+          <li class="dir-row" data-key="worldmap">
+            <a href="worldmap.html" class="dir-row-link">
+              <span class="dir-row-num">02</span>
+              <span class="dir-row-body">
+                <span class="dir-row-title">World Map</span>
+                <span class="dir-row-sub">Live situational awareness, interactive timeline</span>
+              </span>
+              <span class="dir-row-tag">Geospatial</span>
+              <span class="dir-row-arrow">&rarr;</span>
+            </a>
+          </li>
 
-    <!-- WORLD MAP — wide banner -->
-    <div class="portal-map-row">
-      <a href="worldmap.html" class="pcard pcard-map">
-        <div class="pcard-noise"></div>
-        <div class="pcard-map-grid"></div>
-        <div class="pcard-map-crosshair pcard-map-ch1"></div>
-        <div class="pcard-map-crosshair pcard-map-ch2"></div>
-        <div class="pcard-map-crosshair pcard-map-ch3"></div>
-        <div class="pcard-inner pcard-map-inner">
-          <div class="pcard-map-left">
-            <div class="pcard-tag pcard-map-tag">04 — GEOGRAPHY</div>
-            <h2 class="pcard-title pcard-map-title">World Map</h2>
-            <p class="pcard-desc pcard-map-desc">Facility locations, known anomaly zones, contested territories. Know the terrain before you move.</p>
-            <div class="pcard-arrow">Open Map &rarr;</div>
-          </div>
-          <div class="pcard-map-right">
-            <div class="pcard-map-coords">
-              <span class="map-coord">48.8566° N</span>
-              <span class="map-coord-div">/</span>
-              <span class="map-coord">2.3522° E</span>
+          <li class="dir-row" data-key="worldstate">
+            <a href="worldstate.html" class="dir-row-link">
+              <span class="dir-row-num">03</span>
+              <span class="dir-row-body">
+                <span class="dir-row-title">World State</span>
+                <span class="dir-row-sub">Tensions, news feed, GOI relations graph</span>
+              </span>
+              <span class="dir-row-tag">Live</span>
+              <span class="dir-row-arrow">&rarr;</span>
+            </a>
+          </li>
+
+          <li class="dir-row" data-key="departments">
+            <a href="departments.html" class="dir-row-link">
+              <span class="dir-row-num">04</span>
+              <span class="dir-row-body">
+                <span class="dir-row-title">Departments</span>
+                <span class="dir-row-sub">Structure, divisions, clearance tiers</span>
+              </span>
+              <span class="dir-row-tag">Structure</span>
+              <span class="dir-row-arrow">&rarr;</span>
+            </a>
+          </li>
+
+          <li class="dir-row" data-key="database">
+            <a href="database.html" class="dir-row-link">
+              <span class="dir-row-num">05</span>
+              <span class="dir-row-body">
+                <span class="dir-row-title">Character Database</span>
+                <span class="dir-row-sub">Approved personnel files, on record</span>
+              </span>
+              <span class="dir-row-tag">Archive</span>
+              <span class="dir-row-arrow">&rarr;</span>
+            </a>
+          </li>
+
+          <li class="dir-row" data-key="submission">
+            <a href="submission.html" class="dir-row-link">
+              <span class="dir-row-num">06</span>
+              <span class="dir-row-body">
+                <span class="dir-row-title">Character Submission</span>
+                <span class="dir-row-sub">File your personnel record for review</span>
+              </span>
+              <span class="dir-row-tag">Intake</span>
+              <span class="dir-row-arrow">&rarr;</span>
+            </a>
+          </li>
+
+          <li class="dir-row" data-key="apply">
+            <a href="#" onclick="showPage('applications');return false;" class="dir-row-link">
+              <span class="dir-row-num">07</span>
+              <span class="dir-row-body">
+                <span class="dir-row-title">Staff Applications</span>
+                <span class="dir-row-sub">Lore Team, Moderation, Gamemasters</span>
+              </span>
+              <span class="dir-row-tag">Recruit</span>
+              <span class="dir-row-arrow">&rarr;</span>
+            </a>
+          </li>
+
+        </ol>
+
+        <!-- Preview pane -->
+        <aside class="dir-preview">
+          <div class="dir-preview-inner" id="dir-preview-inner">
+
+            <div class="dp-card" data-key="lore">
+              <div class="dp-stamp">TF / LORE / 001</div>
+              <div class="dp-tag">Dossier</div>
+              <h3 class="dp-title"><em>Server</em> Lore</h3>
+              <p class="dp-body">Chronological record of Threefold canon, 2014 through present. Milestones, incident reports, and in-world documents on a single timeline. Begins with Crimea, moves through the Cistern, Wuhan, disclosure, the passing of the Queen, Reykj&aacute;vik.</p>
+              <div class="dp-viz">
+                <div class="dp-viz-spine"></div>
+                <div class="dp-viz-node" style="top:10%"><span>2014</span></div>
+                <div class="dp-viz-node" style="top:32%"><span>2016</span></div>
+                <div class="dp-viz-node" style="top:54%"><span>2021</span></div>
+                <div class="dp-viz-node" style="top:76%"><span>2026</span></div>
+              </div>
+              <a href="lore.html" class="dp-cta">Open Dossier &rarr;</a>
             </div>
-            <div class="pcard-map-scan"></div>
+
+            <div class="dp-card" data-key="worldmap">
+              <div class="dp-stamp">TF / WMAP / LIVE</div>
+              <div class="dp-tag">Geospatial</div>
+              <h3 class="dp-title">World <em>Map</em></h3>
+              <p class="dp-body">Live situational awareness map. Foundation installations, active cordons, GRU-P remnant zones, and the Area-314 intrusion, plotted in real time. Toggle to timeline mode to walk through every major event one by one.</p>
+              <div class="dp-viz dp-viz-map">
+                <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <pattern id="dpGrid" width="10" height="10" patternUnits="userSpaceOnUse">
+                      <path d="M 10 0 L 0 0 0 10" fill="none" stroke="#333" stroke-width="0.3"/>
+                    </pattern>
+                  </defs>
+                  <rect width="200" height="120" fill="url(#dpGrid)"/>
+                  <circle cx="50" cy="45" r="3" fill="#bb3a3a"/>
+                  <circle cx="50" cy="45" r="8" fill="none" stroke="#bb3a3a" stroke-width="0.6" opacity=".6"/>
+                  <circle cx="110" cy="35" r="2" fill="#d4a52c"/>
+                  <rect x="106" y="31" width="8" height="8" fill="none" stroke="#d4a52c" stroke-width="0.4" stroke-dasharray="1 1"/>
+                  <circle cx="155" cy="55" r="2" fill="#3a8a3a"/>
+                  <line x1="50" y1="45" x2="110" y2="35" stroke="#555" stroke-width="0.3" stroke-dasharray="2 2"/>
+                  <line x1="110" y1="35" x2="155" y2="55" stroke="#555" stroke-width="0.3" stroke-dasharray="2 2"/>
+                </svg>
+              </div>
+              <a href="worldmap.html" class="dp-cta">Open Map &rarr;</a>
+            </div>
+
+            <div class="dp-card" data-key="worldstate">
+              <div class="dp-stamp">TF / STATE / LIVE</div>
+              <div class="dp-tag">Live</div>
+              <h3 class="dp-title">World <em>State</em></h3>
+              <p class="dp-body">The pulse of the setting. Current tension level, recent dispatches from both above and below the Veil, and the full GOI relations graph, updated by Senior Lore Staff as events develop.</p>
+              <div class="dp-viz dp-viz-stack">
+                <div class="dp-bar"><span class="dp-bar-k">Tensions</span><span class="dp-bar-v"><em class="dp-pip r"></em><em class="dp-pip r"></em><em class="dp-pip r"></em><em class="dp-pip off"></em><em class="dp-pip off"></em></span></div>
+                <div class="dp-bar"><span class="dp-bar-k">Dispatches</span><span class="dp-bar-v mono">12 active</span></div>
+                <div class="dp-bar"><span class="dp-bar-k">GOI Nodes</span><span class="dp-bar-v mono">7 / 21 relations</span></div>
+              </div>
+              <a href="worldstate.html" class="dp-cta">Open State &rarr;</a>
+            </div>
+
+            <div class="dp-card" data-key="departments">
+              <div class="dp-stamp">TF / DEPT / STRUCT</div>
+              <div class="dp-tag">Structure</div>
+              <h3 class="dp-title"><em>Depart</em>ments</h3>
+              <p class="dp-body">The SCP Foundation's operational divisions and clearance hierarchies, from entry-level researchers up through O5. Know which division you belong to, and who outranks you, before you walk into the briefing room.</p>
+              <div class="dp-viz dp-viz-tree">
+                <div class="dp-tier dp-tier-1"><span></span><span></span></div>
+                <div class="dp-tier dp-tier-2"><span></span><span></span><span></span><span></span></div>
+                <div class="dp-tier dp-tier-3"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+              </div>
+              <a href="departments.html" class="dp-cta">View Structure &rarr;</a>
+            </div>
+
+            <div class="dp-card" data-key="database">
+              <div class="dp-stamp">TF / DB / ACCESS</div>
+              <div class="dp-tag">Archive</div>
+              <h3 class="dp-title">Character <em>Database</em></h3>
+              <p class="dp-body">Every approved personnel file on the server, searchable. Foundation staff, anomalous entities, unaffiliated operatives. Who works where, who reports to whom, who's been seen recently.</p>
+              <div class="dp-viz dp-viz-files">
+                <div class="dp-file"><span class="dp-file-id">#0241</span><span class="dp-file-name">S. Marchetti</span></div>
+                <div class="dp-file"><span class="dp-file-id">#0318</span><span class="dp-file-name">A. Roche</span></div>
+                <div class="dp-file"><span class="dp-file-id">#0402</span><span class="dp-file-name">M. Vel</span></div>
+                <div class="dp-file"><span class="dp-file-id">#0517</span><span class="dp-file-name">T. Osei</span></div>
+              </div>
+              <a href="database.html" class="dp-cta">Access Records &rarr;</a>
+            </div>
+
+            <div class="dp-card" data-key="submission">
+              <div class="dp-stamp">TF / FORM / 17</div>
+              <div class="dp-tag">Intake</div>
+              <h3 class="dp-title">Character <em>Submission</em></h3>
+              <p class="dp-body">File a new personnel record for staff review. Foundation operatives, SCP entities, or unaffiliated characters. Turnaround is typically 48 hours.</p>
+              <div class="dp-viz dp-viz-form">
+                <div class="dp-field"><span class="dp-field-k">Name</span><span class="dp-field-line"></span></div>
+                <div class="dp-field"><span class="dp-field-k">Designation</span><span class="dp-field-line"></span></div>
+                <div class="dp-field"><span class="dp-field-k">Clearance</span><span class="dp-field-line"></span></div>
+                <div class="dp-field"><span class="dp-field-k">Biography</span><span class="dp-field-line long"></span></div>
+              </div>
+              <a href="submission.html" class="dp-cta">Begin Filing &rarr;</a>
+            </div>
+
+            <div class="dp-card" data-key="apply">
+              <div class="dp-stamp">TF / CREW / OPEN</div>
+              <div class="dp-tag">Recruit</div>
+              <h3 class="dp-title">Staff <em>Applications</em></h3>
+              <p class="dp-body">Open positions for Lore Team, Moderators, and Gamemasters. These are the people keeping the world consistent, the channels running, and the scenes moving.</p>
+              <div class="dp-viz dp-viz-badges">
+                <div class="dp-badge"><span class="dp-badge-t">Lore</span><span class="dp-badge-d">World-building</span></div>
+                <div class="dp-badge"><span class="dp-badge-t">Moderation</span><span class="dp-badge-d">Community</span></div>
+                <div class="dp-badge"><span class="dp-badge-t">GM</span><span class="dp-badge-d">Events</span></div>
+              </div>
+              <a href="#" onclick="showPage('applications');return false;" class="dp-cta">View Positions &rarr;</a>
+            </div>
+
           </div>
-        </div>
-      </a>
+        </aside>
+      </div>
     </div>
+  </section>
 
-    <!-- BOTTOM ROW: 2 cards -->
-    <div class="portal-bottom-row">
-
-      <!-- SUBMISSION -->
-      <a href="submission.html" class="pcard pcard-submit">
-        <div class="pcard-noise"></div>
-        <div class="pcard-glow"></div>
-        <div class="pcard-inner" style="padding-bottom:2.5rem">
-          <div class="pcard-tag">05 — INTAKE</div>
-          <div class="pcard-icon">
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><rect x="4" y="6" width="24" height="20" rx="1" stroke="currentColor" stroke-width="1.2"/><line x1="10" y1="13" x2="22" y2="13" stroke="currentColor" stroke-width="1.2"/><line x1="10" y1="17" x2="19" y2="17" stroke="currentColor" stroke-width="1.2"/><polyline points="15,22 18,25 25,18" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-          <h2 class="pcard-title">Character<br>Submission</h2>
-          <p class="pcard-desc">Submit your Foundation personnel file, SCP entity, or unaffiliated operative for staff review.</p>
-          <div class="pcard-arrow">Begin Filing &rarr;</div>
-        </div>
-        <div class="pcard-submit-ticker">
-          <span>FORM-17 &nbsp;&bull;&nbsp; INTAKE SYSTEM &nbsp;&bull;&nbsp; SUBMIT CHARACTER &nbsp;&bull;&nbsp; FORM-17 &nbsp;&bull;&nbsp; INTAKE SYSTEM &nbsp;&bull;&nbsp; SUBMIT CHARACTER &nbsp;&bull;&nbsp;</span>
-        </div>
-      </a>
-
-      <!-- DATABASE -->
-      <a href="database.html" class="pcard pcard-db">
-        <div class="pcard-noise"></div>
-        <div class="pcard-glow"></div>
-        <div class="pcard-inner">
-          <div class="pcard-tag">06 — ARCHIVE</div>
-          <div class="pcard-icon">
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><ellipse cx="16" cy="8" rx="12" ry="4" stroke="currentColor" stroke-width="1.2"/><path d="M4 8v8c0 2.2 5.4 4 12 4s12-1.8 12-4V8" stroke="currentColor" stroke-width="1.2"/><path d="M4 16v8c0 2.2 5.4 4 12 4s12-1.8 12-4v-8" stroke="currentColor" stroke-width="1.2"/></svg>
-          </div>
-          <h2 class="pcard-title">Character<br>Database</h2>
-          <p class="pcard-desc">Browse approved personnel files. Foundation staff, anomalous entities, unaffiliated operatives — all on record.</p>
-          <div class="pcard-arrow">Access Records &rarr;</div>
-        </div>
-        <div class="pcard-db-lines"></div>
-      </a>
-
+  <!-- ═══ XI-13 RECRUITMENT NOTICE ═══ -->
+  <div class="recruit">
+    <div class="recruit-mark">RECRUITMENT NOTICE</div>
+    <div class="recruit-main">
+      <div class="recruit-tag">Armed Mobile Task Force Xi-13 / Active Deployment</div>
+      <h2 class="recruit-title">Mobile Task Force Xi-13<span class="motto">"Sequere Nos"</span></h2>
+      <p class="recruit-lede">
+        Armed Mobile Task Force Xi-13 is a platoon-strength rapid response unit, tasked with responding quickly
+        to dangerous and/or anomalous situations where the threat has not yet been identified but military-grade
+        force is deemed likely, including but not limited to large-scale containment and security breaches.
+        Xi-13 is currently the <strong>first and only MTF on the server accepting open character transfers</strong>.
+      </p>
+      <div class="recruit-meta">
+        <span>Designation: <strong>Armed MTF Xi-13</strong></span>
+        <span>Role: <strong>Rapid Response</strong></span>
+        <span>Strength: <strong>Platoon</strong></span>
+        <span>Authority: <strong>SCPF</strong></span>
+      </div>
     </div>
-    </div><!-- end portal-wrap -->
+    <div class="recruit-aside">
+      <div class="recruit-aside-num">XI-13</div>
+      <div class="recruit-aside-label">Task Force Designation</div>
+      <button class="btn btn-fill" onclick="showPage('join')">Enlist Now</button>
+    </div>
   </div>
-  <!-- END PORTAL SECTION -->
+
   <footer>
-    <span>THREEFOLD &mdash; SCP RP Community</span>
-    <span>Semi-Serious &bull; Text-Based &bull; Discord</span>
+    <span>THREEFOLD / SCP RP Community</span>
+    <span>Semi-Serious / Text-Based / Discord</span>
   </footer>
 </section>
 
@@ -1029,30 +1259,6 @@ footer {
     </div>
   </div>
   <footer><span>THREEFOLD</span><span>About</span></footer>
-</section>
-
-<!-- ======== RULES ======== -->
-<section id="page-rules" class="page">
-  <div class="ph">
-    <div class="ph-bgword">RULES</div>
-    <div class="ph-tag">Conduct &mdash; All Members</div>
-    <h1>Rules &amp;<br>Conduct</h1>
-    <p class="ph-desc">Seven rules. None of them should come as a surprise.</p>
-  </div>
-  <div class="wrap">
-    <div class="callout" style="margin-bottom:2.5rem;">
-      <span class="callout-ico">&mdash;</span>
-      <p>Staff decisions are final, but they're appealable. If something feels wrong, there's a proper channel for it &mdash; just don't do it publicly while everyone's still heated.</p>
-    </div>
-    <div class="rule"><div class="rule-n">01</div><div><h3>Be a decent person</h3><p>IC conflict is fine and encouraged. OOC harassment, targeting people, bigotry, or continuing arguments in DMs isn't. The line is pretty obvious once you're not being heated about it.</p><span class="rtag rt-ban">Instant ban &mdash; no warnings</span></div></div>
-    <div class="rule"><div class="rule-n">02</div><div><h3>Don't control other people's characters</h3><p>Write what your character <em>tries</em> to do, not what happens to someone else. This trips up new players a lot, so the first time it's a quiet word, not a punishment.</p><span class="rtag rt-note">First offence: guidance only</span></div></div>
-    <div class="rule"><div class="rule-n">03</div><div><h3>Keep IC and OOC separate</h3><p>Your character only knows what they've seen in-scene. Using out-of-character knowledge to get an in-character advantage is metagaming, and it makes things less fun for everyone.</p><span class="rtag rt-warn">Warning, then strike</span></div></div>
-    <div class="rule"><div class="rule-n">04</div><div><h3>Write clearly</h3><p>Full sentences, basic punctuation, enough detail that others can respond. Third-person past tense is standard: <em>"She moved toward the door"</em>, not <em>"*moves toward door*"</em>.</p><span class="rtag rt-note">Guidance first, always</span></div></div>
-    <div class="rule"><div class="rule-n">05</div><div><h3>Content limits</h3><p>Dark themes and horror are part of the territory. Explicit sexual content is not allowed, full stop. If you're not sure whether something crosses the line, ask before you post.</p><span class="rtag rt-ban">NSFW: immediate ban</span></div></div>
-    <div class="rule"><div class="rule-n">06</div><div><h3>Work with staff, not against them</h3><p>Comply first, discuss second. There's an appeal process &mdash; but arguing publicly while things are live just makes a mess for everyone.</p><span class="rtag rt-kick">Strike &mdash; escalates if repeated</span></div></div>
-    <div class="rule"><div class="rule-n">07</div><div><h3>Show up, or let us know</h3><p>If you're holding an active scene or faction role, others are waiting on you. Just drop a message in OOC if you need to step away for a bit.</p><span class="rtag rt-note">Character archiving after contact attempts</span></div></div>
-  </div>
-  <footer><span>THREEFOLD</span><span>Conduct &mdash; Updated Each Season</span></footer>
 </section>
 
 <!-- ======== HOW TO JOIN ======== -->
@@ -1373,10 +1579,52 @@ function showMsg(el, type, text) {
 }
 
 /* ======================================================
+   LIVE CLOCK (cover status panel)
+====================================================== */
+function startCoverClock() {
+  const el = document.getElementById('cover-clock');
+  if (!el) return;
+  function tick() {
+    const now = new Date();
+    const hh = String(now.getUTCHours()).padStart(2,'0');
+    const mm = String(now.getUTCMinutes()).padStart(2,'0');
+    const ss = String(now.getUTCSeconds()).padStart(2,'0');
+    el.textContent = `${hh}:${mm}:${ss} UTC / CURRENT`;
+  }
+  tick();
+  setInterval(tick, 1000);
+}
+
+/* ======================================================
+   DIRECTORY PREVIEW HOVER
+====================================================== */
+function wireDirectoryPreview() {
+  const rows = document.querySelectorAll('.dir-row');
+  const cards = document.querySelectorAll('.dp-card');
+  if (!rows.length || !cards.length) return;
+
+  function activate(key) {
+    rows.forEach(r => r.classList.toggle('is-active', r.dataset.key === key));
+    cards.forEach(c => c.classList.toggle('is-active', c.dataset.key === key));
+  }
+
+  // Default active = first row
+  const firstKey = rows[0]?.dataset.key;
+  if (firstKey) activate(firstKey);
+
+  rows.forEach(r => {
+    r.addEventListener('mouseenter', () => activate(r.dataset.key));
+    r.addEventListener('focusin',   () => activate(r.dataset.key));
+  });
+}
+
+/* ======================================================
    INIT
 ====================================================== */
 document.addEventListener('DOMContentLoaded', () => {
   renderAppCards();
+  startCoverClock();
+  wireDirectoryPreview();
 });
 </script>
 </body>

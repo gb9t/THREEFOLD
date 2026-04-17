@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>THREEFOLD — Departments</title>
+<title>THREEFOLD / Departments</title>
 <link rel="icon" type="image/png" href="img/Base.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;800&family=Barlow:wght@300;400;500&family=Special+Elite&display=swap" rel="stylesheet">
 <style>
-:root{--black:#0a0a0a;--deep:#111;--dark:#1a1a1a;--mid:#2e2e2e;--border:#3a3a3a;--muted:#666;--light:#999;--pale:#ccc;--white:#f0f0f0;--danger:#cc2200;--mono:'Share Tech Mono',monospace;--display:'Barlow Condensed',sans-serif;--body:'Barlow',sans-serif;}
+:root{--black:#0a0a0a;--deep:#111;--dark:#1a1a1a;--mid:#2e2e2e;--border:#3a3a3a;--muted:#666;--light:#999;--pale:#ccc;--white:#f0f0f0;--danger:#cc2200;--red:#8a2a2a;--red-bright:#bb3a3a;--amber:#9a7a2a;--amber-bright:#d4a52c;--blue:#2a4a7a;--blue-bright:#3a6aaa;--green:#2a6a2a;--green-bright:#3a8a3a;--mono:'Share Tech Mono',monospace;--display:'Barlow Condensed',sans-serif;--body:'Barlow',sans-serif;--typewriter:'Special Elite',monospace;}
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
 body{background:var(--black);color:var(--pale);font-family:var(--body);font-weight:300;font-size:16px;line-height:1.7;min-height:100vh;overflow-x:hidden;}
@@ -27,66 +27,132 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:56px;background:rgba(
 .nav-link:hover{color:var(--pale);border-color:var(--border);}
 .nav-link.active{color:var(--pale);border-color:var(--border);}
 
-/* PAGE */
+/* ========== COVER SHEET (page header) ========== */
 .page-pad{padding-top:56px;}
-.ph{padding:4rem 3rem 3rem;border-bottom:1px solid var(--border);position:relative;overflow:hidden;background-image:linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);background-size:60px 60px;}
-.ph-bgword{position:absolute;right:2rem;top:50%;transform:translateY(-50%);font-family:var(--display);font-weight:700;font-size:160px;line-height:1;color:transparent;-webkit-text-stroke:1px var(--border);pointer-events:none;user-select:none;letter-spacing:0.04em;}
-.ph-tag{font-family:var(--mono);font-size:9.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;}
-.ph h1{font-family:var(--display);font-weight:700;font-size:clamp(48px,7vw,88px);letter-spacing:0.05em;text-transform:uppercase;color:var(--white);line-height:.9;}
-.ph-desc{margin-top:1rem;font-size:15px;color:var(--light);max-width:560px;}
-.wrap{max-width:1100px;margin:0 auto;padding:3rem 3rem 5rem;}
-.stag{font-family:var(--mono);font-size:9.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:1rem;margin-bottom:2rem;}
+.cover{
+  position:relative;overflow:hidden;
+  border-bottom:1px solid var(--border);
+  padding:4.5rem 3rem 3.5rem;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 25%, rgba(138,42,42,0.07), transparent 60%),
+    radial-gradient(ellipse 70% 50% at 85% 75%, rgba(42,74,122,0.05), transparent 60%),
+    linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px),
+    var(--black);
+  background-size:auto,auto,48px 48px,48px 48px,auto;
+}
+.cover-grid{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:3rem;align-items:end;}
+.cover-left{min-width:0;}
+.cover-stamps{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem;}
+.stamp{font-family:var(--mono);font-size:8.5px;letter-spacing:0.25em;text-transform:uppercase;padding:4px 10px;border:1px solid;}
+.stamp.red{border-color:var(--red);color:var(--red-bright);background:rgba(138,42,42,.08);}
+.stamp.amber{border-color:var(--amber);color:var(--amber-bright);background:rgba(154,122,42,.06);}
+.stamp.blue{border-color:var(--blue);color:var(--blue-bright);background:rgba(42,74,122,.06);}
+.stamp.border{border-color:var(--border);color:var(--muted);}
+.cover-tag{font-family:var(--mono);font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;}
+.cover h1{font-family:var(--display);font-weight:800;font-size:clamp(56px,9vw,120px);letter-spacing:0.01em;text-transform:uppercase;color:var(--white);line-height:.85;}
+.cover h1 em{font-style:normal;color:var(--red-bright);font-weight:800;}
+.cover-desc{margin-top:1.25rem;font-family:var(--typewriter);font-size:15px;color:var(--pale);line-height:1.75;max-width:560px;}
+
+.cover-right{display:flex;flex-direction:column;gap:.75rem;align-items:flex-end;}
+.cover-fileno{font-family:var(--mono);font-size:9.5px;letter-spacing:0.2em;color:var(--muted);text-align:right;}
+.cover-fileno strong{color:var(--pale);display:block;font-size:12px;margin-top:.25rem;letter-spacing:0.25em;}
+.cover-meta{display:grid;grid-template-columns:repeat(3,auto);gap:1.5rem;padding-top:.9rem;border-top:1px dashed var(--border);min-width:260px;}
+.cover-meta-item{min-width:0;}
+.cover-meta-item .k{font-family:var(--mono);font-size:8.5px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-bottom:.2rem;}
+.cover-meta-item .v{font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:0.04em;color:var(--white);line-height:1;}
+.cover-meta-item.amber .v{color:var(--amber-bright);}
+.cover-meta-item.red .v{color:var(--red-bright);}
+
+.wrap{max-width:1180px;margin:0 auto;padding:3rem 3rem 5rem;}
+
+.stag{font-family:var(--mono);font-size:9.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;}
+.stag::before{content:'';width:8px;height:8px;background:var(--red-bright);flex-shrink:0;}
 .stag::after{content:'';flex:1;height:1px;background:var(--border);}
+.stag strong{color:var(--pale);font-weight:400;}
 
 /* PERSONNEL CLASSIFICATION SECTION */
-.cls-section{margin-bottom:2.5rem;border:1px solid var(--border);background:var(--deep);}
+.cls-section{margin-bottom:3rem;border:1px solid var(--border);background:var(--deep);}
 .cls-toggle{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.5rem;cursor:pointer;transition:background .2s;user-select:none;}
 .cls-toggle:hover{background:rgba(255,255,255,.02);}
-.cls-toggle-label{font-family:var(--mono);font-size:9.5px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);}
+.cls-toggle-label{font-family:var(--mono);font-size:9.5px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:.75rem;}
+.cls-toggle-label::before{content:'FILE';font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:0.15em;color:var(--red-bright);border:1px solid var(--red);padding:2px 7px;}
 .cls-chevron{font-family:var(--mono);font-size:14px;color:var(--border);transition:transform .25s;}
 .cls-chevron.open{transform:rotate(90deg);}
 .cls-body{display:none;border-top:1px solid var(--border);}
 .cls-body.show{display:block;}
 .cls-cards{display:grid;grid-template-columns:repeat(5,1fr);}
-.cls-card{padding:1.25rem;border-right:1px solid var(--border);}
+.cls-card{padding:1.5rem 1.25rem;border-right:1px solid var(--border);position:relative;background:var(--deep);transition:background .25s;}
 .cls-card:last-child{border-right:none;}
-.cls-card-letter{font-family:var(--display);font-size:36px;font-weight:700;letter-spacing:0.06em;line-height:1;margin-bottom:.5rem;}
-.cls-card-title{font-family:var(--mono);font-size:8.5px;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:.75rem;}
-.cls-card-desc{font-size:12px;color:var(--muted);line-height:1.75;}
-.cls-a .cls-card-letter{color:#aa3a3a;}.cls-a .cls-card-title{color:#7a1a1a;}
-.cls-b .cls-card-letter{color:#3a6aaa;}.cls-b .cls-card-title{color:#1a3a6a;}
-.cls-c .cls-card-letter{color:#4a8a4a;}.cls-c .cls-card-title{color:#2a5a2a;}
-.cls-d .cls-card-letter{color:#888;}.cls-d .cls-card-title{color:#555;}
-.cls-e .cls-card-letter{color:#9a7a3a;}.cls-e .cls-card-title{color:#5a4a1a;}
+.cls-card:hover{background:var(--dark);}
+.cls-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.cls-a::before{background:var(--red);}
+.cls-b::before{background:var(--blue);}
+.cls-c::before{background:var(--green);}
+.cls-d::before{background:var(--muted);}
+.cls-e::before{background:var(--amber);}
+.cls-card-letter{font-family:var(--display);font-size:44px;font-weight:800;letter-spacing:0.04em;line-height:1;margin-bottom:.5rem;}
+.cls-card-title{font-family:var(--mono);font-size:8.5px;letter-spacing:0.25em;text-transform:uppercase;margin-bottom:.85rem;padding-bottom:.5rem;border-bottom:1px dashed var(--border);}
+.cls-card-desc{font-family:var(--typewriter);font-size:11.5px;color:var(--light);line-height:1.75;}
+.cls-a .cls-card-letter{color:var(--red-bright);}.cls-a .cls-card-title{color:var(--red-bright);}
+.cls-b .cls-card-letter{color:var(--blue-bright);}.cls-b .cls-card-title{color:var(--blue-bright);}
+.cls-c .cls-card-letter{color:var(--green-bright);}.cls-c .cls-card-title{color:var(--green-bright);}
+.cls-d .cls-card-letter{color:var(--light);}.cls-d .cls-card-title{color:var(--light);}
+.cls-e .cls-card-letter{color:var(--amber-bright);}.cls-e .cls-card-title{color:var(--amber-bright);}
 
-/* DEPARTMENT GRID */
+/* DEPARTMENT GRID (file-index cards) */
 .dept-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;}
-.dept-card{background:var(--deep);border:1px solid var(--border);border-left:3px solid var(--border);padding:1.4rem 1.6rem;display:flex;align-items:center;gap:1.25rem;cursor:pointer;position:relative;overflow:hidden;transition:transform .2s,background .2s;animation:cardIn .5s ease both;}
-.dept-card:nth-child(1){animation-delay:.05s}.dept-card:nth-child(2){animation-delay:.1s}.dept-card:nth-child(3){animation-delay:.15s}.dept-card:nth-child(4){animation-delay:.2s}.dept-card:nth-child(5){animation-delay:.25s}.dept-card:nth-child(6){animation-delay:.3s}.dept-card:nth-child(7){animation-delay:.35s}.dept-card:nth-child(8){animation-delay:.4s}.dept-card:nth-child(9){animation-delay:.45s}.dept-card:nth-child(10){animation-delay:.5s}
-@keyframes cardIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-.dept-card:hover{transform:translateY(-2px);background:var(--dark);}
+.dept-card{
+  position:relative;background:var(--deep);border:1px solid var(--border);
+  padding:1.5rem 1.75rem 1.4rem 1.75rem;
+  display:grid;grid-template-columns:52px 1fr auto;gap:1.25rem;align-items:center;
+  cursor:pointer;overflow:hidden;
+  transition:border-color .25s,background .25s,transform .25s;
+  animation:cardIn .5s ease both;
+}
+.dept-card::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--dept-accent, var(--red-bright));transition:width .25s;
+}
+.dept-card:nth-child(1){animation-delay:.04s}.dept-card:nth-child(2){animation-delay:.08s}.dept-card:nth-child(3){animation-delay:.12s}.dept-card:nth-child(4){animation-delay:.16s}.dept-card:nth-child(5){animation-delay:.2s}.dept-card:nth-child(6){animation-delay:.24s}.dept-card:nth-child(7){animation-delay:.28s}.dept-card:nth-child(8){animation-delay:.32s}.dept-card:nth-child(9){animation-delay:.36s}.dept-card:nth-child(10){animation-delay:.4s}
+@keyframes cardIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.dept-card:hover{border-color:var(--mid);background:var(--dark);transform:translateY(-2px);}
+.dept-card:hover::before{width:5px;}
+
+/* File-tab corner indicator (top-right) */
+.dept-tab{
+  position:absolute;top:0;right:0;
+  font-family:var(--mono);font-size:8px;letter-spacing:0.22em;
+  color:var(--muted);text-transform:uppercase;
+  background:var(--dark);padding:3px 10px 3px 12px;
+  border-left:1px solid var(--border);border-bottom:1px solid var(--border);
+}
+.dept-tab.active{color:var(--green-bright);}
+.dept-tab.restricted{color:var(--amber-bright);}
+.dept-tab.classified-tab{color:var(--red-bright);animation:tabBlink 2s step-end infinite;}
+@keyframes tabBlink{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* Shimmer on hover */
 .dept-card::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.025) 50%,transparent 100%);transform:translateX(-120%);pointer-events:none;}
 .dept-card:hover::after{animation:shimmer .7s ease forwards;}
 @keyframes shimmer{from{transform:translateX(-120%)}to{transform:translateX(120%)}}
 
 /* Logo */
-.dept-logo-wrap{width:44px;height:44px;flex-shrink:0;position:relative;overflow:hidden;}
-.dept-logo{width:44px;height:44px;object-fit:contain;mix-blend-mode:screen;display:block;transition:transform .3s;}
+.dept-logo-wrap{width:52px;height:52px;flex-shrink:0;position:relative;overflow:hidden;background:rgba(0,0,0,.35);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;}
+.dept-logo{width:42px;height:42px;object-fit:contain;mix-blend-mode:screen;display:block;transition:transform .3s;}
 .dept-card:hover .dept-logo{transform:scale(1.08);}
-.dept-logo-wrap::before{content:'';position:absolute;left:0;right:0;height:35%;background:linear-gradient(transparent,rgba(255,255,255,0.1),transparent);top:-35%;pointer-events:none;z-index:2;}
-.dept-card:hover .dept-logo-wrap::before{animation:logoScan .8s ease forwards;}
-@keyframes logoScan{from{top:-35%}to{top:110%}}
-.dept-card.classified .dept-logo{opacity:.55;filter:contrast(1.2);}
+.dept-logo-wrap::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.15) 2px,rgba(0,0,0,.15) 4px);pointer-events:none;}
+.dept-card.classified .dept-logo{opacity:.55;filter:contrast(1.2) grayscale(.5);}
 .dept-card.classified:hover .dept-logo{animation:isdLogoGlitch 3s steps(2) infinite;}
 @keyframes isdLogoGlitch{0%,88%,100%{filter:none;transform:scale(1);}90%{filter:hue-rotate(90deg) brightness(1.8);transform:scale(1.05) translate(-1px,0);}92%{filter:none;transform:scale(1);}95%{filter:hue-rotate(200deg) brightness(.4);transform:scale(1.02) translate(1px,0);}97%{filter:none;transform:scale(1.08);}}
 
-.dept-info{flex:1;min-width:0;}
-.dept-abbr{font-family:var(--mono);font-size:8px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);margin-bottom:.2rem;}
-.dept-name{font-family:var(--display);font-size:20px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:var(--white);line-height:1.1;margin-bottom:.3rem;}
-.dept-tagline{font-size:12.5px;color:var(--muted);line-height:1.5;margin-bottom:.5rem;}
-.dept-cl{font-family:var(--mono);font-size:8.5px;letter-spacing:0.12em;text-transform:uppercase;padding:2px 8px;border:1px solid;display:inline-block;}
-.dept-arrow{font-family:var(--mono);font-size:16px;color:var(--border);flex-shrink:0;transition:color .2s,transform .2s;}
-.dept-card:hover .dept-arrow{color:var(--light);transform:translateX(3px);}
+.dept-info{min-width:0;padding-top:.3rem;padding-right:5rem;}
+.dept-abbr{font-family:var(--mono);font-size:8.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);margin-bottom:.25rem;}
+.dept-name{font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--white);line-height:1.05;margin-bottom:.35rem;}
+.dept-tagline{font-family:var(--typewriter);font-size:11.5px;color:var(--light);line-height:1.55;margin-bottom:.6rem;min-height:2em;}
+.dept-cl{font-family:var(--mono);font-size:8.5px;letter-spacing:0.12em;text-transform:uppercase;padding:2px 9px;border:1px solid;display:inline-block;}
+.dept-arrow{font-family:var(--mono);font-size:18px;color:var(--border);flex-shrink:0;transition:color .22s,transform .22s;align-self:center;}
+.dept-card:hover .dept-arrow{color:var(--red-bright);transform:translateX(4px);}
 
 /* ======= DETAIL OVERLAY ======= */
 .detail-overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0);pointer-events:none;transition:background .3s;}
@@ -100,23 +166,29 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:56px;background:rgba(
 .detail-content{padding:2.5rem;}
 
 /* Detail header */
-.dh{display:flex;align-items:flex-start;gap:1.75rem;margin-bottom:2.5rem;padding-bottom:2rem;border-bottom:1px solid var(--border);}
+.detail-fileref{display:flex;justify-content:space-between;align-items:center;padding:.65rem 1rem;margin-bottom:2rem;border:1px dashed var(--border);font-family:var(--mono);font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);}
+.detail-fileref strong{color:var(--red-bright);letter-spacing:0.2em;}
+
+.dh{display:flex;align-items:flex-start;gap:1.75rem;margin-bottom:2.5rem;padding-bottom:2rem;border-bottom:1px solid var(--border);position:relative;}
+.dh::before{content:'';position:absolute;left:-2.5rem;top:0;bottom:0;width:3px;background:var(--red-bright);}
 .dh-logo-box{width:76px;height:76px;flex-shrink:0;background:var(--dark);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;}
-.dh-logo{width:68px;height:68px;object-fit:contain;mix-blend-mode:screen;}
+.dh-logo{width:64px;height:64px;object-fit:contain;mix-blend-mode:screen;display:block;}
 .dh-logo-box::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,0),rgba(0,0,0,0) 2px,rgba(0,0,0,0.12) 2px,rgba(0,0,0,0.12) 4px);pointer-events:none;}
 .dh-abbr{font-family:var(--mono);font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem;}
-.dh-name{font-family:var(--display);font-weight:700;font-size:clamp(26px,4vw,42px);letter-spacing:0.06em;text-transform:uppercase;color:var(--white);line-height:.9;margin-bottom:.85rem;}
+.dh-name{font-family:var(--display);font-weight:800;font-size:clamp(26px,4vw,42px);letter-spacing:0.04em;text-transform:uppercase;color:var(--white);line-height:.9;margin-bottom:.85rem;}
 .dh-badges{display:flex;gap:.5rem;flex-wrap:wrap;}
 .dh-badge{font-family:var(--mono);font-size:8.5px;letter-spacing:0.18em;text-transform:uppercase;padding:3px 10px;border:1px solid;}
+.dh-stamps{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.75rem;}
 
 /* Sections */
 .ds{margin-bottom:2.5rem;}
-.ds-title{font-family:var(--mono);font-size:9.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);padding-bottom:.65rem;border-bottom:1px solid var(--border);margin-bottom:1.25rem;}
-.ds-body{font-size:14px;color:var(--light);line-height:1.88;}
+.ds-title{font-family:var(--mono);font-size:9.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);padding-bottom:.65rem;border-bottom:1px solid var(--border);margin-bottom:1.25rem;display:flex;align-items:center;gap:.65rem;}
+.ds-title::before{content:'';width:6px;height:6px;background:var(--red-bright);flex-shrink:0;}
+.ds-body{font-family:var(--typewriter);font-size:13px;color:var(--pale);line-height:1.85;}
 .ds-body p+p{margin-top:1rem;}
-.mandate{border-left:2px solid var(--border);padding:1rem 1.5rem;background:rgba(255,255,255,.015);margin-top:1.5rem;}
-.mandate-lbl{font-family:var(--mono);font-size:8px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);margin-bottom:.35rem;}
-.mandate-txt{font-size:13px;color:var(--light);font-style:italic;}
+.mandate{border-left:2px solid var(--red);padding:1rem 1.5rem;background:rgba(138,42,42,.06);margin-top:1.5rem;}
+.mandate-lbl{font-family:var(--mono);font-size:8px;letter-spacing:0.3em;text-transform:uppercase;color:var(--red-bright);margin-bottom:.35rem;}
+.mandate-txt{font-family:var(--typewriter);font-size:13px;color:var(--pale);font-style:normal;}
 
 /* RANKS */
 .rank-list{display:flex;flex-direction:column;gap:.4rem;}
@@ -170,6 +242,73 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:56px;background:rgba(
 /* ISD note */
 .isd-note{background:rgba(10,0,0,.4);border:1px solid rgba(100,0,0,.3);padding:1rem 1.25rem;font-family:var(--mono);font-size:10px;letter-spacing:0.15em;color:rgba(200,50,50,.7);text-transform:uppercase;margin-top:1.5rem;line-height:1.7;}
 
+/* ═══════════════════════════════════════
+   TASK FORCES (MTF department only)
+═══════════════════════════════════════ */
+.tf-tabs{display:flex;gap:0;margin-bottom:1.25rem;border-bottom:1px solid var(--border);}
+.tf-tab{font-family:var(--mono);font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);padding:.6rem 1.25rem;display:flex;align-items:center;gap:.5rem;border-bottom:2px solid transparent;margin-bottom:-1px;cursor:default;}
+.tf-tab.is-active{color:var(--white);border-bottom-color:#d4a52c;}
+.tf-tab.is-disabled{opacity:.5;}
+.tf-tab-count{font-family:var(--display);font-size:15px;letter-spacing:0;color:var(--border);font-weight:700;}
+.tf-tab.is-active .tf-tab-count{color:#d4a52c;}
+.tf-count-open{color:#3a8a3a !important;}
+
+.tf-list{display:flex;flex-direction:column;gap:1.25rem;}
+
+.tf-card{position:relative;border:1px solid var(--border);background:radial-gradient(ellipse 90% 70% at 100% 0%, rgba(212,165,44,.04), transparent 60%),var(--deep);padding:1.75rem 1.75rem 1.5rem 2rem;overflow:hidden;}
+.tf-card-accent{position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(to bottom, #d4a52c, #bb3a3a 80%, var(--border));}
+.tf-card.tf-status-open{border-color:rgba(212,165,44,.4);}
+.tf-card.tf-status-open:hover{border-color:rgba(212,165,44,.7);}
+.tf-card.tf-status-classified{border-color:var(--border);opacity:.85;}
+
+/* Stamp top-right */
+.tf-stamp{position:absolute;top:1rem;right:1.25rem;font-family:var(--mono);font-size:9px;letter-spacing:0.25em;text-transform:uppercase;padding:4px 10px;border:1px solid;background:rgba(10,10,10,.7);}
+.tf-stamp.tf-status-open{color:#3a8a3a;border-color:#2a6a2a;animation:tfOpenPulse 2.4s ease-in-out infinite;}
+@keyframes tfOpenPulse{0%,100%{box-shadow:0 0 0 0 rgba(58,138,58,0);}50%{box-shadow:0 0 0 3px rgba(58,138,58,.15);}}
+.tf-stamp.tf-status-classified{color:var(--muted);border-color:var(--border);}
+.tf-stamp.tf-status-archived{color:var(--muted);border-color:var(--border);}
+
+/* Head block */
+.tf-head{display:flex;gap:1.5rem;align-items:center;margin-bottom:1.5rem;padding-right:9rem;}
+.tf-insignia{width:88px;height:88px;flex-shrink:0;background:radial-gradient(ellipse at center, rgba(212,165,44,.08), transparent 70%), var(--dark);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.tf-insignia::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.15) 2px,rgba(0,0,0,.15) 4px);pointer-events:none;}
+.tf-insignia img{width:76px;height:76px;object-fit:contain;mix-blend-mode:screen;filter:brightness(1.1);}
+.tf-ident{min-width:0;flex:1;}
+.tf-short{font-family:var(--display);font-weight:800;font-size:30px;letter-spacing:0.04em;text-transform:uppercase;color:var(--white);line-height:1;margin-bottom:.25rem;}
+.tf-designation{font-family:var(--mono);font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--light);margin-bottom:.6rem;}
+.tf-motto-row{display:flex;gap:.5rem;align-items:baseline;flex-wrap:wrap;}
+.tf-motto{font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:600;font-size:18px;letter-spacing:0.02em;color:#d4a52c;}
+.tf-motto-en{font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);}
+
+/* Meta grid */
+.tf-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:1.5rem;padding:.85rem 1rem;background:rgba(0,0,0,.3);border:1px solid var(--border);}
+.tf-meta-item{display:flex;flex-direction:column;gap:.25rem;min-width:0;}
+.tf-meta-item .k{font-family:var(--mono);font-size:8px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);}
+.tf-meta-item .v{font-family:var(--mono);font-size:11px;letter-spacing:0.08em;color:var(--pale);}
+.tf-meta-status.tf-status-open{color:#3a8a3a;}
+.tf-meta-status.tf-status-classified{color:var(--muted);}
+
+/* Mission text */
+.tf-mission{margin-bottom:1rem;border-left:2px solid #d4a52c;padding:.25rem 0 .25rem 1rem;}
+.tf-mission-lbl{font-family:var(--mono);font-size:8.5px;letter-spacing:0.25em;text-transform:uppercase;color:#d4a52c;margin-bottom:.3rem;}
+.tf-mission-body{font-size:13.5px;color:var(--light);line-height:1.85;}
+
+/* Recruitment notes */
+.tf-notes{margin-bottom:1.25rem;padding:.9rem 1.1rem;background:rgba(212,165,44,.05);border:1px dashed rgba(212,165,44,.35);}
+.tf-notes-lbl{font-family:var(--mono);font-size:8.5px;letter-spacing:0.25em;text-transform:uppercase;color:#d4a52c;display:block;margin-bottom:.35rem;}
+.tf-notes-body{font-size:12.5px;color:var(--light);line-height:1.75;}
+
+/* Enlist CTA */
+.tf-enlist-btn{display:inline-block;text-decoration:none;font-family:var(--mono);font-size:10px;letter-spacing:0.22em;text-transform:uppercase;background:#d4a52c;color:var(--black);padding:11px 20px;transition:all .2s;border:1px solid #d4a52c;}
+.tf-enlist-btn:hover{background:var(--white);border-color:var(--white);}
+
+/* Placeholder card for future TFs */
+.tf-card.tf-placeholder{background:transparent;border:1px dashed var(--border);padding:2rem 1.5rem;text-align:center;}
+.tf-card.tf-placeholder .tf-card-accent{display:none;}
+.tf-placeholder-dots{font-family:var(--mono);color:var(--border);font-size:14px;letter-spacing:0.3em;margin-bottom:.5rem;opacity:.5;}
+.tf-placeholder-title{font-family:var(--display);font-size:18px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:.3rem;}
+.tf-placeholder-sub{font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:var(--border);max-width:400px;margin:0 auto;line-height:1.7;}
+
 /* ISD AUTH GATE */
 .auth-overlay{position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0);display:none;align-items:center;justify-content:center;padding:2rem;}
 .auth-overlay.open{background:rgba(0,0,0,.94);display:flex;}
@@ -202,7 +341,10 @@ footer{border-top:1px solid var(--dark);padding:2rem 3rem;display:flex;justify-c
 }
 @media(max-width:768px){
   nav{padding:0 1.2rem;}.nav-logo-sub{display:none;}
-  .ph{padding:2.5rem 1.5rem 2rem;}.ph-bgword{display:none;}
+  .cover{padding:2.5rem 1.5rem 2rem;}
+  .cover-grid{grid-template-columns:1fr;gap:1.5rem;align-items:start;}
+  .cover-right{align-items:flex-start;}
+  .cover-meta{min-width:0;}
   .wrap{padding:2rem 1.5rem 4rem;}
   .dept-grid{grid-template-columns:1fr;}
   .dh{flex-direction:column;gap:1rem;}
@@ -212,6 +354,12 @@ footer{border-top:1px solid var(--dark);padding:2rem 3rem;display:flex;justify-c
   footer{flex-direction:column;gap:.5rem;text-align:center;}
   .detail-panel{width:100%;}
   .detail-content{padding:1.5rem;}
+  .tf-head{flex-direction:column;align-items:flex-start;padding-right:0;}
+  .tf-stamp{position:static;align-self:flex-start;margin-bottom:1rem;}
+  .tf-insignia{width:72px;height:72px;}
+  .tf-insignia img{width:60px;height:60px;}
+  .tf-short{font-size:24px;}
+  .tf-meta{grid-template-columns:1fr 1fr;}
 }
 </style>
 </head>
@@ -237,20 +385,39 @@ footer{border-top:1px solid var(--dark);padding:2rem 3rem;display:flex;justify-c
 </nav>
 
 <div class="page-pad">
-  <div class="ph">
-    <div class="ph-bgword">DEPT</div>
-    <div class="ph-tag">Foundation Structure &mdash; Site Departments</div>
-    <h1>Departments</h1>
-    <p class="ph-desc">The operational divisions of the Threefold Foundation site. Click any department to view its full mandate, personnel ranks, and classifications.</p>
+  <div class="cover">
+    <div class="cover-grid">
+      <div class="cover-left">
+        <div class="cover-stamps">
+          <span class="stamp red">Secure / Contain / Protect</span>
+          <span class="stamp amber">Clearance Required</span>
+          <span class="stamp border">Internal Document</span>
+        </div>
+        <div class="cover-tag">Foundation Structure / Site Departments</div>
+        <h1><em>Depart</em>ments</h1>
+        <p class="cover-desc">The operational divisions of the Threefold Foundation site. Each entry below is a live personnel file. Open a department to view full mandate, rank hierarchy, and specialist units.</p>
+      </div>
+      <div class="cover-right">
+        <div class="cover-fileno">
+          File Reference
+          <strong>TF / DEPT / INDEX / 10</strong>
+        </div>
+        <div class="cover-meta">
+          <div class="cover-meta-item"><div class="k">Active</div><div class="v">9</div></div>
+          <div class="cover-meta-item amber"><div class="k">Restricted</div><div class="v">0</div></div>
+          <div class="cover-meta-item red"><div class="k">Classified</div><div class="v">1</div></div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="wrap">
 
     <!-- PERSONNEL CLASSIFICATIONS -->
-    <div class="stag">Personnel Classifications</div>
+    <div class="stag">Personnel Classifications <strong>&middot; Class A through Class E</strong></div>
     <div class="cls-section">
       <div class="cls-toggle" onclick="toggleCls()">
-        <span class="cls-toggle-label">Classifications are assigned based on proximity to anomalous phenomena &mdash; click to expand</span>
+        <span class="cls-toggle-label">Classifications are assigned based on proximity to anomalous phenomena. Click to expand.</span>
         <span class="cls-chevron" id="cls-chevron">&#8250;</span>
       </div>
       <div class="cls-body" id="cls-body">
@@ -284,13 +451,13 @@ footer{border-top:1px solid var(--dark);padding:2rem 3rem;display:flex;justify-c
       </div>
     </div>
 
-    <div class="stag">Operational Departments &mdash; 10 Active Divisions</div>
+    <div class="stag">Operational Departments <strong>&middot; 10 Divisions on Record</strong></div>
     <div class="dept-grid" id="dept-grid"></div>
   </div>
 
   <footer>
-    <span>THREEFOLD &mdash; Departments</span>
-    <span>Structure &amp; Roster &mdash; Internal Document</span>
+    <span>THREEFOLD / Departments</span>
+    <span>Structure &amp; Roster / Internal Document</span>
   </footer>
 </div>
 
@@ -298,7 +465,7 @@ footer{border-top:1px solid var(--dark);padding:2rem 3rem;display:flex;justify-c
 <div class="detail-overlay" id="detail-overlay" onclick="onOverlayClick(event)">
   <div class="detail-panel" id="detail-panel">
     <div class="detail-topbar">
-      <span class="detail-topbar-name" id="detail-topbar-name">&mdash;</span>
+      <span class="detail-topbar-name" id="detail-topbar-name"></span>
       <button class="detail-close" onclick="closeDetail()">Close &#215;</button>
     </div>
     <div class="detail-content" id="detail-content"></div>
@@ -315,7 +482,7 @@ footer{border-top:1px solid var(--dark);padding:2rem 3rem;display:flex;justify-c
     <div class="auth-progress" id="auth-progress"><div class="auth-bar" id="auth-bar"></div></div>
     <div class="auth-status" id="auth-status"></div>
     <button class="btn-auth" id="btn-auth" onclick="doAuth()">Authenticate &amp; Proceed</button>
-    <button class="btn-auth-cancel" onclick="closeAuth()">Dismiss &mdash; Return to Listing</button>
+    <button class="btn-auth-cancel" onclick="closeAuth()">Dismiss / Return to Listing</button>
   </div>
 </div>
 
@@ -326,10 +493,10 @@ footer{border-top:1px solid var(--dark);padding:2rem 3rem;display:flex;justify-c
 const DEPARTMENTS = [
   {
     id:'science', name:'Science Department', abbr:'ScD', logo:'img/Science.png',
-    border:'#2a5a8a', cl:{border:'#2a5a8a',color:'#4a7aaa'}, range:'CL0 &mdash; CL4',
+    border:'#2a5a8a', cl:{border:'#2a5a8a',color:'#4a7aaa'}, range:'CL0 to CL4',
     tagline:'The pursuit of anomalous understanding.',
     classified:false,
-    desc:`The Science Department forms the intellectual backbone of Foundation operations. Researchers catalogue, study, and contain anomalies through rigorous empirical methodology. From analysis of recovered artefacts to controlled experimentation on designated subjects, ScD personnel are responsible for building the Foundation's understanding of the anomalous — and by extension, its containment capabilities.\n\nThe department spans a wide range of disciplines: physics, biology, chemistry, psychology, and numerous fields that have no name in mainstream academia. Junior researchers are assigned to established containment teams before eventually leading their own research projects.`,
+    desc:`The Science Department forms the intellectual backbone of Foundation operations. Researchers catalogue, study, and contain anomalies through rigorous empirical methodology. From analysis of recovered artefacts to controlled experimentation on designated subjects, ScD personnel are responsible for building the Foundation's understanding of the anomalous, and by extension its containment capabilities.\n\nThe department spans a wide range of disciplines: physics, biology, chemistry, psychology, and numerous fields that have no name in mainstream academia. Junior researchers are assigned to established containment teams before eventually leading their own research projects.`,
     mandate:"To study, understand, and document anomalous phenomena in service of containment and the Foundation's broader mission.",
     ranks:[
       {name:'Research Director',     cl:4, cls:'B', note:'Department head. Final authority on all research projects and staffing decisions.'},
@@ -345,10 +512,10 @@ const DEPARTMENTS = [
   },
   {
     id:'security', name:'Security Department', abbr:'SD', logo:'img/Security.png',
-    border:'#8a7a1a', cl:{border:'#8a7a1a',color:'#baa03a'}, range:'CL0 &mdash; CL4',
+    border:'#8a7a1a', cl:{border:'#8a7a1a',color:'#baa03a'}, range:'CL0 to CL4',
     tagline:'Order maintained. Containment enforced.',
     classified:false,
-    desc:`The Security Department maintains physical order across all Foundation sites. Divided into four specialist units, SD personnel manage everything from active breach response to undercover enforcement operations. Security is not simply a protective measure — it is the mechanism by which the Foundation's containment infrastructure holds together.\n\nSD operates under a strict chain of command and coordinates closely with the Ethics Committee, Site Directorship, and ISD depending on the nature of the operation. Personnel are assigned to specialist units based on aptitude assessments conducted during onboarding.`,
+    desc:`The Security Department maintains physical order across all Foundation sites. Divided into four specialist units, SD personnel manage everything from active breach response to undercover enforcement operations. Security is not simply a protective measure. It is the mechanism by which the Foundation's containment infrastructure holds together.\n\nSD operates under a strict chain of command and coordinates closely with the Ethics Committee, Site Directorship, and ISD depending on the nature of the operation. Personnel are assigned to specialist units based on aptitude assessments conducted during onboarding.`,
     mandate:'To maintain order, enforce containment, protect Foundation personnel, and neutralise all threats to site integrity.',
     ranks:[
       {name:'Security Director',   cl:4, cls:'B', note:'Department head. Coordinates all SD operations across the site.'},
@@ -366,20 +533,20 @@ const DEPARTMENTS = [
       {id:'scu',abbr:'SCU',full:'Security Containment Unit',cl:null,
        desc:"Dedicated to the physical handling of anomalies during containment and testing. SCU officers protect researchers during experiments, ensure that test protocols are followed, and maintain direct oversight of anomalous subjects in transit and testing environments. They work closely with the Science Department on a near-daily basis."},
       {id:'seu',abbr:'SEU',full:'Security Enforcement Unit',cl:null,
-       desc:"The enforcement arm of the Ethics Committee within the Security Department. SEU officers investigate and suppress internal violations — drug smuggling, unethical experiments, mistreatment of D-Class personnel. They operate with the authority of both SD and the Ethics Committee simultaneously, reporting to both chains of command."},
+       desc:"The enforcement arm of the Ethics Committee within the Security Department. SEU officers investigate and suppress internal violations: drug smuggling, unethical experiments, and mistreatment of D-Class personnel. They operate with the authority of both SD and the Ethics Committee simultaneously, reporting to both chains of command."},
       {id:'siu',abbr:'SIU',full:'Security Intelligence Unit',cl:3,
        desc:"The existence of SIU is restricted to Level 3 clearance and above. SIU operates alongside ISD and the Intelligence Agency on matters of internal and external intelligence. Primarily deployed for off-site operations and the security of high-value individuals and assets. Their methods, operational history, and current personnel are not disclosed to standard SD staff."},
     ],
   },
   {
     id:'ethics', name:'Ethics Committee', abbr:'EC', logo:'img/Ethics.png',
-    border:'#7a3a1a', cl:{border:'#7a3a1a',color:'#ba6a3a'}, range:'CL3 &mdash; CL6',
+    border:'#7a3a1a', cl:{border:'#7a3a1a',color:'#ba6a3a'}, range:'CL3 to CL6',
     tagline:'Accountability where no law applies.',
     classified:false,
-    desc:`The Ethics Committee is an independent oversight body operating across all Foundation facilities. It is tasked with ensuring that containment procedures, research practices, and personnel management do not cross into unnecessary cruelty, corruption, or violation of the Foundation's internal code of conduct.\n\nUnlike most departments, the EC holds authority over all other departments — including Site Directorship. The Head of Ethics operates at O5 Council level and is not subordinate to any site command structure. EC investigators have the power to suspend experiments, relieve personnel of duty, and recommend disciplinary action without requiring approval from anyone below O5 level.`,
-    mandate:"To uphold the Foundation's internal code of conduct, investigate violations, and ensure that the means — to whatever extent possible — justify the ends.",
+    desc:`The Ethics Committee is an independent oversight body operating across all Foundation facilities. It is tasked with ensuring that containment procedures, research practices, and personnel management do not cross into unnecessary cruelty, corruption, or violation of the Foundation's internal code of conduct.\n\nUnlike most departments, the EC holds authority over all other departments, including Site Directorship. The Head of Ethics operates at O5 Council level and is not subordinate to any site command structure. EC investigators have the power to suspend experiments, relieve personnel of duty, and recommend disciplinary action without requiring approval from anyone below O5 level.`,
+    mandate:"To uphold the Foundation's internal code of conduct, investigate violations, and ensure that the means, to whatever extent possible, justify the ends.",
     ranks:[
-      {name:'Head of Ethics',          cl:6, cls:'A', note:'Operates at O5 Council level. A peer authority — not subordinate to O5, site command, or the Administrator on ethical matters.'},
+      {name:'Head of Ethics',          cl:6, cls:'A', note:'Operates at O5 Council level. A peer authority, not subordinate to O5, site command, or the Administrator on ethical matters.'},
       {name:'Ethics Commissioner',     cl:4, cls:'B', note:'Senior EC authority. Coordinates cross-site investigations and policy enforcement.'},
       {name:'Senior Ethics Liaison',   cl:4, cls:'B', note:'Leads complex investigations and formal disciplinary proceedings.'},
       {name:'Ethics Liaison',          cl:3, cls:'C', note:'Conducts inquiries and compliance reviews. First point of contact for reported violations.'},
@@ -388,7 +555,7 @@ const DEPARTMENTS = [
   },
   {
     id:'mtf', name:'Mobile Task Forces', abbr:'MTF', logo:'img/MTF.png',
-    border:'#5a3a8a', cl:{border:'#5a3a8a',color:'#8a6aaa'}, range:'CL2 &mdash; CL4',
+    border:'#5a3a8a', cl:{border:'#5a3a8a',color:'#8a6aaa'}, range:'CL2 to CL4',
     tagline:'Deployed where standard units cannot go.',
     classified:false,
     desc:`Mobile Task Forces are elite field units commissioned by the O5 Council and deployed for operations that exceed the capability of standard site security. Each task force is built around a specific anomalous threat type, given specialist training and tailored equipment, and operates under direct mandate from above Site Director level.\n\nTask forces are designated by a Greek letter followed by a numeric identifier. Assignment to an MTF is considered both a privilege and an expectation of exceptional performance. MTF units have broader operational authority than standard SD personnel and frequently operate off-site for extended periods.`,
@@ -398,17 +565,33 @@ const DEPARTMENTS = [
       {name:'MTF Captain',     cl:3, cls:'C', note:'Field command of multi-team operations within a task force.'},
       {name:'MTF Lieutenant',  cl:3, cls:'C', note:'Team leader. Coordinates unit-level tactics during operations.'},
       {name:'MTF Sergeant',    cl:2, cls:'C', note:'Non-commissioned leader. Manages squad operations in the field.'},
-      {name:'MTF Specialist',  cl:2, cls:'C', note:'Trained in a specific discipline — demolitions, anomaly handling, etc.'},
+      {name:'MTF Specialist',  cl:2, cls:'C', note:'Trained in a specific discipline: demolitions, anomaly handling, etc.'},
       {name:'MTF Operative',   cl:2, cls:'C', note:'Core MTF personnel. Field-deployed following full selection and training.'},
     ],
     units:null,
+    taskForces:[
+      {
+        id:'xi13',
+        designation:'Armed Mobile Task Force Xi-13',
+        short:'MTF Xi-13',
+        motto:'Sequere Nos',
+        mottoEn:'Follow Us',
+        insignia:'img/Xi13.png',
+        status:'open',
+        strength:'Platoon',
+        authority:'SCPF',
+        classification:'Armed Rapid Response',
+        mission:`Armed Mobile Task Force Xi-13 is a platoon-strength rapid response unit, tasked with responding quickly to dangerous and/or anomalous situations where the threat has not yet been identified but military-grade force is deemed likely, including but not limited to large-scale containment and security breaches.`,
+        notes:`Xi-13 is currently the first and only Task Force on the server accepting open character transfers. Applicants should have, or be willing to build, a character with military or security backgrounds. Operators report through the standard MTF command structure.`,
+      },
+    ],
   },
   {
     id:'medical', name:'Medical Department', abbr:'MD', logo:'img/Medical.png',
-    border:'#1a7a3a', cl:{border:'#1a7a3a',color:'#3a9a5a'}, range:'CL0 &mdash; CL4',
+    border:'#1a7a3a', cl:{border:'#1a7a3a',color:'#3a9a5a'}, range:'CL0 to CL4',
     tagline:'Keeping what remains of personnel functional.',
     classified:false,
-    desc:`The Medical Department maintains the physical and psychological welfare of all Foundation personnel. Operating in conditions that have no equivalent in civilian healthcare — anomalous pathogens, cognitohazardous exposure, reality instability, and trauma from regular containment failures — MD staff are among the most resilient in the organisation.\n\nSpecialisations within the department include anomalous pathology, psychotropic containment therapy, post-incident trauma response, and Scranton reality research. The Medical Department also manages D-Class health screening prior to experimental assignment and provides post-experiment evaluations for all participants.`,
+    desc:`The Medical Department maintains the physical and psychological welfare of all Foundation personnel. Operating in conditions that have no equivalent in civilian healthcare (anomalous pathogens, cognitohazardous exposure, reality instability, and trauma from regular containment failures). MD staff are among the most resilient in the organisation.\n\nSpecialisations within the department include anomalous pathology, psychotropic containment therapy, post-incident trauma response, and Scranton reality research. The Medical Department also manages D-Class health screening prior to experimental assignment and provides post-experiment evaluations for all participants.`,
     mandate:'To preserve the health and operational capability of Foundation personnel, and to study biological phenomena arising from anomalous exposure.',
     ranks:[
       {name:'Director of Medicine',      cl:4, cls:'B', note:'Department head. Oversees all medical operations across the site.'},
@@ -422,7 +605,7 @@ const DEPARTMENTS = [
   },
   {
     id:'intelligence', name:'Intelligence Agency', abbr:'IA', logo:'img/Intelligence.png',
-    border:'#1a3a6a', cl:{border:'#1a3a6a',color:'#3a5aaa'}, range:'CL3 &mdash; CL4',
+    border:'#1a3a6a', cl:{border:'#1a3a6a',color:'#3a5aaa'}, range:'CL3 to CL4',
     tagline:'Information is containment before containment is needed.',
     classified:false,
     desc:`The Intelligence Agency is the Foundation's primary external information-gathering body. IA agents operate embedded within governments, rival organisations, civilian institutions, and areas of known anomalous interest. Their intelligence informs containment strategies before threats materialise, rather than after.\n\nIA personnel rarely interact directly with standard site staff. Field agents operate with significant autonomy and are trained to maintain cover across extended deployment periods. The Agency coordinates closely with ISD on matters where internal and external intelligence overlap.`,
@@ -437,15 +620,15 @@ const DEPARTMENTS = [
   },
   {
     id:'admin', name:"Administrator's Office", abbr:'AO', logo:'img/AdministratorsOffice.png',
-    border:'#7a1a1a', cl:{border:'#7a1a1a',color:'#aa3a3a'}, range:'CL5 &mdash; CL6',
+    border:'#7a1a1a', cl:{border:'#7a1a1a',color:'#aa3a3a'}, range:'CL5 to CL6',
     tagline:'The hand that guides. The voice that does not speak.',
     classified:false,
-    desc:`The Administrator's Office encompasses the very highest tier of Foundation governance. The Administrator — whose identity is known only to O5 Council members — sits above the O5 Council itself, serving as the singular executive authority from which all Foundation mandate ultimately flows.\n\nThe Factotum are the personal staff of the O5 Council: selected for absolute loyalty, they act as personal assistants, bodyguards, and decoys. Many encounters with an apparent "O5" are in fact mediated by a Factotum, dressed and trained to perfectly resemble their assigned Council member. Some Factotum are reportedly subject to anomalous alteration approved by O5 Command, making it nearly impossible to distinguish them from those they represent. For all practical purposes, they carry the authority of an O5 Council member.`,
+    desc:`The Administrator's Office encompasses the very highest tier of Foundation governance. The Administrator, whose identity is known only to O5 Council members, sits above the O5 Council itself, serving as the singular executive authority from which all Foundation mandate ultimately flows.\n\nThe Factotum are the personal staff of the O5 Council: selected for absolute loyalty, they act as personal assistants, bodyguards, and decoys. Many encounters with an apparent "O5" are in fact mediated by a Factotum, dressed and trained to perfectly resemble their assigned Council member. Some Factotum are reportedly subject to anomalous alteration approved by O5 Command, making it nearly impossible to distinguish them from those they represent. For all practical purposes, they carry the authority of an O5 Council member.`,
     mandate:"To govern the Foundation at its highest level, set global strategic direction, and ensure that the mission is pursued without compromise or deviation.",
     ranks:[
       {name:'Administrator',          cl:6, cls:'A', note:'Above the O5 Council. The singular executive authority of the Foundation. Identity known only to O5 members.'},
       {name:'O5 Council Member',      cl:6, cls:'A', note:'The thirteen. Final policy authority on all Foundation matters. Identities classified at every clearance level.'},
-      {name:'Factotum',               cl:5, cls:'A', note:'Personal staff of the O5 Council. Selected for absolute loyalty. Act as assistants, bodyguards, and decoys — some with anomalous alterations. Carry full O5 authority in the field.'},
+      {name:'Factotum',               cl:5, cls:'A', note:'Personal staff of the O5 Council. Selected for absolute loyalty. Act as assistants, bodyguards, and decoys, some with anomalous alterations. Carry full O5 authority in the field.'},
     ],
     units:null,
   },
@@ -464,10 +647,10 @@ const DEPARTMENTS = [
   },
   {
     id:'engineering', name:'Engineering Department', abbr:'Eng', logo:'img/Engineering.png',
-    border:'#5a5a1a', cl:{border:'#5a5a1a',color:'#8a8a3a'}, range:'CL0 &mdash; CL4',
+    border:'#5a5a1a', cl:{border:'#5a5a1a',color:'#8a8a3a'}, range:'CL0 to CL4',
     tagline:'If it holds, Engineering built it.',
     classified:false,
-    desc:`The Engineering Department designs, constructs, and maintains the physical infrastructure that makes containment possible. Containment chambers calibrated for Keter-class entities, anomalous power distribution networks, secure transport systems, and the architecture of Foundation sites — all of it falls under Engineering's domain.\n\nWithout them, containment is theoretical. Engineering works closely with the Science Department on containment design and with Site Directorship on expansion and maintenance projects. A significant portion of the department's work involves retrofitting existing containment solutions when anomalies evolve in unexpected ways.`,
+    desc:`The Engineering Department designs, constructs, and maintains the physical infrastructure that makes containment possible. Containment chambers calibrated for Keter-class entities, anomalous power distribution networks, secure transport systems, and the architecture of Foundation sites: all of it falls under Engineering's domain.\n\nWithout them, containment is theoretical. Engineering works closely with the Science Department on containment design and with Site Directorship on expansion and maintenance projects. A significant portion of the department's work involves retrofitting existing containment solutions when anomalies evolve in unexpected ways.`,
     mandate:'To build and maintain the physical infrastructure required for anomalous containment, site security, and Foundation operational capability.',
     ranks:[
       {name:'Director of Engineering',   cl:4, cls:'B', note:'Department head. Oversees all engineering projects and personnel allocation.'},
@@ -485,14 +668,14 @@ const DEPARTMENTS = [
     border:'#1a1a2a', cl:{border:'#333',color:'#555'}, range:'&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;',
     tagline:'[ INFORMATION RESTRICTED ]',
     classified:true,
-    desc:`The Internal Security Department exists to identify and neutralise threats originating from within the Foundation itself. Rogue agents, compromised personnel, information leaks, anomalous coercion of staff, and attempts to exploit Foundation assets for personal or external gain all fall within ISD's mandate.\n\nThe department operates with a high degree of autonomy and reports directly to the O5 Council, bypassing standard site command structures entirely. ISD agents may operate within any site without disclosure to local administration. Their investigation records are not accessible below Level 4 clearance.\n\nISD works in close coordination with the Intelligence Agency on matters of overlapping jurisdiction, and with the Security Department's SIU on operational matters. Field agents use their cover role's clearance level — their ISD affiliation is not reflected in any accessible personnel file.`,
-    mandate:'To identify, investigate, and neutralise internal threats to Foundation security, integrity, and chain of command — by any means deemed necessary.',
+    desc:`The Internal Security Department exists to identify and neutralise threats originating from within the Foundation itself. Rogue agents, compromised personnel, information leaks, anomalous coercion of staff, and attempts to exploit Foundation assets for personal or external gain all fall within ISD's mandate.\n\nThe department operates with a high degree of autonomy and reports directly to the O5 Council, bypassing standard site command structures entirely. ISD agents may operate within any site without disclosure to local administration. Their investigation records are not accessible below Level 4 clearance.\n\nISD works in close coordination with the Intelligence Agency on matters of overlapping jurisdiction, and with the Security Department's SIU on operational matters. Field agents use their cover role's clearance level. Their ISD affiliation is not reflected in any accessible personnel file.`,
+    mandate:'To identify, investigate, and neutralise internal threats to Foundation security, integrity, and chain of command, by any means deemed necessary.',
     ranks:[
       {name:'ISD Director',       cl:5,    cls:'A',  note:'Reports directly to the O5 Council. All operations withheld from site command structure.'},
       {name:'ISD Handler',        cl:4,    cls:'B',  note:'Manages active investigations and coordinates field agent deployments.'},
-      {name:'Senior ISD Agent',   cl:null, cls:'—',  note:'Operates under cover role clearance. True ISD affiliation is not recorded in accessible files.'},
-      {name:'ISD Agent',          cl:null, cls:'—',  note:'Operates under cover role clearance. True ISD affiliation is not recorded in accessible files.'},
-      {name:'Junior ISD Agent',   cl:null, cls:'—',  note:'Operates under cover role clearance. Works under direct supervision of a Handler.'},
+      {name:'Senior ISD Agent',   cl:null, cls:'X',  note:'Operates under cover role clearance. True ISD affiliation is not recorded in accessible files.'},
+      {name:'ISD Agent',          cl:null, cls:'X',  note:'Operates under cover role clearance. True ISD affiliation is not recorded in accessible files.'},
+      {name:'Junior ISD Agent',   cl:null, cls:'X',  note:'Operates under cover role clearance. Works under direct supervision of a Handler.'},
     ],
     units:null,
     isd:true,
@@ -504,10 +687,14 @@ const DEPARTMENTS = [
 ===================================================== */
 function renderCards() {
   const grid = document.getElementById('dept-grid');
-  grid.innerHTML = DEPARTMENTS.map(d => `
+  grid.innerHTML = DEPARTMENTS.map(d => {
+    const tabLabel = d.classified ? 'Classified' : 'Active';
+    const tabClass = d.classified ? 'classified-tab' : 'active';
+    return `
     <div class="dept-card ${d.classified?'classified':''}"
-         style="border-left-color:${d.border}"
+         style="--dept-accent:${d.border};"
          onclick="${d.classified?`openAuth()`:`openDetail('${d.id}')`}">
+      <span class="dept-tab ${tabClass}">${tabLabel}</span>
       <div class="dept-logo-wrap">
         <img class="dept-logo" src="${d.logo}" alt="${d.name}">
       </div>
@@ -518,7 +705,8 @@ function renderCards() {
         <span class="dept-cl" style="border-color:${d.cl.border};color:${d.cl.color}">${d.classified?'&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;':d.range}</span>
       </div>
       <div class="dept-arrow">&#8250;</div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 /* =====================================================
@@ -544,13 +732,13 @@ function onOverlayClick(e) {
 function renderDetail(d) {
   document.getElementById('detail-topbar-name').textContent = d.abbr + ' \u2014 ' + d.name;
   const descHtml = d.desc.split('\n\n').map(p=>`<p>${p}</p>`).join('');
-  const clsMap = {A:'rcls-a',B:'rcls-b',C:'rcls-c',D:'rcls-d',E:'rcls-e','—':'rcls-blank'};
+  const clsMap = {A:'rcls-a',B:'rcls-b',C:'rcls-c',D:'rcls-d',E:'rcls-e','X':'rcls-blank'};
 
   const ranksHtml = d.ranks.map(r => {
-    const clLabel = r.cl === null ? '—' : r.cl === 6 ? '██' : `L${r.cl}`;
+    const clLabel = r.cl === null ? '--' : r.cl === 6 ? '██' : `L${r.cl}`;
     const clClass = r.cl === null ? 'cl-null' : `cl-${r.cl}`;
     const clsBadge = r.cls
-      ? `<span class="rank-cls-badge ${clsMap[r.cls]||'rcls-blank'}">${r.cls==='—'?'Cover CL':`Class ${r.cls}`}</span>`
+      ? `<span class="rank-cls-badge ${clsMap[r.cls]||'rcls-blank'}">${r.cls==='X'?'Cover CL':`Class ${r.cls}`}</span>`
       : '';
     return `<div class="rank-item">
       <div class="rank-cl ${clClass}"><span>${clLabel}</span></div>
@@ -596,13 +784,64 @@ function renderDetail(d) {
 
   const isdNote = d.isd ? `<div class="isd-note">&#9632; ACCESS TO THIS FILE HAS BEEN LOGGED.<br>&#9632; ISD PERSONNEL MAY BE AWARE OF THIS QUERY.<br>&#9632; FURTHER INVESTIGATION RECORDS: RESTRICTED CL4+</div>` : '';
 
+  // TASK FORCES (MTF page only)
+  let tfHtml = '';
+  if (d.taskForces && d.taskForces.length) {
+    const availCount = d.taskForces.filter(t => t.status === 'open').length;
+    const classCount = d.taskForces.filter(t => t.status === 'classified').length;
+    const archCount  = d.taskForces.filter(t => t.status === 'archived').length;
+
+    const tfCards = d.taskForces.map(tf => renderTaskForceCard(tf)).join('');
+
+    // Placeholder for future TFs
+    const tfPlaceholder = `
+      <div class="tf-card tf-placeholder">
+        <div class="tf-placeholder-inner">
+          <div class="tf-placeholder-dots">&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;</div>
+          <div class="tf-placeholder-title">Additional Task Forces</div>
+          <div class="tf-placeholder-sub">Classification pending. Further assignments to be opened as the theatre develops.</div>
+        </div>
+      </div>`;
+
+    tfHtml = `
+    <div class="ds">
+      <div class="ds-title">Active Task Forces</div>
+      <div class="tf-tabs">
+        <div class="tf-tab is-active">
+          <span class="tf-tab-label">Available</span>
+          <span class="tf-tab-count tf-count-open">${availCount}</span>
+        </div>
+        <div class="tf-tab is-disabled">
+          <span class="tf-tab-label">Classified</span>
+          <span class="tf-tab-count">${classCount || '0'}</span>
+        </div>
+        <div class="tf-tab is-disabled">
+          <span class="tf-tab-label">Archived</span>
+          <span class="tf-tab-count">${archCount || '0'}</span>
+        </div>
+      </div>
+      <div class="tf-list">${tfCards}${tfPlaceholder}</div>
+    </div>`;
+  }
+
+  // Department status stamp
+  const deptStatusStamp = d.classified
+    ? `<span class="stamp red">Classified</span>`
+    : `<span class="stamp border">Active</span>`;
+  const deptFileRef = `TF / DEPT / ${d.abbr.toUpperCase()}`;
+
   document.getElementById('detail-content').innerHTML = `
+    <div class="detail-fileref">
+      <span>File Reference</span>
+      <strong>${deptFileRef}</strong>
+    </div>
     <div class="dh">
       <div class="dh-logo-box"><img class="dh-logo" src="${d.logo}" alt="${d.name}"></div>
       <div>
         <div class="dh-abbr">${d.abbr}</div>
         <div class="dh-name">${d.name}</div>
         <div class="dh-badges"><span class="dh-badge" style="border-color:${d.cl.border};color:${d.cl.color}">${d.range}</span></div>
+        <div class="dh-stamps">${deptStatusStamp}<span class="stamp border">Internal Document</span></div>
       </div>
     </div>
     <div class="ds">
@@ -610,12 +849,65 @@ function renderDetail(d) {
       <div class="ds-body">${descHtml}</div>
       <div class="mandate"><div class="mandate-lbl">Mandate</div><div class="mandate-txt">${d.mandate}</div></div>
     </div>
+    ${tfHtml}
     <div class="ds">
-      <div class="ds-title">Personnel Ranks &mdash; Highest to Lowest</div>
+      <div class="ds-title">Personnel Ranks, Highest to Lowest</div>
       <div class="rank-list">${ranksHtml}</div>
     </div>
     ${unitsHtml}
     ${isdNote}`;
+}
+
+/* =====================================================
+   TASK FORCE CARD
+===================================================== */
+function renderTaskForceCard(tf) {
+  const statusLabel = {
+    open: 'Recruitment Open',
+    classified: 'Classified',
+    archived: 'Archived',
+  }[tf.status] || 'Status Unknown';
+  const statusClass = `tf-status-${tf.status}`;
+
+  const mottoLine = tf.motto
+    ? `<span class="tf-motto">&ldquo;${tf.motto}&rdquo;</span>${tf.mottoEn ? `<span class="tf-motto-en">(${tf.mottoEn})</span>` : ''}`
+    : '';
+
+  const enlistCta = tf.status === 'open'
+    ? `<a href="index.html" class="tf-enlist-btn" onclick="event.stopPropagation();">Enlist with ${tf.short} &rarr;</a>`
+    : '';
+
+  const notesBlock = tf.notes
+    ? `<div class="tf-notes"><span class="tf-notes-lbl">Recruitment Notes</span><div class="tf-notes-body">${tf.notes}</div></div>`
+    : '';
+
+  return `
+    <div class="tf-card ${statusClass}">
+      <div class="tf-card-accent"></div>
+      <div class="tf-stamp ${statusClass}">${statusLabel}</div>
+      <div class="tf-head">
+        <div class="tf-insignia">
+          <img src="${tf.insignia}" alt="${tf.short}" onerror="this.style.display='none'">
+        </div>
+        <div class="tf-ident">
+          <div class="tf-short">${tf.short}</div>
+          <div class="tf-designation">${tf.designation}</div>
+          <div class="tf-motto-row">${mottoLine}</div>
+        </div>
+      </div>
+      <div class="tf-meta">
+        <div class="tf-meta-item"><span class="k">Classification</span><span class="v">${tf.classification || 'Unspecified'}</span></div>
+        <div class="tf-meta-item"><span class="k">Strength</span><span class="v">${tf.strength || 'Unspecified'}</span></div>
+        <div class="tf-meta-item"><span class="k">Authority</span><span class="v">${tf.authority || 'Unspecified'}</span></div>
+        <div class="tf-meta-item"><span class="k">Status</span><span class="v tf-meta-status ${statusClass}">${statusLabel}</span></div>
+      </div>
+      <div class="tf-mission">
+        <div class="tf-mission-lbl">Task Force Mission</div>
+        <div class="tf-mission-body">${tf.mission}</div>
+      </div>
+      ${notesBlock}
+      ${enlistCta}
+    </div>`;
 }
 
 function toggleUnit(id) {

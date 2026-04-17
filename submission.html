@@ -1723,30 +1723,27 @@ function selectClass(cls) {
 function toggleSecretClass(show) {
   const cl6  = document.getElementById('cl-6-box');
   const clsO = document.getElementById('cls-O-box');
-  if (!cl6 || !clsO) return;
+  if (!cl6) return;
   if (show && !_secretUnlocked) {
     _secretUnlocked = true;
-    cl6.style.display  = 'flex';
-    clsO.style.display = 'flex';
-    // small delay so display:flex takes effect before animation
+    cl6.style.display = 'flex';
     requestAnimationFrame(() => {
       cl6.classList.add('secret-glitch-in');
-      clsO.classList.add('secret-glitch-in');
       cl6.classList.remove('secret-glitch-out');
-      clsO.classList.remove('secret-glitch-out');
     });
-    // auto-select them
-    setTimeout(() => { selectClearanceSecret(); selectClassSecret(); }, 120);
+    setTimeout(() => { selectClearanceSecret(); }, 120);
   } else if (!show && _secretUnlocked) {
     _secretUnlocked = false;
     cl6.classList.add('secret-glitch-out');
-    clsO.classList.add('secret-glitch-out');
     cl6.classList.remove('secret-glitch-in');
-    clsO.classList.remove('secret-glitch-in');
     cl6.classList.remove('selected');
-    clsO.classList.remove('selected');
-    setTimeout(() => { cl6.style.display='none'; clsO.style.display='none'; }, 380);
-    // revert clearance/class to what role dictates (no secret)
+    // Also hide Class O if it happened to be shown
+    if (clsO) {
+      clsO.classList.add('secret-glitch-out');
+      clsO.classList.remove('selected');
+      setTimeout(() => { clsO.style.display='none'; }, 380);
+    }
+    setTimeout(() => { cl6.style.display='none'; }, 380);
     document.getElementById('fn-clearance').value = '';
     document.getElementById('fn-classification').value = '';
     document.getElementById('cl-desc').textContent = '';
@@ -1903,7 +1900,7 @@ function selectRole(idx, dept) {
   // Auto-set clearance — handles secret Level 6 unlock
   if (r.cl !== null && r.cl !== undefined) {
     if (r.cl === 6) {
-      // Trigger the secret glitch-in sequence
+      // Trigger the secret clearance glitch-in, but do NOT auto-select Class O
       selectClearance(6);
     } else {
       // Ensure secret is dismissed if previously selected

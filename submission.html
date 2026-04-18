@@ -1324,7 +1324,7 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
 
       <!-- MTF Sub-units -->
       <div class="subunit-wrap" id="mtf-subunit-wrap">
-        <label style="font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;display:block;">Task Force <span style="color:var(--muted);font-size:8px;text-transform:none;">(optional)</span></label>
+        <label style="font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;display:block;">Task Force <span class="req">*</span></label>
         <div class="subunit-grid">
           <div class="subunit-box" onclick="selectMtfUnit('Xi-13')" data-mtf-unit="Xi-13" style="display:flex;align-items:center;gap:.9rem;">
             <img src="img/Xi13.png" alt="" style="width:38px;height:38px;object-fit:contain;flex-shrink:0;filter:invert(1) brightness(1.1);">
@@ -2295,7 +2295,8 @@ function selectDept(dept, abbr) {
     if (crf) crf.style.display = 'none';
   }
   // Reset subunit if dept changed
-  if (dept !== 'Security Department') { document.getElementById('fn-sd-unit').value = ''; document.getElementById('fn-sd-unit').dispatchEvent(new Event('change')); document.querySelectorAll('.subunit-box').forEach(b=>b.classList.remove('selected')); }
+  if (dept !== 'Security Department') { document.getElementById('fn-sd-unit').value = ''; document.getElementById('fn-sd-unit').dispatchEvent(new Event('change')); document.querySelectorAll('#sd-subunit-wrap .subunit-box').forEach(b=>b.classList.remove('selected')); }
+  if (dept !== 'Mobile Task Forces') { document.getElementById('fn-mtf-unit').value = ''; document.getElementById('fn-mtf-unit').dispatchEvent(new Event('change')); document.querySelectorAll('#mtf-subunit-wrap .subunit-box').forEach(b=>b.classList.remove('selected')); }
   // Render role picker for this department
   renderRolePicker(dept);
   // Reset role selection
@@ -2448,6 +2449,7 @@ function updateFnPreview() {
   const coverDept = document.getElementById('fn-cover-dept')?.value.trim();
   const coverRole = document.getElementById('fn-cover-role')?.value.trim();
   const sdUnit = document.getElementById('fn-sd-unit')?.value;
+  const mtfUnit = document.getElementById('fn-mtf-unit')?.value;
   const scipnet = document.getElementById('fn-scipnet')?.value.trim();
   const personnelId = document.getElementById('fn-personnel-id')?.value.trim();
   const mbti = document.getElementById('fn-mbti')?.value;
@@ -2501,7 +2503,7 @@ function updateFnPreview() {
       <div class="dp-ident-pid">${_previewEscape(pid)}</div>
       <div class="dp-ident-name">${_previewEscape(name || 'Unnamed Personnel')}</div>
       ${displayRole ? `<div class="dp-ident-role">${_previewEscape(displayRole)}</div>` : ''}
-      ${displayDept ? `<div class="dp-ident-dept">${_previewEscape(displayDept)}${sdUnit ? ' / ' + _previewEscape(sdUnit) : ''}</div>` : ''}
+      ${displayDept ? `<div class="dp-ident-dept">${_previewEscape(displayDept)}${(mtfUnit || sdUnit) ? ' / ' + _previewEscape(mtfUnit || sdUnit) : ''}</div>` : ''}
       ${alias ? `<div class="dp-ident-alias">"${_previewEscape(alias)}"</div>` : ''}
     </div>
   `;
@@ -2590,7 +2592,7 @@ function wireFnPreview(){
   const selectors = [
     '#fn-discord','#fn-name','#fn-alias','#fn-age','#fn-nationality','#fn-gender','#fn-height','#fn-blood',
     '#fn-scipnet','#fn-personnel-id','#fn-mbti','#fn-loyalty','#fn-mars','#fn-education','#fn-experience',
-    '#fn-clearance','#fn-classification','#fn-dept','#fn-cover-dept','#fn-cover-role','#fn-role','#fn-sd-unit'
+    '#fn-clearance','#fn-classification','#fn-dept','#fn-cover-dept','#fn-cover-role','#fn-role','#fn-sd-unit','#fn-mtf-unit'
   ];
   selectors.forEach(sel=>{
     const el = document.querySelector(sel);
@@ -2824,6 +2826,11 @@ async function submitFoundation() {
     setMsg(msg,'error','Please select a Security unit (SRU, SCU, SEU, or SIU).');
     return;
   }
+  // MTF task force required
+  if (dept === 'Mobile Task Forces' && !document.getElementById('fn-mtf-unit').value) {
+    setMsg(msg,'error','Please select a task force.');
+    return;
+  }
   // ISD cover requirements: only for "agent" roles (cl === null). Handler/Director are openly operating.
   if (dept === 'Internal Security Department') {
     const roleData = (DEPT_ROLES['Internal Security Department'] || []).find(r => r.name === role);
@@ -2868,6 +2875,7 @@ async function submitFoundation() {
     cover_dept: coverDept || null,
     cover_role: coverRole || null,
     sd_unit: document.getElementById('fn-sd-unit')?.value || null,
+    mtf_unit: document.getElementById('fn-mtf-unit')?.value || null,
     scipnet: scipnet + '@SCiP.net',
     personnel_id: g('fn-personnel-id'),
     mbti: g('fn-mbti'), loyalty: g('fn-loyalty'), mars: g('fn-mars'),

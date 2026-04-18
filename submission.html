@@ -312,32 +312,292 @@ nav{
 
 /* Rich text field */
 .rich-field{
+  position:relative;
   background:var(--deep);border:1px solid var(--border);
   min-height:130px;padding:11px 13px;outline:none;
   font-family:var(--body);font-size:13.5px;color:var(--pale);line-height:1.8;
   transition:border-color .2s;white-space:pre-wrap;
 }
-.rich-field:focus{border-color:var(--border-hi);}
+.rich-field:focus{border-color:var(--gold-dim);}
 .rich-field[data-placeholder]:empty::before{content:attr(data-placeholder);color:var(--muted);pointer-events:none;}
 
-/* Rich toolbar */
+/* Compact dossier format toolbar (floats at bottom of viewport when any rich field is focused) */
 #rich-toolbar{
-  position:fixed;bottom:0;left:0;right:0;z-index:800;
-  background:rgba(10,10,10,0.98);border-top:1px solid var(--border);
-  padding:8px 1.5rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap;
-  transform:translateY(100%);transition:transform .25s;backdrop-filter:blur(10px);
+  position:fixed;bottom:1rem;left:50%;transform:translate(-50%, 160%);z-index:800;
+  background:rgba(10,10,10,0.98);border:1px solid var(--gold-dim);
+  padding:6px 8px;display:flex;align-items:center;gap:2px;
+  box-shadow:0 10px 32px rgba(0,0,0,0.65), 0 0 0 1px rgba(200,150,10,0.08);
+  transition:transform .22s cubic-bezier(.4,0,.2,1);backdrop-filter:blur(10px);
+  font-family:var(--mono);
 }
-#rich-toolbar.visible{transform:translateY(0);}
-.tb-group{display:flex;align-items:center;gap:4px;border-right:1px solid var(--border);padding-right:8px;margin-right:4px;}
+#rich-toolbar::before{
+  content:'FORMAT';position:absolute;left:10px;top:-9px;
+  font-size:7.5px;letter-spacing:0.3em;color:var(--gold);
+  background:var(--black);padding:0 6px;border:1px solid var(--gold-dim);border-bottom:none;
+}
+#rich-toolbar.visible{transform:translate(-50%, 0);}
+.tb-group{display:flex;align-items:center;gap:2px;padding:0 6px;border-right:1px solid var(--border);}
 .tb-group:last-child{border-right:none;}
-.tb-btn{font-family:var(--mono);font-size:9.5px;letter-spacing:0.08em;background:var(--dark);border:1px solid var(--border);color:var(--light);padding:4px 10px;cursor:pointer;transition:all .2s;text-transform:uppercase;white-space:nowrap;}
-.tb-btn:hover{border-color:var(--border-hi);color:var(--pale);}
-.tb-select{font-family:var(--mono);font-size:9px;background:var(--dark);border:1px solid var(--border);color:var(--pale);padding:4px 7px;cursor:pointer;outline:none;}
-.tb-select option{background:var(--dark);}
-.color-row{display:flex;gap:3px;align-items:center;}
-.cswatch{width:16px;height:16px;border:1px solid transparent;cursor:pointer;transition:transform .15s,border-color .15s;flex-shrink:0;}
-.cswatch:hover{transform:scale(1.25);border-color:var(--white);}
-.tb-label{font-family:var(--mono);font-size:8px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);}
+.tb-btn{
+  font-family:var(--mono);font-size:10px;letter-spacing:0.08em;
+  background:transparent;border:1px solid transparent;color:var(--light);
+  padding:6px 10px;cursor:pointer;transition:all .15s;
+  text-transform:uppercase;white-space:nowrap;min-width:30px;
+}
+.tb-btn:hover{border-color:var(--gold-dim);color:var(--gold);background:rgba(200,150,10,0.05);}
+.tb-btn b{font-weight:900;color:inherit;}
+.tb-btn i{font-style:italic;color:inherit;}
+.tb-btn.tb-redact{color:var(--red);border-color:transparent;font-weight:700;}
+.tb-btn.tb-redact:hover{color:var(--red);border-color:var(--red);background:rgba(176,26,10,0.08);}
+.tb-cswatch{
+  width:17px;height:17px;border:1px solid rgba(255,255,255,0.18);cursor:pointer;
+  transition:transform .15s;flex-shrink:0;position:relative;
+}
+.tb-cswatch:hover{transform:scale(1.25);border-color:var(--pale);}
+.tb-cswatch::after{content:'';position:absolute;inset:1px;border:1px solid rgba(0,0,0,0.35);}
+.tb-hint{font-family:var(--mono);font-size:7.5px;letter-spacing:0.22em;color:var(--muted);text-transform:uppercase;padding:0 4px;}
+
+/* ══════════════════════════════════════════
+   DOSSIER TWO-COLUMN LAYOUT + LIVE PREVIEW
+══════════════════════════════════════════════ */
+.dossier-layout{
+  display:grid;grid-template-columns:minmax(0, 1fr) minmax(0, 480px);
+  gap:2rem;max-width:1380px;margin:0 auto;padding:0 2rem;
+  align-items:start;
+}
+.dossier-layout > .form-col{min-width:0;}
+.dossier-preview{
+  position:sticky;top:70px;
+  max-height:calc(100vh - 90px);overflow-y:auto;
+  background:var(--deep);border:1px solid var(--border);
+}
+.dossier-preview::-webkit-scrollbar{width:6px;}
+.dossier-preview::-webkit-scrollbar-track{background:var(--black);}
+.dossier-preview::-webkit-scrollbar-thumb{background:var(--border);}
+.dp-hdr{
+  padding:.7rem 1rem;border-bottom:1px solid var(--border);
+  background:linear-gradient(180deg, rgba(200,150,10,0.06), transparent);
+  display:flex;align-items:center;justify-content:space-between;
+  font-family:var(--mono);font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);
+}
+.dp-hdr-left{display:flex;align-items:center;gap:.55rem;}
+.dp-hdr-left::before{content:'';width:6px;height:6px;background:var(--red);border-radius:50%;animation:dpLive 1.8s ease-in-out infinite;}
+@keyframes dpLive{0%,100%{opacity:1;}50%{opacity:.35;}}
+.dp-hdr-ref{color:var(--gold);font-size:9px;letter-spacing:0.18em;}
+
+/* Foundation Dossier Preview */
+.dp-body{padding:1.4rem 1.3rem;font-family:var(--body);}
+.dp-stamp-row{display:flex;gap:.35rem;flex-wrap:wrap;margin-bottom:.9rem;}
+.dp-stamp{
+  font-family:var(--mono);font-size:7.5px;letter-spacing:0.22em;text-transform:uppercase;
+  padding:3px 7px;border:1px solid;
+}
+.dp-stamp.red{border-color:var(--red);color:var(--red);background:rgba(176,26,10,0.08);}
+.dp-stamp.gold{border-color:var(--gold-dim);color:var(--gold);background:rgba(200,150,10,0.05);}
+.dp-stamp.green{border-color:var(--green-bright);color:var(--green-bright);background:rgba(42,138,72,0.08);}
+.dp-stamp.blue{border-color:var(--blue-bright);color:var(--blue-bright);background:rgba(26,74,138,0.08);}
+.dp-stamp.grey{border-color:var(--border);color:var(--muted);}
+
+.dp-portrait-row{display:grid;grid-template-columns:92px 1fr;gap:1rem;align-items:start;margin-bottom:1.2rem;padding-bottom:1rem;border-bottom:1px solid var(--border);}
+.dp-portrait{
+  width:92px;height:108px;background:var(--dark);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+  position:relative;flex-shrink:0;
+}
+.dp-portrait img{width:100%;height:100%;object-fit:cover;}
+.dp-portrait::after{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.12) 2px,rgba(0,0,0,0.12) 4px);
+  pointer-events:none;
+}
+.dp-portrait-empty{font-family:var(--mono);font-size:8px;letter-spacing:0.25em;color:var(--border);text-transform:uppercase;text-align:center;padding:1rem;}
+.dp-ident{min-width:0;}
+.dp-ident-pid{font-family:var(--mono);font-size:8.5px;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;margin-bottom:.2rem;}
+.dp-ident-name{font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:0.04em;text-transform:uppercase;color:var(--white);line-height:1;margin-bottom:.2rem;}
+.dp-ident-role{font-family:var(--mono);font-size:9.5px;letter-spacing:0.12em;color:var(--pale);margin-bottom:.3rem;}
+.dp-ident-dept{font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;color:var(--gold);text-transform:uppercase;}
+.dp-ident-alias{font-family:var(--elite);font-size:12px;color:var(--muted);margin-top:.3rem;font-style:italic;}
+
+.dp-clearance-row{display:grid;grid-template-columns:1fr 1fr;gap:.55rem;margin-bottom:1.1rem;}
+.dp-cl-tile{border:1px solid var(--border);padding:.55rem .7rem;background:rgba(0,0,0,0.25);}
+.dp-cl-tile .k{font-family:var(--mono);font-size:7.5px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-bottom:.2rem;}
+.dp-cl-tile .v{font-family:var(--display);font-weight:700;font-size:17px;letter-spacing:0.05em;color:var(--white);}
+.dp-cl-tile.cl-1{border-color:#2a6a2a;}.dp-cl-tile.cl-1 .v{color:#4a9a4a;}
+.dp-cl-tile.cl-2{border-color:#2a3a8a;}.dp-cl-tile.cl-2 .v{color:#4a6aaa;}
+.dp-cl-tile.cl-3{border-color:#8a7a1a;}.dp-cl-tile.cl-3 .v{color:#c8981a;}
+.dp-cl-tile.cl-4{border-color:#8a4a1a;}.dp-cl-tile.cl-4 .v{color:#ba6a3a;}
+.dp-cl-tile.cl-5{border-color:#8a1a1a;}.dp-cl-tile.cl-5 .v{color:#ba3a3a;}
+.dp-cl-tile.cl-6{border-color:#4a0a6a;background:rgba(74,10,106,.15);}.dp-cl-tile.cl-6 .v{color:#aa3aff;}
+.dp-cl-tile.cls-A{border-color:#8a1a1a;}.dp-cl-tile.cls-A .v{color:#ba3a3a;}
+.dp-cl-tile.cls-B{border-color:#2a3a8a;}.dp-cl-tile.cls-B .v{color:#4a6aaa;}
+.dp-cl-tile.cls-C{border-color:#2a6a2a;}.dp-cl-tile.cls-C .v{color:#4a9a4a;}
+.dp-cl-tile.cls-D{border-color:#666;}.dp-cl-tile.cls-D .v{color:#999;}
+.dp-cl-tile.cls-E{border-color:#8a7a1a;}.dp-cl-tile.cls-E .v{color:#c8981a;}
+.dp-cl-tile.cls-O{border-color:#4a0a6a;background:rgba(74,10,106,.15);}.dp-cl-tile.cls-O .v{color:#aa3aff;}
+
+.dp-vitals{display:grid;grid-template-columns:1fr 1fr;gap:.45rem .9rem;margin-bottom:1.1rem;font-family:var(--mono);font-size:10px;letter-spacing:0.08em;}
+.dp-vital{display:flex;justify-content:space-between;gap:.5rem;padding:.2rem 0;border-bottom:1px dashed var(--border);}
+.dp-vital .k{color:var(--muted);text-transform:uppercase;font-size:8.5px;letter-spacing:0.18em;}
+.dp-vital .v{color:var(--pale);text-align:right;}
+
+.dp-section{margin-bottom:1rem;}
+.dp-section-title{
+  font-family:var(--mono);font-size:8.5px;letter-spacing:0.28em;text-transform:uppercase;
+  color:var(--gold);padding-bottom:.35rem;margin-bottom:.55rem;
+  border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.4rem;
+}
+.dp-section-title::before{content:'';width:5px;height:5px;background:var(--red);flex-shrink:0;}
+.dp-section-body{font-family:var(--elite);font-size:11.5px;color:var(--pale);line-height:1.6;max-height:120px;overflow:hidden;position:relative;}
+.dp-section-body.expanded{max-height:none;}
+.dp-section-body:not(.expanded)::after{content:'';position:absolute;bottom:0;left:0;right:0;height:30px;background:linear-gradient(to bottom, transparent, var(--deep));pointer-events:none;}
+
+.dp-psych{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem;margin-bottom:.75rem;}
+.dp-psych-chip{text-align:center;padding:.4rem .3rem;border:1px solid var(--border);background:rgba(0,0,0,0.2);}
+.dp-psych-chip .k{font-family:var(--mono);font-size:7px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-bottom:.15rem;}
+.dp-psych-chip .v{font-family:var(--display);font-size:14px;font-weight:700;letter-spacing:0.08em;color:var(--pale);}
+
+.dp-list-title{font-family:var(--mono);font-size:8px;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold);margin-bottom:.35rem;margin-top:.6rem;}
+.dp-traits{display:flex;gap:.3rem;flex-wrap:wrap;}
+.dp-trait-chip{
+  font-family:var(--mono);font-size:8.5px;letter-spacing:0.05em;
+  padding:2px 7px;border:1px solid var(--border);color:var(--pale);
+  background:rgba(0,0,0,0.25);
+}
+.dp-trait-chip.virtue{border-color:var(--green-bright);color:var(--green-bright);}
+.dp-trait-chip.vice{border-color:var(--red);color:var(--red);}
+.dp-trait-chip.motive{border-color:var(--gold-dim);color:var(--gold);}
+.dp-trait-chip.fear{border-color:#8a3a8a;color:#bf6abf;}
+
+.dp-empty{
+  padding:2rem 1.5rem;text-align:center;font-family:var(--mono);font-size:9px;
+  letter-spacing:0.22em;color:var(--border);text-transform:uppercase;
+  border:1px dashed var(--border);
+}
+.dp-empty::before{content:'▓ ▓ ▓ ▓ ▓ ▓';display:block;font-size:13px;letter-spacing:0.3em;margin-bottom:.6rem;opacity:.45;}
+
+.dp-footer-stamp{
+  margin-top:1rem;padding:.55rem .75rem;border:1px dashed var(--gold-dim);
+  font-family:var(--mono);font-size:8px;letter-spacing:0.25em;
+  color:var(--gold);text-transform:uppercase;text-align:center;
+  background:rgba(200,150,10,0.04);
+}
+
+/* ══════════════════════════════════════════
+   SCP PREVIEW - unique classified file look
+══════════════════════════════════════════════ */
+.scp-preview-body{padding:0;}
+.spv-topbar{
+  background:var(--black);border-bottom:1px solid var(--gold-dim);
+  padding:.6rem 1rem;display:flex;align-items:center;justify-content:space-between;
+  font-family:var(--mono);font-size:8.5px;letter-spacing:0.25em;text-transform:uppercase;
+  color:var(--gold);
+}
+.spv-topbar-left{display:flex;align-items:center;gap:.5rem;}
+.spv-topbar-left::before{content:'';width:6px;height:6px;background:var(--red);border-radius:50%;animation:dpLive 1.8s ease-in-out infinite;}
+.spv-clearance-banner{
+  padding:.7rem 1rem;display:flex;justify-content:space-between;align-items:center;
+  font-family:var(--mono);font-size:9px;letter-spacing:0.22em;text-transform:uppercase;
+  border-bottom:1px solid var(--border);
+}
+.spv-clearance-banner.l1{background:rgba(42,106,42,.12);color:#5aaa5a;border-left:4px solid #2a6a2a;}
+.spv-clearance-banner.l2{background:rgba(42,58,138,.12);color:#5a7aca;border-left:4px solid #2a3a8a;}
+.spv-clearance-banner.l3{background:rgba(138,122,26,.12);color:#d4a52c;border-left:4px solid #8a7a1a;}
+.spv-clearance-banner.l4{background:rgba(138,74,26,.12);color:#d47a3c;border-left:4px solid #8a4a1a;}
+.spv-clearance-banner.l5{background:rgba(138,26,26,.15);color:#ea5a4a;border-left:4px solid #8a1a1a;}
+.spv-clearance-banner .lock{letter-spacing:0.18em;}
+
+.spv-acs{
+  padding:0;border-bottom:1px solid var(--border);background:var(--black);
+}
+.spv-acs-top{display:grid;grid-template-columns:1.6fr 1.6fr 1.2fr;border-bottom:1px solid rgba(255,255,255,.08);}
+.spv-acs-top > div{padding:.7rem .9rem;font-family:var(--mono);}
+.spv-acs-item{border-right:1px solid rgba(255,255,255,.08);font-size:12px;color:var(--white);display:flex;flex-direction:column;justify-content:center;letter-spacing:0.05em;}
+.spv-acs-item .lbl{font-size:7px;letter-spacing:0.3em;color:rgba(255,255,255,.5);text-transform:uppercase;margin-bottom:.25rem;}
+.spv-acs-level{border-right:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;justify-content:center;font-size:11px;color:rgba(255,255,255,.82);letter-spacing:0.08em;text-transform:uppercase;}
+.spv-acs-class{display:flex;flex-direction:column;justify-content:center;}
+.spv-acs-class .cls-hdr{font-size:7px;letter-spacing:0.3em;opacity:.65;margin-bottom:.2rem;text-transform:uppercase;}
+.spv-acs-class .cls-val{font-size:13px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;}
+.spv-acs-class .cls-sec{font-size:9px;color:rgba(255,255,255,.55);margin-top:.15rem;letter-spacing:0.08em;}
+.spv-acs-class.cc-safe{background:#0d4a2a;color:#8aea9a;}
+.spv-acs-class.cc-euclid{background:#4a3d0d;color:#eadf7a;}
+.spv-acs-class.cc-keter{background:#4a0d0d;color:#ea6a5a;}
+.spv-acs-class.cc-neutralized{background:#2a2a2a;color:#aaa;}
+.spv-acs-class.cc-pending{background:#0d2a4a;color:#7aaeea;}
+.spv-acs-class.cc-explained{background:#2a0d4a;color:#aa7ada;}
+.spv-acs-class.cc-esoteric{background:#3a0d3a;color:#da7ada;}
+.spv-acs-bottom{display:grid;grid-template-columns:1fr 1fr;}
+.spv-acs-bottom > div{padding:.55rem .9rem;font-family:var(--mono);display:flex;flex-direction:column;font-size:11px;}
+.spv-acs-dis{border-right:1px solid rgba(255,255,255,.08);}
+.spv-acs-bottom .lbl{font-size:7px;letter-spacing:0.3em;opacity:.5;margin-bottom:.2rem;text-transform:uppercase;}
+.spv-acs-bottom .val{letter-spacing:0.08em;color:rgba(255,255,255,.82);text-transform:uppercase;}
+.spv-acs-dis.di-dark{background:#0a0a0a;}
+.spv-acs-dis.di-vlam{background:#3a1a05;}
+.spv-acs-dis.di-keneq{background:#3a2a05;}
+.spv-acs-dis.di-ekhi{background:#4a3a0a;}
+.spv-acs-dis.di-amida{background:#4a4a3a;}
+.spv-acs-risk.ri-notice{background:#0a3a0a;}
+.spv-acs-risk.ri-caution{background:#2a3a0a;}
+.spv-acs-risk.ri-warning{background:#3a2a0a;}
+.spv-acs-risk.ri-danger{background:#3a0a0a;}
+.spv-acs-risk.ri-critical{background:#1a0505;}
+
+.spv-doc{padding:1.25rem 1.2rem 1rem;font-family:'Times New Roman', Georgia, serif;}
+.spv-doc-title{font-family:var(--mono);font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);text-align:center;padding-bottom:.5rem;margin-bottom:1rem;border-bottom:2px double var(--border);}
+.spv-doc-section{margin-bottom:1.1rem;}
+.spv-doc-section-hdr{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.25em;text-transform:uppercase;
+  color:var(--white);background:var(--dark);padding:4px 9px;margin-bottom:.5rem;
+  border-left:3px solid var(--red);
+}
+.spv-doc-body{font-size:12px;color:var(--pale);line-height:1.65;max-height:140px;overflow:hidden;position:relative;cursor:pointer;}
+.spv-doc-body.expanded{max-height:none;}
+.spv-doc-body:not(.expanded)::after{content:'';position:absolute;bottom:0;left:0;right:0;height:34px;background:linear-gradient(to bottom, transparent, var(--deep));pointer-events:none;}
+.spv-doc-body p{margin-bottom:.65rem;}
+.spv-doc-body > :first-child::first-letter{float:left;font-family:var(--display);font-size:34px;font-weight:700;line-height:.85;padding:2px 8px 0 0;color:var(--red);}
+
+.spv-addendum{
+  margin-top:.7rem;padding:.55rem .8rem;
+  background:var(--dark);border:1px solid var(--border);border-left:3px solid var(--gold-dim);
+}
+.spv-addendum-title{font-family:var(--mono);font-size:9px;letter-spacing:0.18em;color:var(--gold);text-transform:uppercase;margin-bottom:.3rem;}
+.spv-addendum-body{font-size:11px;color:var(--pale);line-height:1.55;}
+
+.spv-classified-stamp{
+  position:absolute;top:2rem;right:1.5rem;transform:rotate(-12deg);
+  font-family:var(--mono);font-size:11px;letter-spacing:0.3em;text-transform:uppercase;
+  color:var(--red);border:3px double var(--red);padding:4px 10px;
+  background:rgba(176,26,10,0.05);pointer-events:none;opacity:.3;
+}
+
+/* ══════════════════════════════════════════
+   UNALIGNED PREVIEW - civilian file look
+══════════════════════════════════════════════ */
+.upv-hdr{
+  padding:1rem 1.2rem;display:grid;grid-template-columns:90px 1fr;gap:1rem;
+  border-bottom:1px solid var(--border);background:linear-gradient(180deg, rgba(15,42,80,0.08), transparent);
+}
+.upv-portrait{width:90px;height:108px;background:var(--dark);border:1px solid var(--border);overflow:hidden;position:relative;}
+.upv-portrait img{width:100%;height:100%;object-fit:cover;}
+.upv-portrait::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.12) 2px,rgba(0,0,0,.12) 4px);pointer-events:none;}
+.upv-portrait-empty{display:flex;align-items:center;justify-content:center;height:100%;font-family:var(--mono);font-size:7.5px;letter-spacing:0.25em;color:var(--border);text-align:center;text-transform:uppercase;padding:.5rem;}
+.upv-ident{min-width:0;}
+.upv-fileref{font-family:var(--mono);font-size:8.5px;letter-spacing:0.22em;color:var(--muted);text-transform:uppercase;margin-bottom:.3rem;}
+.upv-name{font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:0.04em;color:var(--white);line-height:1;margin-bottom:.3rem;text-transform:uppercase;}
+.upv-aff{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:0.15em;color:var(--blue-bright);background:rgba(15,42,80,.2);border:1px solid var(--blue-bright);padding:2px 8px;text-transform:uppercase;}
+.upv-age{font-family:var(--mono);font-size:9.5px;letter-spacing:0.1em;color:var(--pale);margin-top:.4rem;}
+.upv-section{padding:1rem 1.2rem;border-bottom:1px solid var(--border);}
+.upv-section:last-child{border-bottom:none;}
+.upv-section-hdr{font-family:var(--mono);font-size:8.5px;letter-spacing:0.25em;color:var(--gold);text-transform:uppercase;margin-bottom:.5rem;padding-bottom:.3rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.45rem;}
+.upv-section-hdr::before{content:'';width:5px;height:5px;background:var(--red);flex-shrink:0;}
+.upv-section-body{font-family:var(--elite);font-size:11.5px;color:var(--pale);line-height:1.65;max-height:110px;overflow:hidden;position:relative;cursor:pointer;}
+.upv-section-body.expanded{max-height:none;}
+.upv-section-body:not(.expanded)::after{content:'';position:absolute;bottom:0;left:0;right:0;height:28px;background:linear-gradient(to bottom, transparent, var(--deep));pointer-events:none;}
+
+/* Responsive: stack preview below on smaller screens */
+@media(max-width:1200px){
+  .dossier-layout{grid-template-columns:1fr;gap:1.5rem;}
+  .dossier-preview{position:static;max-height:none;margin-top:1rem;}
+}
 
 /* ACS bar */
 .acs-bar{border:1px solid var(--border);overflow:hidden;margin-bottom:2rem;font-family:var(--mono);}
@@ -415,135 +675,341 @@ nav{
 }
 .tracker-form input:focus{border-color:var(--border-hi);}
 
-.track-table{width:100%;border-collapse:collapse;}
-.track-table th{font-family:var(--mono);font-size:8px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);padding:.55rem 1rem;text-align:left;border-bottom:1px solid var(--border);}
-.track-table td{padding:.8rem 1rem;border-bottom:1px solid rgba(255,255,255,0.04);font-size:13px;color:var(--light);vertical-align:top;}
-.track-table tr:hover td{background:rgba(255,255,255,0.015);}
+/* ═══════════════════════════════════════════
+   TRACKER (My Submissions) - dossier aesthetic
+══════════════════════════════════════════════ */
+.trk-form{
+  display:grid;grid-template-columns:1fr auto;gap:.75rem;
+  padding:1.25rem;border:1px solid var(--border);background:var(--deep);
+  margin-bottom:2rem;position:relative;
+}
+.trk-form::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--gold);}
+.trk-form-label{
+  grid-column:1 / -1;
+  font-family:var(--mono);font-size:9px;letter-spacing:0.28em;color:var(--muted);
+  text-transform:uppercase;margin-bottom:.25rem;display:flex;align-items:center;gap:.5rem;
+}
+.trk-form-label::before{content:'';width:6px;height:6px;background:var(--gold);flex-shrink:0;}
+.trk-form input{
+  width:100%;font-family:var(--mono);font-size:13px;letter-spacing:0.1em;
+  background:var(--black);border:1px solid var(--border);color:var(--pale);
+  padding:.7rem .85rem;outline:none;transition:border-color .2s;
+}
+.trk-form input:focus{border-color:var(--gold-dim);}
+.trk-form button{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:0.22em;text-transform:uppercase;
+  padding:.75rem 1.4rem;border:1px solid var(--gold-dim);background:transparent;
+  color:var(--gold);cursor:pointer;transition:all .2s;
+}
+.trk-form button:hover{background:var(--gold);color:var(--black);border-color:var(--gold);}
 
-.track-badge{font-family:var(--mono);font-size:8px;letter-spacing:0.15em;text-transform:uppercase;padding:2px 8px;border:1px solid;display:inline-block;}
-.ts-pending{border-color:var(--border);color:var(--muted);}
-.ts-review{border-color:#7a5a10;color:#b08020;}
-.ts-approved{border-color:#2a6a38;color:#3a9a50;}
-.ts-denied{border-color:var(--danger);color:var(--danger);}
-.track-reason{font-size:11.5px;color:var(--muted);font-style:italic;margin-top:.3rem;}
-.track-empty{text-align:center;padding:3rem 2rem;font-family:var(--mono);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);}
+/* Tracker summary strip - shows once a user is loaded */
+.trk-summary{
+  display:grid;grid-template-columns:repeat(4, 1fr);gap:0;
+  border:1px solid var(--border);background:var(--deep);margin-bottom:1.5rem;
+}
+.trk-sum-item{
+  padding:1rem 1.2rem;border-right:1px solid var(--border);
+  display:flex;flex-direction:column;gap:.25rem;
+}
+.trk-sum-item:last-child{border-right:none;}
+.trk-sum-k{font-family:var(--mono);font-size:8px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);}
+.trk-sum-v{font-family:var(--display);font-size:24px;font-weight:700;color:var(--white);line-height:1;}
+.trk-sum-item.pending .trk-sum-v{color:var(--border);}
+.trk-sum-item.review .trk-sum-v{color:#b08020;}
+.trk-sum-item.approved .trk-sum-v{color:#3a9a50;}
+.trk-sum-item.denied .trk-sum-v{color:var(--danger);}
+
+/* Tracker results as dossier cards */
+.trk-results{display:flex;flex-direction:column;gap:.75rem;}
+.trk-card{
+  position:relative;background:var(--deep);border:1px solid var(--border);
+  padding:1.1rem 1.3rem 1rem 1.5rem;transition:background .2s,border-color .2s;
+  overflow:hidden;
+}
+.trk-card::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--border);transition:width .22s,background .22s;
+}
+.trk-card:hover{background:var(--dark);border-color:var(--border-hi);}
+.trk-card:hover::before{width:5px;}
+.trk-card.s-pending::before{background:var(--muted);}
+.trk-card.s-review::before{background:#b08020;}
+.trk-card.s-approved::before{background:#3a9a50;}
+.trk-card.s-denied::before{background:var(--danger);}
+.trk-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:.5rem;}
+.trk-card-seq{font-family:var(--mono);font-size:9.5px;letter-spacing:0.22em;color:var(--muted);text-transform:uppercase;}
+.trk-card-seq strong{color:var(--pale);font-weight:400;}
+.trk-card-badges{display:flex;gap:.4rem;align-items:center;flex-wrap:wrap;}
+.trk-badge{font-family:var(--mono);font-size:8px;letter-spacing:0.22em;text-transform:uppercase;padding:3px 9px;border:1px solid;}
+.trk-badge.type{border-color:var(--border);color:var(--light);}
+.trk-badge.status.s-pending{border-color:var(--border);color:var(--muted);background:rgba(255,255,255,.02);}
+.trk-badge.status.s-review{border-color:#7a5a10;color:#d4a52c;background:rgba(212,165,44,.06);}
+.trk-badge.status.s-approved{border-color:#2a6a38;color:#3a9a50;background:rgba(42,138,72,.06);}
+.trk-badge.status.s-denied{border-color:var(--danger);color:var(--danger);background:rgba(204,34,0,.06);}
+.trk-card-name{font-family:var(--display);font-size:20px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--white);line-height:1.1;margin-bottom:.5rem;}
+.trk-card-meta{font-family:var(--mono);font-size:9px;letter-spacing:0.14em;color:var(--muted);text-transform:uppercase;display:flex;gap:1rem;flex-wrap:wrap;}
+.trk-card-reason{
+  margin-top:.8rem;padding:.7rem .9rem;
+  font-family:var(--elite);font-size:12px;color:var(--pale);line-height:1.65;
+  border-left:2px solid var(--red);background:rgba(176,26,10,.04);position:relative;
+}
+.trk-card-reason::before{
+  content:'STAFF FEEDBACK';position:absolute;top:-9px;left:.85rem;padding:0 .5rem;
+  background:var(--deep);font-family:var(--mono);font-size:7.5px;letter-spacing:0.28em;color:var(--red);
+}
+
+.trk-empty{
+  border:1px dashed var(--border);padding:3rem 2rem;text-align:center;
+  font-family:var(--mono);font-size:10px;letter-spacing:0.25em;color:var(--border);
+  text-transform:uppercase;background:var(--deep);
+}
+.trk-empty::before{content:'\25A3 \25A3 \25A3 \25A3 \25A3 \25A3';display:block;font-size:14px;color:var(--border);margin-bottom:.75rem;letter-spacing:0.3em;opacity:.4;}
 
 /* ═══════════════════════════════════════════
-   ROSTER / LISTING
+   ROSTER (Public Roster) - dossier aesthetic
 ══════════════════════════════════════════════ */
-.roster-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:2.5rem;}
-.rtab{font-family:var(--mono);font-size:9.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;padding:.8rem 1.6rem;cursor:pointer;transition:all .2s;margin-bottom:-1px;}
-.rtab:hover{color:var(--pale);}
-.rtab.active{color:var(--white);border-bottom-color:var(--white);}
-.rtab-panel{display:none;}.rtab-panel.active{display:block;}
-
-/* Dept filter pills */
-.dept-pills{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:2rem;}
-.dpill{font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--muted);padding:4px 12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.4rem;}
-.dpill:hover{border-color:var(--light);color:var(--pale);}
-.dpill.active{border-color:var(--pale);color:var(--pale);}
-.dpill img{width:14px;height:14px;object-fit:contain;mix-blend-mode:screen;}
-
-/* Dept section */
-.dept-section{margin-bottom:2.75rem;}
-.dept-sec-hdr{display:flex;align-items:center;gap:.9rem;margin-bottom:1.1rem;padding-bottom:.65rem;border-bottom:1px solid var(--border);}
-.dept-sec-icon{width:30px;height:30px;object-fit:contain;mix-blend-mode:screen;}
-.dept-sec-name{font-family:var(--display);font-size:18px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--pale);}
-.dept-sec-count{font-family:var(--mono);font-size:8.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--border);margin-left:auto;}
-
-/* Character cards */
-.rchar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1px;background:var(--border);}
-.rchar-card{
-  background:var(--deep);cursor:pointer;position:relative;overflow:hidden;
-  transition:background .2s;
+.roster-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:2.5rem;gap:0;}
+.rtab{
+  position:relative;font-family:var(--mono);font-size:10px;letter-spacing:0.22em;
+  text-transform:uppercase;color:var(--muted);background:none;border:none;
+  padding:.9rem 1.5rem;cursor:pointer;transition:color .2s;margin-bottom:-1px;
+  display:flex;align-items:center;gap:.6rem;
 }
-.rchar-card:hover{background:var(--dark);}
-.rchar-accent{position:absolute;left:0;top:0;bottom:0;width:2px;z-index:1;}
-.rchar-body{position:relative;z-index:2;padding:1rem 1rem .9rem;}
-.rchar-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.6rem;}
-.rchar-icon{width:26px;height:26px;object-fit:contain;mix-blend-mode:screen;flex-shrink:0;}
-.rchar-cl{font-family:var(--mono);font-size:7.5px;letter-spacing:0.12em;text-transform:uppercase;padding:2px 6px;border:1px solid;}
-.rchar-name{font-family:var(--display);font-size:17px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:var(--white);line-height:1.1;margin-bottom:.35rem;}
-.rchar-role{font-family:var(--mono);font-size:9px;letter-spacing:0.08em;color:var(--muted);margin-bottom:.5rem;}
-.rchar-dept{font-size:11px;color:var(--muted);}
-.rchar-dept-name{font-family:var(--mono);font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:var(--border);margin-top:.4rem;}
+.rtab::after{
+  content:'';position:absolute;left:0;right:0;bottom:0;height:2px;
+  background:var(--red);transform:scaleX(0);transform-origin:center;transition:transform .25s;
+}
+.rtab:hover{color:var(--pale);}
+.rtab:hover::after{transform:scaleX(.4);}
+.rtab.active{color:var(--white);}
+.rtab.active::after{transform:scaleX(1);}
+.rtab-num{font-family:var(--display);font-size:14px;font-weight:700;color:var(--border);letter-spacing:0;transition:color .2s;}
+.rtab.active .rtab-num{color:var(--red);}
+.rtab-ico{display:inline-block;width:7px;height:7px;border:1px solid var(--border);transform:rotate(45deg);transition:all .2s;}
+.rtab.active .rtab-ico{background:var(--red);border-color:var(--red);}
+.rtab-panel{display:none;}.rtab-panel.active{display:block;animation:rtabFade .3s ease both;}
+@keyframes rtabFade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 
-/* SCP cards */
-.scp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1px;background:var(--border);}
-.scp-card{background:var(--deep);cursor:pointer;transition:background .2s;padding:1.25rem 1rem 1rem;}
-.scp-card:hover{background:var(--dark);}
-.scp-card-num{font-family:var(--mono);font-size:11px;letter-spacing:0.1em;color:var(--muted);margin-bottom:.5rem;}
-.scp-card-class{font-family:var(--mono);font-size:8px;letter-spacing:0.2em;text-transform:uppercase;padding:2px 7px;border:1px solid;display:inline-block;margin-bottom:.65rem;}
-.scp-card-name{font-family:var(--display);font-size:18px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:var(--white);line-height:1.1;}
-.class-safe{border-color:#1a4a2a;color:#2a7a40;}
-.class-euclid{border-color:#5a4510;color:#9a7020;}
-.class-keter{border-color:#5a1010;color:#9a2020;}
-.class-neutralized{border-color:#2a2a2a;color:#5a5a5a;}
-.class-pending{border-color:#0a2a4a;color:#1a4a8a;}
-.class-explained{border-color:#2a0a4a;color:#5a1a8a;}
-.class-esoteric{border-color:#3a0a3a;color:#7a1a7a;}
+/* Filter row (shared by all tabs) */
+.roster-filters{
+  display:flex;flex-direction:column;gap:.75rem;margin-bottom:2rem;
+  padding:1rem 1.2rem;border:1px solid var(--border);background:var(--deep);position:relative;
+}
+.roster-filters::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--red);}
+.rfilter-label{
+  font-family:var(--mono);font-size:8.5px;letter-spacing:0.28em;color:var(--muted);
+  text-transform:uppercase;margin-right:.85rem;flex-shrink:0;min-width:90px;
+}
+.rfilter-row{display:flex;align-items:center;gap:.45rem;flex-wrap:wrap;}
 
-/* Unaffiliated */
-.runaff-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1px;background:var(--border);}
-.runaff-card{background:var(--deep);cursor:pointer;padding:1.1rem;transition:background .2s;}
-.runaff-card:hover{background:var(--dark);}
-.runaff-name{font-family:var(--display);font-size:19px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:var(--white);margin-bottom:.3rem;}
-.runaff-affil{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);}
+/* Filter chips */
+.rchip{
+  font-family:var(--mono);font-size:8.5px;letter-spacing:0.18em;text-transform:uppercase;
+  background:none;border:1px solid var(--border);color:var(--muted);
+  padding:5px 11px;cursor:pointer;transition:all .18s;
+  display:inline-flex;align-items:center;gap:.4rem;line-height:1;
+}
+.rchip:hover{border-color:var(--pale);color:var(--pale);}
+.rchip.active{background:var(--dark);border-color:var(--pale);color:var(--white);}
+.rchip img{width:14px;height:14px;object-fit:contain;mix-blend-mode:screen;flex-shrink:0;}
+.rchip .count{font-size:7.5px;color:var(--muted);padding-left:.35rem;border-left:1px solid currentColor;margin-left:.2rem;}
+.rchip.active .count{color:var(--pale);}
+/* Clearance-level tinted chips */
+.rchip.cl-0{border-color:#444;color:#666;}.rchip.cl-0.active{background:rgba(80,80,80,.15);color:#aaa;}
+.rchip.cl-1{border-color:#1a6a1a;color:#2a7a2a;}.rchip.cl-1.active{background:rgba(26,106,26,.15);color:#4a9a4a;}
+.rchip.cl-2{border-color:#1a3a8a;color:#2a4a9a;}.rchip.cl-2.active{background:rgba(26,58,138,.15);color:#4a6aaa;}
+.rchip.cl-3{border-color:#8a7a1a;color:#baa03a;}.rchip.cl-3.active{background:rgba(138,122,26,.15);color:var(--gold);}
+.rchip.cl-4{border-color:#8a4a1a;color:#ba6a3a;}.rchip.cl-4.active{background:rgba(138,74,26,.15);color:#d47a3c;}
+.rchip.cl-5{border-color:#8a1a1a;color:#ba3a3a;}.rchip.cl-5.active{background:rgba(138,26,26,.15);color:#ea5a4a;}
+/* Containment-class tinted chips */
+.rchip.cc-safe{border-color:#2a6a3a;color:#3a9a5a;}.rchip.cc-safe.active{background:rgba(42,138,72,.15);color:#5ada7a;}
+.rchip.cc-euclid{border-color:#8a7a1a;color:#baa03a;}.rchip.cc-euclid.active{background:rgba(138,122,26,.15);color:var(--gold);}
+.rchip.cc-keter{border-color:#8a1a1a;color:#ba3a3a;}.rchip.cc-keter.active{background:rgba(138,26,26,.15);color:#ea5a4a;}
+.rchip.cc-neutralized{border-color:#555;color:#888;}.rchip.cc-neutralized.active{background:rgba(100,100,100,.15);color:#bbb;}
+.rchip.cc-pending{border-color:#1a3a8a;color:#3a6aaa;}.rchip.cc-pending.active{background:rgba(26,58,138,.15);color:#7aaaea;}
+.rchip.cc-explained{border-color:#4a1a8a;color:#7a3aba;}.rchip.cc-explained.active{background:rgba(74,26,138,.15);color:#aa6ada;}
+.rchip.cc-esoteric{border-color:#5a1a5a;color:#aa3aaa;}.rchip.cc-esoteric.active{background:rgba(90,26,90,.15);color:#da6ada;}
+
+/* Dept sections on Foundation tab */
+.dept-section{margin-bottom:2.5rem;}
+.dept-sec-hdr{
+  display:flex;align-items:center;gap:1rem;margin-bottom:1rem;padding:.75rem 1rem;
+  border:1px solid var(--border);background:var(--deep);position:relative;
+}
+.dept-sec-hdr::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--red);}
+.dept-sec-icon{width:32px;height:32px;object-fit:contain;mix-blend-mode:screen;flex-shrink:0;}
+.dept-sec-name{font-family:var(--display);font-size:20px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--white);line-height:1;}
+.dept-sec-ref{font-family:var(--mono);font-size:8.5px;letter-spacing:0.22em;color:var(--muted);text-transform:uppercase;margin-top:.15rem;}
+.dept-sec-meta{margin-left:auto;font-family:var(--mono);font-size:9px;letter-spacing:0.2em;color:var(--gold);text-transform:uppercase;}
+
+/* Foundation character card - dossier file style */
+.rchar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.75rem;}
+.rchar-card{
+  background:var(--deep);border:1px solid var(--border);cursor:pointer;
+  position:relative;overflow:hidden;transition:border-color .2s,background .2s,transform .2s;
+  display:flex;flex-direction:column;
+}
+.rchar-card:hover{border-color:var(--border-hi);background:var(--dark);transform:translateY(-2px);}
+.rchar-accent{position:absolute;left:0;top:0;bottom:0;width:3px;z-index:1;transition:width .2s;}
+.rchar-card:hover .rchar-accent{width:5px;}
+.rchar-tab{
+  position:absolute;top:0;right:0;z-index:2;
+  font-family:var(--mono);font-size:7.5px;letter-spacing:0.22em;text-transform:uppercase;
+  color:var(--muted);background:var(--dark);padding:3px 9px 3px 10px;
+  border-left:1px solid var(--border);border-bottom:1px solid var(--border);
+}
+.rchar-body{position:relative;z-index:2;padding:2rem 1rem 1rem 1.2rem;}
+.rchar-fileref{font-family:var(--mono);font-size:8px;letter-spacing:0.22em;color:var(--muted);text-transform:uppercase;margin-bottom:.55rem;}
+.rchar-name{font-family:var(--display);font-size:17px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--white);line-height:1.1;margin-bottom:.2rem;}
+.rchar-role{font-family:var(--mono);font-size:9px;letter-spacing:0.12em;color:var(--pale);text-transform:uppercase;margin-bottom:.55rem;}
+.rchar-meta{display:flex;gap:.35rem;flex-wrap:wrap;margin-bottom:.5rem;}
+.rchar-meta-chip{font-family:var(--mono);font-size:7.5px;letter-spacing:0.18em;text-transform:uppercase;padding:2px 6px;border:1px solid;}
+.rchar-dept-line{font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;color:var(--muted);text-transform:uppercase;padding-top:.45rem;border-top:1px dashed var(--border);}
+
+/* SCP card - mini ACS plate */
+.scp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.75rem;}
+.scp-card{
+  background:var(--deep);border:1px solid var(--border);cursor:pointer;
+  position:relative;overflow:hidden;transition:border-color .2s,background .2s,transform .2s;
+}
+.scp-card:hover{border-color:var(--border-hi);transform:translateY(-2px);}
+.scp-acs-top{
+  background:var(--black);padding:.7rem .9rem .6rem;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;gap:.6rem;
+}
+.scp-item-num{font-family:var(--mono);font-size:11px;letter-spacing:0.08em;color:var(--white);}
+.scp-class-block{
+  font-family:var(--mono);font-size:8px;letter-spacing:0.22em;text-transform:uppercase;
+  padding:3px 9px;font-weight:700;
+}
+.scp-class-block.cc-safe{background:#0d4a2a;color:#8aea9a;}
+.scp-class-block.cc-euclid{background:#4a3d0d;color:#eadf7a;}
+.scp-class-block.cc-keter{background:#4a0d0d;color:#ea6a5a;}
+.scp-class-block.cc-neutralized{background:#2a2a2a;color:#aaa;}
+.scp-class-block.cc-pending{background:#0d2a4a;color:#7aaeea;}
+.scp-class-block.cc-explained{background:#2a0d4a;color:#aa7ada;}
+.scp-class-block.cc-esoteric{background:#3a0d3a;color:#da7ada;}
+.scp-card-body{padding:.9rem 1rem 1rem;}
+.scp-card-sec{font-family:var(--mono);font-size:8.5px;letter-spacing:0.2em;color:var(--gold);text-transform:uppercase;margin-bottom:.5rem;}
+.scp-card-meta-row{
+  display:grid;grid-template-columns:1fr 1fr;gap:.35rem;margin-top:.5rem;
+  padding-top:.5rem;border-top:1px dashed var(--border);
+  font-family:var(--mono);font-size:8px;letter-spacing:0.15em;color:var(--muted);text-transform:uppercase;
+}
+.scp-card-meta-row strong{color:var(--pale);font-weight:400;}
+.scp-card-accent{position:absolute;left:0;top:0;bottom:0;width:3px;z-index:2;}
+.scp-card-accent.cc-safe{background:#2a6a3a;}
+.scp-card-accent.cc-euclid{background:#8a7a1a;}
+.scp-card-accent.cc-keter{background:#8a1a1a;}
+.scp-card-accent.cc-neutralized{background:#555;}
+.scp-card-accent.cc-pending{background:#1a3a8a;}
+.scp-card-accent.cc-explained{background:#4a1a8a;}
+.scp-card-accent.cc-esoteric{background:#5a1a5a;}
+
+/* Unaligned card - blue-accent civilian file */
+.runaff-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.75rem;}
+.runaff-card{
+  background:var(--deep);border:1px solid var(--border);border-left:3px solid var(--blue-bright);
+  cursor:pointer;padding:1rem 1.1rem 1rem 1.25rem;transition:border-color .2s,background .2s,transform .2s;
+  position:relative;overflow:hidden;
+}
+.runaff-card:hover{border-color:var(--border-hi);border-left-color:var(--blue-bright);background:var(--dark);transform:translateY(-2px);}
+.runaff-tab{
+  position:absolute;top:0;right:0;
+  font-family:var(--mono);font-size:7.5px;letter-spacing:0.22em;text-transform:uppercase;
+  color:var(--muted);background:var(--dark);padding:3px 9px;
+  border-left:1px solid var(--border);border-bottom:1px solid var(--border);
+}
+.runaff-fileref{font-family:var(--mono);font-size:8px;letter-spacing:0.22em;color:var(--muted);text-transform:uppercase;margin-bottom:.5rem;padding-top:1rem;}
+.runaff-name{font-family:var(--display);font-size:18px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--white);line-height:1.1;margin-bottom:.4rem;}
+.runaff-affil{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.14em;color:var(--blue-bright);
+  text-transform:uppercase;display:inline-block;padding:2px 8px;
+  border:1px solid var(--blue-bright);background:rgba(15,42,80,.15);
+}
+.runaff-age{font-family:var(--mono);font-size:8.5px;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;margin-top:.45rem;padding-top:.45rem;border-top:1px dashed var(--border);}
 
 .empty-state{
   border:1px dashed var(--border);padding:3.5rem 2rem;text-align:center;
-  font-family:var(--mono);font-size:9.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);
+  font-family:var(--mono);font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:var(--border);
+  background:var(--deep);
 }
+.empty-state::before{content:'\25A3 \25A3 \25A3 \25A3 \25A3 \25A3';display:block;font-size:14px;color:var(--border);margin-bottom:.75rem;letter-spacing:0.3em;opacity:.4;}
 
 /* ═══════════════════════════════════════════
-   CHARACTER VIEW
+   CHARACTER VIEW - dossier chrome
 ══════════════════════════════════════════════ */
-.cv-wrap{max-width:840px;margin:0 auto;padding:2.5rem 3rem 5rem;}
+.cv-wrap{max-width:920px;margin:0 auto;padding:2.5rem 3rem 5rem;}
 .cv-back-btn{
   font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;
   color:var(--muted);background:none;border:none;cursor:pointer;
   display:inline-flex;align-items:center;gap:.5rem;
   margin-bottom:2rem;transition:color .2s;padding:0;
 }
-.cv-back-btn::before{content:'←';}
+.cv-back-btn::before{content:'\2190';}
 .cv-back-btn:hover{color:var(--pale);}
 
-/* Foundation character view */
-.cv-fnd-header{display:flex;gap:1.75rem;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border);}
-.cv-fnd-img{width:130px;height:160px;object-fit:cover;border:1px solid var(--border);flex-shrink:0;}
-.cv-fnd-img-ph{width:130px;height:160px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);flex-shrink:0;}
-.cv-fnd-name{font-family:var(--display);font-size:38px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--white);line-height:1;}
-.cv-table{width:100%;border-collapse:collapse;margin-top:.6rem;}
-.cv-table td{font-size:13px;padding:.4rem 0;border-bottom:1px solid rgba(255,255,255,0.04);color:var(--light);}
-.cv-table td:first-child{font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);width:38%;padding-right:1rem;}
-.cv-section{margin-bottom:1.75rem;}
-.cv-section-title{font-family:var(--mono);font-size:8.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);margin-bottom:.75rem;padding-bottom:.5rem;border-bottom:1px solid var(--border);}
-.cv-rich{font-size:14px;color:var(--light);line-height:1.85;}
+.cv-cover-stamps{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1rem;}
+.cv-stamp{font-family:var(--mono);font-size:8.5px;letter-spacing:0.25em;text-transform:uppercase;padding:4px 10px;border:1px solid;}
+.cv-stamp.red{border-color:var(--red);color:var(--red);background:rgba(176,26,10,.08);}
+.cv-stamp.gold{border-color:var(--gold-dim);color:var(--gold);background:rgba(200,150,10,.05);}
+.cv-stamp.grey{border-color:var(--border);color:var(--muted);}
+.cv-stamp.blue{border-color:var(--blue-bright);color:var(--blue-bright);background:rgba(15,42,80,.1);}
 
-/* SCP char view */
-.cv-scp-doc{font-size:14px;color:var(--light);line-height:1.85;}
+/* Foundation character view - dossier style */
+.cv-fnd-header{
+  display:grid;grid-template-columns:150px 1fr;gap:1.75rem;margin-bottom:2rem;
+  padding:1.5rem;border:1px solid var(--border);background:var(--deep);position:relative;
+}
+.cv-fnd-header::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--red);}
+.cv-fnd-img,.cv-fnd-img-ph{width:150px;height:180px;border:1px solid var(--border);flex-shrink:0;position:relative;overflow:hidden;}
+.cv-fnd-img{object-fit:cover;}
+.cv-fnd-img::after,.cv-fnd-img-ph::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.15) 2px,rgba(0,0,0,.15) 4px);pointer-events:none;}
+.cv-fnd-img-ph{background:var(--dark);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);}
+.cv-fileref{font-family:var(--mono);font-size:9px;letter-spacing:0.22em;color:var(--muted);text-transform:uppercase;margin-bottom:.4rem;}
+.cv-fnd-name{font-family:var(--display);font-size:clamp(28px,4vw,42px);font-weight:800;letter-spacing:0.04em;text-transform:uppercase;color:var(--white);line-height:.95;margin-bottom:.35rem;}
+.cv-fnd-role{font-family:var(--mono);font-size:10.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--pale);margin-bottom:.4rem;}
+.cv-fnd-dept{font-family:var(--mono);font-size:9.5px;letter-spacing:0.18em;color:var(--gold);text-transform:uppercase;margin-bottom:.8rem;}
+.cv-table{width:100%;border-collapse:collapse;margin-top:.6rem;}
+.cv-table td{font-family:var(--mono);font-size:11px;padding:.4rem 0;border-bottom:1px dashed var(--border);color:var(--pale);letter-spacing:0.05em;}
+.cv-table td:first-child{font-size:8.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);width:40%;padding-right:1rem;}
+
+.cv-section{margin-bottom:1.75rem;}
+.cv-section-title{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.28em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:.85rem;padding:.6rem 1rem;
+  background:var(--dark);border-left:3px solid var(--red);
+  display:flex;align-items:center;gap:.6rem;
+}
+.cv-section-title::before{content:'';width:6px;height:6px;background:var(--red);flex-shrink:0;}
+.cv-rich{font-family:var(--elite);font-size:13.5px;color:var(--pale);line-height:1.8;padding:0 1rem;}
+
+/* SCP char view - keep ACS bar intact, polish surrounding chrome */
+.cv-scp-doc{font-family:'Times New Roman', Georgia, serif;font-size:14px;color:var(--pale);line-height:1.8;padding:1.5rem 1rem;border:1px solid var(--border);background:var(--deep);margin-top:1rem;}
 .scp-doc-section{margin-bottom:1.75rem;}
-.scp-doc-section-title{font-family:var(--mono);font-size:8.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);margin-bottom:.75rem;padding-bottom:.5rem;border-bottom:1px solid var(--border);}
+.scp-doc-section-title{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.28em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:.85rem;padding:.55rem .9rem;
+  background:var(--dark);border-left:3px solid var(--red);
+}
 .cv-addendum{border:1px solid var(--border);margin-bottom:.65rem;}
 .cv-addendum-toggle{
   width:100%;text-align:left;background:rgba(255,255,255,0.02);border:none;
-  font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;
-  color:var(--light);padding:.65rem 1rem;cursor:pointer;transition:background .2s;
+  font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;
+  color:var(--pale);padding:.7rem 1rem;cursor:pointer;transition:background .2s;
   display:flex;align-items:center;justify-content:space-between;
 }
-.cv-addendum-toggle::after{content:'▸';font-size:8px;color:var(--muted);transition:transform .2s;}
+.cv-addendum-toggle:hover{background:rgba(255,255,255,0.04);}
+.cv-addendum-toggle::after{content:'\25B8';font-size:9px;color:var(--muted);transition:transform .2s;}
 .cv-addendum-toggle.open::after{transform:rotate(90deg);}
-.cv-addendum-body{display:none;padding:.75rem 1rem;border-top:1px solid var(--border);}
+.cv-addendum-body{display:none;padding:.85rem 1rem;border-top:1px solid var(--border);font-family:'Times New Roman',Georgia,serif;font-size:13px;line-height:1.7;}
 .cv-addendum-body.visible{display:block;}
 
 /* Special text effects */
 .char-redacted{background:var(--pale);color:var(--pale);border-radius:0;cursor:pointer;transition:all .3s;user-select:none;}
 .char-redacted.revealed{background:transparent;color:var(--pale);}
-@keyframes glitch{0%,100%{clip-path:inset(0 0 98% 0)}20%{clip-path:inset(10% 0 85% 0)}40%{clip-path:inset(30% 0 50% 0)}60%{clip-path:inset(60% 0 20% 0)}80%{clip-path:inset(80% 0 5% 0)}}
-.char-glitch{position:relative;display:inline-block;}
-.char-glitch::before,.char-glitch::after{content:attr(data-text);position:absolute;top:0;left:0;}
-.char-glitch::before{color:#f00;animation:glitch .3s infinite linear alternate-reverse;clip-path:inset(0 0 50% 0);}
-.char-glitch::after{color:#0ff;animation:glitch .3s infinite linear;clip-path:inset(50% 0 0 0);}
 
 /* Footer */
 footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--border);margin-top:2rem;}
@@ -686,8 +1152,93 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
 .role-picker-empty { font-family:var(--mono); font-size:9.5px; color:var(--muted); letter-spacing:0.1em; }
 
 /* ── CL/CLS picker non-interactive look ── */
-.cl-picker,.cls-picker { opacity:.85; }
-.cl-box:hover,.cls-box:hover { border-color:var(--border) !important; }
+/* ══════════════════════════════════════════
+   HOME COVER SHEET
+══════════════════════════════════════════════ */
+.home-cover{
+  position:relative;overflow:hidden;padding:4rem 3rem 3.5rem;
+  border-bottom:1px solid var(--border);
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 25%, rgba(176,26,10,0.07), transparent 60%),
+    radial-gradient(ellipse 70% 50% at 85% 75%, rgba(15,42,80,0.06), transparent 60%),
+    linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px),
+    var(--black);
+  background-size:auto,auto,48px 48px,48px 48px,auto;
+}
+.home-cover-grid{max-width:1380px;margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:3rem;align-items:end;}
+.home-cover-left{min-width:0;}
+.home-cover-stamps{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.4rem;}
+.stamp-ch{
+  font-family:var(--mono);font-size:8.5px;letter-spacing:0.25em;text-transform:uppercase;
+  padding:4px 10px;border:1px solid;
+}
+.stamp-ch.red{border-color:var(--red);color:var(--red);background:rgba(176,26,10,.08);}
+.stamp-ch.gold{border-color:var(--gold-dim);color:var(--gold);background:rgba(200,150,10,.05);}
+.stamp-ch.green{border-color:var(--green-bright);color:var(--green-bright);background:rgba(42,138,72,.06);}
+.stamp-ch.grey{border-color:var(--border);color:var(--muted);}
+.stamp-ch.live{border-color:var(--green-bright);color:var(--green-bright);background:rgba(42,138,72,.06);display:inline-flex;align-items:center;gap:.5rem;}
+.stamp-ch.live::before{content:'';width:6px;height:6px;background:var(--green-bright);border-radius:50%;animation:hcLive 1.8s ease-in-out infinite;}
+@keyframes hcLive{0%,100%{opacity:1;}50%{opacity:.35;}}
+.home-cover-tag{font-family:var(--mono);font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);margin-bottom:.9rem;}
+.home-cover-title{font-family:var(--display);font-weight:800;font-size:clamp(56px,9vw,120px);letter-spacing:0.01em;text-transform:uppercase;color:var(--white);line-height:.85;}
+.home-cover-title em{font-style:normal;color:var(--red);font-weight:800;}
+.home-cover-desc{margin-top:1.1rem;font-family:var(--elite);font-size:15px;color:var(--pale);line-height:1.75;max-width:580px;}
+.home-cover-right{display:flex;flex-direction:column;gap:.75rem;align-items:flex-end;}
+.home-cover-fileno{font-family:var(--mono);font-size:9.5px;letter-spacing:0.2em;color:var(--muted);text-align:right;}
+.home-cover-fileno strong{color:var(--pale);display:block;font-size:12px;margin-top:.25rem;letter-spacing:0.25em;}
+.home-cover-meta{display:grid;grid-template-columns:repeat(3,auto);gap:1.3rem;padding-top:.9rem;border-top:1px dashed var(--border);min-width:260px;}
+.home-cover-meta .k{font-family:var(--mono);font-size:8.5px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-bottom:.2rem;}
+.home-cover-meta .v{font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:0.04em;color:var(--white);line-height:1;}
+.home-cover-meta .item.gold .v{color:var(--gold);}
+.home-cover-meta .item.red .v{color:var(--red);}
+.home-cover-meta .item.blue .v{color:var(--blue-bright);}
+
+/* Home cards — dossier style */
+.home-grid-v2{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;max-width:1380px;margin:3rem auto;padding:0 3rem;}
+.home-card-v2{
+  position:relative;overflow:hidden;
+  background:var(--deep);border:1px solid var(--border);
+  padding:1.8rem 1.7rem 1.5rem 1.9rem;
+  cursor:pointer;transition:border-color .25s,background .25s,transform .25s;
+}
+.home-card-v2::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--accent, var(--red));transition:width .25s;
+}
+.home-card-v2:hover{border-color:var(--border-hi);background:var(--dark);transform:translateY(-2px);}
+.home-card-v2:hover::before{width:5px;}
+.home-card-v2 .tab{
+  position:absolute;top:0;right:0;
+  font-family:var(--mono);font-size:8px;letter-spacing:0.22em;text-transform:uppercase;
+  color:var(--muted);background:var(--dark);padding:3px 10px 3px 12px;
+  border-left:1px solid var(--border);border-bottom:1px solid var(--border);
+}
+.home-card-v2 .num{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.3em;color:var(--muted);
+  text-transform:uppercase;margin-bottom:1rem;display:block;
+}
+.home-card-v2 h2{
+  font-family:var(--display);font-weight:700;font-size:28px;letter-spacing:0.04em;
+  text-transform:uppercase;color:var(--white);line-height:1.02;margin-bottom:.85rem;
+}
+.home-card-v2 h2 em{font-style:normal;color:var(--gold);font-weight:700;}
+.home-card-v2 p{font-family:var(--elite);font-size:12.5px;color:var(--pale);line-height:1.8;margin-bottom:1.75rem;}
+.home-card-v2 .action{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.25em;text-transform:uppercase;
+  color:var(--light);display:inline-flex;align-items:center;gap:.55rem;transition:color .2s,transform .2s;
+}
+.home-card-v2 .action::after{content:'→';}
+.home-card-v2:hover .action{color:var(--white);transform:translateX(4px);}
+.home-card-v2.c-submit{--accent:var(--red);}
+.home-card-v2.c-track{--accent:var(--gold);}
+.home-card-v2.c-browse{--accent:var(--blue-bright);}
+
+@media(max-width:900px){
+  .home-cover-grid{grid-template-columns:1fr;gap:1.5rem;}
+  .home-cover-right{align-items:flex-start;}
+  .home-grid-v2{grid-template-columns:1fr;gap:.75rem;padding:0 1.5rem;}
+}
 </style>
 </head>
 <body>
@@ -716,35 +1267,56 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
      HOME VIEW
 ══════════════════════════════════════════════ -->
 <div id="v-home" class="view active">
-  <div class="ph">
-    <div class="ph-stamp">CHARS</div>
-    <div class="ph-eyebrow"><div class="ph-eyebrow-line"></div><div class="ph-eyebrow-text">Personnel Registry &amp; Submissions</div></div>
-    <h1>Character<br><em>Records</em></h1>
-    <p class="ph-desc">Submit a new character for staff review, track an existing submission, or browse the full approved roster of Foundation personnel, SCPs, and unaffiliated individuals.</p>
-  </div>
-  <div class="wrap" style="padding-top:2.5rem;">
-    <div class="home-grid">
-      <div class="home-card" onclick="showView('v-method')">
-        <span class="home-card-num">01 — Submit</span>
-        <h2>Create a<br>Character</h2>
-        <p>Build your sheet right here with our full character creator, or drop a Google Docs link. Every submission goes to staff review before it hits the public roster.</p>
-        <span class="home-card-action">Start Application</span>
+  <div class="home-cover">
+    <div class="home-cover-grid">
+      <div class="home-cover-left">
+        <div class="home-cover-stamps">
+          <span class="stamp-ch red">Secure / Contain / Protect</span>
+          <span class="stamp-ch live">Intake Open</span>
+          <span class="stamp-ch grey">Internal Document</span>
+        </div>
+        <div class="home-cover-tag">Personnel Registry / Submission &amp; Archive</div>
+        <h1 class="home-cover-title">Character <em>Records</em></h1>
+        <p class="home-cover-desc">Submit a new character for staff review, track an existing submission, or browse the full approved roster of Foundation personnel, SCPs, and unaligned individuals.</p>
       </div>
-      <div class="home-card" onclick="showView('v-tracker')">
-        <span class="home-card-num">02 — Track</span>
-        <h2>My<br>Submissions</h2>
-        <p>Enter your Discord username to pull up the current review status of all your characters and any feedback the team has left.</p>
-        <span class="home-card-action">Check Status</span>
-      </div>
-      <div class="home-card" onclick="loadListing()">
-        <span class="home-card-num">03 — Browse</span>
-        <h2>Public<br>Roster</h2>
-        <p>View every approved character — Foundation personnel sorted by department, SCP entries with full ACS data, and unaffiliated individuals.</p>
-        <span class="home-card-action">View Roster</span>
+      <div class="home-cover-right">
+        <div class="home-cover-fileno">
+          File Reference
+          <strong>TF / CHARS / INTAKE</strong>
+        </div>
+        <div class="home-cover-meta">
+          <div class="item red"><div class="k">Foundation</div><div class="v" id="hc-fnd-count">--</div></div>
+          <div class="item gold"><div class="k">SCPs</div><div class="v" id="hc-scp-count">--</div></div>
+          <div class="item blue"><div class="k">Unaligned</div><div class="v" id="hc-ua-count">--</div></div>
+        </div>
       </div>
     </div>
   </div>
-  <footer><span>THREEFOLD — Character Registry</span><span>Submissions &amp; Roster</span></footer>
+
+  <div class="home-grid-v2">
+    <div class="home-card-v2 c-submit" onclick="showView('v-method')">
+      <span class="tab">File Intake</span>
+      <span class="num">01 / Submit</span>
+      <h2>Create a<br><em>Character</em></h2>
+      <p>Build your sheet here with the full creator, or drop a Google Doc link. Every submission goes to staff review before it hits the public roster.</p>
+      <span class="action">Start Application</span>
+    </div>
+    <div class="home-card-v2 c-track" onclick="showView('v-tracker')">
+      <span class="tab">Status Check</span>
+      <span class="num">02 / Track</span>
+      <h2>My<br><em>Submissions</em></h2>
+      <p>Enter your Discord username to pull up the current review status of your characters and any feedback the team has left.</p>
+      <span class="action">Check Status</span>
+    </div>
+    <div class="home-card-v2 c-browse" onclick="loadListing()">
+      <span class="tab">Public Access</span>
+      <span class="num">03 / Browse</span>
+      <h2>Public<br><em>Roster</em></h2>
+      <p>View every approved character. Foundation personnel sorted by department, SCP entries with full ACS data, unaligned individuals, all on record.</p>
+      <span class="action">View Roster</span>
+    </div>
+  </div>
+  <footer><span>THREEFOLD / Character Registry</span><span>Submissions &amp; Roster</span></footer>
 </div>
 
 <!-- ══════════════════════════════════════════
@@ -876,7 +1448,10 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
     <p class="ph-desc">Fields marked <span style="color:var(--gold)">*</span> are required. Use the toolbar to format rich text sections.</p>
   </div>
   <div class="breadcrumb"><span class="breadcrumb-item">Method</span><span class="breadcrumb-sep">/</span><span class="breadcrumb-item">Type</span><span class="breadcrumb-sep">/</span><span class="breadcrumb-item active">Dossier</span></div>
-  <div class="form-wrap" style="max-width:820px;">
+
+  <div class="dossier-layout">
+  <div class="form-col">
+  <div class="form-wrap" style="max-width:none;margin:0;">
     <button class="back-btn" onclick="showView('v-type')">Back</button>
 
     <!-- SUBMITTER -->
@@ -1017,22 +1592,43 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
         <input type="hidden" id="fn-mtf-unit" value="">
       </div>
 
-      <!-- ISD cover role (fades in) -->
-      <div class="isd-cover-wrap" id="isd-cover-wrap">
-        <div class="isd-cover-note">
-          ◼ &nbsp;ISD affiliation is classified. Publicly, your character will appear under their cover department. Only staff with appropriate clearance will see the ISD designation.<br>
-          ◼ &nbsp;Select the department your character uses as their cover assignment below.
-        </div>
-        <label style="font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;display:block;">Cover Department <span class="req">*</span></label>
-        <div class="field"><input type="text" id="fn-cover-dept" placeholder="e.g. Science Department — Senior Researcher"></div>
-      </div>
-
       <!-- Dept description + Role picker (appears after dept is chosen) -->
       <div class="dept-desc" id="dept-desc" style="margin-top:.75rem;">Select a department above.</div>
       <div class="field" id="fn-role-field" style="display:none;margin-top:1.25rem;">
-        <label>Role / Position <span class="req">*</span> <span style="font-family:var(--mono);font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;">— Clearance &amp; Classification auto-set by role</span></label>
+        <label>Role / Position <span class="req">*</span> <span style="font-family:var(--mono);font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;">Clearance &amp; Classification auto-set by role</span></label>
         <div class="role-picker" id="fn-role-picker"></div>
         <input type="hidden" id="fn-role" value="">
+      </div>
+
+      <!-- ISD cover department + cover role (appears once an ISD agent role is selected) -->
+      <div class="isd-cover-wrap" id="isd-cover-wrap">
+        <div class="isd-cover-note">
+          &#9632; &nbsp;ISD affiliation is classified. Publicly, your character appears under a cover department and a cover role. Only staff with appropriate clearance will see the true ISD designation.<br>
+          &#9632; &nbsp;Pick the department your character uses as cover below, then pick the cover role within it.
+        </div>
+        <label style="font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;display:block;margin-top:.75rem;">Cover Department <span class="req">*</span></label>
+        <div class="dept-picker" id="fn-cover-dept-picker">
+          <div class="dept-box" onclick="selectCoverDept('Science Department')" data-cover-dept="Science Department"><img src="img/Science.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Science Dept.</div><div class="dept-box-abbr">ScD</div></div></div>
+          <div class="dept-box" onclick="selectCoverDept('Security Department')" data-cover-dept="Security Department"><img src="img/Security.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Security Dept.</div><div class="dept-box-abbr">SD</div></div></div>
+          <div class="dept-box" onclick="selectCoverDept('Ethics Committee')" data-cover-dept="Ethics Committee"><img src="img/Ethics.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Ethics Committee</div><div class="dept-box-abbr">EC</div></div></div>
+          <div class="dept-box" onclick="selectCoverDept('Mobile Task Forces')" data-cover-dept="Mobile Task Forces"><img src="img/MTF.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Mobile Task Forces</div><div class="dept-box-abbr">MTF</div></div></div>
+          <div class="dept-box" onclick="selectCoverDept('Medical Department')" data-cover-dept="Medical Department"><img src="img/Medical.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Medical Dept.</div><div class="dept-box-abbr">MD</div></div></div>
+          <div class="dept-box" onclick="selectCoverDept('Intelligence Agency')" data-cover-dept="Intelligence Agency"><img src="img/Intelligence.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Intelligence Agency</div><div class="dept-box-abbr">IA</div></div></div>
+          <div class="dept-box" onclick="selectCoverDept('Site Directorship')" data-cover-dept="Site Directorship"><img src="img/SiteDirectorship.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Site Directorship</div><div class="dept-box-abbr">SDir</div></div></div>
+          <div class="dept-box" onclick="selectCoverDept('Engineering Department')" data-cover-dept="Engineering Department"><img src="img/Engineering.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Engineering Dept.</div><div class="dept-box-abbr">Eng</div></div></div>
+        </div>
+        <input type="hidden" id="fn-cover-dept" value="">
+
+        <!-- Cover role picker (appears once a cover dept is chosen) -->
+        <div class="field" id="fn-cover-role-field" style="display:none;margin-top:1.25rem;">
+          <label>Cover Role / Position <span class="req">*</span> <span style="font-family:var(--mono);font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;">Publicly visible role within the cover department</span></label>
+          <div class="role-picker" id="fn-cover-role-picker"></div>
+          <input type="hidden" id="fn-cover-role" value="">
+        </div>
+
+        <div class="isd-cover-hide-note" id="isd-cover-hide-note" style="display:none;font-family:var(--mono);font-size:9.5px;letter-spacing:0.18em;color:var(--gold);text-transform:uppercase;padding:.75rem 1rem;border:1px dashed var(--gold-dim);background:rgba(200,150,10,.04);margin-top:.75rem;">
+          &#9632; &nbsp;Cover assignment not required for this role. ISD leadership operates openly within the command structure.
+        </div>
       </div>
 
     </div>
@@ -1141,6 +1737,18 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
       <div class="form-msg" id="fn-msg"></div>
     </div>
   </div>
+  </div><!-- /form-col -->
+
+  <aside class="dossier-preview" id="fn-preview-pane">
+    <div class="dp-hdr">
+      <span class="dp-hdr-left">Live Dossier Preview</span>
+      <span class="dp-hdr-ref">TF / PERS / DRAFT</span>
+    </div>
+    <div class="dp-body" id="fn-preview-body">
+      <div class="dp-empty">Fill in the form to the left. Your dossier will render here as you type.</div>
+    </div>
+  </aside>
+  </div><!-- /dossier-layout -->
 </div>
 
 <!-- ══════════════════════════════════════════
@@ -1154,7 +1762,9 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
     <p class="ph-desc">Fields marked <span style="color:var(--gold)">*</span> are required. The ACS bar updates live as you fill in the classification fields above it.</p>
   </div>
   <div class="breadcrumb"><span class="breadcrumb-item">Method</span><span class="breadcrumb-sep">/</span><span class="breadcrumb-item">Type</span><span class="breadcrumb-sep">/</span><span class="breadcrumb-item active">Sheet</span></div>
-  <div class="form-wrap" style="max-width:800px;">
+  <div class="dossier-layout">
+  <div class="form-col">
+  <div class="form-wrap" style="max-width:none;margin:0;">
     <button class="back-btn" onclick="showView('v-type')">Back</button>
 
     <div class="form-section" style="margin-top:0;border-top:none;">
@@ -1259,6 +1869,18 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
       <div class="form-msg" id="scp-msg"></div>
     </div>
   </div>
+  </div><!-- /form-col -->
+
+  <aside class="dossier-preview" id="scp-preview-pane">
+    <div class="dp-hdr">
+      <span class="dp-hdr-left">Live Anomaly Preview</span>
+      <span class="dp-hdr-ref">TF / SCP / DRAFT</span>
+    </div>
+    <div class="dp-body scp-preview-body" id="scp-preview-body">
+      <div class="dp-empty">Fill in the form to the left. Your SCP file will render here as you type.</div>
+    </div>
+  </aside>
+  </div><!-- /dossier-layout -->
 </div>
 
 <!-- ══════════════════════════════════════════
@@ -1272,7 +1894,9 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
     <p class="ph-desc">A more open format — fill in what's relevant to your character. Only fields marked <span style="color:var(--gold)">*</span> are strictly required.</p>
   </div>
   <div class="breadcrumb"><span class="breadcrumb-item">Method</span><span class="breadcrumb-sep">/</span><span class="breadcrumb-item">Type</span><span class="breadcrumb-sep">/</span><span class="breadcrumb-item active">Sheet</span></div>
-  <div class="form-wrap" style="max-width:800px;">
+  <div class="dossier-layout">
+  <div class="form-col">
+  <div class="form-wrap" style="max-width:none;margin:0;">
     <button class="back-btn" onclick="showView('v-type')">Back</button>
 
     <div class="form-section" style="margin-top:0;border-top:none;">
@@ -1318,6 +1942,18 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
       <div class="form-msg" id="ua-msg"></div>
     </div>
   </div>
+  </div><!-- /form-col -->
+
+  <aside class="dossier-preview" id="ua-preview-pane">
+    <div class="dp-hdr">
+      <span class="dp-hdr-left">Live File Preview</span>
+      <span class="dp-hdr-ref">TF / UNA / DRAFT</span>
+    </div>
+    <div class="dp-body" id="ua-preview-body">
+      <div class="dp-empty">Fill in the form to the left. Your file will render here as you type.</div>
+    </div>
+  </aside>
+  </div><!-- /dossier-layout -->
 </div>
 
 <!-- ══════════════════════════════════════════
@@ -1342,55 +1978,123 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
      TRACKER
 ══════════════════════════════════════════════ -->
 <div id="v-tracker" class="view">
-  <div class="ph">
-    <div class="ph-stamp">TRACK</div>
-    <div class="ph-eyebrow"><div class="ph-eyebrow-line"></div><div class="ph-eyebrow-text">Submission Tracker</div></div>
-    <h1>My<br><em>Submissions</em></h1>
-    <p class="ph-desc">Enter your Discord username to see the review status of all your characters and any staff feedback.</p>
+  <div class="home-cover">
+    <div class="home-cover-grid">
+      <div class="home-cover-left">
+        <div class="home-cover-stamps">
+          <span class="stamp-ch gold">Submission Tracker</span>
+          <span class="stamp-ch grey">Restricted Query</span>
+        </div>
+        <div class="home-cover-tag">Personnel Registry / Submission Status</div>
+        <h1 class="home-cover-title">My <em>Submissions</em></h1>
+        <p class="home-cover-desc">Enter your Discord username to pull the current review status of every character you've submitted, plus any staff feedback left on record.</p>
+      </div>
+      <div class="home-cover-right">
+        <div class="home-cover-fileno">
+          File Reference
+          <strong>TF / TRACK / LOOKUP</strong>
+        </div>
+      </div>
+    </div>
   </div>
+
   <div class="wrap">
     <button class="back-btn" onclick="showView('v-home')">Back</button>
-    <div class="stag">Lookup</div>
-    <div class="tracker-form">
-      <input type="text" id="tracker-input" placeholder="Your Discord username...">
-      <button class="btn btn-fill btn-sm" onclick="doTrack()">Search</button>
+
+    <div class="trk-form">
+      <div class="trk-form-label">Lookup By Discord Username</div>
+      <input type="text" id="tracker-input" placeholder="yourname or yourname#0000">
+      <button onclick="doTrack()">Search</button>
     </div>
+
     <div id="tracker-results"></div>
   </div>
+  <footer><span>THREEFOLD / Submission Tracker</span><span>Query-Only Access</span></footer>
 </div>
 
 <!-- ══════════════════════════════════════════
      LISTING / ROSTER
 ══════════════════════════════════════════════ -->
 <div id="v-listing" class="view">
-  <div class="ph">
-    <div class="ph-stamp">ROSTER</div>
-    <div class="ph-eyebrow"><div class="ph-eyebrow-line"></div><div class="ph-eyebrow-text">Approved Character Roster</div></div>
-    <h1>Public<br><em>Roster</em></h1>
-    <p class="ph-desc">All approved characters. Foundation personnel are sorted by department. Click any entry to view the full sheet.</p>
+  <div class="home-cover">
+    <div class="home-cover-grid">
+      <div class="home-cover-left">
+        <div class="home-cover-stamps">
+          <span class="stamp-ch red">Public Access</span>
+          <span class="stamp-ch gold">Approved Files</span>
+          <span class="stamp-ch grey">Read-Only</span>
+        </div>
+        <div class="home-cover-tag">Personnel Registry / Public Roster</div>
+        <h1 class="home-cover-title">Public <em>Roster</em></h1>
+        <p class="home-cover-desc">Every approved character on the server. Foundation personnel sorted by department, SCP entries with full ACS data, unaligned individuals. Filter by clearance level, containment class, or affiliation.</p>
+      </div>
+      <div class="home-cover-right">
+        <div class="home-cover-fileno">
+          File Reference
+          <strong>TF / ROSTER / PUBLIC</strong>
+        </div>
+        <div class="home-cover-meta">
+          <div class="item red"><div class="k">Foundation</div><div class="v" id="rst-fnd-count">0</div></div>
+          <div class="item gold"><div class="k">SCPs</div><div class="v" id="rst-scp-count">0</div></div>
+          <div class="item blue"><div class="k">Unaligned</div><div class="v" id="rst-ua-count">0</div></div>
+        </div>
+      </div>
+    </div>
   </div>
+
   <div class="wrap">
     <button class="back-btn" onclick="showView('v-home')">Back</button>
+
     <div class="roster-tabs">
-      <button class="rtab active" onclick="switchRTab('foundation',this)">Foundation</button>
-      <button class="rtab" onclick="switchRTab('scp',this)">SCPs</button>
-      <button class="rtab" onclick="switchRTab('unaffiliated',this)">Unaffiliated</button>
+      <button class="rtab active" onclick="switchRTab('foundation',this)">
+        <span class="rtab-num">01</span><span class="rtab-ico"></span> Foundation
+      </button>
+      <button class="rtab" onclick="switchRTab('scp',this)">
+        <span class="rtab-num">02</span><span class="rtab-ico"></span> SCPs
+      </button>
+      <button class="rtab" onclick="switchRTab('unaffiliated',this)">
+        <span class="rtab-num">03</span><span class="rtab-ico"></span> Unaligned
+      </button>
     </div>
+
     <div class="rtab-panel active" id="rtab-foundation">
-      <div class="dept-pills" id="dept-pills"></div>
+      <div class="roster-filters" id="fnd-filters" style="display:none;">
+        <div class="rfilter-row">
+          <span class="rfilter-label">Department</span>
+          <div id="dept-pills" style="display:flex;gap:.45rem;flex-wrap:wrap;"></div>
+        </div>
+        <div class="rfilter-row">
+          <span class="rfilter-label">Clearance</span>
+          <div id="cl-pills" style="display:flex;gap:.45rem;flex-wrap:wrap;"></div>
+        </div>
+      </div>
       <div id="foundation-content"></div>
       <div class="empty-state" id="foundation-empty" style="display:none;">No approved Foundation characters yet.</div>
     </div>
+
     <div class="rtab-panel" id="rtab-scp">
+      <div class="roster-filters" id="scp-filters" style="display:none;">
+        <div class="rfilter-row">
+          <span class="rfilter-label">Containment</span>
+          <div id="cc-pills" style="display:flex;gap:.45rem;flex-wrap:wrap;"></div>
+        </div>
+      </div>
       <div class="scp-grid" id="scp-content"></div>
       <div class="empty-state" id="scp-empty" style="display:none;">No approved SCP entries yet.</div>
     </div>
+
     <div class="rtab-panel" id="rtab-unaffiliated">
+      <div class="roster-filters" id="ua-filters" style="display:none;">
+        <div class="rfilter-row">
+          <span class="rfilter-label">Affiliation</span>
+          <div id="aff-pills" style="display:flex;gap:.45rem;flex-wrap:wrap;"></div>
+        </div>
+      </div>
       <div class="runaff-grid" id="unaff-content"></div>
-      <div class="empty-state" id="unaff-empty" style="display:none;">No approved unaffiliated characters yet.</div>
+      <div class="empty-state" id="unaff-empty" style="display:none;">No approved unaligned characters yet.</div>
     </div>
   </div>
-  <footer><span>THREEFOLD</span><span>Public Roster</span></footer>
+  <footer><span>THREEFOLD / Public Roster</span><span>Approved Characters Only</span></footer>
 </div>
 
 <!-- ══════════════════════════════════════════
@@ -1405,51 +2109,27 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
 </div>
 
 <!-- ══════════════════════════════════════════
-     RICH TEXT TOOLBAR
+     COMPACT DOSSIER FORMAT TOOLBAR
 ══════════════════════════════════════════════ -->
 <div id="rich-toolbar">
   <div class="tb-group">
-    <span class="tb-label">Font</span>
-    <select class="tb-select" id="tb-font" onchange="tbFont(this.value)">
-      <option value="'Barlow',sans-serif">Barlow</option>
-      <option value="'Barlow Condensed',sans-serif">Barlow Condensed</option>
-      <option value="'Share Tech Mono',monospace">Monospace</option>
-      <option value="'Special Elite',cursive">Special Elite</option>
-      <option value="Georgia,serif">Georgia</option>
-      <option value="'Courier New',monospace">Courier New</option>
-    </select>
+    <button class="tb-btn" onclick="tbCmd('bold')" title="Bold"><b>B</b></button>
+    <button class="tb-btn" onclick="tbCmd('italic')" title="Italic"><i>I</i></button>
+    <button class="tb-btn" onclick="tbCmd('underline')" title="Underline"><u>U</u></button>
   </div>
   <div class="tb-group">
-    <span class="tb-label">Size</span>
-    <select class="tb-select" id="tb-size" onchange="tbSize(this.value)">
-      <option value="11px">11</option><option value="13px">13</option>
-      <option value="16px" selected>16</option><option value="18px">18</option>
-      <option value="22px">22</option><option value="28px">28</option><option value="36px">36</option>
-    </select>
+    <div class="tb-hint">Colour</div>
+    <div class="tb-cswatch" style="background:#f0f0f0" onclick="tbColor('#f0f0f0')" title="White"></div>
+    <div class="tb-cswatch" style="background:#cc2200" onclick="tbColor('#cc2200')" title="Red"></div>
+    <div class="tb-cswatch" style="background:#c8981a" onclick="tbColor('#c8981a')" title="Gold"></div>
+    <div class="tb-cswatch" style="background:#4a9a5a" onclick="tbColor('#4a9a5a')" title="Green"></div>
+    <div class="tb-cswatch" style="background:#4a5aaa" onclick="tbColor('#4a5aaa')" title="Blue"></div>
   </div>
   <div class="tb-group">
-    <button class="tb-btn" onclick="tbCmd('bold')"><b>B</b></button>
-    <button class="tb-btn" onclick="tbCmd('italic')"><i>I</i></button>
+    <button class="tb-btn tb-redact" onclick="tbRedacted()" title="Click-to-reveal redaction">[REDACT]</button>
   </div>
   <div class="tb-group">
-    <span class="tb-label">Colour</span>
-    <div class="color-row">
-      <div class="cswatch" style="background:#f0f0f0" onclick="tbColor('#f0f0f0')" title="White"></div>
-      <div class="cswatch" style="background:#cccccc" onclick="tbColor('#cccccc')" title="Pale"></div>
-      <div class="cswatch" style="background:#999999" onclick="tbColor('#999999')" title="Light grey"></div>
-      <div class="cswatch" style="background:#cc2200" onclick="tbColor('#cc2200')" title="Red"></div>
-      <div class="cswatch" style="background:#4a9a5a" onclick="tbColor('#4a9a5a')" title="Green"></div>
-      <div class="cswatch" style="background:#4a5aaa" onclick="tbColor('#4a5aaa')" title="Blue"></div>
-      <div class="cswatch" style="background:#c8981a" onclick="tbColor('#c8981a')" title="Gold"></div>
-      <div class="cswatch" style="background:#8a3a8a" onclick="tbColor('#8a3a8a')" title="Purple"></div>
-    </div>
-  </div>
-  <div class="tb-group">
-    <button class="tb-btn" onclick="tbRedacted()" title="Click-to-reveal redaction">[REDACT]</button>
-    <button class="tb-btn" onclick="tbGlitch()" title="Glitch text animation">~GLITCH~</button>
-  </div>
-  <div class="tb-group">
-    <span class="tb-label" style="font-size:8px;color:var(--border);">Select text first</span>
+    <span class="tb-hint">Select text first</span>
   </div>
 </div>
 
@@ -1468,6 +2148,9 @@ function showView(id) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   const t = document.getElementById(id);
   if (t) { t.classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
+  if (id === 'v-foundation' && typeof updateFnPreview === 'function') updateFnPreview();
+  if (id === 'v-scp' && typeof updateScpPreview === 'function') updateScpPreview();
+  if (id === 'v-unaff' && typeof updateUaPreview === 'function') updateUaPreview();
 }
 
 function setMethod(m) {
@@ -1505,10 +2188,13 @@ function initToolbar() {
   });
 }
 
-function tbCmd(cmd) { if (!_focusedField) return; _focusedField.focus(); document.execCommand(cmd); }
-function tbFont(font) { if (!_focusedField) return; _focusedField.focus(); wrapSel({ fontFamily: font }); }
-function tbSize(size) { if (!_focusedField) return; _focusedField.focus(); wrapSel({ fontSize: size }); }
-function tbColor(color) { if (!_focusedField) return; _focusedField.focus(); document.execCommand('foreColor', false, color); }
+function tbCmd(cmd) { if (!_focusedField) return; _focusedField.focus(); document.execCommand(cmd); _fireAllPreviews(); }
+function tbColor(color) { if (!_focusedField) return; _focusedField.focus(); document.execCommand('foreColor', false, color); _fireAllPreviews(); }
+function _fireAllPreviews(){
+  if (typeof updateFnPreview === 'function') updateFnPreview();
+  if (typeof updateScpPreview === 'function') updateScpPreview();
+  if (typeof updateUaPreview === 'function') updateUaPreview();
+}
 
 function wrapSel(styles) {
   const sel = window.getSelection();
@@ -1538,21 +2224,8 @@ function tbRedacted() {
   try { range.deleteContents(); range.insertNode(span); }
   catch(e) { document.execCommand('insertHTML', false, `<span class="char-redacted" onclick="this.classList.toggle('revealed')">${text}</span>`); }
   sel.removeAllRanges();
-}
-
-function tbGlitch() {
-  if (!_focusedField) return;
-  const sel = window.getSelection();
-  if (!sel || sel.isCollapsed) { alert('Select some text first.'); return; }
-  const text = sel.toString();
-  const range = sel.getRangeAt(0);
-  const span = document.createElement('span');
-  span.className = 'char-glitch';
-  span.setAttribute('data-text', text);
-  span.textContent = text;
-  try { range.deleteContents(); range.insertNode(span); }
-  catch(e) { document.execCommand('insertHTML', false, `<span class="char-glitch" data-text="${escHtml(text)}">${text}</span>`); }
-  sel.removeAllRanges();
+  // Trigger live preview update
+  _fireAllPreviews();
 }
 
 /* ═══════════════════════════════════════════
@@ -1701,7 +2374,7 @@ function selectClearance(level) {
   document.querySelectorAll('.cl-box:not(.cl-6-secret)').forEach(b => b.classList.remove('selected'));
   const box = document.querySelector('.cl-box[data-cl="'+level+'"]');
   if (box) box.classList.add('selected');
-  document.getElementById('fn-clearance').value = level;
+  document.getElementById('fn-clearance').value = level; document.getElementById('fn-clearance').dispatchEvent(new Event('change'));
   const desc = document.getElementById('cl-desc');
   desc.textContent = CL_DESC[level] ?? '';
   desc.style.fontStyle = level == 6 ? 'italic' : 'italic';
@@ -1714,7 +2387,7 @@ function selectClass(cls) {
   document.querySelectorAll('.cls-box:not(.cls-O-secret)').forEach(b => b.classList.remove('selected'));
   const box = document.querySelector('.cls-box[data-cls="'+cls+'"]');
   if (box) box.classList.add('selected');
-  document.getElementById('fn-classification').value = cls;
+  document.getElementById('fn-classification').value = cls; document.getElementById('fn-classification').dispatchEvent(new Event('change'));
   const desc = document.getElementById('cls-desc');
   desc.textContent = CLS_DESC[cls] ?? '';
   desc.style.color = cls === 'O' ? '#5a0a8a' : 'var(--border)';
@@ -1744,8 +2417,8 @@ function toggleSecretClass(show) {
       setTimeout(() => { clsO.style.display='none'; }, 380);
     }
     setTimeout(() => { cl6.style.display='none'; }, 380);
-    document.getElementById('fn-clearance').value = '';
-    document.getElementById('fn-classification').value = '';
+    document.getElementById('fn-clearance').value = ''; document.getElementById('fn-clearance').dispatchEvent(new Event('change'));
+    document.getElementById('fn-classification').value = ''; document.getElementById('fn-classification').dispatchEvent(new Event('change'));
     document.getElementById('cl-desc').textContent = '';
     document.getElementById('cls-desc').textContent = '';
     document.querySelectorAll('.cl-box,.cls-box').forEach(b => b.classList.remove('selected'));
@@ -1756,7 +2429,7 @@ function selectClearanceSecret() {
   document.querySelectorAll('.cl-box').forEach(b => b.classList.remove('selected'));
   const box = document.getElementById('cl-6-box');
   if (box) box.classList.add('selected');
-  document.getElementById('fn-clearance').value = 6;
+  document.getElementById('fn-clearance').value = 6; document.getElementById('fn-clearance').dispatchEvent(new Event('change'));
   const desc = document.getElementById('cl-desc');
   desc.textContent = CL_DESC[6];
   desc.style.color = '#5a0a8a';
@@ -1766,7 +2439,7 @@ function selectClassSecret() {
   document.querySelectorAll('.cls-box').forEach(b => b.classList.remove('selected'));
   const box = document.getElementById('cls-O-box');
   if (box) box.classList.add('selected');
-  document.getElementById('fn-classification').value = 'O';
+  document.getElementById('fn-classification').value = 'O'; document.getElementById('fn-classification').dispatchEvent(new Event('change'));
   const desc = document.getElementById('cls-desc');
   desc.textContent = CLS_DESC['O'];
   desc.style.color = '#5a0a8a';
@@ -1869,7 +2542,7 @@ function renderRolePicker(dept) {
   const field  = document.getElementById('fn-role-field');
   if (!roles.length) { field.style.display = 'none'; return; }
   field.style.display = 'block';
-  document.getElementById('fn-role').value = '';
+  document.getElementById('fn-role').value = ''; document.getElementById('fn-role').dispatchEvent(new Event('change'));
   picker.innerHTML = roles.map((r, i) => {
     const clLabel = r.cl === null ? '—' : r.cl === 6 ? '██' : `L${r.cl}`;
     const clBorder = r.cl === null ? '#2a2a2a' : (CL_BADGE_COLORS[r.cl] || '#444');
@@ -1896,7 +2569,7 @@ function selectRole(idx, dept) {
   if (!r) return;
   document.querySelectorAll('.role-box').forEach(b => b.classList.remove('selected'));
   document.querySelectorAll('.role-box')[idx]?.classList.add('selected');
-  document.getElementById('fn-role').value = r.name;
+  document.getElementById('fn-role').value = r.name; document.getElementById('fn-role').dispatchEvent(new Event('change'));
   // Auto-set clearance — handles secret Level 6 unlock
   if (r.cl !== null && r.cl !== undefined) {
     if (r.cl === 6) {
@@ -1909,24 +2582,135 @@ function selectRole(idx, dept) {
     }
   }
   if (r.cls && r.cls !== '—') { selectClass(r.cls); }
+  // ISD role-based cover department toggle: Handler and Director operate openly.
+  if (dept === 'Internal Security Department') {
+    toggleISDCoverVisibility(r);
+  }
+}
+
+/* Show or hide the ISD cover department picker based on the selected role.
+   Roles with an explicit clearance level (Director=5, Handler=4) don't have cover.
+   Roles with cl===null show the cover-department picker (and subsequently the cover-role picker). */
+function toggleISDCoverVisibility(role){
+  const wrap = document.getElementById('isd-cover-wrap');
+  const picker = document.getElementById('fn-cover-dept-picker');
+  const note = document.getElementById('isd-cover-hide-note');
+  const coverRoleField = document.getElementById('fn-cover-role-field');
+  if (!wrap || !picker || !note) return;
+  const isOpenRole = role && role.cl !== null && role.cl !== undefined;
+  if (isOpenRole) {
+    // Director/Handler: show the wrap but with just the "not required" note.
+    wrap.classList.add('visible');
+    picker.style.display = 'none';
+    note.style.display = 'block';
+    if (coverRoleField) coverRoleField.style.display = 'none';
+    // Clear any prior cover-dept / cover-role
+    const hd = document.getElementById('fn-cover-dept');
+    const hr = document.getElementById('fn-cover-role');
+    if (hd) { hd.value = ''; hd.dispatchEvent(new Event('change')); }
+    if (hr) { hr.value = ''; hr.dispatchEvent(new Event('change')); }
+    document.querySelectorAll('#fn-cover-dept-picker .dept-box').forEach(b => b.classList.remove('selected'));
+  } else if (role && role.cl === null) {
+    // Agent/Senior/Junior: show the cover dept picker. Cover role picker will appear once a cover dept is picked.
+    wrap.classList.add('visible');
+    picker.style.display = '';
+    note.style.display = 'none';
+    // Keep cover role field hidden until a cover dept is chosen
+    if (coverRoleField && !document.getElementById('fn-cover-dept').value) {
+      coverRoleField.style.display = 'none';
+    }
+  }
 }
 
 function selectDept(dept, abbr) {
-  document.querySelectorAll('.dept-box').forEach(b => b.classList.remove('selected'));
-  const box = document.querySelector('.dept-box[data-dept="'+dept+'"]');
+  document.querySelectorAll('#dept-picker .dept-box').forEach(b => b.classList.remove('selected'));
+  const box = document.querySelector('#dept-picker .dept-box[data-dept="'+dept+'"]');
   if (box) box.classList.add('selected');
-  document.getElementById('fn-dept').value = dept;
+  document.getElementById('fn-dept').value = dept; document.getElementById('fn-dept').dispatchEvent(new Event('change'));
   document.getElementById('dept-desc').textContent = DEPT_DESC[dept] || '';
   // Show/hide subunit pickers
   document.getElementById('sd-subunit-wrap').classList.toggle('visible', dept === 'Security Department');
   document.getElementById('mtf-subunit-wrap').classList.toggle('visible', dept === 'Mobile Task Forces');
-  document.getElementById('isd-cover-wrap').classList.toggle('visible', dept === 'Internal Security Department');
+  const isISD = dept === 'Internal Security Department';
+  // For ISD: keep the cover wrap HIDDEN until a role is selected (so roles appear first)
+  const isdWrap = document.getElementById('isd-cover-wrap');
+  if (isdWrap) isdWrap.classList.remove('visible');
+  if (!isISD) {
+    // Clear cover fields when leaving ISD
+    const hd = document.getElementById('fn-cover-dept');
+    const hr = document.getElementById('fn-cover-role');
+    if (hd && hd.value) { hd.value = ''; hd.dispatchEvent(new Event('change')); }
+    if (hr && hr.value) { hr.value = ''; hr.dispatchEvent(new Event('change')); }
+    document.querySelectorAll('#fn-cover-dept-picker .dept-box').forEach(b => b.classList.remove('selected'));
+    const crf = document.getElementById('fn-cover-role-field');
+    if (crf) crf.style.display = 'none';
+  }
   // Reset subunit if dept changed
-  if (dept !== 'Security Department') { document.getElementById('fn-sd-unit').value = ''; document.querySelectorAll('.subunit-box').forEach(b=>b.classList.remove('selected')); }
+  if (dept !== 'Security Department') { document.getElementById('fn-sd-unit').value = ''; document.getElementById('fn-sd-unit').dispatchEvent(new Event('change')); document.querySelectorAll('.subunit-box').forEach(b=>b.classList.remove('selected')); }
   // Render role picker for this department
   renderRolePicker(dept);
   // Reset role selection
-  document.getElementById('fn-role').value = '';
+  document.getElementById('fn-role').value = ''; document.getElementById('fn-role').dispatchEvent(new Event('change'));
+}
+
+/* ── COVER DEPT PICKER (ISD only) ── */
+function selectCoverDept(dept) {
+  document.querySelectorAll('#fn-cover-dept-picker .dept-box').forEach(b => b.classList.remove('selected'));
+  const box = document.querySelector('#fn-cover-dept-picker .dept-box[data-cover-dept="'+dept+'"]');
+  if (box) box.classList.add('selected');
+  const hidden = document.getElementById('fn-cover-dept');
+  hidden.value = dept;
+  hidden.dispatchEvent(new Event('change'));
+  // Render the cover-role picker using this department's roles
+  renderCoverRolePicker(dept);
+  // Clear any previous cover role selection
+  const hr = document.getElementById('fn-cover-role');
+  if (hr) { hr.value = ''; hr.dispatchEvent(new Event('change')); }
+}
+
+/* Render the cover role picker from DEPT_ROLES for the selected cover department. */
+function renderCoverRolePicker(dept){
+  const field = document.getElementById('fn-cover-role-field');
+  const picker = document.getElementById('fn-cover-role-picker');
+  if (!field || !picker) return;
+  const roles = DEPT_ROLES[dept] || [];
+  if (!roles.length) { field.style.display = 'none'; return; }
+  field.style.display = '';
+  picker.innerHTML = roles.map((r, i) => {
+    const clBg = CL_BADGE_COLORS[r.cl] || '#2a2a2a';
+    const clTx = CL_BADGE_TEXT[r.cl] || '#666';
+    const clsBg = CLS_BADGE_COLORS[r.cls] || '#2a2a2a';
+    const clsTx = CLS_BADGE_TEXT[r.cls] || '#666';
+    const clLabel = (r.cl === null || r.cl === undefined) ? '---' : 'L' + r.cl;
+    return `
+      <div class="role-box" onclick="selectCoverRole(${i}, '${escAttr(dept)}')">
+        <div class="role-box-left">
+          <div class="role-box-name">${escHtml(r.name)}</div>
+          <div class="role-box-note">${escHtml(r.note || '')}</div>
+        </div>
+        <div class="role-box-badges">
+          <span class="role-badge" style="border-color:${clBg};color:${clTx}">${clLabel}</span>
+          <span class="role-badge" style="border-color:${clsBg};color:${clsTx}">Class ${r.cls || '?'}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function selectCoverRole(idx, dept){
+  const roles = DEPT_ROLES[dept] || [];
+  const r = roles[idx];
+  if (!r) return;
+  document.querySelectorAll('#fn-cover-role-picker .role-box').forEach(b => b.classList.remove('selected'));
+  document.querySelectorAll('#fn-cover-role-picker .role-box')[idx]?.classList.add('selected');
+  const hr = document.getElementById('fn-cover-role');
+  hr.value = r.name;
+  hr.dispatchEvent(new Event('change'));
+  // The character's public clearance + classification follow the cover role.
+  // Since this is ISD, ensure the secret Class O / CL-6 tier is never carried over.
+  if (_secretUnlocked) toggleSecretClass(false);
+  if (r.cl !== null && r.cl !== undefined) selectClearance(r.cl);
+  if (r.cls && r.cls !== '\u2014' && r.cls !== '-') selectClass(r.cls);
 }
 
 /* ── SUBUNIT PICKER ── */
@@ -1934,7 +2718,7 @@ function selectSubunit(unit) {
   document.querySelectorAll('.subunit-box').forEach(b => b.classList.remove('selected'));
   const box = document.querySelector('.subunit-box[data-unit="'+unit+'"]');
   if (box) box.classList.add('selected');
-  document.getElementById('fn-sd-unit').value = unit;
+  document.getElementById('fn-sd-unit').value = unit; document.getElementById('fn-sd-unit').dispatchEvent(new Event('change'));
 }
 
 /* ── PERSONNEL ID GENERATOR ── */
@@ -1957,6 +2741,416 @@ function getListItems(listId, className) {
   return Array.from(document.querySelectorAll('#'+listId+' .'+className+'-input')).map(i=>i.value.trim()).filter(Boolean);
 }
 
+/* ═══════════════════════════════════════════
+   FOUNDATION LIVE PREVIEW
+══════════════════════════════════════════════ */
+const DEPT_ICON_MAP = {
+  'Science Department':'img/Science.png',
+  'Security Department':'img/Security.png',
+  'Ethics Committee':'img/Ethics.png',
+  'Mobile Task Forces':'img/MTF.png',
+  'Medical Department':'img/Medical.png',
+  'Intelligence Agency':'img/Intelligence.png',
+  'Site Directorship':'img/SiteDirectorship.png',
+  'Engineering Department':'img/Engineering.png',
+  'Internal Security Department':'img/ISD.png',
+  "Administrator's Office":'img/AdministratorsOffice.png',
+};
+function fnGetDeptIcon(d){return DEPT_ICON_MAP[d]||'img/Base.png';}
+
+function _previewEscape(s){
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function _previewPipe(s){
+  // Pass through safe rich HTML from contenteditable: allow span, b, i, u, strong, em, br, div, p.
+  // Strip script/iframe/style/on* attributes as safety net.
+  if (!s) return '';
+  return String(s)
+    .replace(/<script[\s\S]*?<\/script>/gi,'')
+    .replace(/<style[\s\S]*?<\/style>/gi,'')
+    .replace(/ on\w+="[^"]*"/gi,'')
+    .replace(/ on\w+='[^']*'/gi,'');
+}
+
+function updateFnPreview() {
+  const pane = document.getElementById('fn-preview-body');
+  if (!pane) return;
+
+  // Pull state
+  const name = document.getElementById('fn-name')?.value.trim();
+  const alias = document.getElementById('fn-alias')?.value.trim();
+  const age = document.getElementById('fn-age')?.value.trim();
+  const nationality = document.getElementById('fn-nationality')?.value.trim();
+  const gender = document.getElementById('fn-gender')?.value.trim();
+  const height = document.getElementById('fn-height')?.value.trim();
+  const blood = document.getElementById('fn-blood')?.value.trim();
+  const role = document.getElementById('fn-role')?.value.trim();
+  const clearance = document.getElementById('fn-clearance')?.value;
+  const classification = document.getElementById('fn-classification')?.value;
+  const dept = document.getElementById('fn-dept')?.value;
+  const coverDept = document.getElementById('fn-cover-dept')?.value.trim();
+  const coverRole = document.getElementById('fn-cover-role')?.value.trim();
+  const sdUnit = document.getElementById('fn-sd-unit')?.value;
+  const scipnet = document.getElementById('fn-scipnet')?.value.trim();
+  const personnelId = document.getElementById('fn-personnel-id')?.value.trim();
+  const mbti = document.getElementById('fn-mbti')?.value;
+  const loyalty = document.getElementById('fn-loyalty')?.value;
+  const mars = document.getElementById('fn-mars')?.value;
+  const education = document.getElementById('fn-education')?.value.trim();
+  const experience = document.getElementById('fn-experience')?.value.trim();
+  const virtues = getListItems('fn-virtue-list','virtue');
+  const vices = getListItems('fn-vice-list','vice');
+  const motives = getListItems('fn-motive-list','motive');
+  const fears = getListItems('fn-fear-list','fear');
+  const backstory = document.getElementById('fn-backstory')?.innerHTML || '';
+  const physical = document.getElementById('fn-physical')?.innerHTML || '';
+  const employment = document.getElementById('fn-employment')?.innerHTML || '';
+  const incidents = document.getElementById('fn-incidents')?.innerHTML || '';
+  const notes = document.getElementById('fn-notes')?.innerHTML || '';
+  const imgPreview = document.getElementById('fn-img-preview');
+  const imgSrc = (imgPreview && imgPreview.src && !imgPreview.src.endsWith('#') && imgPreview.style.display !== 'none') ? imgPreview.src : '';
+
+  const isISD = dept === 'Internal Security Department';
+  const displayDept = isISD && coverDept ? coverDept : dept;
+  const trueDept = dept;
+
+  // Empty state: nothing meaningful yet
+  if (!name && !role && !dept && !clearance && !classification) {
+    pane.innerHTML = '<div class="dp-empty">Fill in the form to the left. Your dossier will render here as you type.</div>';
+    return;
+  }
+
+  // Stamps - these shift based on clearance/classification
+  const stamps = [];
+  if (clearance) stamps.push({ cls:'red', txt:`CL-${clearance}` });
+  if (classification) stamps.push({ cls:'gold', txt:`Class ${classification}` });
+  if (isISD) stamps.push({ cls:'red', txt:'Cover Assignment' });
+  if (dept) stamps.push({ cls:'grey', txt:(dept.length > 20 ? dept.split(' ').map(w=>w[0]).join('') : dept) });
+
+  const stampHtml = stamps.length
+    ? `<div class="dp-stamp-row">${stamps.map(s=>`<span class="dp-stamp ${s.cls}">${_previewEscape(s.txt)}</span>`).join('')}</div>`
+    : '';
+
+  // Portrait block
+  const portraitHtml = imgSrc
+    ? `<div class="dp-portrait"><img src="${_previewEscape(imgSrc)}" alt=""></div>`
+    : `<div class="dp-portrait"><div class="dp-portrait-empty">No Image on File</div></div>`;
+
+  // Identity
+  const pid = personnelId || (scipnet ? scipnet + '@SCiP.net' : 'ID pending');
+  const displayRole = (isISD && coverRole) ? coverRole : role;
+  const identHtml = `
+    <div class="dp-ident">
+      <div class="dp-ident-pid">${_previewEscape(pid)}</div>
+      <div class="dp-ident-name">${_previewEscape(name || 'Unnamed Personnel')}</div>
+      ${displayRole ? `<div class="dp-ident-role">${_previewEscape(displayRole)}</div>` : ''}
+      ${displayDept ? `<div class="dp-ident-dept">${_previewEscape(displayDept)}${sdUnit ? ' / ' + _previewEscape(sdUnit) : ''}</div>` : ''}
+      ${alias ? `<div class="dp-ident-alias">"${_previewEscape(alias)}"</div>` : ''}
+    </div>
+  `;
+
+  // Clearance row
+  const clHtml = (clearance || classification) ? `
+    <div class="dp-clearance-row">
+      ${clearance ? `<div class="dp-cl-tile cl-${clearance}"><div class="k">Clearance</div><div class="v">Level ${_previewEscape(clearance)}</div></div>` : ''}
+      ${classification ? `<div class="dp-cl-tile cls-${classification}"><div class="k">Classification</div><div class="v">Class ${_previewEscape(classification)}</div></div>` : ''}
+    </div>
+  ` : '';
+
+  // Vitals
+  const vitals = [];
+  if (age) vitals.push({k:'Age', v:age});
+  if (nationality) vitals.push({k:'Nationality', v:nationality});
+  if (gender) vitals.push({k:'Gender', v:gender});
+  if (height) vitals.push({k:'Height', v:height});
+  if (blood) vitals.push({k:'Blood', v:blood});
+  if (education) vitals.push({k:'Education', v:education});
+  if (experience) vitals.push({k:'Experience', v:experience});
+  const vitalsHtml = vitals.length ? `
+    <div class="dp-vitals">
+      ${vitals.map(v=>`<div class="dp-vital"><span class="k">${_previewEscape(v.k)}</span><span class="v">${_previewEscape(v.v)}</span></div>`).join('')}
+    </div>
+  ` : '';
+
+  // Psychological chips
+  const psych = [];
+  if (mbti) psych.push({k:'MBTI', v:mbti});
+  if (loyalty) psych.push({k:'Loyalty', v:loyalty});
+  if (mars) psych.push({k:'MARS', v:mars});
+  const psychHtml = psych.length ? `
+    <div class="dp-section-title">Psychological Profile</div>
+    <div class="dp-psych">
+      ${psych.map(p=>`<div class="dp-psych-chip"><div class="k">${_previewEscape(p.k)}</div><div class="v">${_previewEscape(p.v)}</div></div>`).join('')}
+    </div>
+  ` : '';
+
+  // Traits (chips)
+  function chipList(arr, cls, label){
+    if (!arr || !arr.length) return '';
+    return `<div class="dp-list-title">${label}</div><div class="dp-traits">${arr.map(t=>`<span class="dp-trait-chip ${cls}">${_previewEscape(t.length > 22 ? t.slice(0,22) + '...' : t)}</span>`).join('')}</div>`;
+  }
+  const traitsHtml = (virtues.length || vices.length || motives.length || fears.length) ? `
+    <div class="dp-section" style="margin-top:.5rem;">
+      ${chipList(virtues, 'virtue', 'Virtues')}
+      ${chipList(vices, 'vice', 'Vices')}
+      ${chipList(motives, 'motive', 'Motives')}
+      ${chipList(fears, 'fear', 'Fears')}
+    </div>
+  ` : '';
+
+  // Prose sections
+  function proseSection(title, html){
+    if (!html || !html.trim() || html.trim() === '<br>') return '';
+    return `
+      <div class="dp-section">
+        <div class="dp-section-title">${_previewEscape(title)}</div>
+        <div class="dp-section-body" onclick="this.classList.toggle('expanded')">${_previewPipe(html)}</div>
+      </div>
+    `;
+  }
+
+  pane.innerHTML = `
+    ${stampHtml}
+    <div class="dp-portrait-row">
+      ${portraitHtml}
+      ${identHtml}
+    </div>
+    ${clHtml}
+    ${vitalsHtml}
+    ${psychHtml}
+    ${traitsHtml}
+    ${proseSection('Physical Description', physical)}
+    ${proseSection('Backstory', backstory)}
+    ${proseSection('Employment History', employment)}
+    ${proseSection('Notable Incidents', incidents)}
+    ${proseSection('Additional Notes', notes)}
+    <div class="dp-footer-stamp">Draft Preview / Not Yet Submitted</div>
+  `;
+}
+
+function wireFnPreview(){
+  if (!document.getElementById('fn-preview-body')) return;
+  const selectors = [
+    '#fn-discord','#fn-name','#fn-alias','#fn-age','#fn-nationality','#fn-gender','#fn-height','#fn-blood',
+    '#fn-scipnet','#fn-personnel-id','#fn-mbti','#fn-loyalty','#fn-mars','#fn-education','#fn-experience',
+    '#fn-clearance','#fn-classification','#fn-dept','#fn-cover-dept','#fn-cover-role','#fn-role','#fn-sd-unit'
+  ];
+  selectors.forEach(sel=>{
+    const el = document.querySelector(sel);
+    if (el) el.addEventListener('input', updateFnPreview);
+    if (el) el.addEventListener('change', updateFnPreview);
+  });
+  ['fn-backstory','fn-physical','fn-employment','fn-incidents','fn-notes','fn-rp-sample'].forEach(id=>{
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', updateFnPreview);
+  });
+  // Watch list mutations (virtues/vices/etc) + image changes via MutationObserver
+  ['fn-virtue-list','fn-vice-list','fn-motive-list','fn-fear-list','fn-connection-list','fn-addendum-list'].forEach(id=>{
+    const el = document.getElementById(id);
+    if (el) {
+      const mo = new MutationObserver(updateFnPreview);
+      mo.observe(el, {childList:true, subtree:true, characterData:true});
+      el.addEventListener('input', updateFnPreview);
+    }
+  });
+  // Image preview watch
+  const imgEl = document.getElementById('fn-img-preview');
+  if (imgEl) {
+    const mo = new MutationObserver(updateFnPreview);
+    mo.observe(imgEl, {attributes:true, attributeFilter:['src','style']});
+  }
+  // Initial render
+  updateFnPreview();
+}
+
+/* ═══════════════════════════════════════════
+   SCP LIVE PREVIEW
+══════════════════════════════════════════════ */
+function updateScpPreview(){
+  const pane = document.getElementById('scp-preview-body');
+  if (!pane) return;
+  const item = document.getElementById('scp-item')?.value.trim();
+  const clearance = document.getElementById('scp-clearance')?.value;
+  const cls = document.getElementById('scp-class')?.value;
+  const disruption = document.getElementById('scp-disruption')?.value;
+  const risk = document.getElementById('scp-risk')?.value;
+  const secondarySel = document.getElementById('scp-secondary')?.value || '';
+  const customSec = document.getElementById('scp-custom-class')?.value.trim() || '';
+  const secondary = cls === 'Esoteric' ? (secondarySel === 'Other' ? customSec : secondarySel) : '';
+  const containment = document.getElementById('scp-containment')?.innerHTML || '';
+  const description = document.getElementById('scp-description')?.innerHTML || '';
+  const abilities = document.getElementById('scp-abilities')?.innerHTML || '';
+  const addenda = [];
+  document.querySelectorAll('#scp-addendum-list .addendum-item').forEach(it => {
+    const t = it.querySelector('.addendum-title-input')?.value.trim() || '';
+    const c = it.querySelector('.addendum-content')?.innerHTML || '';
+    if (t || c) addenda.push({title:t, content:c});
+  });
+
+  if (!item && !clearance && !cls && !containment && !description && !abilities) {
+    pane.innerHTML = '<div class="dp-empty" style="margin:1.5rem;">Fill in the form to the left. Your SCP file will render here as you type.</div>';
+    return;
+  }
+
+  const itemDisplay = item || 'SCP-XXXX';
+  const clsKey = (cls || 'pending').toLowerCase();
+  const disKey = (disruption || '').toLowerCase();
+  const riskKey = (risk || '').toLowerCase();
+  const clLevel = clearance || '?';
+
+  const clBannerCls = clearance ? 'l' + clearance : '';
+  const clBannerTxt = clearance ? `Authorized Personnel Only / Clearance Level ${clearance} Required` : 'Classification Pending';
+
+  const addendaHtml = addenda.length ? addenda.map((a,i) => `
+    <div class="spv-addendum">
+      <div class="spv-addendum-title">Addendum ${itemDisplay}.${i+1} / ${_previewEscape(a.title || 'Untitled')}</div>
+      <div class="spv-addendum-body">${_previewPipe(a.content)}</div>
+    </div>
+  `).join('') : '';
+
+  const proseOrEmpty = (h, fallback) => (h && h.trim() && h.trim() !== '<br>') ? _previewPipe(h) : `<p style="color:var(--muted);font-style:italic;">${fallback}</p>`;
+
+  pane.innerHTML = `
+    <div class="spv-topbar">
+      <span class="spv-topbar-left">Live Anomaly Preview</span>
+      <span>${_previewEscape(itemDisplay)}</span>
+    </div>
+    <div class="spv-clearance-banner ${clBannerCls}">
+      <span>&#128274;&nbsp;&nbsp;${clBannerTxt}</span>
+      <span class="lock">RAISA / Classified</span>
+    </div>
+    <div class="spv-acs">
+      <div class="spv-acs-top">
+        <div class="spv-acs-item"><span class="lbl">Item #</span>${_previewEscape(itemDisplay)}</div>
+        <div class="spv-acs-level">Level ${_previewEscape(clLevel)} / ${_previewEscape(itemDisplay)}</div>
+        <div class="spv-acs-class cc-${clsKey}">
+          <span class="cls-hdr">Object Class</span>
+          <span class="cls-val">${_previewEscape((cls || 'Pending').toUpperCase())}</span>
+          ${secondary ? `<span class="cls-sec">${_previewEscape(secondary)}</span>` : ''}
+        </div>
+      </div>
+      <div class="spv-acs-bottom">
+        <div class="spv-acs-dis di-${disKey}">
+          <span class="lbl">Disruption Class</span>
+          <span class="val">${_previewEscape(disruption || '---')}</span>
+        </div>
+        <div class="spv-acs-risk ri-${riskKey}">
+          <span class="lbl">Risk Class</span>
+          <span class="val">${_previewEscape(risk || '---')}</span>
+        </div>
+      </div>
+    </div>
+    <div class="spv-doc">
+      <div class="spv-doc-title">&mdash; Classified Anomaly File &mdash;</div>
+      <div class="spv-doc-section">
+        <div class="spv-doc-section-hdr">Special Containment Procedures</div>
+        <div class="spv-doc-body" onclick="this.classList.toggle('expanded')">${proseOrEmpty(containment, 'Containment procedures pending.')}</div>
+      </div>
+      <div class="spv-doc-section">
+        <div class="spv-doc-section-hdr">Description</div>
+        <div class="spv-doc-body" onclick="this.classList.toggle('expanded')">${proseOrEmpty(description, 'No description yet.')}</div>
+      </div>
+      <div class="spv-doc-section">
+        <div class="spv-doc-section-hdr">Abilities and Limits</div>
+        <div class="spv-doc-body" onclick="this.classList.toggle('expanded')">${proseOrEmpty(abilities, 'Abilities not yet documented.')}</div>
+      </div>
+      ${addendaHtml ? `<div class="spv-doc-section"><div class="spv-doc-section-hdr">Addenda</div>${addendaHtml}</div>` : ''}
+    </div>
+    <div class="dp-footer-stamp" style="margin:0 1.2rem 1.2rem;">Draft Preview / Not Yet Submitted</div>
+  `;
+}
+
+function wireScpPreview(){
+  if (!document.getElementById('scp-preview-body')) return;
+  ['scp-discord','scp-item','scp-clearance','scp-class','scp-disruption','scp-risk','scp-secondary','scp-custom-class'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.addEventListener('input', updateScpPreview); el.addEventListener('change', updateScpPreview); }
+  });
+  ['scp-containment','scp-description','scp-abilities'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', updateScpPreview);
+  });
+  const addList = document.getElementById('scp-addendum-list');
+  if (addList) {
+    const mo = new MutationObserver(updateScpPreview);
+    mo.observe(addList, {childList:true, subtree:true, characterData:true});
+    addList.addEventListener('input', updateScpPreview);
+  }
+  updateScpPreview();
+}
+
+/* ═══════════════════════════════════════════
+   UNALIGNED LIVE PREVIEW
+══════════════════════════════════════════════ */
+function updateUaPreview(){
+  const pane = document.getElementById('ua-preview-body');
+  if (!pane) return;
+  const name = document.getElementById('ua-name')?.value.trim();
+  const age = document.getElementById('ua-age')?.value.trim();
+  const affiliation = document.getElementById('ua-affiliation')?.value.trim();
+  const background = document.getElementById('ua-background')?.innerHTML || '';
+  const skills = document.getElementById('ua-skills')?.innerHTML || '';
+  const equipment = document.getElementById('ua-equipment')?.innerHTML || '';
+  const notes = document.getElementById('ua-notes')?.innerHTML || '';
+  const imgPreview = document.getElementById('ua-img-preview');
+  const imgSrc = (imgPreview && imgPreview.src && !imgPreview.src.endsWith('#') && imgPreview.style.display !== 'none') ? imgPreview.src : '';
+
+  if (!name && !affiliation && !background.trim()) {
+    pane.innerHTML = '<div class="dp-empty" style="margin:1.5rem;">Fill in the form to the left. Your file will render here as you type.</div>';
+    return;
+  }
+
+  const portraitHtml = imgSrc
+    ? `<div class="upv-portrait"><img src="${_previewEscape(imgSrc)}" alt=""></div>`
+    : `<div class="upv-portrait"><div class="upv-portrait-empty">No Image on File</div></div>`;
+
+  const proseOrNothing = (title, html) => {
+    if (!html || !html.trim() || html.trim() === '<br>') return '';
+    return `
+      <div class="upv-section">
+        <div class="upv-section-hdr">${_previewEscape(title)}</div>
+        <div class="upv-section-body" onclick="this.classList.toggle('expanded')">${_previewPipe(html)}</div>
+      </div>
+    `;
+  };
+
+  pane.innerHTML = `
+    <div class="upv-hdr">
+      ${portraitHtml}
+      <div class="upv-ident">
+        <div class="upv-fileref">TF / UNA / ${_previewEscape((name || 'DRAFT').split(' ')[0].toUpperCase().slice(0,8))}</div>
+        <div class="upv-name">${_previewEscape(name || 'Unnamed Subject')}</div>
+        ${affiliation ? `<div class="upv-aff">${_previewEscape(affiliation)}</div>` : ''}
+        ${age ? `<div class="upv-age">Age: ${_previewEscape(age)}</div>` : ''}
+      </div>
+    </div>
+    ${proseOrNothing('Background / History', background)}
+    ${proseOrNothing('Skills and Abilities', skills)}
+    ${proseOrNothing('Equipment / Resources', equipment)}
+    ${proseOrNothing('Additional Notes', notes)}
+    <div class="dp-footer-stamp" style="margin:1rem 1.2rem 1.2rem;">Draft Preview / Not Yet Submitted</div>
+  `;
+}
+
+function wireUaPreview(){
+  if (!document.getElementById('ua-preview-body')) return;
+  ['ua-discord','ua-name','ua-age','ua-affiliation'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.addEventListener('input', updateUaPreview); el.addEventListener('change', updateUaPreview); }
+  });
+  ['ua-background','ua-skills','ua-equipment','ua-notes'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', updateUaPreview);
+  });
+  const imgEl = document.getElementById('ua-img-preview');
+  if (imgEl) {
+    const mo = new MutationObserver(updateUaPreview);
+    mo.observe(imgEl, {attributes:true, attributeFilter:['src','style']});
+  }
+  updateUaPreview();
+}
+
 async function submitFoundation() {
   const msg = document.getElementById('fn-msg');
   const discord = g('fn-discord'), name = g('fn-name'),
@@ -1974,10 +3168,14 @@ async function submitFoundation() {
     setMsg(msg,'error','Please select a Security unit (SRU, SCU, SEU, or SIU).');
     return;
   }
-  // ISD cover dept required
-  if (dept === 'Internal Security Department' && !g('fn-cover-dept')) {
-    setMsg(msg,'error','Please provide a cover department for your ISD character.');
-    return;
+  // ISD cover requirements: only for "agent" roles (cl === null). Handler/Director are openly operating.
+  if (dept === 'Internal Security Department') {
+    const roleData = (DEPT_ROLES['Internal Security Department'] || []).find(r => r.name === role);
+    const isAgentRole = roleData && (roleData.cl === null || roleData.cl === undefined);
+    if (isAgentRole) {
+      if (!g('fn-cover-dept')) { setMsg(msg,'error','Please select a cover department for your ISD character.'); return; }
+      if (!g('fn-cover-role')) { setMsg(msg,'error','Please select a cover role within the cover department.'); return; }
+    }
   }
   // Virtue/Vice/Motive/Fear minimums
   const virtues  = getListItems('fn-virtue-list','virtue');
@@ -1994,16 +3192,25 @@ async function submitFoundation() {
   setMsg(msg,'loading','Uploading...');
   const imgUrl = await doUploadImg('_pendingImgFile_fn');
   const isISD = dept === 'Internal Security Department';
+  const coverDept = isISD ? g('fn-cover-dept') : '';
+  const coverRole = isISD ? g('fn-cover-role') : '';
+  // For ISD agents: the PUBLIC role is the cover role, and PUBLIC department is the cover department.
+  // For ISD Handler/Director (no cover), the role/department show openly.
+  const publicRole = (isISD && coverRole) ? coverRole : role;
+  const publicDept = (isISD && coverDept) ? coverDept : dept;
   const data = {
     image_url: imgUrl,
     full_name: name, alias: g('fn-alias'),
-    age, nationality, role,
+    age, nationality,
+    role: publicRole,
+    actual_role: role,
     gender: g('fn-gender'), height: g('fn-height'), blood_type: g('fn-blood'),
     clearance: parseInt(clearance), classification,
-    department: isISD ? (g('fn-cover-dept') || dept) : dept,
+    department: publicDept,
     actual_department: dept,
     is_isd: isISD,
-    cover_dept: isISD ? g('fn-cover-dept') : null,
+    cover_dept: coverDept || null,
+    cover_role: coverRole || null,
     sd_unit: document.getElementById('fn-sd-unit')?.value || null,
     scipnet: scipnet + '@SCiP.net',
     personnel_id: g('fn-personnel-id'),
@@ -2082,23 +3289,56 @@ async function submitUnaff() {
 async function doTrack() {
   const username = document.getElementById('tracker-input').value.trim();
   const el = document.getElementById('tracker-results');
-  if (!username) { el.innerHTML = '<div class="track-empty">Enter your Discord username above.</div>'; return; }
-  el.innerHTML = '<div class="track-empty">Searching...</div>';
+  if (!username) { el.innerHTML = '<div class="trk-empty">Enter your Discord username above.</div>'; return; }
+  el.innerHTML = '<div class="trk-empty">Querying records...</div>';
   const {data,error} = await getCharactersByDiscord(username);
-  if (error||!data||!data.length) { el.innerHTML = '<div class="track-empty">No submissions found for that username.</div>'; return; }
-  const rows = data.map(c => {
+  if (error || !data || !data.length) {
+    el.innerHTML = '<div class="trk-empty">No submissions found for that username.</div>';
+    return;
+  }
+
+  // Summary counts
+  const counts = {pending:0, review:0, approved:0, denied:0};
+  data.forEach(c => { if (counts[c.status] !== undefined) counts[c.status]++; });
+  const summary = `
+    <div class="trk-summary">
+      <div class="trk-sum-item pending"><div class="trk-sum-k">Pending</div><div class="trk-sum-v">${counts.pending}</div></div>
+      <div class="trk-sum-item review"><div class="trk-sum-k">Under Review</div><div class="trk-sum-v">${counts.review}</div></div>
+      <div class="trk-sum-item approved"><div class="trk-sum-k">Approved</div><div class="trk-sum-v">${counts.approved}</div></div>
+      <div class="trk-sum-item denied"><div class="trk-sum-k">Denied</div><div class="trk-sum-v">${counts.denied}</div></div>
+    </div>
+  `;
+
+  // Sort: newest first
+  const sorted = [...data].sort((a,b) => new Date(b.created_at||0) - new Date(a.created_at||0));
+  const cards = sorted.map(c => {
     const d = c.character_data || {};
-    const name = c.type==='scp' ? (d.item_number||'SCP-???') : (d.full_name||'—');
-    const reason = c.staff_reason ? `<div class="track-reason">${escHtml(c.staff_reason)}</div>` : '';
-    return `<tr>
-      <td style="font-family:var(--mono);font-size:9px;color:var(--muted)">#${c.seq}</td>
-      <td>${escHtml(name)}</td>
-      <td><span style="font-family:var(--mono);font-size:8.5px;letter-spacing:0.1em;color:var(--light)">${c.type.toUpperCase()}</span></td>
-      <td><span class="track-badge ts-${c.status}">${statusLabel(c.status)}</span>${reason}</td>
-      <td style="font-family:var(--mono);font-size:9px;color:var(--muted)">${new Date(c.created_at).toLocaleDateString('en-GB')}</td>
-    </tr>`;
+    const name = c.type === 'scp' ? (d.item_number || 'SCP-???') : (d.full_name || 'Unnamed Submission');
+    const typeLabel = c.type === 'foundation' ? 'Foundation' : c.type === 'scp' ? 'SCP Entry' : 'Unaligned';
+    const created = c.created_at ? new Date(c.created_at).toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'}) : '---';
+    const methodLabel = c.method === 'googledoc' ? 'Google Doc' : 'Website Form';
+    const reason = c.staff_reason
+      ? `<div class="trk-card-reason">${escHtml(c.staff_reason)}</div>` : '';
+    return `
+      <div class="trk-card s-${c.status}">
+        <div class="trk-card-top">
+          <span class="trk-card-seq">File No. <strong>#${c.seq || '---'}</strong></span>
+          <span class="trk-card-badges">
+            <span class="trk-badge type">${typeLabel}</span>
+            <span class="trk-badge status s-${c.status}">${statusLabel(c.status)}</span>
+          </span>
+        </div>
+        <div class="trk-card-name">${escHtml(name)}</div>
+        <div class="trk-card-meta">
+          <span>Submitted / ${created}</span>
+          <span>Method / ${methodLabel}</span>
+        </div>
+        ${reason}
+      </div>
+    `;
   }).join('');
-  el.innerHTML = `<table class="track-table"><thead><tr><th>#</th><th>Name</th><th>Type</th><th>Status</th><th>Submitted</th></tr></thead><tbody>${rows}</tbody></table>`;
+
+  el.innerHTML = summary + `<div class="trk-results">${cards}</div>`;
 }
 
 /* ═══════════════════════════════════════════
@@ -2116,105 +3356,349 @@ function switchRTab(tab, btn) {
 ══════════════════════════════════════════════ */
 const CL_COLORS = {'0':'#444','1':'#1a6a1a','2':'#1a1a6a','3':'#6a5a1a','4':'#6a1a1a','5':'#5a0a5a','6':'#2a2a2a'};
 
+async function updateHomeCounts(){
+  try {
+    const {data} = await getCharacters({status:'approved'});
+    if (!data) return;
+    const counts = {foundation:0, scp:0, unaffiliated:0};
+    data.forEach(c => { if (counts[c.type] !== undefined) counts[c.type]++; });
+    const fnd = document.getElementById('hc-fnd-count');
+    const scp = document.getElementById('hc-scp-count');
+    const ua  = document.getElementById('hc-ua-count');
+    if (fnd) fnd.textContent = counts.foundation;
+    if (scp) scp.textContent = counts.scp;
+    if (ua)  ua.textContent  = counts.unaffiliated;
+  } catch(e) { /* ignore if DB unreachable */ }
+}
+
+/* State for roster filters */
+let _rstFoundation = [], _rstScps = [], _rstUnaff = [];
+let _fnDeptFilter = 'all', _fnClFilter = 'all', _scpClassFilter = 'all', _uaAffFilter = 'all';
+
+/* Dept icon map (shared with preview) */
+const ROSTER_DEPT_ICONS = {
+  'Science Department':'img/Science.png',
+  'Security Department':'img/Security.png',
+  'Ethics Committee':'img/Ethics.png',
+  'Mobile Task Forces':'img/MTF.png',
+  'Medical Department':'img/Medical.png',
+  'Intelligence Agency':'img/Intelligence.png',
+  'Site Directorship':'img/SiteDirectorship.png',
+  'Engineering Department':'img/Engineering.png',
+  'Internal Security Department':'img/ISD.png',
+  "Administrator's Office":'img/AdministratorsOffice.png',
+};
+function rstGetDeptIcon(d){return ROSTER_DEPT_ICONS[d] || 'img/Base.png';}
+
+/* Abbreviation for dept display */
+const ROSTER_DEPT_ABBR = {
+  'Science Department':'ScD','Security Department':'SD','Ethics Committee':'EC',
+  'Mobile Task Forces':'MTF','Medical Department':'MD','Intelligence Agency':'IA',
+  'Site Directorship':'SDir','Engineering Department':'Eng','Internal Security Department':'ISD',
+  "Administrator's Office":"O5"
+};
+
 async function loadListing() {
   showView('v-listing');
   const {data,error} = await getCharacters({status:'approved'});
   if (error || !data) return;
   _allChars = data;
 
-  const foundation = data.filter(c => c.type === 'foundation');
-  const scps = data.filter(c => c.type === 'scp');
-  const unaff = data.filter(c => c.type === 'unaffiliated');
+  _rstFoundation = data.filter(c => c.type === 'foundation');
+  _rstScps = data.filter(c => c.type === 'scp');
+  _rstUnaff = data.filter(c => c.type === 'unaffiliated');
 
-  // Foundation — grouped by department
-  const depts = {};
-  foundation.forEach(c => {
-    const dept = c.character_data?.department || 'Unassigned';
-    if (!depts[dept]) depts[dept] = [];
-    depts[dept].push(c);
+  // Cover counters
+  const fnCount = document.getElementById('rst-fnd-count');
+  const scpCount = document.getElementById('rst-scp-count');
+  const uaCount = document.getElementById('rst-ua-count');
+  if (fnCount) fnCount.textContent = _rstFoundation.length;
+  if (scpCount) scpCount.textContent = _rstScps.length;
+  if (uaCount) uaCount.textContent = _rstUnaff.length;
+
+  // Reset filter state
+  _fnDeptFilter = 'all'; _fnClFilter = 'all';
+  _scpClassFilter = 'all';
+  _uaAffFilter = 'all';
+
+  renderFoundationTab();
+  renderScpTab();
+  renderUaTab();
+}
+
+/* ═══ FOUNDATION TAB ═══ */
+function renderFoundationTab(){
+  const filtersEl = document.getElementById('fnd-filters');
+  const emptyEl = document.getElementById('foundation-empty');
+  const contentEl = document.getElementById('foundation-content');
+  if (!_rstFoundation.length) {
+    filtersEl.style.display = 'none';
+    emptyEl.style.display = 'block';
+    contentEl.innerHTML = '';
+    return;
+  }
+  filtersEl.style.display = '';
+  emptyEl.style.display = 'none';
+
+  // Dept chips
+  const deptCounts = {};
+  _rstFoundation.forEach(c => {
+    const d = c.character_data?.department || 'Unassigned';
+    deptCounts[d] = (deptCounts[d] || 0) + 1;
   });
+  const deptNames = Object.keys(deptCounts).sort();
+  const deptPills = document.getElementById('dept-pills');
+  deptPills.innerHTML = `<button class="rchip ${_fnDeptFilter==='all'?'active':''}" onclick="setFnDeptFilter('all',this)">All<span class="count">${_rstFoundation.length}</span></button>` +
+    deptNames.map(d => {
+      const icon = rstGetDeptIcon(d);
+      return `<button class="rchip ${_fnDeptFilter===d?'active':''}" onclick="setFnDeptFilter('${escAttr(d)}',this)"><img src="${icon}" alt="">${escHtml(ROSTER_DEPT_ABBR[d] || d)}<span class="count">${deptCounts[d]}</span></button>`;
+    }).join('');
 
-  const deptNames = Object.keys(depts).sort();
-  const pillsEl = document.getElementById('dept-pills');
-  pillsEl.innerHTML = `<button class="dpill active" onclick="filterDept('all',this)">All</button>` +
-    deptNames.map(d => `<button class="dpill" onclick="filterDept('${escHtml(d)}',this)">${escHtml(d)}</button>`).join('');
+  // Clearance chips
+  const clCounts = {0:0,1:0,2:0,3:0,4:0,5:0};
+  _rstFoundation.forEach(c => {
+    const cl = c.character_data?.clearance ?? 0;
+    if (clCounts[cl] !== undefined) clCounts[cl]++;
+  });
+  const clPills = document.getElementById('cl-pills');
+  clPills.innerHTML = `<button class="rchip ${_fnClFilter==='all'?'active':''}" onclick="setFnClFilter('all',this)">All</button>` +
+    [1,2,3,4,5].filter(l => clCounts[l] > 0).map(l =>
+      `<button class="rchip cl-${l} ${_fnClFilter===String(l)?'active':''}" onclick="setFnClFilter('${l}',this)">L${l}<span class="count">${clCounts[l]}</span></button>`
+    ).join('');
 
-  const fcontent = document.getElementById('foundation-content');
-  if (!foundation.length) { document.getElementById('foundation-empty').style.display='block'; }
-  else {
-    fcontent.innerHTML = deptNames.map(dept => {
-      const chars = depts[dept];
-      return `<div class="dept-section" data-dept="${escHtml(dept)}">
+  renderFoundationSections();
+}
+
+function setFnDeptFilter(dept, btn){
+  _fnDeptFilter = dept;
+  document.querySelectorAll('#dept-pills .rchip').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderFoundationSections();
+}
+function setFnClFilter(cl, btn){
+  _fnClFilter = cl;
+  document.querySelectorAll('#cl-pills .rchip').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderFoundationSections();
+}
+
+function renderFoundationSections(){
+  let filtered = _rstFoundation.slice();
+  if (_fnDeptFilter !== 'all') filtered = filtered.filter(c => (c.character_data?.department || 'Unassigned') === _fnDeptFilter);
+  if (_fnClFilter !== 'all') filtered = filtered.filter(c => String(c.character_data?.clearance ?? 0) === _fnClFilter);
+
+  const contentEl = document.getElementById('foundation-content');
+  if (!filtered.length) {
+    contentEl.innerHTML = '<div class="empty-state">No personnel match the current filters.</div>';
+    return;
+  }
+
+  // Group by department
+  const groups = {};
+  filtered.forEach(c => {
+    const d = c.character_data?.department || 'Unassigned';
+    if (!groups[d]) groups[d] = [];
+    groups[d].push(c);
+  });
+  Object.values(groups).forEach(arr => arr.sort((a,b) => (b.character_data?.clearance||0) - (a.character_data?.clearance||0)));
+  const deptNames = Object.keys(groups).sort();
+
+  contentEl.innerHTML = deptNames.map(dept => {
+    const chars = groups[dept];
+    const icon = rstGetDeptIcon(dept);
+    const abbr = ROSTER_DEPT_ABBR[dept] || dept.split(' ').map(w=>w[0]).join('').toUpperCase();
+    return `
+      <div class="dept-section" data-dept="${escAttr(dept)}">
         <div class="dept-sec-hdr">
-          <span class="dept-sec-name">${escHtml(dept)}</span>
-          <span class="dept-sec-count">${chars.length} personnel</span>
+          <img class="dept-sec-icon" src="${icon}" alt="">
+          <div>
+            <div class="dept-sec-name">${escHtml(dept)}</div>
+            <div class="dept-sec-ref">TF / DEPT / ${escHtml(abbr.toUpperCase())}</div>
+          </div>
+          <div class="dept-sec-meta">${chars.length} Personnel</div>
         </div>
         <div class="rchar-grid">
           ${chars.map(c => foundationCard(c)).join('')}
         </div>
-      </div>`;
-    }).join('');
-  }
-
-  // SCPs
-  if (!scps.length) { document.getElementById('scp-empty').style.display='block'; }
-  else {
-    document.getElementById('scp-content').innerHTML = scps.map(c => scpCard(c)).join('');
-  }
-
-  // Unaffiliated
-  if (!unaff.length) { document.getElementById('unaff-empty').style.display='block'; }
-  else {
-    document.getElementById('unaff-content').innerHTML = unaff.map(c => {
-      const d = c.character_data || {};
-      return `<div class="runaff-card" onclick="viewChar('${c.id}')">
-        <div class="runaff-name">${escHtml(d.full_name||'Unknown')}</div>
-        <div class="runaff-affil">${escHtml(d.affiliation||'Unaffiliated')}</div>
-        ${d.age ? `<div style="font-family:var(--mono);font-size:8.5px;color:var(--border);margin-top:.3rem">Age ${escHtml(d.age)}</div>` : ''}
-      </div>`;
-    }).join('');
-  }
-}
-
-function foundationCard(c) {
-  const d = c.character_data || {};
-  const cl = d.clearance || 0;
-  const clColor = CL_COLORS[String(cl)] || '#333';
-  return `<div class="rchar-card" onclick="viewChar('${c.id}')">
-    <div class="rchar-accent" style="background:${clColor}"></div>
-    <div class="rchar-body">
-      <div class="rchar-top">
-        <span></span>
-        <span class="rchar-cl" style="border-color:${clColor};color:${clColor}">LVL ${cl}</span>
       </div>
-      <div class="rchar-name">${escHtml(d.full_name||'Unknown')}</div>
-      <div class="rchar-role">${escHtml(d.role||'')}</div>
-      ${d.alias ? `<div style="font-family:var(--mono);font-size:8px;letter-spacing:0.1em;color:var(--muted)">aka ${escHtml(d.alias)}</div>` : ''}
-    </div>
-  </div>`;
+    `;
+  }).join('');
 }
 
-function scpCard(c) {
+function foundationCard(c){
   const d = c.character_data || {};
-  const cls = (d.containment_class||'Pending').toLowerCase();
-  return `<div class="scp-card" onclick="viewChar('${c.id}')">
-    <div class="scp-card-num">${escHtml(d.item_number||'SCP-???')}</div>
-    <span class="scp-card-class class-${cls}">${escHtml(d.containment_class||'PENDING')}</span>
-    <div class="scp-card-name">${escHtml(d.item_number||'???')}</div>
-    <div style="font-family:var(--mono);font-size:8px;color:var(--muted);margin-top:.5rem;">
-      ${d.disruption_class ? `Dis: ${escHtml(d.disruption_class)}` : ''}
-      ${d.risk_class ? ` · Risk: ${escHtml(d.risk_class)}` : ''}
+  const cl = d.clearance ?? 0;
+  const cls = d.classification || '';
+  const clColor = CL_COLORS[String(cl)] || '#444';
+  const clsBorder = { 'A':'#8a1a1a','B':'#2a3a8a','C':'#2a6a2a','D':'#666','E':'#8a7a1a','O':'#4a0a6a' }[cls] || '#444';
+  const dept = d.department || '';
+  const abbr = ROSTER_DEPT_ABBR[dept] || dept.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,4);
+  const fileRef = `TF / PERS / ${escAttr((d.full_name||'unknown').split(' ').slice(-1)[0].toUpperCase().slice(0,8))}`;
+  return `
+    <div class="rchar-card" onclick="viewChar('${c.id}')">
+      <div class="rchar-accent" style="background:${clColor}"></div>
+      <div class="rchar-tab">${escHtml(abbr)}</div>
+      <div class="rchar-body">
+        <div class="rchar-fileref">${fileRef}</div>
+        <div class="rchar-name">${escHtml(d.full_name || 'Unknown')}</div>
+        <div class="rchar-role">${escHtml(d.role || 'Unassigned')}</div>
+        <div class="rchar-meta">
+          <span class="rchar-meta-chip" style="border-color:${clColor};color:${clColor}">CL-${cl}</span>
+          ${cls ? `<span class="rchar-meta-chip" style="border-color:${clsBorder};color:${clsBorder}">Class ${cls}</span>` : ''}
+        </div>
+        <div class="rchar-dept-line">${escHtml(dept || 'Unassigned')}</div>
+      </div>
     </div>
-  </div>`;
+  `;
 }
 
-function filterDept(dept, btn) {
-  document.querySelectorAll('.dpill').forEach(p => p.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  document.querySelectorAll('.dept-section').forEach(sec => {
-    sec.style.display = (dept === 'all' || sec.dataset.dept === dept) ? '' : 'none';
+/* ═══ SCP TAB ═══ */
+function renderScpTab(){
+  const filtersEl = document.getElementById('scp-filters');
+  const emptyEl = document.getElementById('scp-empty');
+  const gridEl = document.getElementById('scp-content');
+  if (!_rstScps.length) {
+    filtersEl.style.display = 'none';
+    emptyEl.style.display = 'block';
+    gridEl.innerHTML = '';
+    return;
+  }
+  filtersEl.style.display = '';
+  emptyEl.style.display = 'none';
+
+  // Containment class counts
+  const ccCounts = {};
+  _rstScps.forEach(s => {
+    const cc = (s.character_data?.containment_class || 'Pending');
+    ccCounts[cc] = (ccCounts[cc] || 0) + 1;
   });
+  const ccOrder = ['Safe','Euclid','Keter','Neutralized','Pending','Explained','Esoteric'];
+  const ccNames = ccOrder.filter(c => ccCounts[c]);
+  // Also any custom ones not in the canon list
+  Object.keys(ccCounts).forEach(c => { if (!ccOrder.includes(c)) ccNames.push(c); });
+
+  const ccPills = document.getElementById('cc-pills');
+  ccPills.innerHTML = `<button class="rchip ${_scpClassFilter==='all'?'active':''}" onclick="setScpClassFilter('all',this)">All<span class="count">${_rstScps.length}</span></button>` +
+    ccNames.map(cc => {
+      const key = cc.toLowerCase();
+      return `<button class="rchip cc-${key} ${_scpClassFilter===cc?'active':''}" onclick="setScpClassFilter('${escAttr(cc)}',this)">${escHtml(cc)}<span class="count">${ccCounts[cc]}</span></button>`;
+    }).join('');
+
+  renderScpCards();
 }
+
+function setScpClassFilter(cc, btn){
+  _scpClassFilter = cc;
+  document.querySelectorAll('#cc-pills .rchip').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderScpCards();
+}
+
+function renderScpCards(){
+  let filtered = _rstScps.slice();
+  if (_scpClassFilter !== 'all') filtered = filtered.filter(s => (s.character_data?.containment_class || 'Pending') === _scpClassFilter);
+  filtered.sort((a,b) => {
+    const na = parseInt((a.character_data?.item_number||'').replace(/\D/g,'')) || 9999;
+    const nb = parseInt((b.character_data?.item_number||'').replace(/\D/g,'')) || 9999;
+    return na - nb;
+  });
+  const gridEl = document.getElementById('scp-content');
+  if (!filtered.length) {
+    gridEl.innerHTML = '<div class="empty-state">No SCPs match the current filter.</div>';
+    return;
+  }
+  gridEl.innerHTML = filtered.map(c => scpCard(c)).join('');
+}
+
+function scpCard(c){
+  const d = c.character_data || {};
+  const cls = (d.containment_class || 'Pending');
+  const clsKey = cls.toLowerCase();
+  const secondary = d.secondary_class || '';
+  return `
+    <div class="scp-card" onclick="viewChar('${c.id}')">
+      <div class="scp-card-accent cc-${clsKey}"></div>
+      <div class="scp-acs-top">
+        <span class="scp-item-num">${escHtml(d.item_number || 'SCP-???')}</span>
+        <span class="scp-class-block cc-${clsKey}">${escHtml(cls)}</span>
+      </div>
+      <div class="scp-card-body">
+        ${secondary ? `<div class="scp-card-sec">${escHtml(secondary)}</div>` : ''}
+        <div class="scp-card-meta-row">
+          <div>Disruption / <strong>${escHtml(d.disruption_class || '---')}</strong></div>
+          <div>Risk / <strong>${escHtml(d.risk_class || '---')}</strong></div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* ═══ UNALIGNED TAB ═══ */
+function renderUaTab(){
+  const filtersEl = document.getElementById('ua-filters');
+  const emptyEl = document.getElementById('unaff-empty');
+  const gridEl = document.getElementById('unaff-content');
+  if (!_rstUnaff.length) {
+    filtersEl.style.display = 'none';
+    emptyEl.style.display = 'block';
+    gridEl.innerHTML = '';
+    return;
+  }
+
+  // Affiliation counts
+  const affCounts = {};
+  _rstUnaff.forEach(c => {
+    const a = (c.character_data?.affiliation || 'Unaligned').trim() || 'Unaligned';
+    affCounts[a] = (affCounts[a] || 0) + 1;
+  });
+  const affNames = Object.keys(affCounts).sort();
+
+  if (affNames.length > 1) {
+    filtersEl.style.display = '';
+    emptyEl.style.display = 'none';
+    const affPills = document.getElementById('aff-pills');
+    affPills.innerHTML = `<button class="rchip ${_uaAffFilter==='all'?'active':''}" onclick="setUaAffFilter('all',this)">All<span class="count">${_rstUnaff.length}</span></button>` +
+      affNames.map(a => `<button class="rchip ${_uaAffFilter===a?'active':''}" onclick="setUaAffFilter('${escAttr(a)}',this)">${escHtml(a)}<span class="count">${affCounts[a]}</span></button>`).join('');
+  } else {
+    filtersEl.style.display = 'none';
+    emptyEl.style.display = 'none';
+  }
+
+  renderUaCards();
+}
+
+function setUaAffFilter(aff, btn){
+  _uaAffFilter = aff;
+  document.querySelectorAll('#aff-pills .rchip').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderUaCards();
+}
+
+function renderUaCards(){
+  let filtered = _rstUnaff.slice();
+  if (_uaAffFilter !== 'all') filtered = filtered.filter(c => ((c.character_data?.affiliation || 'Unaligned').trim() || 'Unaligned') === _uaAffFilter);
+  const gridEl = document.getElementById('unaff-content');
+  if (!filtered.length) {
+    gridEl.innerHTML = '<div class="empty-state">No records match the current filter.</div>';
+    return;
+  }
+  gridEl.innerHTML = filtered.map(c => {
+    const d = c.character_data || {};
+    const aff = (d.affiliation || '').trim();
+    const fileRef = `TF / UNA / ${escAttr((d.full_name||'unknown').split(' ').slice(-1)[0].toUpperCase().slice(0,8))}`;
+    return `
+      <div class="runaff-card" onclick="viewChar('${c.id}')">
+        <div class="runaff-tab">Civilian</div>
+        <div class="runaff-fileref">${fileRef}</div>
+        <div class="runaff-name">${escHtml(d.full_name || 'Unknown')}</div>
+        ${aff ? `<div class="runaff-affil">${escHtml(aff)}</div>` : ''}
+        ${d.age ? `<div class="runaff-age">Age / ${escHtml(d.age)}</div>` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+function escAttr(s){return String(s||'').replace(/'/g,"&#39;").replace(/"/g,'&quot;').replace(/&/g,'&amp;');}
 
 /* ═══════════════════════════════════════════
    CHARACTER DETAIL
@@ -2244,6 +3728,12 @@ function viewChar(id) {
         <div class="cv-addendum-body">${a.content||''}</div>
       </div>`).join('');
     html = `
+    <div class="cv-cover-stamps">
+      <span class="cv-stamp red">Classified Anomaly</span>
+      ${lvl ? `<span class="cv-stamp ${lvl>=4?'red':lvl>=3?'gold':'grey'}">Clearance Level ${lvl}</span>` : ''}
+      ${d.containment_class ? `<span class="cv-stamp gold">${escHtml(d.containment_class)}</span>` : ''}
+      <span class="cv-stamp grey">Approved File</span>
+    </div>
     <div class="acs-bar">
       <div class="acs-top">
         <div class="acs-item-num">ITEM #: ${escHtml(d.item_number||'SCP-???')}</div>
@@ -2255,8 +3745,8 @@ function viewChar(id) {
         </div>
       </div>
       <div class="acs-bottom">
-        <div class="acs-disruption" style="background:${acsDiaBg}"><span class="acs-meta-label">DISRUPTION CLASS</span><span class="acs-meta-value">${escHtml(d.disruption_class||'—')}</span></div>
-        <div class="acs-risk" style="background:${acsRiskBg}"><span class="acs-meta-label">RISK CLASS</span><span class="acs-meta-value">${escHtml(d.risk_class||'—')}</span></div>
+        <div class="acs-disruption" style="background:${acsDiaBg}"><span class="acs-meta-label">DISRUPTION CLASS</span><span class="acs-meta-value">${escHtml(d.disruption_class||'---')}</span></div>
+        <div class="acs-risk" style="background:${acsRiskBg}"><span class="acs-meta-label">RISK CLASS</span><span class="acs-meta-value">${escHtml(d.risk_class||'---')}</span></div>
       </div>
     </div>
     <div class="cv-scp-doc">
@@ -2268,41 +3758,63 @@ function viewChar(id) {
   } else if (c.type === 'foundation') {
     const cl = d.clearance || 0;
     const clColor = CL_COLORS[String(cl)] || '#333';
+    const stampClass = cl >= 4 ? 'red' : cl >= 3 ? 'gold' : 'grey';
+    const fileRef = `TF / PERS / ${escHtml((d.personnel_id || (d.full_name||'unknown').split(' ').slice(-1)[0]).toString().toUpperCase().slice(0,10))}`;
     html = `
-    <div class="cv-fnd-header" style="border-left:2px solid ${clColor};">
-      ${d.image_url ? `<img class="cv-fnd-img" src="${d.image_url}" alt="Character">` : '<div class="cv-fnd-img-ph">No Image</div>'}
+    <div class="cv-cover-stamps">
+      <span class="cv-stamp ${stampClass}">Clearance Level ${cl}</span>
+      ${d.classification ? `<span class="cv-stamp gold">Class ${escHtml(d.classification)}</span>` : ''}
+      ${d.is_isd ? '<span class="cv-stamp red">Cover Assignment</span>' : ''}
+      <span class="cv-stamp grey">Approved File</span>
+    </div>
+    <div class="cv-fnd-header" style="border-color:${clColor}${'aa'};">
+      ${d.image_url ? `<img class="cv-fnd-img" src="${d.image_url}" alt="Character">` : '<div class="cv-fnd-img-ph">No Image<br>On File</div>'}
       <div>
+        <div class="cv-fileref">${fileRef}</div>
         <div class="cv-fnd-name">${escHtml(d.full_name||'Unknown')}</div>
-        <table class="cv-table" style="margin-top:.6rem;">
+        <div class="cv-fnd-role">${escHtml(d.role||'Unassigned')}</div>
+        ${d.department ? `<div class="cv-fnd-dept">${escHtml(d.department)}${d.sd_unit ? ' / ' + escHtml(d.sd_unit) : ''}</div>` : ''}
+        <table class="cv-table">
           ${d.alias?`<tr><td>Alias</td><td>${escHtml(d.alias)}</td></tr>`:''}
           ${d.age?`<tr><td>Age</td><td>${escHtml(d.age)}</td></tr>`:''}
           ${d.nationality?`<tr><td>Nationality</td><td>${escHtml(d.nationality)}</td></tr>`:''}
-          ${d.role?`<tr><td>Role</td><td>${escHtml(d.role)}</td></tr>`:''}
-          ${d.clearance!=null?`<tr><td>Clearance</td><td>Level ${d.clearance} / Class ${d.classification||'?'}</td></tr>`:''}
-          ${d.department?`<tr><td>Department</td><td>${escHtml(d.department)}</td></tr>`:''}
-          ${d.sub_departments&&d.sub_departments.length?`<tr><td>Sub-Depts</td><td>${d.sub_departments.map(escHtml).join(', ')}</td></tr>`:''}
+          ${d.gender?`<tr><td>Gender</td><td>${escHtml(d.gender)}</td></tr>`:''}
+          ${d.height?`<tr><td>Height</td><td>${escHtml(d.height)}</td></tr>`:''}
+          ${d.blood_type?`<tr><td>Blood Type</td><td>${escHtml(d.blood_type)}</td></tr>`:''}
+          ${d.scipnet?`<tr><td>SCiPNET</td><td>${escHtml(d.scipnet)}</td></tr>`:''}
+          ${d.personnel_id?`<tr><td>Personnel ID</td><td>${escHtml(d.personnel_id)}</td></tr>`:''}
+          ${d.mbti?`<tr><td>MBTI</td><td>${escHtml(d.mbti)}</td></tr>`:''}
+          ${d.loyalty?`<tr><td>Loyalty Index</td><td>${escHtml(d.loyalty)}</td></tr>`:''}
+          ${d.mars?`<tr><td>MARS Score</td><td>${escHtml(d.mars)}</td></tr>`:''}
         </table>
       </div>
     </div>
     ${cvSection('Physical Description', d.physical_desc)}
-    ${cvSection('Psychological Profile', d.psych_profile)}
+    ${cvSection('Backstory', d.backstory)}
     ${cvSection('Employment History', d.employment)}
     ${d.incidents&&d.incidents.trim()&&d.incidents!=='<br>' ? cvSection('Notable Incidents / Logs', d.incidents) : ''}
     ${d.notes&&d.notes.trim()&&d.notes!=='<br>' ? cvSection('Additional Notes', d.notes) : ''}`;
   } else {
+    const fileRef = `TF / UNA / ${escHtml((d.full_name||'unknown').split(' ').slice(-1)[0].toUpperCase().slice(0,10))}`;
     html = `
-    <div class="cv-fnd-header" style="border-left:2px solid #1a3a7a;">
-      ${d.image_url ? `<img class="cv-fnd-img" src="${d.image_url}" alt="Character">` : '<div class="cv-fnd-img-ph">No Image</div>'}
+    <div class="cv-cover-stamps">
+      <span class="cv-stamp blue">Unaligned</span>
+      <span class="cv-stamp grey">Approved File</span>
+    </div>
+    <div class="cv-fnd-header" style="border-color:var(--blue-bright);">
+      ${d.image_url ? `<img class="cv-fnd-img" src="${d.image_url}" alt="Character">` : '<div class="cv-fnd-img-ph">No Image<br>On File</div>'}
       <div>
+        <div class="cv-fileref">${fileRef}</div>
         <div class="cv-fnd-name">${escHtml(d.full_name||'Unknown')}</div>
-        <table class="cv-table" style="margin-top:.6rem;">
+        ${d.affiliation ? `<div class="cv-fnd-dept" style="color:var(--blue-bright);">${escHtml(d.affiliation)}</div>` : ''}
+        <table class="cv-table">
           ${d.age?`<tr><td>Age</td><td>${escHtml(d.age)}</td></tr>`:''}
           ${d.affiliation?`<tr><td>Affiliation</td><td>${escHtml(d.affiliation)}</td></tr>`:''}
         </table>
       </div>
     </div>
     ${cvSection('Background / History', d.background)}
-    ${d.skills&&d.skills.trim()&&d.skills!=='<br>' ? cvSection('Skills & Abilities', d.skills) : ''}
+    ${d.skills&&d.skills.trim()&&d.skills!=='<br>' ? cvSection('Skills and Abilities', d.skills) : ''}
     ${d.equipment&&d.equipment.trim()&&d.equipment!=='<br>' ? cvSection('Equipment / Resources', d.equipment) : ''}
     ${d.notes&&d.notes.trim()&&d.notes!=='<br>' ? cvSection('Additional Notes', d.notes) : ''}`;
   }
@@ -2360,6 +3872,10 @@ async function uploadCharacterImage(file) {
 ══════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
   initToolbar();
+  wireFnPreview();
+  wireScpPreview();
+  wireUaPreview();
+  updateHomeCounts();
   const params = new URLSearchParams(window.location.search);
   if (params.get('view') === 'roster') { loadListing(); }
   const ti = document.getElementById('tracker-input');

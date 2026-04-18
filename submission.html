@@ -666,16 +666,6 @@ nav{
 .success-actions{display:flex;gap:.9rem;flex-wrap:wrap;justify-content:center;}
 
 /* ═══════════════════════════════════════════
-   TRACKER
-══════════════════════════════════════════════ */
-.tracker-form{display:flex;gap:.75rem;margin-bottom:2.5rem;}
-.tracker-form input{
-  flex:1;background:var(--deep);border:1px solid var(--border);color:var(--pale);
-  font-family:var(--body);font-size:13.5px;padding:10px 13px;outline:none;
-}
-.tracker-form input:focus{border-color:var(--border-hi);}
-
-/* ═══════════════════════════════════════════
    TRACKER (My Submissions) - dossier aesthetic
 ══════════════════════════════════════════════ */
 .trk-form{
@@ -766,247 +756,6 @@ nav{
 }
 .trk-empty::before{content:'\25A3 \25A3 \25A3 \25A3 \25A3 \25A3';display:block;font-size:14px;color:var(--border);margin-bottom:.75rem;letter-spacing:0.3em;opacity:.4;}
 
-/* ═══════════════════════════════════════════
-   ROSTER (Public Roster) - dossier aesthetic
-══════════════════════════════════════════════ */
-.roster-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:2.5rem;gap:0;}
-.rtab{
-  position:relative;font-family:var(--mono);font-size:10px;letter-spacing:0.22em;
-  text-transform:uppercase;color:var(--muted);background:none;border:none;
-  padding:.9rem 1.5rem;cursor:pointer;transition:color .2s;margin-bottom:-1px;
-  display:flex;align-items:center;gap:.6rem;
-}
-.rtab::after{
-  content:'';position:absolute;left:0;right:0;bottom:0;height:2px;
-  background:var(--red);transform:scaleX(0);transform-origin:center;transition:transform .25s;
-}
-.rtab:hover{color:var(--pale);}
-.rtab:hover::after{transform:scaleX(.4);}
-.rtab.active{color:var(--white);}
-.rtab.active::after{transform:scaleX(1);}
-.rtab-num{font-family:var(--display);font-size:14px;font-weight:700;color:var(--border);letter-spacing:0;transition:color .2s;}
-.rtab.active .rtab-num{color:var(--red);}
-.rtab-ico{display:inline-block;width:7px;height:7px;border:1px solid var(--border);transform:rotate(45deg);transition:all .2s;}
-.rtab.active .rtab-ico{background:var(--red);border-color:var(--red);}
-.rtab-panel{display:none;}.rtab-panel.active{display:block;animation:rtabFade .3s ease both;}
-@keyframes rtabFade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
-
-/* Filter row (shared by all tabs) */
-.roster-filters{
-  display:flex;flex-direction:column;gap:.75rem;margin-bottom:2rem;
-  padding:1rem 1.2rem;border:1px solid var(--border);background:var(--deep);position:relative;
-}
-.roster-filters::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--red);}
-.rfilter-label{
-  font-family:var(--mono);font-size:8.5px;letter-spacing:0.28em;color:var(--muted);
-  text-transform:uppercase;margin-right:.85rem;flex-shrink:0;min-width:90px;
-}
-.rfilter-row{display:flex;align-items:center;gap:.45rem;flex-wrap:wrap;}
-
-/* Filter chips */
-.rchip{
-  font-family:var(--mono);font-size:8.5px;letter-spacing:0.18em;text-transform:uppercase;
-  background:none;border:1px solid var(--border);color:var(--muted);
-  padding:5px 11px;cursor:pointer;transition:all .18s;
-  display:inline-flex;align-items:center;gap:.4rem;line-height:1;
-}
-.rchip:hover{border-color:var(--pale);color:var(--pale);}
-.rchip.active{background:var(--dark);border-color:var(--pale);color:var(--white);}
-.rchip img{width:14px;height:14px;object-fit:contain;mix-blend-mode:screen;flex-shrink:0;}
-.rchip .count{font-size:7.5px;color:var(--muted);padding-left:.35rem;border-left:1px solid currentColor;margin-left:.2rem;}
-.rchip.active .count{color:var(--pale);}
-/* Clearance-level tinted chips */
-.rchip.cl-0{border-color:#444;color:#666;}.rchip.cl-0.active{background:rgba(80,80,80,.15);color:#aaa;}
-.rchip.cl-1{border-color:#1a6a1a;color:#2a7a2a;}.rchip.cl-1.active{background:rgba(26,106,26,.15);color:#4a9a4a;}
-.rchip.cl-2{border-color:#1a3a8a;color:#2a4a9a;}.rchip.cl-2.active{background:rgba(26,58,138,.15);color:#4a6aaa;}
-.rchip.cl-3{border-color:#8a7a1a;color:#baa03a;}.rchip.cl-3.active{background:rgba(138,122,26,.15);color:var(--gold);}
-.rchip.cl-4{border-color:#8a4a1a;color:#ba6a3a;}.rchip.cl-4.active{background:rgba(138,74,26,.15);color:#d47a3c;}
-.rchip.cl-5{border-color:#8a1a1a;color:#ba3a3a;}.rchip.cl-5.active{background:rgba(138,26,26,.15);color:#ea5a4a;}
-/* Containment-class tinted chips */
-.rchip.cc-safe{border-color:#2a6a3a;color:#3a9a5a;}.rchip.cc-safe.active{background:rgba(42,138,72,.15);color:#5ada7a;}
-.rchip.cc-euclid{border-color:#8a7a1a;color:#baa03a;}.rchip.cc-euclid.active{background:rgba(138,122,26,.15);color:var(--gold);}
-.rchip.cc-keter{border-color:#8a1a1a;color:#ba3a3a;}.rchip.cc-keter.active{background:rgba(138,26,26,.15);color:#ea5a4a;}
-.rchip.cc-neutralized{border-color:#555;color:#888;}.rchip.cc-neutralized.active{background:rgba(100,100,100,.15);color:#bbb;}
-.rchip.cc-pending{border-color:#1a3a8a;color:#3a6aaa;}.rchip.cc-pending.active{background:rgba(26,58,138,.15);color:#7aaaea;}
-.rchip.cc-explained{border-color:#4a1a8a;color:#7a3aba;}.rchip.cc-explained.active{background:rgba(74,26,138,.15);color:#aa6ada;}
-.rchip.cc-esoteric{border-color:#5a1a5a;color:#aa3aaa;}.rchip.cc-esoteric.active{background:rgba(90,26,90,.15);color:#da6ada;}
-
-/* Dept sections on Foundation tab */
-.dept-section{margin-bottom:2.5rem;}
-.dept-sec-hdr{
-  display:flex;align-items:center;gap:1rem;margin-bottom:1rem;padding:.75rem 1rem;
-  border:1px solid var(--border);background:var(--deep);position:relative;
-}
-.dept-sec-hdr::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--red);}
-.dept-sec-icon{width:32px;height:32px;object-fit:contain;mix-blend-mode:screen;flex-shrink:0;}
-.dept-sec-name{font-family:var(--display);font-size:20px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--white);line-height:1;}
-.dept-sec-ref{font-family:var(--mono);font-size:8.5px;letter-spacing:0.22em;color:var(--muted);text-transform:uppercase;margin-top:.15rem;}
-.dept-sec-meta{margin-left:auto;font-family:var(--mono);font-size:9px;letter-spacing:0.2em;color:var(--gold);text-transform:uppercase;}
-
-/* Foundation character card - dossier file style */
-.rchar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.75rem;}
-.rchar-card{
-  background:var(--deep);border:1px solid var(--border);cursor:pointer;
-  position:relative;overflow:hidden;transition:border-color .2s,background .2s,transform .2s;
-  display:flex;flex-direction:column;
-}
-.rchar-card:hover{border-color:var(--border-hi);background:var(--dark);transform:translateY(-2px);}
-.rchar-accent{position:absolute;left:0;top:0;bottom:0;width:3px;z-index:1;transition:width .2s;}
-.rchar-card:hover .rchar-accent{width:5px;}
-.rchar-tab{
-  position:absolute;top:0;right:0;z-index:2;
-  font-family:var(--mono);font-size:7.5px;letter-spacing:0.22em;text-transform:uppercase;
-  color:var(--muted);background:var(--dark);padding:3px 9px 3px 10px;
-  border-left:1px solid var(--border);border-bottom:1px solid var(--border);
-}
-.rchar-body{position:relative;z-index:2;padding:2rem 1rem 1rem 1.2rem;}
-.rchar-fileref{font-family:var(--mono);font-size:8px;letter-spacing:0.22em;color:var(--muted);text-transform:uppercase;margin-bottom:.55rem;}
-.rchar-name{font-family:var(--display);font-size:17px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--white);line-height:1.1;margin-bottom:.2rem;}
-.rchar-role{font-family:var(--mono);font-size:9px;letter-spacing:0.12em;color:var(--pale);text-transform:uppercase;margin-bottom:.55rem;}
-.rchar-meta{display:flex;gap:.35rem;flex-wrap:wrap;margin-bottom:.5rem;}
-.rchar-meta-chip{font-family:var(--mono);font-size:7.5px;letter-spacing:0.18em;text-transform:uppercase;padding:2px 6px;border:1px solid;}
-.rchar-dept-line{font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;color:var(--muted);text-transform:uppercase;padding-top:.45rem;border-top:1px dashed var(--border);}
-
-/* SCP card - mini ACS plate */
-.scp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.75rem;}
-.scp-card{
-  background:var(--deep);border:1px solid var(--border);cursor:pointer;
-  position:relative;overflow:hidden;transition:border-color .2s,background .2s,transform .2s;
-}
-.scp-card:hover{border-color:var(--border-hi);transform:translateY(-2px);}
-.scp-acs-top{
-  background:var(--black);padding:.7rem .9rem .6rem;
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;gap:.6rem;
-}
-.scp-item-num{font-family:var(--mono);font-size:11px;letter-spacing:0.08em;color:var(--white);}
-.scp-class-block{
-  font-family:var(--mono);font-size:8px;letter-spacing:0.22em;text-transform:uppercase;
-  padding:3px 9px;font-weight:700;
-}
-.scp-class-block.cc-safe{background:#0d4a2a;color:#8aea9a;}
-.scp-class-block.cc-euclid{background:#4a3d0d;color:#eadf7a;}
-.scp-class-block.cc-keter{background:#4a0d0d;color:#ea6a5a;}
-.scp-class-block.cc-neutralized{background:#2a2a2a;color:#aaa;}
-.scp-class-block.cc-pending{background:#0d2a4a;color:#7aaeea;}
-.scp-class-block.cc-explained{background:#2a0d4a;color:#aa7ada;}
-.scp-class-block.cc-esoteric{background:#3a0d3a;color:#da7ada;}
-.scp-card-body{padding:.9rem 1rem 1rem;}
-.scp-card-sec{font-family:var(--mono);font-size:8.5px;letter-spacing:0.2em;color:var(--gold);text-transform:uppercase;margin-bottom:.5rem;}
-.scp-card-meta-row{
-  display:grid;grid-template-columns:1fr 1fr;gap:.35rem;margin-top:.5rem;
-  padding-top:.5rem;border-top:1px dashed var(--border);
-  font-family:var(--mono);font-size:8px;letter-spacing:0.15em;color:var(--muted);text-transform:uppercase;
-}
-.scp-card-meta-row strong{color:var(--pale);font-weight:400;}
-.scp-card-accent{position:absolute;left:0;top:0;bottom:0;width:3px;z-index:2;}
-.scp-card-accent.cc-safe{background:#2a6a3a;}
-.scp-card-accent.cc-euclid{background:#8a7a1a;}
-.scp-card-accent.cc-keter{background:#8a1a1a;}
-.scp-card-accent.cc-neutralized{background:#555;}
-.scp-card-accent.cc-pending{background:#1a3a8a;}
-.scp-card-accent.cc-explained{background:#4a1a8a;}
-.scp-card-accent.cc-esoteric{background:#5a1a5a;}
-
-/* Unaligned card - blue-accent civilian file */
-.runaff-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.75rem;}
-.runaff-card{
-  background:var(--deep);border:1px solid var(--border);border-left:3px solid var(--blue-bright);
-  cursor:pointer;padding:1rem 1.1rem 1rem 1.25rem;transition:border-color .2s,background .2s,transform .2s;
-  position:relative;overflow:hidden;
-}
-.runaff-card:hover{border-color:var(--border-hi);border-left-color:var(--blue-bright);background:var(--dark);transform:translateY(-2px);}
-.runaff-tab{
-  position:absolute;top:0;right:0;
-  font-family:var(--mono);font-size:7.5px;letter-spacing:0.22em;text-transform:uppercase;
-  color:var(--muted);background:var(--dark);padding:3px 9px;
-  border-left:1px solid var(--border);border-bottom:1px solid var(--border);
-}
-.runaff-fileref{font-family:var(--mono);font-size:8px;letter-spacing:0.22em;color:var(--muted);text-transform:uppercase;margin-bottom:.5rem;padding-top:1rem;}
-.runaff-name{font-family:var(--display);font-size:18px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--white);line-height:1.1;margin-bottom:.4rem;}
-.runaff-affil{
-  font-family:var(--mono);font-size:9px;letter-spacing:0.14em;color:var(--blue-bright);
-  text-transform:uppercase;display:inline-block;padding:2px 8px;
-  border:1px solid var(--blue-bright);background:rgba(15,42,80,.15);
-}
-.runaff-age{font-family:var(--mono);font-size:8.5px;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;margin-top:.45rem;padding-top:.45rem;border-top:1px dashed var(--border);}
-
-.empty-state{
-  border:1px dashed var(--border);padding:3.5rem 2rem;text-align:center;
-  font-family:var(--mono);font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:var(--border);
-  background:var(--deep);
-}
-.empty-state::before{content:'\25A3 \25A3 \25A3 \25A3 \25A3 \25A3';display:block;font-size:14px;color:var(--border);margin-bottom:.75rem;letter-spacing:0.3em;opacity:.4;}
-
-/* ═══════════════════════════════════════════
-   CHARACTER VIEW - dossier chrome
-══════════════════════════════════════════════ */
-.cv-wrap{max-width:920px;margin:0 auto;padding:2.5rem 3rem 5rem;}
-.cv-back-btn{
-  font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;
-  color:var(--muted);background:none;border:none;cursor:pointer;
-  display:inline-flex;align-items:center;gap:.5rem;
-  margin-bottom:2rem;transition:color .2s;padding:0;
-}
-.cv-back-btn::before{content:'\2190';}
-.cv-back-btn:hover{color:var(--pale);}
-
-.cv-cover-stamps{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1rem;}
-.cv-stamp{font-family:var(--mono);font-size:8.5px;letter-spacing:0.25em;text-transform:uppercase;padding:4px 10px;border:1px solid;}
-.cv-stamp.red{border-color:var(--red);color:var(--red);background:rgba(176,26,10,.08);}
-.cv-stamp.gold{border-color:var(--gold-dim);color:var(--gold);background:rgba(200,150,10,.05);}
-.cv-stamp.grey{border-color:var(--border);color:var(--muted);}
-.cv-stamp.blue{border-color:var(--blue-bright);color:var(--blue-bright);background:rgba(15,42,80,.1);}
-
-/* Foundation character view - dossier style */
-.cv-fnd-header{
-  display:grid;grid-template-columns:150px 1fr;gap:1.75rem;margin-bottom:2rem;
-  padding:1.5rem;border:1px solid var(--border);background:var(--deep);position:relative;
-}
-.cv-fnd-header::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--red);}
-.cv-fnd-img,.cv-fnd-img-ph{width:150px;height:180px;border:1px solid var(--border);flex-shrink:0;position:relative;overflow:hidden;}
-.cv-fnd-img{object-fit:cover;}
-.cv-fnd-img::after,.cv-fnd-img-ph::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.15) 2px,rgba(0,0,0,.15) 4px);pointer-events:none;}
-.cv-fnd-img-ph{background:var(--dark);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);}
-.cv-fileref{font-family:var(--mono);font-size:9px;letter-spacing:0.22em;color:var(--muted);text-transform:uppercase;margin-bottom:.4rem;}
-.cv-fnd-name{font-family:var(--display);font-size:clamp(28px,4vw,42px);font-weight:800;letter-spacing:0.04em;text-transform:uppercase;color:var(--white);line-height:.95;margin-bottom:.35rem;}
-.cv-fnd-role{font-family:var(--mono);font-size:10.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--pale);margin-bottom:.4rem;}
-.cv-fnd-dept{font-family:var(--mono);font-size:9.5px;letter-spacing:0.18em;color:var(--gold);text-transform:uppercase;margin-bottom:.8rem;}
-.cv-table{width:100%;border-collapse:collapse;margin-top:.6rem;}
-.cv-table td{font-family:var(--mono);font-size:11px;padding:.4rem 0;border-bottom:1px dashed var(--border);color:var(--pale);letter-spacing:0.05em;}
-.cv-table td:first-child{font-size:8.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);width:40%;padding-right:1rem;}
-
-.cv-section{margin-bottom:1.75rem;}
-.cv-section-title{
-  font-family:var(--mono);font-size:9px;letter-spacing:0.28em;text-transform:uppercase;
-  color:var(--gold);margin-bottom:.85rem;padding:.6rem 1rem;
-  background:var(--dark);border-left:3px solid var(--red);
-  display:flex;align-items:center;gap:.6rem;
-}
-.cv-section-title::before{content:'';width:6px;height:6px;background:var(--red);flex-shrink:0;}
-.cv-rich{font-family:var(--elite);font-size:13.5px;color:var(--pale);line-height:1.8;padding:0 1rem;}
-
-/* SCP char view - keep ACS bar intact, polish surrounding chrome */
-.cv-scp-doc{font-family:'Times New Roman', Georgia, serif;font-size:14px;color:var(--pale);line-height:1.8;padding:1.5rem 1rem;border:1px solid var(--border);background:var(--deep);margin-top:1rem;}
-.scp-doc-section{margin-bottom:1.75rem;}
-.scp-doc-section-title{
-  font-family:var(--mono);font-size:9px;letter-spacing:0.28em;text-transform:uppercase;
-  color:var(--gold);margin-bottom:.85rem;padding:.55rem .9rem;
-  background:var(--dark);border-left:3px solid var(--red);
-}
-.cv-addendum{border:1px solid var(--border);margin-bottom:.65rem;}
-.cv-addendum-toggle{
-  width:100%;text-align:left;background:rgba(255,255,255,0.02);border:none;
-  font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;
-  color:var(--pale);padding:.7rem 1rem;cursor:pointer;transition:background .2s;
-  display:flex;align-items:center;justify-content:space-between;
-}
-.cv-addendum-toggle:hover{background:rgba(255,255,255,0.04);}
-.cv-addendum-toggle::after{content:'\25B8';font-size:9px;color:var(--muted);transition:transform .2s;}
-.cv-addendum-toggle.open::after{transform:rotate(90deg);}
-.cv-addendum-body{display:none;padding:.85rem 1rem;border-top:1px solid var(--border);font-family:'Times New Roman',Georgia,serif;font-size:13px;line-height:1.7;}
-.cv-addendum-body.visible{display:block;}
-
 /* Special text effects */
 .char-redacted{background:var(--pale);color:var(--pale);border-radius:0;cursor:pointer;transition:all .3s;user-select:none;}
 .char-redacted.revealed{background:transparent;color:var(--pale);}
@@ -1022,7 +771,7 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
   nav{padding:0 1.25rem;}
   .ph{padding:2.5rem 1.5rem 2rem;}
   .ph-stamp{display:none;}
-  .wrap,.form-wrap,.cv-wrap{padding:2rem 1.5rem 3.5rem;}
+  .wrap,.form-wrap{padding:2rem 1.5rem 3.5rem;}
   .step-header{padding:1.5rem 1.5rem 0;}
   .breadcrumb{padding:.5rem 1.5rem;}
 }
@@ -1277,17 +1026,12 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
         </div>
         <div class="home-cover-tag">Personnel Registry / Submission &amp; Archive</div>
         <h1 class="home-cover-title">Character <em>Records</em></h1>
-        <p class="home-cover-desc">Submit a new character for staff review, or track an existing submission.</p>
+        <p class="home-cover-desc">Submit a new character for staff review, or track an existing submission. Every submission goes to staff review before it hits the roster.</p>
       </div>
       <div class="home-cover-right">
         <div class="home-cover-fileno">
           File Reference
           <strong>TF / CHARS / INTAKE</strong>
-        </div>
-        <div class="home-cover-meta">
-          <div class="item red"><div class="k">Foundation</div><div class="v" id="hc-fnd-count">--</div></div>
-          <div class="item gold"><div class="k">SCPs</div><div class="v" id="hc-scp-count">--</div></div>
-          <div class="item blue"><div class="k">Unaligned</div><div class="v" id="hc-ua-count">--</div></div>
         </div>
       </div>
     </div>
@@ -1298,7 +1042,7 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
       <span class="tab">File Intake</span>
       <span class="num">01 / Submit</span>
       <h2>Create a<br><em>Character</em></h2>
-      <p>Build your sheet here with the full creator, or drop a Google Doc link. Every submission goes to staff review before it hits the public roster.</p>
+      <p>Build your sheet here with the full creator, or drop a Google Doc link. Every submission goes to staff review before it is approved.</p>
       <span class="action">Start Application</span>
     </div>
     <div class="home-card-v2 c-track" onclick="showView('v-tracker')">
@@ -1308,15 +1052,8 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
       <p>Enter your Discord username to pull up the current review status of your characters and any feedback the team has left.</p>
       <span class="action">Check Status</span>
     </div>
-    <div class="home-card-v2 c-browse" onclick="loadListing()">
-      <span class="tab">Public Access</span>
-      <span class="num">03 / Browse</span>
-      <h2>Public<br><em>Roster</em></h2>
-      <p>View every approved character. Foundation personnel sorted by department, SCP entries with full ACS data, unaligned individuals, all on record.</p>
-      <span class="action">View Roster</span>
-    </div>
   </div>
-  <footer><span>THREEFOLD / Character Registry</span><span>Submissions &amp; Roster</span></footer>
+  <footer><span>THREEFOLD / Character Registry</span><span>Submissions &amp; Tracking</span></footer>
 </div>
 
 <!-- ══════════════════════════════════════════
@@ -1353,7 +1090,7 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
         <span class="method-card-tag">Quick Submit</span>
         <h2>Submit a Google Doc</h2>
         <p>Already have a sheet written in Google Docs? Paste the link and submit. Make sure sharing is set to <strong style="color:var(--pale)">"Anyone with the link can view"</strong> before submitting.</p>
-        <p style="font-size:13px;color:var(--muted);margin-top:.75rem;line-height:1.8;">Staff will review the document directly. Once approved, clicking your character on the public roster opens the original document.</p>
+        <p style="font-size:13px;color:var(--muted);margin-top:.75rem;line-height:1.8;">Staff will review the document directly. Once approved, your character appears on the server roster.</p>
         <div class="method-card-footer">
           <span class="method-card-cta">Submit a Link</span>
         </div>
@@ -1585,10 +1322,18 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
         <input type="hidden" id="fn-sd-unit" value="">
       </div>
 
-      <!-- MTF Sub-units (fades in — empty for now) -->
+      <!-- MTF Sub-units -->
       <div class="subunit-wrap" id="mtf-subunit-wrap">
-        <label style="font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;display:block;">Task Force <span style="color:var(--muted);font-size:8px;text-transform:none;">(optional — assigned by staff)</span></label>
-        <div style="border:1px dashed var(--border);padding:1rem 1.25rem;font-family:var(--mono);font-size:9.5px;color:var(--muted);letter-spacing:0.1em;">No task forces are currently registered. Your MTF assignment will be confirmed by staff during review.</div>
+        <label style="font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;display:block;">Task Force <span style="color:var(--muted);font-size:8px;text-transform:none;">(optional)</span></label>
+        <div class="subunit-grid">
+          <div class="subunit-box" onclick="selectMtfUnit('Xi-13')" data-mtf-unit="Xi-13" style="display:flex;align-items:center;gap:.9rem;">
+            <img src="img/Xi13.png" alt="" style="width:38px;height:38px;object-fit:contain;flex-shrink:0;filter:invert(1) brightness(1.1);">
+            <div style="min-width:0;">
+              <div class="subunit-name">MTF Xi-13 &middot; "Sequere Nos"</div>
+              <div class="subunit-full">Platoon-strength rapid response unit. Tasked with responding quickly to dangerous and/or anomalous situations where the threat has not yet been identified but military-grade force is deemed likely, including large-scale containment and security breaches.</div>
+            </div>
+          </div>
+        </div>
         <input type="hidden" id="fn-mtf-unit" value="">
       </div>
 
@@ -2010,102 +1755,6 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
     <div id="tracker-results"></div>
   </div>
   <footer><span>THREEFOLD / Submission Tracker</span><span>Query-Only Access</span></footer>
-</div>
-
-<!-- ══════════════════════════════════════════
-     LISTING / ROSTER
-══════════════════════════════════════════════ -->
-<div id="v-listing" class="view">
-  <div class="home-cover">
-    <div class="home-cover-grid">
-      <div class="home-cover-left">
-        <div class="home-cover-stamps">
-          <span class="stamp-ch red">Public Access</span>
-          <span class="stamp-ch gold">Approved Files</span>
-          <span class="stamp-ch grey">Read-Only</span>
-        </div>
-        <div class="home-cover-tag">Personnel Registry / Public Roster</div>
-        <h1 class="home-cover-title">Public <em>Roster</em></h1>
-        <p class="home-cover-desc">Every approved character on the server. Foundation personnel sorted by department, SCP entries with full ACS data, unaligned individuals. Filter by clearance level, containment class, or affiliation.</p>
-      </div>
-      <div class="home-cover-right">
-        <div class="home-cover-fileno">
-          File Reference
-          <strong>TF / ROSTER / PUBLIC</strong>
-        </div>
-        <div class="home-cover-meta">
-          <div class="item red"><div class="k">Foundation</div><div class="v" id="rst-fnd-count">0</div></div>
-          <div class="item gold"><div class="k">SCPs</div><div class="v" id="rst-scp-count">0</div></div>
-          <div class="item blue"><div class="k">Unaligned</div><div class="v" id="rst-ua-count">0</div></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="wrap">
-    <button class="back-btn" onclick="showView('v-home')">Back</button>
-
-    <div class="roster-tabs">
-      <button class="rtab active" onclick="switchRTab('foundation',this)">
-        <span class="rtab-num">01</span><span class="rtab-ico"></span> Foundation
-      </button>
-      <button class="rtab" onclick="switchRTab('scp',this)">
-        <span class="rtab-num">02</span><span class="rtab-ico"></span> SCPs
-      </button>
-      <button class="rtab" onclick="switchRTab('unaffiliated',this)">
-        <span class="rtab-num">03</span><span class="rtab-ico"></span> Unaligned
-      </button>
-    </div>
-
-    <div class="rtab-panel active" id="rtab-foundation">
-      <div class="roster-filters" id="fnd-filters" style="display:none;">
-        <div class="rfilter-row">
-          <span class="rfilter-label">Department</span>
-          <div id="dept-pills" style="display:flex;gap:.45rem;flex-wrap:wrap;"></div>
-        </div>
-        <div class="rfilter-row">
-          <span class="rfilter-label">Clearance</span>
-          <div id="cl-pills" style="display:flex;gap:.45rem;flex-wrap:wrap;"></div>
-        </div>
-      </div>
-      <div id="foundation-content"></div>
-      <div class="empty-state" id="foundation-empty" style="display:none;">No approved Foundation characters yet.</div>
-    </div>
-
-    <div class="rtab-panel" id="rtab-scp">
-      <div class="roster-filters" id="scp-filters" style="display:none;">
-        <div class="rfilter-row">
-          <span class="rfilter-label">Containment</span>
-          <div id="cc-pills" style="display:flex;gap:.45rem;flex-wrap:wrap;"></div>
-        </div>
-      </div>
-      <div class="scp-grid" id="scp-content"></div>
-      <div class="empty-state" id="scp-empty" style="display:none;">No approved SCP entries yet.</div>
-    </div>
-
-    <div class="rtab-panel" id="rtab-unaffiliated">
-      <div class="roster-filters" id="ua-filters" style="display:none;">
-        <div class="rfilter-row">
-          <span class="rfilter-label">Affiliation</span>
-          <div id="aff-pills" style="display:flex;gap:.45rem;flex-wrap:wrap;"></div>
-        </div>
-      </div>
-      <div class="runaff-grid" id="unaff-content"></div>
-      <div class="empty-state" id="unaff-empty" style="display:none;">No approved unaligned characters yet.</div>
-    </div>
-  </div>
-  <footer><span>THREEFOLD / Public Roster</span><span>Approved Characters Only</span></footer>
-</div>
-
-<!-- ══════════════════════════════════════════
-     CHARACTER DETAIL VIEW
-══════════════════════════════════════════════ -->
-<div id="v-character" class="view">
-  <div class="cv-wrap">
-    <button class="cv-back-btn" onclick="showView('v-listing')">Back to Roster</button>
-    <div id="cv-content"></div>
-  </div>
-  <footer><span>THREEFOLD</span><span>Character</span></footer>
 </div>
 
 <!-- ══════════════════════════════════════════
@@ -2719,6 +2368,13 @@ function selectSubunit(unit) {
   const box = document.querySelector('.subunit-box[data-unit="'+unit+'"]');
   if (box) box.classList.add('selected');
   document.getElementById('fn-sd-unit').value = unit; document.getElementById('fn-sd-unit').dispatchEvent(new Event('change'));
+}
+
+function selectMtfUnit(unit) {
+  document.querySelectorAll('#mtf-subunit-wrap .subunit-box').forEach(b => b.classList.remove('selected'));
+  const box = document.querySelector('#mtf-subunit-wrap .subunit-box[data-mtf-unit="'+unit+'"]');
+  if (box) box.classList.add('selected');
+  document.getElementById('fn-mtf-unit').value = unit; document.getElementById('fn-mtf-unit').dispatchEvent(new Event('change'));
 }
 
 /* ── PERSONNEL ID GENERATOR ── */
@@ -3341,505 +2997,13 @@ async function doTrack() {
   el.innerHTML = summary + `<div class="trk-results">${cards}</div>`;
 }
 
-/* ═══════════════════════════════════════════
-   ROSTER TABS
-══════════════════════════════════════════════ */
-function switchRTab(tab, btn) {
-  document.querySelectorAll('.rtab').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.rtab-panel').forEach(p => p.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  document.getElementById('rtab-'+tab).classList.add('active');
-}
-
-/* ═══════════════════════════════════════════
-   LISTING
-══════════════════════════════════════════════ */
-const CL_COLORS = {'0':'#444','1':'#1a6a1a','2':'#1a1a6a','3':'#6a5a1a','4':'#6a1a1a','5':'#5a0a5a','6':'#2a2a2a'};
-
-async function updateHomeCounts(){
-  try {
-    const {data} = await getCharacters({status:'approved'});
-    if (!data) return;
-    const counts = {foundation:0, scp:0, unaffiliated:0};
-    data.forEach(c => { if (counts[c.type] !== undefined) counts[c.type]++; });
-    const fnd = document.getElementById('hc-fnd-count');
-    const scp = document.getElementById('hc-scp-count');
-    const ua  = document.getElementById('hc-ua-count');
-    if (fnd) fnd.textContent = counts.foundation;
-    if (scp) scp.textContent = counts.scp;
-    if (ua)  ua.textContent  = counts.unaffiliated;
-  } catch(e) { /* ignore if DB unreachable */ }
-}
-
-/* State for roster filters */
-let _rstFoundation = [], _rstScps = [], _rstUnaff = [];
-let _fnDeptFilter = 'all', _fnClFilter = 'all', _scpClassFilter = 'all', _uaAffFilter = 'all';
-
-/* Dept icon map (shared with preview) */
-const ROSTER_DEPT_ICONS = {
-  'Science Department':'img/Science.png',
-  'Security Department':'img/Security.png',
-  'Ethics Committee':'img/Ethics.png',
-  'Mobile Task Forces':'img/MTF.png',
-  'Medical Department':'img/Medical.png',
-  'Intelligence Agency':'img/Intelligence.png',
-  'Site Directorship':'img/SiteDirectorship.png',
-  'Engineering Department':'img/Engineering.png',
-  'Internal Security Department':'img/ISD.png',
-  "Administrator's Office":'img/AdministratorsOffice.png',
-};
-function rstGetDeptIcon(d){return ROSTER_DEPT_ICONS[d] || 'img/Base.png';}
-
-/* Abbreviation for dept display */
-const ROSTER_DEPT_ABBR = {
-  'Science Department':'ScD','Security Department':'SD','Ethics Committee':'EC',
-  'Mobile Task Forces':'MTF','Medical Department':'MD','Intelligence Agency':'IA',
-  'Site Directorship':'SDir','Engineering Department':'Eng','Internal Security Department':'ISD',
-  "Administrator's Office":"O5"
-};
-
-async function loadListing() {
-  showView('v-listing');
-  const {data,error} = await getCharacters({status:'approved'});
-  if (error || !data) return;
-  _allChars = data;
-
-  _rstFoundation = data.filter(c => c.type === 'foundation');
-  _rstScps = data.filter(c => c.type === 'scp');
-  _rstUnaff = data.filter(c => c.type === 'unaffiliated');
-
-  // Cover counters
-  const fnCount = document.getElementById('rst-fnd-count');
-  const scpCount = document.getElementById('rst-scp-count');
-  const uaCount = document.getElementById('rst-ua-count');
-  if (fnCount) fnCount.textContent = _rstFoundation.length;
-  if (scpCount) scpCount.textContent = _rstScps.length;
-  if (uaCount) uaCount.textContent = _rstUnaff.length;
-
-  // Reset filter state
-  _fnDeptFilter = 'all'; _fnClFilter = 'all';
-  _scpClassFilter = 'all';
-  _uaAffFilter = 'all';
-
-  renderFoundationTab();
-  renderScpTab();
-  renderUaTab();
-}
-
-/* ═══ FOUNDATION TAB ═══ */
-function renderFoundationTab(){
-  const filtersEl = document.getElementById('fnd-filters');
-  const emptyEl = document.getElementById('foundation-empty');
-  const contentEl = document.getElementById('foundation-content');
-  if (!_rstFoundation.length) {
-    filtersEl.style.display = 'none';
-    emptyEl.style.display = 'block';
-    contentEl.innerHTML = '';
-    return;
-  }
-  filtersEl.style.display = '';
-  emptyEl.style.display = 'none';
-
-  // Dept chips
-  const deptCounts = {};
-  _rstFoundation.forEach(c => {
-    const d = c.character_data?.department || 'Unassigned';
-    deptCounts[d] = (deptCounts[d] || 0) + 1;
-  });
-  const deptNames = Object.keys(deptCounts).sort();
-  const deptPills = document.getElementById('dept-pills');
-  deptPills.innerHTML = `<button class="rchip ${_fnDeptFilter==='all'?'active':''}" onclick="setFnDeptFilter('all',this)">All<span class="count">${_rstFoundation.length}</span></button>` +
-    deptNames.map(d => {
-      const icon = rstGetDeptIcon(d);
-      return `<button class="rchip ${_fnDeptFilter===d?'active':''}" onclick="setFnDeptFilter('${escAttr(d)}',this)"><img src="${icon}" alt="">${escHtml(ROSTER_DEPT_ABBR[d] || d)}<span class="count">${deptCounts[d]}</span></button>`;
-    }).join('');
-
-  // Clearance chips
-  const clCounts = {0:0,1:0,2:0,3:0,4:0,5:0};
-  _rstFoundation.forEach(c => {
-    const cl = c.character_data?.clearance ?? 0;
-    if (clCounts[cl] !== undefined) clCounts[cl]++;
-  });
-  const clPills = document.getElementById('cl-pills');
-  clPills.innerHTML = `<button class="rchip ${_fnClFilter==='all'?'active':''}" onclick="setFnClFilter('all',this)">All</button>` +
-    [1,2,3,4,5].filter(l => clCounts[l] > 0).map(l =>
-      `<button class="rchip cl-${l} ${_fnClFilter===String(l)?'active':''}" onclick="setFnClFilter('${l}',this)">L${l}<span class="count">${clCounts[l]}</span></button>`
-    ).join('');
-
-  renderFoundationSections();
-}
-
-function setFnDeptFilter(dept, btn){
-  _fnDeptFilter = dept;
-  document.querySelectorAll('#dept-pills .rchip').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  renderFoundationSections();
-}
-function setFnClFilter(cl, btn){
-  _fnClFilter = cl;
-  document.querySelectorAll('#cl-pills .rchip').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  renderFoundationSections();
-}
-
-function renderFoundationSections(){
-  let filtered = _rstFoundation.slice();
-  if (_fnDeptFilter !== 'all') filtered = filtered.filter(c => (c.character_data?.department || 'Unassigned') === _fnDeptFilter);
-  if (_fnClFilter !== 'all') filtered = filtered.filter(c => String(c.character_data?.clearance ?? 0) === _fnClFilter);
-
-  const contentEl = document.getElementById('foundation-content');
-  if (!filtered.length) {
-    contentEl.innerHTML = '<div class="empty-state">No personnel match the current filters.</div>';
-    return;
-  }
-
-  // Group by department
-  const groups = {};
-  filtered.forEach(c => {
-    const d = c.character_data?.department || 'Unassigned';
-    if (!groups[d]) groups[d] = [];
-    groups[d].push(c);
-  });
-  Object.values(groups).forEach(arr => arr.sort((a,b) => (b.character_data?.clearance||0) - (a.character_data?.clearance||0)));
-  const deptNames = Object.keys(groups).sort();
-
-  contentEl.innerHTML = deptNames.map(dept => {
-    const chars = groups[dept];
-    const icon = rstGetDeptIcon(dept);
-    const abbr = ROSTER_DEPT_ABBR[dept] || dept.split(' ').map(w=>w[0]).join('').toUpperCase();
-    return `
-      <div class="dept-section" data-dept="${escAttr(dept)}">
-        <div class="dept-sec-hdr">
-          <img class="dept-sec-icon" src="${icon}" alt="">
-          <div>
-            <div class="dept-sec-name">${escHtml(dept)}</div>
-            <div class="dept-sec-ref">TF / DEPT / ${escHtml(abbr.toUpperCase())}</div>
-          </div>
-          <div class="dept-sec-meta">${chars.length} Personnel</div>
-        </div>
-        <div class="rchar-grid">
-          ${chars.map(c => foundationCard(c)).join('')}
-        </div>
-      </div>
-    `;
-  }).join('');
-}
-
-function foundationCard(c){
-  const d = c.character_data || {};
-  const cl = d.clearance ?? 0;
-  const cls = d.classification || '';
-  const clColor = CL_COLORS[String(cl)] || '#444';
-  const clsBorder = { 'A':'#8a1a1a','B':'#2a3a8a','C':'#2a6a2a','D':'#666','E':'#8a7a1a','O':'#4a0a6a' }[cls] || '#444';
-  const dept = d.department || '';
-  const abbr = ROSTER_DEPT_ABBR[dept] || dept.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,4);
-  const fileRef = `TF / PERS / ${escAttr((d.full_name||'unknown').split(' ').slice(-1)[0].toUpperCase().slice(0,8))}`;
-  return `
-    <div class="rchar-card" onclick="viewChar('${c.id}')">
-      <div class="rchar-accent" style="background:${clColor}"></div>
-      <div class="rchar-tab">${escHtml(abbr)}</div>
-      <div class="rchar-body">
-        <div class="rchar-fileref">${fileRef}</div>
-        <div class="rchar-name">${escHtml(d.full_name || 'Unknown')}</div>
-        <div class="rchar-role">${escHtml(d.role || 'Unassigned')}</div>
-        <div class="rchar-meta">
-          <span class="rchar-meta-chip" style="border-color:${clColor};color:${clColor}">CL-${cl}</span>
-          ${cls ? `<span class="rchar-meta-chip" style="border-color:${clsBorder};color:${clsBorder}">Class ${cls}</span>` : ''}
-        </div>
-        <div class="rchar-dept-line">${escHtml(dept || 'Unassigned')}</div>
-      </div>
-    </div>
-  `;
-}
-
-/* ═══ SCP TAB ═══ */
-function renderScpTab(){
-  const filtersEl = document.getElementById('scp-filters');
-  const emptyEl = document.getElementById('scp-empty');
-  const gridEl = document.getElementById('scp-content');
-  if (!_rstScps.length) {
-    filtersEl.style.display = 'none';
-    emptyEl.style.display = 'block';
-    gridEl.innerHTML = '';
-    return;
-  }
-  filtersEl.style.display = '';
-  emptyEl.style.display = 'none';
-
-  // Containment class counts
-  const ccCounts = {};
-  _rstScps.forEach(s => {
-    const cc = (s.character_data?.containment_class || 'Pending');
-    ccCounts[cc] = (ccCounts[cc] || 0) + 1;
-  });
-  const ccOrder = ['Safe','Euclid','Keter','Neutralized','Pending','Explained','Esoteric'];
-  const ccNames = ccOrder.filter(c => ccCounts[c]);
-  // Also any custom ones not in the canon list
-  Object.keys(ccCounts).forEach(c => { if (!ccOrder.includes(c)) ccNames.push(c); });
-
-  const ccPills = document.getElementById('cc-pills');
-  ccPills.innerHTML = `<button class="rchip ${_scpClassFilter==='all'?'active':''}" onclick="setScpClassFilter('all',this)">All<span class="count">${_rstScps.length}</span></button>` +
-    ccNames.map(cc => {
-      const key = cc.toLowerCase();
-      return `<button class="rchip cc-${key} ${_scpClassFilter===cc?'active':''}" onclick="setScpClassFilter('${escAttr(cc)}',this)">${escHtml(cc)}<span class="count">${ccCounts[cc]}</span></button>`;
-    }).join('');
-
-  renderScpCards();
-}
-
-function setScpClassFilter(cc, btn){
-  _scpClassFilter = cc;
-  document.querySelectorAll('#cc-pills .rchip').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  renderScpCards();
-}
-
-function renderScpCards(){
-  let filtered = _rstScps.slice();
-  if (_scpClassFilter !== 'all') filtered = filtered.filter(s => (s.character_data?.containment_class || 'Pending') === _scpClassFilter);
-  filtered.sort((a,b) => {
-    const na = parseInt((a.character_data?.item_number||'').replace(/\D/g,'')) || 9999;
-    const nb = parseInt((b.character_data?.item_number||'').replace(/\D/g,'')) || 9999;
-    return na - nb;
-  });
-  const gridEl = document.getElementById('scp-content');
-  if (!filtered.length) {
-    gridEl.innerHTML = '<div class="empty-state">No SCPs match the current filter.</div>';
-    return;
-  }
-  gridEl.innerHTML = filtered.map(c => scpCard(c)).join('');
-}
-
-function scpCard(c){
-  const d = c.character_data || {};
-  const cls = (d.containment_class || 'Pending');
-  const clsKey = cls.toLowerCase();
-  const secondary = d.secondary_class || '';
-  return `
-    <div class="scp-card" onclick="viewChar('${c.id}')">
-      <div class="scp-card-accent cc-${clsKey}"></div>
-      <div class="scp-acs-top">
-        <span class="scp-item-num">${escHtml(d.item_number || 'SCP-???')}</span>
-        <span class="scp-class-block cc-${clsKey}">${escHtml(cls)}</span>
-      </div>
-      <div class="scp-card-body">
-        ${secondary ? `<div class="scp-card-sec">${escHtml(secondary)}</div>` : ''}
-        <div class="scp-card-meta-row">
-          <div>Disruption / <strong>${escHtml(d.disruption_class || '---')}</strong></div>
-          <div>Risk / <strong>${escHtml(d.risk_class || '---')}</strong></div>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-/* ═══ UNALIGNED TAB ═══ */
-function renderUaTab(){
-  const filtersEl = document.getElementById('ua-filters');
-  const emptyEl = document.getElementById('unaff-empty');
-  const gridEl = document.getElementById('unaff-content');
-  if (!_rstUnaff.length) {
-    filtersEl.style.display = 'none';
-    emptyEl.style.display = 'block';
-    gridEl.innerHTML = '';
-    return;
-  }
-
-  // Affiliation counts
-  const affCounts = {};
-  _rstUnaff.forEach(c => {
-    const a = (c.character_data?.affiliation || 'Unaligned').trim() || 'Unaligned';
-    affCounts[a] = (affCounts[a] || 0) + 1;
-  });
-  const affNames = Object.keys(affCounts).sort();
-
-  if (affNames.length > 1) {
-    filtersEl.style.display = '';
-    emptyEl.style.display = 'none';
-    const affPills = document.getElementById('aff-pills');
-    affPills.innerHTML = `<button class="rchip ${_uaAffFilter==='all'?'active':''}" onclick="setUaAffFilter('all',this)">All<span class="count">${_rstUnaff.length}</span></button>` +
-      affNames.map(a => `<button class="rchip ${_uaAffFilter===a?'active':''}" onclick="setUaAffFilter('${escAttr(a)}',this)">${escHtml(a)}<span class="count">${affCounts[a]}</span></button>`).join('');
-  } else {
-    filtersEl.style.display = 'none';
-    emptyEl.style.display = 'none';
-  }
-
-  renderUaCards();
-}
-
-function setUaAffFilter(aff, btn){
-  _uaAffFilter = aff;
-  document.querySelectorAll('#aff-pills .rchip').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  renderUaCards();
-}
-
-function renderUaCards(){
-  let filtered = _rstUnaff.slice();
-  if (_uaAffFilter !== 'all') filtered = filtered.filter(c => ((c.character_data?.affiliation || 'Unaligned').trim() || 'Unaligned') === _uaAffFilter);
-  const gridEl = document.getElementById('unaff-content');
-  if (!filtered.length) {
-    gridEl.innerHTML = '<div class="empty-state">No records match the current filter.</div>';
-    return;
-  }
-  gridEl.innerHTML = filtered.map(c => {
-    const d = c.character_data || {};
-    const aff = (d.affiliation || '').trim();
-    const fileRef = `TF / UNA / ${escAttr((d.full_name||'unknown').split(' ').slice(-1)[0].toUpperCase().slice(0,8))}`;
-    return `
-      <div class="runaff-card" onclick="viewChar('${c.id}')">
-        <div class="runaff-tab">Civilian</div>
-        <div class="runaff-fileref">${fileRef}</div>
-        <div class="runaff-name">${escHtml(d.full_name || 'Unknown')}</div>
-        ${aff ? `<div class="runaff-affil">${escHtml(aff)}</div>` : ''}
-        ${d.age ? `<div class="runaff-age">Age / ${escHtml(d.age)}</div>` : ''}
-      </div>
-    `;
-  }).join('');
-}
-
-function escAttr(s){return String(s||'').replace(/'/g,"&#39;").replace(/"/g,'&quot;').replace(/&/g,'&amp;');}
-
-/* ═══════════════════════════════════════════
-   CHARACTER DETAIL
-══════════════════════════════════════════════ */
-function viewChar(id) {
-  const c = _allChars.find(x => x.id === id);
-  if (!c) return;
-  showView('v-character');
-
-  const d = c.character_data || {};
-  let html = '';
-
-  if (c.method === 'googledoc' && c.gdoc_url) {
-    html = `<div style="text-align:center;padding:3rem 2rem;">
-      <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;">Google Doc Submission</div>
-      <a href="${escHtml(c.gdoc_url)}" target="_blank" class="btn btn-fill">Open Character Document</a>
-    </div>`;
-  } else if (c.type === 'scp') {
-    const lvl = d.clearance_level;
-    const acsLvlBg = ACS_CLEARANCE_COLORS[String(lvl)] || '#161616';
-    const acsClassBg = ACS_CLASS_COLORS[(d.containment_class||'').toLowerCase()] || '#1a1a1a';
-    const acsDiaBg = ACS_DIS_COLORS[(d.disruption_class||'').toLowerCase()] || '#0e0e0e';
-    const acsRiskBg = ACS_RISK_COLORS[(d.risk_class||'').toLowerCase()] || '#0e0e0e';
-    const addendaHtml = (d.addenda||[]).map((a,i) => `
-      <div class="cv-addendum">
-        <button class="cv-addendum-toggle" onclick="toggleAddendum(this)">${escHtml(a.title||'Addendum '+(i+1))}</button>
-        <div class="cv-addendum-body">${a.content||''}</div>
-      </div>`).join('');
-    html = `
-    <div class="cv-cover-stamps">
-      <span class="cv-stamp red">Classified Anomaly</span>
-      ${lvl ? `<span class="cv-stamp ${lvl>=4?'red':lvl>=3?'gold':'grey'}">Clearance Level ${lvl}</span>` : ''}
-      ${d.containment_class ? `<span class="cv-stamp gold">${escHtml(d.containment_class)}</span>` : ''}
-      <span class="cv-stamp grey">Approved File</span>
-    </div>
-    <div class="acs-bar">
-      <div class="acs-top">
-        <div class="acs-item-num">ITEM #: ${escHtml(d.item_number||'SCP-???')}</div>
-        <div class="acs-level-tag" style="background:${acsLvlBg}">LEVEL ${lvl||'?'}/${escHtml(d.item_number||'SCP-???')}</div>
-        <div class="acs-class-block" style="background:${acsClassBg}">
-          <span class="acs-class-header">OBJECT CLASS</span>
-          <span class="acs-class-value">${(d.containment_class||'PENDING').toUpperCase()}</span>
-          ${d.secondary_class?`<span style="font-size:8px;display:block;color:rgba(255,255,255,.5);letter-spacing:0.1em">${escHtml(d.secondary_class)}</span>`:''}
-        </div>
-      </div>
-      <div class="acs-bottom">
-        <div class="acs-disruption" style="background:${acsDiaBg}"><span class="acs-meta-label">DISRUPTION CLASS</span><span class="acs-meta-value">${escHtml(d.disruption_class||'---')}</span></div>
-        <div class="acs-risk" style="background:${acsRiskBg}"><span class="acs-meta-label">RISK CLASS</span><span class="acs-meta-value">${escHtml(d.risk_class||'---')}</span></div>
-      </div>
-    </div>
-    <div class="cv-scp-doc">
-      <div class="scp-doc-section"><div class="scp-doc-section-title">Special Containment Procedures</div><div class="cv-rich">${d.containment_procedures||''}</div></div>
-      <div class="scp-doc-section"><div class="scp-doc-section-title">Description</div><div class="cv-rich">${d.description||''}</div></div>
-      ${d.addenda&&d.addenda.length ? `<div class="cv-section"><div class="cv-section-title">Addenda</div>${addendaHtml}</div>` : ''}
-      <div class="scp-doc-section"><div class="scp-doc-section-title">Abilities &amp; Limits</div><div class="cv-rich">${d.abilities||''}</div></div>
-    </div>`;
-  } else if (c.type === 'foundation') {
-    const cl = d.clearance || 0;
-    const clColor = CL_COLORS[String(cl)] || '#333';
-    const stampClass = cl >= 4 ? 'red' : cl >= 3 ? 'gold' : 'grey';
-    const fileRef = `TF / PERS / ${escHtml((d.personnel_id || (d.full_name||'unknown').split(' ').slice(-1)[0]).toString().toUpperCase().slice(0,10))}`;
-    html = `
-    <div class="cv-cover-stamps">
-      <span class="cv-stamp ${stampClass}">Clearance Level ${cl}</span>
-      ${d.classification ? `<span class="cv-stamp gold">Class ${escHtml(d.classification)}</span>` : ''}
-      ${d.is_isd ? '<span class="cv-stamp red">Cover Assignment</span>' : ''}
-      <span class="cv-stamp grey">Approved File</span>
-    </div>
-    <div class="cv-fnd-header" style="border-color:${clColor}${'aa'};">
-      ${d.image_url ? `<img class="cv-fnd-img" src="${d.image_url}" alt="Character">` : '<div class="cv-fnd-img-ph">No Image<br>On File</div>'}
-      <div>
-        <div class="cv-fileref">${fileRef}</div>
-        <div class="cv-fnd-name">${escHtml(d.full_name||'Unknown')}</div>
-        <div class="cv-fnd-role">${escHtml(d.role||'Unassigned')}</div>
-        ${d.department ? `<div class="cv-fnd-dept">${escHtml(d.department)}${d.sd_unit ? ' / ' + escHtml(d.sd_unit) : ''}</div>` : ''}
-        <table class="cv-table">
-          ${d.alias?`<tr><td>Alias</td><td>${escHtml(d.alias)}</td></tr>`:''}
-          ${d.age?`<tr><td>Age</td><td>${escHtml(d.age)}</td></tr>`:''}
-          ${d.nationality?`<tr><td>Nationality</td><td>${escHtml(d.nationality)}</td></tr>`:''}
-          ${d.gender?`<tr><td>Gender</td><td>${escHtml(d.gender)}</td></tr>`:''}
-          ${d.height?`<tr><td>Height</td><td>${escHtml(d.height)}</td></tr>`:''}
-          ${d.blood_type?`<tr><td>Blood Type</td><td>${escHtml(d.blood_type)}</td></tr>`:''}
-          ${d.scipnet?`<tr><td>SCiPNET</td><td>${escHtml(d.scipnet)}</td></tr>`:''}
-          ${d.personnel_id?`<tr><td>Personnel ID</td><td>${escHtml(d.personnel_id)}</td></tr>`:''}
-          ${d.mbti?`<tr><td>MBTI</td><td>${escHtml(d.mbti)}</td></tr>`:''}
-          ${d.loyalty?`<tr><td>Loyalty Index</td><td>${escHtml(d.loyalty)}</td></tr>`:''}
-          ${d.mars?`<tr><td>MARS Score</td><td>${escHtml(d.mars)}</td></tr>`:''}
-        </table>
-      </div>
-    </div>
-    ${cvSection('Physical Description', d.physical_desc)}
-    ${cvSection('Backstory', d.backstory)}
-    ${cvSection('Employment History', d.employment)}
-    ${d.incidents&&d.incidents.trim()&&d.incidents!=='<br>' ? cvSection('Notable Incidents / Logs', d.incidents) : ''}
-    ${d.notes&&d.notes.trim()&&d.notes!=='<br>' ? cvSection('Additional Notes', d.notes) : ''}`;
-  } else {
-    const fileRef = `TF / UNA / ${escHtml((d.full_name||'unknown').split(' ').slice(-1)[0].toUpperCase().slice(0,10))}`;
-    html = `
-    <div class="cv-cover-stamps">
-      <span class="cv-stamp blue">Unaligned</span>
-      <span class="cv-stamp grey">Approved File</span>
-    </div>
-    <div class="cv-fnd-header" style="border-color:var(--blue-bright);">
-      ${d.image_url ? `<img class="cv-fnd-img" src="${d.image_url}" alt="Character">` : '<div class="cv-fnd-img-ph">No Image<br>On File</div>'}
-      <div>
-        <div class="cv-fileref">${fileRef}</div>
-        <div class="cv-fnd-name">${escHtml(d.full_name||'Unknown')}</div>
-        ${d.affiliation ? `<div class="cv-fnd-dept" style="color:var(--blue-bright);">${escHtml(d.affiliation)}</div>` : ''}
-        <table class="cv-table">
-          ${d.age?`<tr><td>Age</td><td>${escHtml(d.age)}</td></tr>`:''}
-          ${d.affiliation?`<tr><td>Affiliation</td><td>${escHtml(d.affiliation)}</td></tr>`:''}
-        </table>
-      </div>
-    </div>
-    ${cvSection('Background / History', d.background)}
-    ${d.skills&&d.skills.trim()&&d.skills!=='<br>' ? cvSection('Skills and Abilities', d.skills) : ''}
-    ${d.equipment&&d.equipment.trim()&&d.equipment!=='<br>' ? cvSection('Equipment / Resources', d.equipment) : ''}
-    ${d.notes&&d.notes.trim()&&d.notes!=='<br>' ? cvSection('Additional Notes', d.notes) : ''}`;
-  }
-
-  document.getElementById('cv-content').innerHTML = html;
-  document.querySelectorAll('.char-redacted').forEach(el => {
-    el.addEventListener('click', () => el.classList.toggle('revealed'));
-  });
-}
-
-function cvSection(title, content) {
-  if (!content||!content.trim()) return '';
-  return `<div class="cv-section"><div class="cv-section-title">${title}</div><div class="cv-rich">${content}</div></div>`;
-}
-
-function toggleAddendum(btn) {
-  btn.classList.toggle('open');
-  btn.nextElementSibling.classList.toggle('visible');
-}
 
 /* ═══════════════════════════════════════════
    HELPERS
 ══════════════════════════════════════════════ */
 function g(id) { const e=document.getElementById(id); return e?e.value.trim():''; }
 function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function escAttr(s){return String(s||'').replace(/&/g,'&amp;').replace(/'/g,"&#39;").replace(/"/g,'&quot;');}
 function statusLabel(s) { return{pending:'Pending',review:'Under Review',approved:'Approved',denied:'Denied'}[s]||s; }
 function setMsg(el,type,text) { el.className='form-msg '+(type==='loading'?'loading':type==='error'?'error':'ok'); el.textContent=text; }
 
@@ -3875,9 +3039,6 @@ document.addEventListener('DOMContentLoaded', () => {
   wireFnPreview();
   wireScpPreview();
   wireUaPreview();
-  updateHomeCounts();
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('view') === 'roster') { loadListing(); }
   const ti = document.getElementById('tracker-input');
   if (ti) ti.addEventListener('keydown', e => { if(e.key==='Enter') doTrack(); });
 });

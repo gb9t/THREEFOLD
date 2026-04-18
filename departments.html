@@ -433,13 +433,13 @@ footer{border-top:1px solid var(--dark);padding:2rem 3rem;display:flex;justify-c
   </div>
 </div>
 
-<!-- ISD AUTH OVERLAY -->
+<!-- CLASSIFIED AUTH OVERLAY -->
 <div class="auth-overlay" id="auth-overlay" onclick="onAuthOverlayClick(event)">
   <div class="auth-box">
     <span class="auth-lock">&#9632;</span>
     <div class="auth-title">Access Restricted</div>
-    <div class="auth-sub">Internal Security Department</div>
-    <div class="auth-cl-req">Level 4 Clearance Required</div>
+    <div class="auth-sub" id="auth-sub">Internal Security Department</div>
+    <div class="auth-cl-req" id="auth-cl-req">Level 3 Clearance Required</div>
     <div class="auth-progress" id="auth-progress"><div class="auth-bar" id="auth-bar"></div></div>
     <div class="auth-status" id="auth-status"></div>
     <button class="btn-auth" id="btn-auth" onclick="doAuth()">Authenticate &amp; Proceed</button>
@@ -583,7 +583,8 @@ const DEPARTMENTS = [
     id:'admin', name:"Administrator's Office", abbr:'AO', logo:'img/AdministratorsOffice.png',
     border:'#7a1a1a', cl:{border:'#7a1a1a',color:'#aa3a3a'}, range:'CL5 to CL6',
     tagline:'The hand that guides. The voice that does not speak.',
-    classified:false,
+    classified:true,
+    authLevel:5,
     desc:`The Administrator's Office encompasses the very highest tier of Foundation governance. The Administrator, whose identity is known only to O5 Council members, sits above the O5 Council itself, serving as the singular executive authority from which all Foundation mandate ultimately flows.\n\nThe Factotum are the personal staff of the O5 Council: selected for absolute loyalty, they act as personal assistants, bodyguards, and decoys. Many encounters with an apparent "O5" are in fact mediated by a Factotum, dressed and trained to perfectly resemble their assigned Council member. Some Factotum are reportedly subject to anomalous alteration approved by O5 Command, making it nearly impossible to distinguish them from those they represent. For all practical purposes, they carry the authority of an O5 Council member.`,
     mandate:"To govern the Foundation at its highest level, set global strategic direction, and ensure that the mission is pursued without compromise or deviation.",
     ranks:[
@@ -640,6 +641,7 @@ const DEPARTMENTS = [
     ],
     units:null,
     isd:true,
+    authLevel:3,
   },
 ];
 
@@ -654,7 +656,7 @@ function renderCards() {
     return `
     <div class="dept-card ${d.classified?'classified':''}"
          style="--dept-accent:${d.border};"
-         onclick="${d.classified?`openAuth()`:`openDetail('${d.id}')`}">
+         onclick="${d.classified?`openAuth('${d.id}')`:`openDetail('${d.id}')`}">
       <span class="dept-tab ${tabClass}">${tabLabel}</span>
       <div class="dept-logo-wrap">
         <img class="dept-logo" src="${d.logo}" alt="${d.name}">
@@ -849,9 +851,21 @@ function toggleCls() {
 }
 
 /* =====================================================
-   ISD AUTH GATE
+   CLASSIFIED AUTH GATE
 ===================================================== */
-function openAuth() {
+let _pendingAuthDeptId = null;
+
+function openAuth(deptId) {
+  const dept = DEPARTMENTS.find(d => d.id === deptId);
+  _pendingAuthDeptId = deptId;
+
+  // Populate overlay text based on which dept was clicked
+  if (dept) {
+    document.getElementById('auth-sub').textContent = dept.name;
+    const lvl = dept.authLevel || 3;
+    document.getElementById('auth-cl-req').textContent = `Level ${lvl} Clearance Required`;
+  }
+
   document.getElementById('auth-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
   document.getElementById('btn-auth').style.display = 'block';
@@ -889,8 +903,8 @@ async function doAuth() {
   }
   await sleep(500);
   closeAuth();
-  const isd = DEPARTMENTS.find(d => d.isd);
-  if (isd) { renderDetail(isd); document.getElementById('detail-overlay').classList.add('open'); document.body.style.overflow = 'hidden'; }
+  const dept = DEPARTMENTS.find(d => d.id === _pendingAuthDeptId);
+  if (dept) { renderDetail(dept); document.getElementById('detail-overlay').classList.add('open'); document.body.style.overflow = 'hidden'; }
 }
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }

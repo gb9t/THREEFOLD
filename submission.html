@@ -1042,7 +1042,7 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
       <span class="tab">File Intake</span>
       <span class="num">01 / Submit</span>
       <h2>Create a<br><em>Character</em></h2>
-      <p>Build your sheet here with the full creator, or drop a Google Doc link. Every submission goes to staff review before it is approved.</p>
+      <p>Drop a Google Doc link or submit from your own Wikidot page. Every submission goes to staff review before it is approved.</p>
       <span class="action">Start Application</span>
     </div>
     <div class="home-card-v2 c-track" onclick="showView('v-tracker')">
@@ -1069,28 +1069,20 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
   <div class="wrap">
     <button class="back-btn" onclick="showView('v-home')">Back</button>
     <div class="method-row">
-      <div class="method-card" onclick="setMethod('website')">
-        <span class="method-card-tag">Full Builder</span>
-        <h2>Build on the Website</h2>
-        <p>Use our character creator to fill in your sheet directly here. You get complete formatting control with these tools:</p>
-        <ul class="method-feat-list">
-          <li>Custom fonts, sizes &amp; text colours</li>
-          <li>Bold &amp; italic formatting</li>
-          <li>Click-to-reveal [REDACTED] blocks</li>
-          <li>Glitchy text animation effect</li>
-          <li>Character image upload (up to 5MB)</li>
-          <li>Live ACS bar preview for SCP entries</li>
-          <li>Multiple collapsible addenda</li>
-        </ul>
-        <div class="method-card-footer">
-          <span class="method-card-cta">Use Website Builder</span>
-        </div>
-      </div>
       <div class="method-card" onclick="setMethod('googledoc')">
-        <span class="method-card-tag">Quick Submit</span>
+        <span class="method-card-tag">Google Doc</span>
         <h2>Submit a Google Doc</h2>
         <p>Already have a sheet written in Google Docs? Paste the link and submit. Make sure sharing is set to <strong style="color:var(--pale)">"Anyone with the link can view"</strong> before submitting.</p>
         <p style="font-size:13px;color:var(--muted);margin-top:.75rem;line-height:1.8;">Staff will review the document directly. Once approved, your character appears on the server roster.</p>
+        <div class="method-card-footer">
+          <span class="method-card-cta">Submit a Link</span>
+        </div>
+      </div>
+      <div class="method-card" onclick="setMethod('wikidot')">
+        <span class="method-card-tag">Wikidot</span>
+        <h2>Submit a Wikidot Link</h2>
+        <p>Prefer hosting your sheet on your own Wikidot page? Paste the public URL and submit. Make sure the page is set to <strong style="color:var(--pale)">publicly viewable</strong> so staff can access it without an account.</p>
+        <p style="font-size:13px;color:var(--muted);margin-top:.75rem;line-height:1.8;">Staff will review the page directly. Once approved, your character appears on the server roster.</p>
         <div class="method-card-footer">
           <span class="method-card-cta">Submit a Link</span>
         </div>
@@ -1175,531 +1167,45 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
 </div>
 
 <!-- ══════════════════════════════════════════
-     FOUNDATION BUILDER
+     WIKIDOT FORM
 ══════════════════════════════════════════════ -->
-<div id="v-foundation" class="view">
+<div id="v-wikidot" class="view">
   <div class="ph">
-    <div class="ph-stamp">RAISA</div>
-    <div class="ph-eyebrow"><div class="ph-eyebrow-line"></div><div class="ph-eyebrow-text">RAISA — Updated Personnel Dossier</div></div>
-    <h1>Personnel<br><em>Dossier</em></h1>
-    <p class="ph-desc">Fields marked <span style="color:var(--gold)">*</span> are required. Use the toolbar to format rich text sections.</p>
+    <div class="ph-stamp">LINK</div>
+    <div class="ph-eyebrow"><div class="ph-eyebrow-line"></div><div class="ph-eyebrow-text">Wikidot Submission</div></div>
+    <h1>Submit a<br><em>Wikidot Link</em></h1>
   </div>
-  <div class="breadcrumb"><span class="breadcrumb-item">Method</span><span class="breadcrumb-sep">/</span><span class="breadcrumb-item">Type</span><span class="breadcrumb-sep">/</span><span class="breadcrumb-item active">Dossier</span></div>
-
-  <div class="dossier-layout">
-  <div class="form-col">
-  <div class="form-wrap" style="max-width:none;margin:0;">
+  <div class="breadcrumb"><span class="breadcrumb-item">Method</span><span class="breadcrumb-sep">/</span><span class="breadcrumb-item">Type</span><span class="breadcrumb-sep">/</span><span class="breadcrumb-item active">Submit</span></div>
+  <div class="form-wrap">
     <button class="back-btn" onclick="showView('v-type')">Back</button>
-
-    <!-- SUBMITTER -->
     <div class="form-section" style="margin-top:0;border-top:none;">
-      <div class="form-section-label">Submitter</div>
-      <div class="field"><label>Discord Username <span class="req">*</span></label><input type="text" id="fn-discord" placeholder="yourname or yourname#0000"></div>
-    </div>
-
-    <!-- SECTION 1: BASIC INFO -->
-    <div class="form-section">
-      <div class="form-section-label">Section 1 — Basic Information</div>
-      <div class="field"><label>Character Image <span style="color:var(--muted);font-size:8px">(optional — max 5MB)</span></label>
-        <div class="img-zone" id="fn-img-area">
-          <input type="file" id="fn-img-input" accept="image/*" onchange="handleImg('fn-img-input','fn-img-preview','fn-img-area')">
-          <div class="img-zone-label">Click to upload portrait image</div>
-          <div class="img-zone-sub">JPG, PNG, GIF, WebP — Max 5MB</div>
-          <img id="fn-img-preview" class="img-preview" alt="Preview">
-        </div>
-      </div>
-      <div class="two-col">
-        <div class="field"><label>Full Name <span class="req">*</span></label><input type="text" id="fn-name" placeholder="Government name"></div>
-        <div class="field"><label>Alias / Codename <span style="color:var(--muted);font-size:8px">(optional)</span></label><input type="text" id="fn-alias" placeholder="If applicable"></div>
-      </div>
-      <div class="two-col">
-        <div class="field">
-          <label>SCiPNET Handle <span class="req">*</span></label>
-          <div class="scipnet-wrap">
-            <input type="text" id="fn-scipnet" placeholder="e.g. ASHWOOD" style="text-transform:uppercase;" oninput="this.value=this.value.toUpperCase()">
-            <span class="scipnet-suffix">@SCiP.net</span>
-          </div>
-        </div>
-        <div class="field">
-          <label>Personnel ID# <span style="color:var(--muted);font-size:8px">(auto-generated)</span></label>
-          <div class="pid-wrap">
-            <input type="text" id="fn-personnel-id" placeholder="Click generate →" readonly>
-            <button class="pid-gen" type="button" onclick="genPersonnelId()">Generate</button>
-          </div>
-        </div>
-      </div>
-      <div class="two-col">
-        <div class="field"><label>Age <span class="req">*</span></label><input type="text" id="fn-age" placeholder="e.g. 34"></div>
-        <div class="field"><label>Nationality <span class="req">*</span></label><input type="text" id="fn-nationality" placeholder="e.g. American"></div>
-      </div>
-      <div class="three-col">
-        <div class="field"><label>Gender <span style="color:var(--muted);font-size:8px">(optional)</span></label><input type="text" id="fn-gender" placeholder="e.g. Male"></div>
-        <div class="field"><label>Height <span style="color:var(--muted);font-size:8px">(optional)</span></label><input type="text" id="fn-height" placeholder="e.g. 1.8M"></div>
-        <div class="field"><label>Blood Type <span style="color:var(--muted);font-size:8px">(optional)</span></label><input type="text" id="fn-blood" placeholder="e.g. O-"></div>
-      </div>
-    </div>
-
-    <!-- SECTION 2: CLEARANCE & CLASSIFICATION -->
-    <div class="form-section">
-      <div class="form-section-label">Section 2 — Clearance &amp; Classification</div>
-
-      <div class="field">
-        <label>Clearance Level <span class="req">*</span></label>
-        <div class="cl-picker" id="cl-picker" style="pointer-events:none;">
-          <div class="cl-box cl-0" data-cl="0"><span class="cl-box-num">0</span><span class="cl-box-label">Unrestr.</span></div>
-          <div class="cl-box cl-1" data-cl="1"><span class="cl-box-num">1</span><span class="cl-box-label">Confid.</span></div>
-          <div class="cl-box cl-2" data-cl="2"><span class="cl-box-num">2</span><span class="cl-box-label">Restrict.</span></div>
-          <div class="cl-box cl-3" data-cl="3"><span class="cl-box-num">3</span><span class="cl-box-label">Secret</span></div>
-          <div class="cl-box cl-4" data-cl="4"><span class="cl-box-num">4</span><span class="cl-box-label">Top Sec.</span></div>
-          <div class="cl-box cl-5" data-cl="5"><span class="cl-box-num">5</span><span class="cl-box-label">C. Top Sec.</span></div>
-          <div class="cl-box cl-6 cl-6-secret" id="cl-6-box" data-cl="6" style="display:none;"><span class="cl-box-num">6</span><span class="cl-box-label">O5 Only</span></div>
-        </div>
-        <div class="cl-desc" id="cl-desc" style="font-style:italic;color:var(--border);">Auto-set by your role selection above.</div>
-        <input type="hidden" id="fn-clearance" value="">
-      </div>
-
-      <div class="field" style="margin-top:1.25rem;">
-        <label>Personnel Classification <span class="req">*</span></label>
-        <div class="cls-picker" id="cls-picker" style="pointer-events:none;">
-          <div class="cls-box cls-E" data-cls="E"><span class="cls-box-letter">E</span><span class="cls-box-label">Provis.</span></div>
-          <div class="cls-box cls-D" data-cls="D"><span class="cls-box-letter">D</span><span class="cls-box-label">Expend.</span></div>
-          <div class="cls-box cls-C" data-cls="C"><span class="cls-box-letter">C</span><span class="cls-box-label">Standard</span></div>
-          <div class="cls-box cls-B" data-cls="B"><span class="cls-box-letter">B</span><span class="cls-box-label">Essential</span></div>
-          <div class="cls-box cls-A" data-cls="A"><span class="cls-box-letter">A</span><span class="cls-box-label">Strategic</span></div>
-          <div class="cls-box cls-O cls-O-secret" id="cls-O-box" data-cls="O" style="display:none;"><span class="cls-box-letter">O</span><span class="cls-box-label">Overseer</span></div>
-        </div>
-        <div class="cls-desc" id="cls-desc" style="font-style:italic;color:var(--border);">Auto-set by your role selection above.</div>
-        <input type="hidden" id="fn-classification" value="">
-      </div>
-    </div>
-
-    <!-- SECTION 3: DEPARTMENT -->
-    <div class="form-section">
-      <div class="form-section-label">Section 3 — Department</div>
-      <div class="field">
-        <label>Primary Department <span class="req">*</span></label>
-        <div class="dept-picker" id="dept-picker">
-          <div class="dept-box" onclick="selectDept('Science Department','ScD')" data-dept="Science Department">
-            <img src="img/Science.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Science Dept.</div><div class="dept-box-abbr">ScD</div></div>
-          </div>
-          <div class="dept-box" onclick="selectDept('Security Department','SD')" data-dept="Security Department">
-            <img src="img/Security.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Security Dept.</div><div class="dept-box-abbr">SD</div></div>
-          </div>
-          <div class="dept-box" onclick="selectDept('Ethics Committee','EC')" data-dept="Ethics Committee">
-            <img src="img/Ethics.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Ethics Committee</div><div class="dept-box-abbr">EC</div></div>
-          </div>
-          <div class="dept-box" onclick="selectDept('Mobile Task Forces','MTF')" data-dept="Mobile Task Forces">
-            <img src="img/MTF.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Mobile Task Forces</div><div class="dept-box-abbr">MTF</div></div>
-          </div>
-          <div class="dept-box" onclick="selectDept('Medical Department','MD')" data-dept="Medical Department">
-            <img src="img/Medical.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Medical Dept.</div><div class="dept-box-abbr">MD</div></div>
-          </div>
-          <div class="dept-box" onclick="selectDept('Intelligence Agency','IA')" data-dept="Intelligence Agency">
-            <img src="img/Intelligence.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Intelligence Agency</div><div class="dept-box-abbr">IA</div></div>
-          </div>
-          <div class="dept-box" onclick="selectDept('Site Directorship','SDir')" data-dept="Site Directorship">
-            <img src="img/SiteDirectorship.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Site Directorship</div><div class="dept-box-abbr">SDir</div></div>
-          </div>
-          <div class="dept-box" onclick="selectDept('Engineering Department','Eng')" data-dept="Engineering Department">
-            <img src="img/Engineering.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Engineering Dept.</div><div class="dept-box-abbr">Eng</div></div>
-          </div>
-          <div class="dept-box" onclick="selectDept('Internal Security Department','ISD')" data-dept="Internal Security Department">
-            <img src="img/ISD.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Int. Security Dept.</div><div class="dept-box-abbr">ISD</div></div>
-          </div>
-        </div>
-        <input type="hidden" id="fn-dept" value="">
-      </div>
-
-      <!-- SD Sub-units (fades in) -->
-      <div class="subunit-wrap" id="sd-subunit-wrap">
-        <label style="font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;display:block;">Security Unit <span class="req">*</span></label>
-        <div class="subunit-grid">
-          <div class="subunit-box" onclick="selectSubunit('SRU')" data-unit="SRU"><div class="subunit-name">SRU</div><div class="subunit-full">Security Response Unit — Active threat response, breach containment, site defence.</div></div>
-          <div class="subunit-box" onclick="selectSubunit('SCU')" data-unit="SCU"><div class="subunit-name">SCU</div><div class="subunit-full">Security Containment Unit — Anomaly containment oversight, test security, researcher protection.</div></div>
-          <div class="subunit-box" onclick="selectSubunit('SEU')" data-unit="SEU"><div class="subunit-name">SEU</div><div class="subunit-full">Security Enforcement Unit — Internal violations, Ethics oversight, D-Class welfare enforcement.</div></div>
-          <div class="subunit-box" onclick="selectSubunit('SIU')" data-unit="SIU"><div class="subunit-name">SIU</div><div class="subunit-full">Security Intelligence Unit — Off-site operations, HVIP security, IA &amp; ISD cooperation. (Level 3+ only.)</div></div>
-        </div>
-        <input type="hidden" id="fn-sd-unit" value="">
-      </div>
-
-      <!-- MTF Sub-units -->
-      <div class="subunit-wrap" id="mtf-subunit-wrap">
-        <label style="font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;display:block;">Task Force <span class="req">*</span></label>
-        <div class="subunit-grid">
-          <div class="subunit-box" onclick="selectMtfUnit('Xi-13')" data-mtf-unit="Xi-13" style="display:flex;align-items:center;gap:.9rem;">
-            <img src="img/Xi13.png" alt="" style="width:38px;height:38px;object-fit:contain;flex-shrink:0;filter:invert(1) brightness(1.1);">
-            <div style="min-width:0;">
-              <div class="subunit-name">MTF Xi-13 &middot; "Sequere Nos"</div>
-              <div class="subunit-full">Platoon-strength rapid response unit. Tasked with responding quickly to dangerous and/or anomalous situations where the threat has not yet been identified but military-grade force is deemed likely, including large-scale containment and security breaches.</div>
-            </div>
-          </div>
-        </div>
-        <input type="hidden" id="fn-mtf-unit" value="">
-      </div>
-
-      <!-- Dept description + Role picker (appears after dept is chosen) -->
-      <div class="dept-desc" id="dept-desc" style="margin-top:.75rem;">Select a department above.</div>
-      <div class="field" id="fn-role-field" style="display:none;margin-top:1.25rem;">
-        <label>Role / Position <span class="req">*</span> <span style="font-family:var(--mono);font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;">Clearance &amp; Classification auto-set by role</span></label>
-        <div class="role-picker" id="fn-role-picker"></div>
-        <input type="hidden" id="fn-role" value="">
-      </div>
-
-      <!-- ISD cover department + cover role (appears once an ISD agent role is selected) -->
-      <div class="isd-cover-wrap" id="isd-cover-wrap">
-        <div class="isd-cover-note">
-          &#9632; &nbsp;ISD affiliation is classified. Publicly, your character appears under a cover department and a cover role. Only staff with appropriate clearance will see the true ISD designation.<br>
-          &#9632; &nbsp;Pick the department your character uses as cover below, then pick the cover role within it.
-        </div>
-        <label style="font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;display:block;margin-top:.75rem;">Cover Department <span class="req">*</span></label>
-        <div class="dept-picker" id="fn-cover-dept-picker">
-          <div class="dept-box" onclick="selectCoverDept('Science Department')" data-cover-dept="Science Department"><img src="img/Science.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Science Dept.</div><div class="dept-box-abbr">ScD</div></div></div>
-          <div class="dept-box" onclick="selectCoverDept('Security Department')" data-cover-dept="Security Department"><img src="img/Security.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Security Dept.</div><div class="dept-box-abbr">SD</div></div></div>
-          <div class="dept-box" onclick="selectCoverDept('Ethics Committee')" data-cover-dept="Ethics Committee"><img src="img/Ethics.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Ethics Committee</div><div class="dept-box-abbr">EC</div></div></div>
-          <div class="dept-box" onclick="selectCoverDept('Mobile Task Forces')" data-cover-dept="Mobile Task Forces"><img src="img/MTF.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Mobile Task Forces</div><div class="dept-box-abbr">MTF</div></div></div>
-          <div class="dept-box" onclick="selectCoverDept('Medical Department')" data-cover-dept="Medical Department"><img src="img/Medical.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Medical Dept.</div><div class="dept-box-abbr">MD</div></div></div>
-          <div class="dept-box" onclick="selectCoverDept('Intelligence Agency')" data-cover-dept="Intelligence Agency"><img src="img/Intelligence.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Intelligence Agency</div><div class="dept-box-abbr">IA</div></div></div>
-          <div class="dept-box" onclick="selectCoverDept('Site Directorship')" data-cover-dept="Site Directorship"><img src="img/SiteDirectorship.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Site Directorship</div><div class="dept-box-abbr">SDir</div></div></div>
-          <div class="dept-box" onclick="selectCoverDept('Engineering Department')" data-cover-dept="Engineering Department"><img src="img/Engineering.png" alt=""><div class="dept-box-info"><div class="dept-box-name">Engineering Dept.</div><div class="dept-box-abbr">Eng</div></div></div>
-        </div>
-        <input type="hidden" id="fn-cover-dept" value="">
-
-        <!-- Cover role picker (appears once a cover dept is chosen) -->
-        <div class="field" id="fn-cover-role-field" style="display:none;margin-top:1.25rem;">
-          <label>Cover Role / Position <span class="req">*</span> <span style="font-family:var(--mono);font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;">Publicly visible role within the cover department</span></label>
-          <div class="role-picker" id="fn-cover-role-picker"></div>
-          <input type="hidden" id="fn-cover-role" value="">
-        </div>
-
-        <div class="isd-cover-hide-note" id="isd-cover-hide-note" style="display:none;font-family:var(--mono);font-size:9.5px;letter-spacing:0.18em;color:var(--gold);text-transform:uppercase;padding:.75rem 1rem;border:1px dashed var(--gold-dim);background:rgba(200,150,10,.04);margin-top:.75rem;">
-          &#9632; &nbsp;Cover assignment not required for this role. ISD leadership operates openly within the command structure.
-        </div>
-      </div>
-
-    </div>
-
-    <!-- SECTION 4: PSYCHOLOGICAL PROFILE -->
-    <div class="form-section">
-      <div class="form-section-label">Section 4 — Psychological Profile</div>
-      <div class="three-col">
-        <div class="field">
-          <label>Myers-Briggs <span style="color:var(--muted);font-size:8px">(optional)</span></label>
-          <select id="fn-mbti">
-            <option value="">Select type...</option>
-            <option>INTJ</option><option>INTP</option><option>ENTJ</option><option>ENTP</option>
-            <option>INFJ</option><option>INFP</option><option>ENFJ</option><option>ENFP</option>
-            <option>ISTJ</option><option>ISFJ</option><option>ESTJ</option><option>ESFJ</option>
-            <option>ISTP</option><option>ISFP</option><option>ESTP</option><option>ESFP</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Loyalty Index <span style="color:var(--muted);font-size:8px">(0–100)</span></label>
-          <input type="number" id="fn-loyalty" min="0" max="100" placeholder="e.g. 72">
-        </div>
-        <div class="field">
-          <label>MARS Score <span style="color:var(--muted);font-size:8px">Mind-Affect Res. (0–10)</span></label>
-          <input type="number" id="fn-mars" min="0" max="10" placeholder="e.g. 6">
-        </div>
-      </div>
-      <div class="two-col">
-        <div class="field">
-          <div class="list-req-note">Virtues <span class="req">*</span> — <span>Minimum 3 required</span></div>
-          <div id="fn-virtue-list" class="virtue-list"></div>
-          <button class="add-link" onclick="addListItem('fn-virtue-list','virtue','e.g. Patience — Knows when to hold back...')">+ Add Virtue</button>
-        </div>
-        <div class="field">
-          <div class="list-req-note">Vices <span class="req">*</span> — <span>Minimum 3 required</span></div>
-          <div id="fn-vice-list" class="vice-list"></div>
-          <button class="add-link" onclick="addListItem('fn-vice-list','vice','e.g. Withdrawn — Lives mostly in their head...')">+ Add Vice</button>
-        </div>
-      </div>
-      <div class="two-col">
-        <div class="field">
-          <div class="list-req-note">Motives <span class="req">*</span> — <span>Minimum 3 required</span></div>
-          <div id="fn-motive-list" class="motive-list"></div>
-          <button class="add-link" onclick="addListItem('fn-motive-list','motive','e.g. Truth — It must all be for a reason...')">+ Add Motive</button>
-        </div>
-        <div class="field">
-          <div class="list-req-note">Fears <span class="req">*</span> — <span>Minimum 2 required</span></div>
-          <div id="fn-fear-list" class="fear-list"></div>
-          <button class="add-link" onclick="addListItem('fn-fear-list','fear','e.g. Divine Judgment — ...')">+ Add Fear</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- SECTION 5: BACKGROUND -->
-    <div class="form-section">
-      <div class="form-section-label">Section 5 — Background</div>
-      <div class="two-col">
-        <div class="field"><label>Education <span style="color:var(--muted);font-size:8px">(optional)</span></label><input type="text" id="fn-education" placeholder="e.g. PhD Neuroscience, BA Psychology"></div>
-        <div class="field"><label>Experience <span style="color:var(--muted);font-size:8px">(optional)</span></label><input type="text" id="fn-experience" placeholder="e.g. 7 years postdoc neurology"></div>
-      </div>
-      <div class="field"><label>Backstory / Background <span class="req">*</span></label>
-        <div class="rich-field" id="fn-backstory" contenteditable="true" data-placeholder="Full background narrative — prior life, how they came to the Foundation, notable events. The more detail the better."></div>
-      </div>
-      <div class="field"><label>Employment History <span style="color:var(--muted);font-size:8px">(optional)</span></label>
-        <div class="rich-field" id="fn-employment" contenteditable="true" data-placeholder="Professional timeline — positions, institutions, key projects, career trajectory..."></div>
-      </div>
-      <div class="field"><label>Notable Incidents / Logs <span style="color:var(--muted);font-size:8px">(optional)</span></label>
-        <div class="rich-field" id="fn-incidents" contenteditable="true" data-placeholder="Significant events, anomalous occurrences, disciplinary records, commendations, or other notable incidents..."></div>
-      </div>
-      <div class="field">
-        <label>Connections <span style="color:var(--muted);font-size:8px">(optional — organisations, groups, individuals)</span></label>
-        <div class="connection-list" id="fn-connection-list"></div>
-        <button class="add-link" onclick="addListItem('fn-connection-list','connection','e.g. The Chaos Insurgency — Description...')">+ Add Connection</button>
-      </div>
-    </div>
-
-    <!-- SECTION 6: PHYSICAL DESCRIPTION -->
-    <div class="form-section">
-      <div class="form-section-label">Section 6 — Physical Description</div>
-      <div class="field">
-        <div class="rich-field" id="fn-physical" contenteditable="true" data-placeholder="Physical appearance — build, colouring, distinguishing features, general presentation..."></div>
-      </div>
-      <div class="field"><label>Additional Notes <span style="color:var(--muted);font-size:8px">(optional)</span></label>
-        <div class="rich-field" id="fn-notes" contenteditable="true" data-placeholder="Medical conditions, allergies, psychological observations, security notes, or anything else relevant to the dossier..."></div>
-      </div>
-    </div>
-
-    <!-- SECTION 7: ADDENDUM -->
-    <div class="form-section">
-      <div class="form-section-label">Section 7 — Addendum</div>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:.75rem;font-family:var(--mono);letter-spacing:0.08em;">Miscellaneous notes — anomalous properties, medical conditions, restrictions, pending requests.</p>
-      <div class="bullet-list" id="fn-addendum-list"></div>
-      <button class="add-link" onclick="addListItem('fn-addendum-list','bullet','e.g. All requests for [SCP-148] are to be denied.')">+ Add Entry</button>
-    </div>
-
-    <!-- SECTION 8: RP SAMPLE -->
-    <div class="form-section">
-      <div class="form-section-label">Section 8 — RP Sample</div>
-      <div class="field">
-        <div class="rich-field" id="fn-rp-sample" contenteditable="true" data-placeholder="A short RP sample (3–5 paragraphs) demonstrating your writing style and how you play this character. Third-person past tense preferred."></div>
-      </div>
-    </div>
-
-    <div class="submit-row" style="margin-top:2.5rem;">
-      <button class="btn btn-fill" onclick="submitFoundation()">Submit Dossier for Review</button>
-      <div class="form-msg" id="fn-msg"></div>
-    </div>
-  </div>
-  </div><!-- /form-col -->
-
-  <aside class="dossier-preview" id="fn-preview-pane">
-    <div class="dp-hdr">
-      <span class="dp-hdr-left">Live Dossier Preview</span>
-      <span class="dp-hdr-ref">TF / PERS / DRAFT</span>
-    </div>
-    <div class="dp-body" id="fn-preview-body">
-      <div class="dp-empty">Fill in the form to the left. Your dossier will render here as you type.</div>
-    </div>
-  </aside>
-  </div><!-- /dossier-layout -->
-</div>
-
-<!-- ══════════════════════════════════════════
-     SCP BUILDER
-══════════════════════════════════════════════ -->
-<div id="v-scp" class="view">
-  <div class="ph">
-    <div class="ph-stamp">SCP</div>
-    <div class="ph-eyebrow"><div class="ph-eyebrow-line"></div><div class="ph-eyebrow-text">SCP Entry — Character Sheet</div></div>
-    <h1>SCP<br><em>Entry</em></h1>
-    <p class="ph-desc">Fields marked <span style="color:var(--gold)">*</span> are required. The ACS bar updates live as you fill in the classification fields above it.</p>
-  </div>
-  <div class="breadcrumb"><span class="breadcrumb-item">Method</span><span class="breadcrumb-sep">/</span><span class="breadcrumb-item">Type</span><span class="breadcrumb-sep">/</span><span class="breadcrumb-item active">Sheet</span></div>
-  <div class="dossier-layout">
-  <div class="form-col">
-  <div class="form-wrap" style="max-width:none;margin:0;">
-    <button class="back-btn" onclick="showView('v-type')">Back</button>
-
-    <div class="form-section" style="margin-top:0;border-top:none;">
-      <div class="form-section-label">Submitter Info</div>
-      <div class="field"><label>Discord Username <span class="req">*</span></label><input type="text" id="scp-discord" placeholder="yourname or yourname#0000"></div>
-    </div>
-
-    <div class="form-section">
-      <div class="form-section-label">ACS Classification — Updates preview below</div>
-      <div class="two-col">
-        <div class="field"><label>Item Number <span class="req">*</span></label><input type="text" id="scp-item" placeholder="SCP-XXXX" oninput="updateACS()"></div>
-        <div class="field"><label>Clearance Level Required <span class="req">*</span></label>
-          <select id="scp-clearance" onchange="updateACS()">
-            <option value="">Select...</option>
-            <option value="1">Level 1</option><option value="2">Level 2</option>
-            <option value="3">Level 3</option><option value="4">Level 4</option><option value="5">Level 5</option>
-          </select>
-        </div>
-      </div>
-      <div class="two-col">
-        <div class="field"><label>Containment Class <span class="req">*</span></label>
-          <select id="scp-class" onchange="updateACS()">
-            <option value="">Select...</option>
-            <option value="Safe">Safe</option><option value="Euclid">Euclid</option>
-            <option value="Keter">Keter</option><option value="Neutralized">Neutralized</option>
-            <option value="Pending">Pending</option><option value="Explained">Explained</option>
-            <option value="Esoteric">Esoteric</option>
-          </select>
-        </div>
-        <div class="field"><label>Disruption Class <span class="req">*</span></label>
-          <select id="scp-disruption" onchange="updateACS()">
-            <option value="">Select...</option>
-            <option value="Dark">Dark</option><option value="Vlam">Vlam</option>
-            <option value="Keneq">Keneq</option><option value="Ekhi">Ekhi</option><option value="Amida">Amida</option>
-          </select>
-        </div>
-      </div>
-      <div class="field" style="max-width:280px;"><label>Risk Class <span class="req">*</span></label>
-        <select id="scp-risk" onchange="updateACS()">
-          <option value="">Select...</option>
-          <option value="Notice">Notice</option><option value="Caution">Caution</option>
-          <option value="Warning">Warning</option><option value="Danger">Danger</option><option value="Critical">Critical</option>
+      <div class="form-section-label">Your Details</div>
+      <div class="field"><label>Discord Username <span class="req">*</span></label><input type="text" id="wk-discord" placeholder="yourname or yourname#0000"></div>
+      <div class="field"><label>Character Type <span class="req">*</span></label>
+        <select id="wk-type">
+          <option value="">Select type...</option>
+          <option value="foundation">Foundation Personnel</option>
+          <option value="scp">SCP Entry</option>
+          <option value="unaffiliated">Unaffiliated</option>
         </select>
       </div>
-
-      <div class="secondary-group" id="scp-secondary-group">
-        <div class="field">
-          <label>Secondary Class (Esoteric)</label>
-          <select id="scp-secondary" onchange="toggleSecondaryCustom()">
-            <option value="">Select secondary class...</option>
-            <option value="Apollyon">Apollyon</option><option value="Archon">Archon</option>
-            <option value="Cernunnos">Cernunnos</option><option value="Decommissioned">Decommissioned</option>
-            <option value="Hiemal">Hiemal</option><option value="Tiamat">Tiamat</option>
-            <option value="Ticonderoga">Ticonderoga</option><option value="Thaumiel">Thaumiel</option>
-            <option value="Uncontained">Uncontained</option><option value="Other">Other (write your own)</option>
-          </select>
-        </div>
-        <div class="field" id="scp-custom-class-group" style="display:none;">
-          <label>Custom Secondary Class</label>
-          <input type="text" id="scp-custom-class" placeholder="Enter custom class name">
-        </div>
-      </div>
-
-      <div class="acs-bar-label">ACS Bar Preview</div>
-      <div class="acs-bar" id="acs-preview">
-        <div class="acs-top">
-          <div class="acs-item-num">ITEM #: <span id="acs-num">SCP-XXXX</span></div>
-          <div class="acs-level-tag" id="acs-level">LEVEL ?/SCP-XXXX</div>
-          <div class="acs-class-block" id="acs-class-block">
-            <span class="acs-class-header">OBJECT CLASS</span>
-            <span class="acs-class-value" id="acs-class-val">PENDING</span>
-          </div>
-        </div>
-        <div class="acs-bottom">
-          <div class="acs-disruption" id="acs-dis-block"><span class="acs-meta-label">DISRUPTION CLASS</span><span class="acs-meta-value" id="acs-dis-val">—</span></div>
-          <div class="acs-risk" id="acs-risk-block"><span class="acs-meta-label">RISK CLASS</span><span class="acs-meta-value" id="acs-risk-val">—</span></div>
-        </div>
-      </div>
     </div>
-
     <div class="form-section">
-      <div class="form-section-label">Document Sections</div>
-      <div class="field"><label>Containment Procedures <span class="req">*</span></label>
-        <div class="rich-field" id="scp-containment" contenteditable="true" data-placeholder="Special Containment Procedures: SCP-XXXX is to be..."></div>
-      </div>
-      <div class="field"><label>Description <span class="req">*</span></label>
-        <div class="rich-field" id="scp-description" contenteditable="true" data-placeholder="SCP-XXXX is a..."></div>
-      </div>
-      <div class="field"><label>Abilities <span class="req">*</span></label>
-        <div class="rich-field" id="scp-abilities" contenteditable="true" data-placeholder="Describe the anomaly's abilities, their limits, weaknesses, and behaviour..."></div>
+      <div class="form-section-label">Wikidot Page Link</div>
+      <div class="field">
+        <label>Wikidot URL <span class="req">*</span></label>
+        <input type="url" id="wk-url" placeholder="https://yoursite.wikidot.com/your-character">
+        <span class="field-hint">The page must be publicly viewable so staff can access it without a Wikidot account.</span>
       </div>
     </div>
-
-    <div class="form-section">
-      <div class="form-section-label">Addenda <span style="letter-spacing:0;text-transform:none;font-size:10px;color:var(--muted);">(optional)</span></div>
-      <div class="addendum-list" id="scp-addendum-list"></div>
-      <button class="add-link" onclick="addAddendum('scp-addendum-list')">+ Add Addendum</button>
-    </div>
-
+    <div class="callout"><span class="callout-ico">ℹ</span><p>Once approved, clicking your character on the public roster will open this Wikidot page directly in a new tab.</p></div>
     <div class="submit-row">
-      <button class="btn btn-fill" onclick="submitSCP()">Submit for Review</button>
-      <div class="form-msg" id="scp-msg"></div>
+      <button class="btn btn-fill" onclick="submitWikidot()">Submit for Review</button>
+      <div class="form-msg" id="wk-msg"></div>
     </div>
   </div>
-  </div><!-- /form-col -->
-
-  <aside class="dossier-preview" id="scp-preview-pane">
-    <div class="dp-hdr">
-      <span class="dp-hdr-left">Live Anomaly Preview</span>
-      <span class="dp-hdr-ref">TF / SCP / DRAFT</span>
-    </div>
-    <div class="dp-body scp-preview-body" id="scp-preview-body">
-      <div class="dp-empty">Fill in the form to the left. Your SCP file will render here as you type.</div>
-    </div>
-  </aside>
-  </div><!-- /dossier-layout -->
 </div>
 
-<!-- ══════════════════════════════════════════
-     UNAFFILIATED BUILDER
-══════════════════════════════════════════════ -->
-<div id="v-unaff" class="view">
-  <div class="ph">
-    <div class="ph-stamp">FREE</div>
-    <div class="ph-eyebrow"><div class="ph-eyebrow-line"></div><div class="ph-eyebrow-text">Unaffiliated — Character Sheet</div></div>
-    <h1>Unaffiliated<br><em>Personnel</em></h1>
-    <p class="ph-desc">A more open format — fill in what's relevant to your character. Only fields marked <span style="color:var(--gold)">*</span> are strictly required.</p>
-  </div>
-  <div class="breadcrumb"><span class="breadcrumb-item">Method</span><span class="breadcrumb-sep">/</span><span class="breadcrumb-item">Type</span><span class="breadcrumb-sep">/</span><span class="breadcrumb-item active">Sheet</span></div>
-  <div class="dossier-layout">
-  <div class="form-col">
-  <div class="form-wrap" style="max-width:none;margin:0;">
-    <button class="back-btn" onclick="showView('v-type')">Back</button>
-
-    <div class="form-section" style="margin-top:0;border-top:none;">
-      <div class="form-section-label">Submitter Info</div>
-      <div class="field"><label>Discord Username <span class="req">*</span></label><input type="text" id="ua-discord" placeholder="yourname or yourname#0000"></div>
-    </div>
-
-    <div class="form-section">
-      <div class="form-section-label">Character Info</div>
-      <div class="field"><label>Character Image <span style="color:var(--muted);font-size:8px">(optional — max 5MB)</span></label>
-        <div class="img-zone" id="ua-img-area">
-          <input type="file" id="ua-img-input" accept="image/*" onchange="handleImg('ua-img-input','ua-img-preview','ua-img-area')">
-          <div class="img-zone-label">Click to upload image</div>
-          <div class="img-zone-sub">JPG, PNG, GIF, WebP — Max 5MB</div>
-          <img id="ua-img-preview" class="img-preview" alt="Preview">
-        </div>
-      </div>
-      <div class="two-col">
-        <div class="field"><label>Full Name <span class="req">*</span></label><input type="text" id="ua-name" placeholder="Character name"></div>
-        <div class="field"><label>Age <span style="color:var(--muted);font-size:8px">(optional)</span></label><input type="text" id="ua-age" placeholder="e.g. 29"></div>
-      </div>
-      <div class="field"><label>Affiliation <span style="color:var(--muted);font-size:8px">(optional — write your own)</span></label><input type="text" id="ua-affiliation" placeholder="e.g. Serpent's Hand, Global Occult Coalition, Civilian, None"></div>
-    </div>
-
-    <div class="form-section">
-      <div class="form-section-label">Rich Text Sections</div>
-      <div class="field"><label>Background / History <span class="req">*</span></label>
-        <div class="rich-field" id="ua-background" contenteditable="true" data-placeholder="Who is this person? Where did they come from? How did they end up here?"></div>
-      </div>
-      <div class="field"><label>Skills &amp; Abilities <span style="color:var(--muted);font-size:8px">(optional)</span></label>
-        <div class="rich-field" id="ua-skills" contenteditable="true" data-placeholder="Relevant skills, abilities, training..."></div>
-      </div>
-      <div class="field"><label>Equipment / Resources <span style="color:var(--muted);font-size:8px">(optional)</span></label>
-        <div class="rich-field" id="ua-equipment" contenteditable="true" data-placeholder="Anything they carry, own, or have access to..."></div>
-      </div>
-      <div class="field"><label>Additional Notes <span style="color:var(--muted);font-size:8px">(optional)</span></label>
-        <div class="rich-field" id="ua-notes" contenteditable="true" data-placeholder="Anything else..."></div>
-      </div>
-    </div>
-
-    <div class="submit-row">
-      <button class="btn btn-fill" onclick="submitUnaff()">Submit for Review</button>
-      <div class="form-msg" id="ua-msg"></div>
-    </div>
-  </div>
-  </div><!-- /form-col -->
-
-  <aside class="dossier-preview" id="ua-preview-pane">
-    <div class="dp-hdr">
-      <span class="dp-hdr-left">Live File Preview</span>
-      <span class="dp-hdr-ref">TF / UNA / DRAFT</span>
-    </div>
-    <div class="dp-body" id="ua-preview-body">
-      <div class="dp-empty">Fill in the form to the left. Your file will render here as you type.</div>
-    </div>
-  </aside>
-  </div><!-- /dossier-layout -->
-</div>
 
 <!-- ══════════════════════════════════════════
      SUCCESS
@@ -1815,9 +1321,11 @@ function setType(t) {
     showView('v-gdoc');
     return;
   }
-  if (t === 'foundation') showView('v-foundation');
-  else if (t === 'scp') showView('v-scp');
-  else showView('v-unaff');
+  if (_method === 'wikidot') {
+    document.getElementById('wk-type').value = t;
+    showView('v-wikidot');
+    return;
+  }
 }
 
 /* ═══════════════════════════════════════════
@@ -1991,6 +1499,20 @@ async function submitGDoc() {
   if (!url.includes('docs.google.com')) { setMsg(msg,'error','Please enter a valid Google Docs link.'); return; }
   setMsg(msg,'loading','Submitting...');
   const {data:result,error} = await submitCharacter(type,'googledoc',discord,{},url);
+  if (error) { setMsg(msg,'error','Submission failed: '+error.message); return; }
+  document.getElementById('success-num').textContent = result.seq || '?';
+  showView('v-success');
+}
+
+async function submitWikidot() {
+  const msg = document.getElementById('wk-msg');
+  const discord = g('wk-discord');
+  const type = g('wk-type');
+  const url = g('wk-url');
+  if (!discord || !type || !url) { setMsg(msg,'error','All fields are required.'); return; }
+  if (!url.includes('wikidot.com')) { setMsg(msg,'error','Please enter a valid Wikidot link.'); return; }
+  setMsg(msg,'loading','Submitting...');
+  const {data:result,error} = await submitCharacter(type,'wikidot',discord,{},url);
   if (error) { setMsg(msg,'error','Submission failed: '+error.message); return; }
   document.getElementById('success-num').textContent = result.seq || '?';
   showView('v-success');
@@ -2980,7 +2502,7 @@ async function doTrack() {
     const name = c.type === 'scp' ? (d.item_number || 'SCP-???') : (d.full_name || 'Unnamed Submission');
     const typeLabel = c.type === 'foundation' ? 'Foundation' : c.type === 'scp' ? 'SCP Entry' : 'Unaligned';
     const created = c.created_at ? new Date(c.created_at).toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'}) : '---';
-    const methodLabel = c.method === 'googledoc' ? 'Google Doc' : 'Website Form';
+    const methodLabel = c.method === 'googledoc' ? 'Google Doc' : c.method === 'wikidot' ? 'Wikidot' : 'Website Form';
     const reason = c.staff_reason
       ? `<div class="trk-card-reason">${escHtml(c.staff_reason)}</div>` : '';
     return `

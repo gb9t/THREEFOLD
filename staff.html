@@ -1026,6 +1026,7 @@ function renderCharTable(typeKey, statusFilter = 'all') {
   }
   empty.style.display = 'none';
   const canManage = CAN_MANAGE.includes(currentProfile?.role);
+  const canReview = CAN_REVIEW_CHARS.includes(currentProfile?.role);
   const canEdit   = currentProfile && [ROLES.OWNER, ROLES.HEAD_LORE].includes(currentProfile.role);
   const showType  = typeKey === 'all';
 
@@ -1041,7 +1042,7 @@ function renderCharTable(typeKey, statusFilter = 'all') {
       <td style="font-size:12px">${escHtml(c.discord_username || '—')}</td>
       <td style="font-size:12px">${escHtml(charName)}</td>
       <td>${fmtDate(c.created_at)}</td>
-      <td><span class="status-tag st-${c.status}" ${canManage ? `onclick="cycleCharStatus('${c.id}',this)"` : ''} title="${canManage ? 'Click to cycle' : ''}">${statusLabel(c.status)}</span></td>
+      <td><span class="status-tag st-${c.status}" ${canReview ? `onclick="cycleCharStatus('${c.id}',this)"` : ''} title="${canReview ? 'Click to cycle' : ''}">${statusLabel(c.status)}</span></td>
       <td class="app-actions">
         <button class="btn-view-app" onclick="openCharModal('${c.id}')">Review</button>
         ${canEdit && c.method === 'website' && c.status === 'approved' ? `<button class="btn-view-app" onclick="window.open('submission.html?edit=${c.id}','_blank')">Edit</button>` : ''}
@@ -1060,7 +1061,7 @@ function filterChars(typeKey, status, btn) {
 }
 
 async function cycleCharStatus(id, el) {
-  if (!CAN_MANAGE.includes(currentProfile?.role)) return;
+  if (!CAN_REVIEW_CHARS.includes(currentProfile?.role)) return;
   const c = allCharacters.find(x => x.id === id);
   if (!c) return;
   const next = STATUS_CYCLE[(STATUS_CYCLE.indexOf(c.status) + 1) % STATUS_CYCLE.length];
@@ -1076,6 +1077,7 @@ function openCharModal(id) {
   const c = allCharacters.find(x => x.id === id);
   if (!c) return;
   const canManage = CAN_MANAGE.includes(currentProfile?.role);
+  const canReview = CAN_REVIEW_CHARS.includes(currentProfile?.role);
   const d = c.character_data || {};
   const charName = c.type === 'scp' ? (d.item_number || 'SCP-???') : (d.full_name || '—');
 
@@ -1122,7 +1124,7 @@ function openCharModal(id) {
   }
 
   let actionsHtml = '';
-  if (canManage) {
+  if (canReview) {
     actionsHtml = `
       <select class="modal-status-select" id="char-modal-status">
         <option value="pending" ${c.status==='pending'?'selected':''}>Pending</option>
@@ -1132,7 +1134,7 @@ function openCharModal(id) {
       </select>
       <input type="text" id="char-modal-reason" placeholder="Staff reason (shown publicly)" value="${escHtml(c.staff_reason||'')}" style="flex:1;min-width:240px;background:var(--dark);border:1px solid var(--border);color:var(--pale);font-family:var(--body);font-size:13px;padding:7px 12px;outline:none;">
       <button class="btn btn-sm btn-fill" onclick="saveCharReview('${c.id}')">Save</button>
-      <button class="btn btn-sm btn-danger" onclick="deleteChar('${c.id}',true)">Delete</button>`;
+      ${canManage ? `<button class="btn btn-sm btn-danger" onclick="deleteChar('${c.id}',true)">Delete</button>` : ''}`;
   }
 
   // Top-of-modal link block for gdoc/wikidot (also keeps backwards-compat with the old inline link)
@@ -1158,6 +1160,7 @@ function openCharModal(id) {
 }
 
 async function saveCharReview(id) {
+  if (!CAN_REVIEW_CHARS.includes(currentProfile?.role)) return;
   const status = document.getElementById('char-modal-status').value;
   const reason = document.getElementById('char-modal-reason').value.trim();
   const { error } = await updateCharacterStatus(id, status, reason, currentProfile?.display_name);

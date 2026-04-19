@@ -351,6 +351,69 @@ nav{
   .opt-btn img{width:32px;height:32px;}
   .opt-grid.scp-class .opt-btn img{width:40px;height:40px;}
 }
+
+/* === ISD CLASSIFIED TOGGLE === */
+.isd-toggle{
+  display:flex;align-items:flex-start;gap:.9rem;
+  padding:1rem 1.1rem;margin:.25rem 0 .15rem;
+  background:linear-gradient(135deg, rgba(139,0,0,0.12), rgba(40,0,0,0.18));
+  border:1px solid #5a1a1a;cursor:pointer;position:relative;
+  transition:border-color .2s, background .2s, box-shadow .2s;user-select:none;
+}
+.isd-toggle::before{
+  content:'';position:absolute;top:0;left:0;bottom:0;width:3px;
+  background:linear-gradient(to bottom, #8a1a1a, #3a0a0a);
+}
+.isd-toggle:hover{
+  border-color:#8a1a1a;
+  background:linear-gradient(135deg, rgba(139,0,0,0.18), rgba(40,0,0,0.24));
+  box-shadow:0 0 0 1px rgba(138,26,26,.25);
+}
+.isd-toggle input[type="checkbox"]{
+  appearance:none;-webkit-appearance:none;width:22px !important;height:22px;
+  min-width:22px;border:2px solid #8a1a1a;background:#0a0505;
+  margin:0;padding:0 !important;cursor:pointer;position:relative;
+  transition:border-color .15s, background .15s;flex-shrink:0;margin-top:2px;
+}
+.isd-toggle input[type="checkbox"]:hover{border-color:#ba3a3a;}
+.isd-toggle input[type="checkbox"]:checked{
+  background:#8a1a1a;border-color:#ba3a3a;
+  box-shadow:0 0 0 1px rgba(186,58,58,.25);
+}
+.isd-toggle input[type="checkbox"]:checked::after{
+  content:'';position:absolute;top:2px;left:6px;width:5px;height:11px;
+  border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg);
+}
+.isd-toggle.checked{
+  border-color:#ba3a3a;
+  background:linear-gradient(135deg, rgba(139,0,0,0.22), rgba(40,0,0,0.3));
+  box-shadow:0 0 0 1px rgba(186,58,58,.2);
+}
+.isd-toggle-text{flex:1;}
+.isd-toggle-head{
+  display:flex;align-items:center;gap:.55rem;margin-bottom:.3rem;
+}
+.isd-toggle-label{
+  font-family:var(--display, 'Barlow Condensed', sans-serif);
+  font-size:16px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;
+  color:#ea5a4a;line-height:1;
+}
+.isd-toggle-stamp{
+  font-family:var(--mono);font-size:8.5px;letter-spacing:0.2em;
+  color:#ba3a3a;border:1px solid #8a1a1a;padding:2px 7px;
+  background:rgba(138,26,26,0.15);text-transform:uppercase;
+}
+.isd-toggle-desc{
+  font-family:var(--body);font-size:12.5px;color:var(--pale);
+  line-height:1.55;font-weight:300;
+}
+.isd-toggle-desc strong{color:#ea8a7a;font-weight:500;}
+.isd-url-field{
+  margin-top:.75rem;padding:1rem 1.1rem;
+  background:rgba(138,26,26,0.08);border:1px dashed #5a1a1a;
+}
+.isd-url-field label{color:#ea8a7a;}
+.isd-url-field .field-hint{color:#9a5a4a;}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
 .three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;}
 
@@ -1237,6 +1300,19 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
         <input type="hidden" id="gd-sub">
         <span class="field-hint" id="gd-sub-hint">Choose the specific unit your character belongs to.</span>
       </div>
+      <!-- ISD classified toggle (Foundation only) -->
+      <label class="isd-toggle" id="gd-isd-toggle" style="display:none;" onclick="onIsdToggle('gd', event)">
+        <input type="checkbox" id="gd-isd">
+        <div class="isd-toggle-text">
+          <div class="isd-toggle-head">
+            <span class="isd-toggle-label">Internal Security Department</span>
+            <span class="isd-toggle-stamp">Classified</span>
+          </div>
+          <div class="isd-toggle-desc">
+            Check this if your character is a <strong>covert ISD operative</strong>. Your public roster entry will show only the cover role you selected above. A second Google Doc link will appear below for the <strong>classified ISD backstory</strong>, which is only visible to Lore Team and higher staff. Other players will see you as their cover role, nothing more.
+          </div>
+        </div>
+      </label>
       <!-- SCP-only: object class + status -->
       <div class="field" id="gd-class-field" style="display:none;"><label>Object Class <span class="req">*</span></label>
         <div class="opt-grid scp-class" id="gd-class-grid"></div>
@@ -1253,6 +1329,13 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
         <label>Google Doc URL <span class="req">*</span></label>
         <input type="url" id="gd-url" placeholder="https://docs.google.com/document/d/...">
         <span class="field-hint">Sharing must be set to "Anyone with the link can view" before submitting.</span>
+      </div>
+      <div class="isd-url-field" id="gd-isd-url-field" style="display:none;">
+        <div class="field" style="margin:0;">
+          <label>Classified ISD Doc URL <span class="req">*</span></label>
+          <input type="url" id="gd-isd-url" placeholder="https://docs.google.com/document/d/..." style="background:#0a0505;border-color:#5a1a1a;">
+          <span class="field-hint">This is your classified ISD backstory. Only Lore Team and higher staff will see this link. Your public roster entry uses the Google Doc URL above.</span>
+        </div>
       </div>
     </div>
     <div class="callout"><span class="callout-ico">ℹ</span><p>Once approved, clicking your character on the public roster will open this Google Doc directly in a new tab.</p></div>
@@ -1299,6 +1382,19 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
         <input type="hidden" id="wk-sub">
         <span class="field-hint" id="wk-sub-hint">Choose the specific unit your character belongs to.</span>
       </div>
+      <!-- ISD classified toggle (Foundation only) -->
+      <label class="isd-toggle" id="wk-isd-toggle" style="display:none;" onclick="onIsdToggle('wk', event)">
+        <input type="checkbox" id="wk-isd">
+        <div class="isd-toggle-text">
+          <div class="isd-toggle-head">
+            <span class="isd-toggle-label">Internal Security Department</span>
+            <span class="isd-toggle-stamp">Classified</span>
+          </div>
+          <div class="isd-toggle-desc">
+            Check this if your character is a <strong>covert ISD operative</strong>. Your public roster entry will show only the cover role you selected above. A second URL will appear below for the <strong>classified ISD backstory</strong>, visible only to Lore Team and higher staff. Other players will see you as their cover role, nothing more.
+          </div>
+        </div>
+      </label>
       <div class="field" id="wk-class-field" style="display:none;"><label>Object Class <span class="req">*</span></label>
         <div class="opt-grid scp-class" id="wk-class-grid"></div>
         <input type="hidden" id="wk-class">
@@ -1314,6 +1410,13 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
         <label>Wikidot URL <span class="req">*</span></label>
         <input type="url" id="wk-url" placeholder="https://yoursite.wikidot.com/your-character">
         <span class="field-hint">The page must be publicly viewable so staff can access it without a Wikidot account.</span>
+      </div>
+      <div class="isd-url-field" id="wk-isd-url-field" style="display:none;">
+        <div class="field" style="margin:0;">
+          <label>Classified ISD Doc URL <span class="req">*</span></label>
+          <input type="url" id="wk-isd-url" placeholder="https://docs.google.com/document/d/... or wikidot page" style="background:#0a0505;border-color:#5a1a1a;">
+          <span class="field-hint">This is your classified ISD backstory. Only Lore Team and higher staff will see this link. Your public roster entry uses the Wikidot URL above.</span>
+        </div>
       </div>
     </div>
     <div class="callout"><span class="callout-ico">ℹ</span><p>Once approved, clicking your character on the public roster will open this Wikidot page directly in a new tab.</p></div>
@@ -1516,17 +1619,43 @@ function onTypeChange(prefix) {
   };
   show(prefix + '-dept-field',   type === 'foundation');
   show(prefix + '-sub-field',    false);
+  show(prefix + '-isd-toggle',   type === 'foundation');
+  show(prefix + '-isd-url-field', false);
   show(prefix + '-class-field',  type === 'scp');
   show(prefix + '-status-field', type === 'scp');
   // reset values so stale data from a previous type doesn't leak through
   if (type !== 'foundation') {
     clearOptGrid(prefix, 'dept');
     clearOptGrid(prefix, 'sub');
+    const cb = document.getElementById(prefix + '-isd');
+    if (cb) cb.checked = false;
+    const toggle = document.getElementById(prefix + '-isd-toggle');
+    if (toggle) toggle.classList.remove('checked');
+    const isdUrl = document.getElementById(prefix + '-isd-url');
+    if (isdUrl) isdUrl.value = '';
   }
   if (type !== 'scp') {
     clearOptGrid(prefix, 'class');
     clearOptGrid(prefix, 'status');
   }
+}
+
+/* ISD checkbox handler — reveals classified URL field and adds visual state */
+function onIsdToggle(prefix, ev) {
+  // The whole label is clickable, but the checkbox itself already toggles
+  // its state. Let that happen and then sync the UI from the checkbox.
+  setTimeout(() => {
+    const cb = document.getElementById(prefix + '-isd');
+    const toggle = document.getElementById(prefix + '-isd-toggle');
+    const urlField = document.getElementById(prefix + '-isd-url-field');
+    if (!cb) return;
+    if (toggle) toggle.classList.toggle('checked', cb.checked);
+    if (urlField) urlField.style.display = cb.checked ? '' : 'none';
+    if (!cb.checked) {
+      const u = document.getElementById(prefix + '-isd-url');
+      if (u) u.value = '';
+    }
+  }, 0);
 }
 
 /* When a department is picked, decide whether to show the sub-unit grid */
@@ -1786,6 +1915,15 @@ async function submitGDoc() {
       charData.sub_unit_full = sub.full || sub.name;
       charData.sub_unit_icon = sub.icon;
     }
+    // ISD flag + classified doc URL (optional)
+    const isIsd = document.getElementById('gd-isd')?.checked;
+    if (isIsd) {
+      const isdUrl = g('gd-isd-url');
+      if (!isdUrl) { setMsg(msg,'error','Please provide the classified ISD doc URL, or uncheck the ISD box.'); return; }
+      if (!isdUrl.startsWith('http')) { setMsg(msg,'error','Please enter a valid URL for the classified ISD doc.'); return; }
+      charData.is_isd = true;
+      charData.isd_url = isdUrl;
+    }
   }
 
   if (type === 'scp') {
@@ -1838,6 +1976,15 @@ async function submitWikidot() {
       charData.sub_unit      = sub.name;
       charData.sub_unit_full = sub.full || sub.name;
       charData.sub_unit_icon = sub.icon;
+    }
+    // ISD flag + classified doc URL (optional)
+    const isIsd = document.getElementById('wk-isd')?.checked;
+    if (isIsd) {
+      const isdUrl = g('wk-isd-url');
+      if (!isdUrl) { setMsg(msg,'error','Please provide the classified ISD doc URL, or uncheck the ISD box.'); return; }
+      if (!isdUrl.startsWith('http')) { setMsg(msg,'error','Please enter a valid URL for the classified ISD doc.'); return; }
+      charData.is_isd = true;
+      charData.isd_url = isdUrl;
     }
   }
 

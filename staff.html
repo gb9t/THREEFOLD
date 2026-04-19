@@ -120,6 +120,19 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .app-table td{padding:.9rem 1rem;border-bottom:1px solid var(--dark);font-size:13px;color:var(--light);vertical-align:top;}
 .app-table tr:hover td{background:var(--deep);}
 .app-num{font-family:var(--mono);font-size:11px;color:var(--muted);}
+.isd-badge{
+  display:inline-block;font-family:var(--mono);font-size:8px;letter-spacing:0.18em;
+  text-transform:uppercase;color:#ea5a4a;border:1px solid #8a1a1a;
+  padding:1px 5px;margin-left:.35rem;background:rgba(138,26,26,.12);
+  font-weight:700;vertical-align:baseline;
+}
+.isd-doc-link{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.1em;
+  color:#ea8a7a;text-decoration:none;border:1px solid #5a1a1a;
+  padding:3px 8px;display:inline-block;margin-left:.35rem;
+  background:rgba(138,26,26,.08);transition:all .2s;
+}
+.isd-doc-link:hover{background:rgba(138,26,26,.18);border-color:#8a1a1a;color:#ea5a4a;}
 .app-type-tag{font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;padding:2px 8px;border:1px solid;}
 .tt-lore{border-color:#4477aa;color:#4477aa;}
 .tt-staff{border-color:#777;color:#777;}
@@ -308,6 +321,7 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
       <li><button onclick="showPanel('chars-foundation')" id="nav-chars-foundation">&#8250; Foundation</button></li>
       <li><button onclick="showPanel('chars-scp')" id="nav-chars-scp">&#8250; SCP</button></li>
       <li><button onclick="showPanel('chars-unaff')" id="nav-chars-unaff">&#8250; Unaffiliated</button></li>
+      <li id="nav-chars-isd-wrap" style="display:none;"><button onclick="showPanel('chars-isd')" id="nav-chars-isd" style="color:#ea5a4a;">&#8250; ISD Roster</button></li>
     </ul>
 
     <span class="sidebar-section">Management</span>
@@ -484,6 +498,28 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
       <table class="app-table"><thead><tr><th>#</th><th>Method</th><th>Discord</th><th>Character</th><th>Submitted</th><th>Status</th><th>Actions</th></tr></thead>
       <tbody id="chars-unaff-body"></tbody></table>
       <div class="empty-state" id="chars-unaff-empty" style="display:none;">No Unaffiliated submissions.</div>
+    </div>
+
+    <!-- ═══════ ISD ROSTER (classified) ═══════ -->
+    <div class="panel" id="panel-chars-isd">
+      <div class="panel-header">
+        <h1 style="color:#ea5a4a;">ISD Roster <span style="font-family:var(--mono);font-size:11px;letter-spacing:0.2em;color:#8a1a1a;border:1px solid #5a1a1a;padding:3px 8px;margin-left:.75rem;vertical-align:middle;background:rgba(138,26,26,.1);">CLASSIFIED</span></h1>
+        <p>Covert Internal Security Department operatives. Each character appears on the public roster as their cover role only. Their classified ISD doc is visible below to Lore Team and higher staff.</p>
+      </div>
+      <div class="callout" style="border-color:#5a1a1a;background:rgba(138,26,26,.08);">
+        <span class="callout-ico" style="color:#ea5a4a;">&#9632;</span>
+        <p><strong style="color:#ea8a7a;">Confidentiality notice.</strong> ISD affiliation must not be disclosed to players outside this panel. Their public cover identity (department, sub-unit, role) is the only thing visible on the database page. Deleting an ISD character removes both the cover submission and the classified doc reference from the record.</p>
+      </div>
+      <div class="filter-bar" id="filter-chars-isd">
+        <button class="filter-btn active" onclick="filterChars('isd','all',this)">All</button>
+        <button class="filter-btn" onclick="filterChars('isd','pending',this)">Pending</button>
+        <button class="filter-btn" onclick="filterChars('isd','review',this)">Under Review</button>
+        <button class="filter-btn" onclick="filterChars('isd','approved',this)">Approved</button>
+        <button class="filter-btn" onclick="filterChars('isd','denied',this)">Denied</button>
+      </div>
+      <table class="app-table"><thead><tr><th>#</th><th>Method</th><th>Discord</th><th>Cover Identity</th><th>Cover Role</th><th>Submitted</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="chars-isd-body"></tbody></table>
+      <div class="empty-state" id="chars-isd-empty" style="display:none;">No ISD operatives on record.</div>
     </div>
 
     <!-- ═══════ POSITIONS ═══════ -->
@@ -680,6 +716,12 @@ async function initShell() {
   document.getElementById('topbar-name').textContent    = currentProfile.display_name || session.user.email;
   document.getElementById('topbar-role').textContent    = roleName(currentProfile.role);
 
+  // Reveal the ISD Roster sidebar link only for roles cleared to review characters
+  const isdNav = document.getElementById('nav-chars-isd-wrap');
+  if (isdNav && CAN_REVIEW_CHARS.includes(currentProfile.role)) {
+    isdNav.style.display = '';
+  }
+
   // Load everything — each loader updates the system status strip
   await Promise.all([
     loadAllApps(),
@@ -729,6 +771,11 @@ function renderSysStatus() {
    NAV
 ═══════════════════════════════════════════════════════════════ */
 function showPanel(id) {
+  // Guard: ISD roster requires review privileges. Anyone attempting to navigate
+  // there without clearance gets bounced to the dashboard.
+  if (id === 'chars-isd' && !CAN_REVIEW_CHARS.includes(currentProfile?.role)) {
+    id = 'dash';
+  }
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.sidebar-nav button').forEach(b => b.classList.remove('active'));
   const panel = document.getElementById('panel-' + id);
@@ -739,6 +786,7 @@ function showPanel(id) {
     'dash':'Dashboard','apps-all':'All Applications',
     'apps-lore':'Lore Team','apps-staff':'Staff / Mod','apps-gm':'Gamemaster',
     'chars-all':'All Characters','chars-foundation':'Foundation','chars-scp':'SCP','chars-unaff':'Unaffiliated',
+    'chars-isd':'ISD Roster — Classified',
     'positions':'Positions','staff-mgmt':'Staff Members',
     'ws-news':'World News','ws-tensions':'Global Tensions','ws-goi':'GOI Relations',
   };
@@ -996,23 +1044,41 @@ async function loadAllChars() {
   if (error) {
     setSysStatus('characters', 'err', error.message || 'fetch failed');
     allCharacters = [];
-    ['all','foundation','scp','unaffiliated'].forEach(t => renderCharTable(t));
+    ['all','foundation','scp','unaffiliated','isd'].forEach(t => renderCharTable(t));
     return;
   }
   setSysStatus('characters', 'ok');
   allCharacters = data || [];
-  ['all','foundation','scp','unaffiliated'].forEach(t => renderCharTable(t));
+  ['all','foundation','scp','unaffiliated','isd'].forEach(t => renderCharTable(t));
 }
 
 function renderCharTable(typeKey, statusFilter = 'all') {
-  const suffix = typeKey === 'all' ? 'all' : typeKey === 'unaffiliated' ? 'unaff' : typeKey;
+  const suffix = typeKey === 'all' ? 'all'
+               : typeKey === 'unaffiliated' ? 'unaff'
+               : typeKey === 'isd' ? 'isd'
+               : typeKey;
   const bodyId  = 'chars-' + suffix + '-body';
   const emptyId = 'chars-' + suffix + '-empty';
   const tbody = document.getElementById(bodyId);
   const empty = document.getElementById(emptyId);
   if (!tbody) return;
 
-  let chars = typeKey === 'all' ? allCharacters : allCharacters.filter(c => c.type === typeKey);
+  const isIsdView = typeKey === 'isd';
+  const canReview = CAN_REVIEW_CHARS.includes(currentProfile?.role);
+
+  // ISD view requires review privileges. Non-privileged viewers bounce out.
+  if (isIsdView && !canReview) {
+    tbody.innerHTML = '';
+    if (empty) { empty.style.display = 'block'; empty.textContent = 'You do not have clearance to view the ISD roster.'; }
+    return;
+  }
+
+  let chars;
+  if (isIsdView) {
+    chars = allCharacters.filter(c => c.character_data?.is_isd === true);
+  } else {
+    chars = typeKey === 'all' ? allCharacters : allCharacters.filter(c => c.type === typeKey);
+  }
   if (statusFilter !== 'all') chars = chars.filter(c => c.status === statusFilter);
 
   if (!chars.length) {
@@ -1020,13 +1086,13 @@ function renderCharTable(typeKey, statusFilter = 'all') {
     empty.style.display = 'block';
     empty.textContent = sysStatus.characters === 'err'
       ? 'Could not load characters — check the system status strip on the dashboard.'
+      : isIsdView ? 'No ISD operatives on record.'
       : (typeKey === 'all' ? 'No character submissions yet.' : 'No submissions of this type.');
     empty.classList.toggle('err', sysStatus.characters === 'err');
     return;
   }
   empty.style.display = 'none';
   const canManage = CAN_MANAGE.includes(currentProfile?.role);
-  const canReview = CAN_REVIEW_CHARS.includes(currentProfile?.role);
   const canEdit   = currentProfile && [ROLES.OWNER, ROLES.HEAD_LORE].includes(currentProfile.role);
   const showType  = typeKey === 'all';
 
@@ -1035,12 +1101,36 @@ function renderCharTable(typeKey, statusFilter = 'all') {
     const charName = c.type === 'scp' ? (d.item_number || 'SCP-???') : (d.full_name || '—');
     const methodTag = `<span style="font-family:var(--mono);font-size:8px;color:var(--muted)">${c.method === 'googledoc' ? 'G-Doc' : c.method === 'wikidot' ? 'Wiki' : 'Site'}</span>`;
     const typeTag = { foundation:'Foundation', scp:'SCP', unaffiliated:'Unaff.' }[c.type] || c.type;
+    const isdBadge = (d.is_isd && canReview) ? '<span class="isd-badge" title="Covert ISD operative">ISD</span>' : '';
+
+    // ISD roster view has its own column layout: cover identity + cover role
+    if (isIsdView) {
+      const coverRole = [d.department, d.sub_unit].filter(Boolean).join(' / ') || '—';
+      const isdDocBtn = d.isd_url
+        ? `<a class="isd-doc-link" href="${escHtml(d.isd_url)}" target="_blank" rel="noopener" title="Open classified ISD backstory">Classified Doc &#8599;</a>`
+        : '';
+      return `<tr>
+        <td class="app-num">#${c.seq || '?'}</td>
+        <td>${methodTag}</td>
+        <td style="font-size:12px">${escHtml(c.discord_username || '—')}</td>
+        <td style="font-size:12px">${escHtml(d.full_name || '—')}</td>
+        <td style="font-size:11px;color:var(--muted);font-family:var(--mono);letter-spacing:0.08em;">${escHtml(coverRole)}</td>
+        <td>${fmtDate(c.created_at)}</td>
+        <td><span class="status-tag st-${c.status}" ${canReview ? `onclick="cycleCharStatus('${c.id}',this)"` : ''} title="${canReview ? 'Click to cycle' : ''}">${statusLabel(c.status)}</span></td>
+        <td class="app-actions">
+          <button class="btn-view-app" onclick="openCharModal('${c.id}')">Review</button>
+          ${isdDocBtn}
+          ${canManage ? `<button class="btn-del-app" onclick="deleteChar('${c.id}')">Delete</button>` : ''}
+        </td>
+      </tr>`;
+    }
+
     return `<tr>
       <td class="app-num">#${c.seq || '?'}</td>
       ${showType ? `<td style="font-family:var(--mono);font-size:9px;color:var(--muted)">${typeTag}</td>` : ''}
       <td>${methodTag}</td>
       <td style="font-size:12px">${escHtml(c.discord_username || '—')}</td>
-      <td style="font-size:12px">${escHtml(charName)}</td>
+      <td style="font-size:12px">${escHtml(charName)}${isdBadge}</td>
       <td>${fmtDate(c.created_at)}</td>
       <td><span class="status-tag st-${c.status}" ${canReview ? `onclick="cycleCharStatus('${c.id}',this)"` : ''} title="${canReview ? 'Click to cycle' : ''}">${statusLabel(c.status)}</span></td>
       <td class="app-actions">
@@ -1053,7 +1143,10 @@ function renderCharTable(typeKey, statusFilter = 'all') {
 }
 
 function filterChars(typeKey, status, btn) {
-  const suffix = typeKey === 'all' ? 'all' : typeKey === 'unaffiliated' ? 'unaff' : typeKey;
+  const suffix = typeKey === 'all' ? 'all'
+               : typeKey === 'unaffiliated' ? 'unaff'
+               : typeKey === 'isd' ? 'isd'
+               : typeKey;
   const bar = document.getElementById('filter-chars-' + suffix);
   if (bar) bar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
@@ -1144,9 +1237,25 @@ function openCharModal(id) {
     topLink = `<div style="margin-bottom:1rem;"><a href="${escHtml(c.gdoc_url)}" target="_blank" style="font-family:var(--mono);font-size:10px;letter-spacing:0.1em;color:var(--light);">${lbl} &#8599;</a></div>`;
   }
 
+  // ISD classified link (reviewers only)
+  let isdBlock = '';
+  if (d.is_isd && canReview) {
+    const deptLine = [d.department, d.sub_unit].filter(Boolean).join(' / ') || 'Cover role on file';
+    isdBlock = `
+      <div style="margin:0 0 1rem;padding:.85rem 1rem;background:rgba(138,26,26,.08);border:1px solid #5a1a1a;border-left:3px solid #8a1a1a;">
+        <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:#ea5a4a;margin-bottom:.3rem;">
+          Internal Security Department &middot; Classified
+        </div>
+        <div style="font-family:var(--body);font-size:12.5px;color:var(--pale);margin-bottom:.55rem;line-height:1.5;">
+          This character is a covert ISD operative. The public roster shows only their cover identity (<span style="color:#ea8a7a;">${escHtml(deptLine)}</span>).
+        </div>
+        ${d.isd_url ? `<a href="${escHtml(d.isd_url)}" target="_blank" rel="noopener" class="isd-doc-link">Open Classified ISD Doc &#8599;</a>` : '<span style="font-family:var(--mono);font-size:9px;color:var(--muted);">No classified doc URL on file.</span>'}
+      </div>`;
+  }
+
   document.getElementById('modal-content').innerHTML = `
-    <div class="modal-app-num">Character #${c.seq || '?'} &mdash; ${c.type.charAt(0).toUpperCase()+c.type.slice(1)}</div>
-    <div class="modal-title">${escHtml(charName)}</div>
+    <div class="modal-app-num">Character #${c.seq || '?'} &mdash; ${c.type.charAt(0).toUpperCase()+c.type.slice(1)}${(d.is_isd && canReview) ? ' &middot; <span style="color:#ea5a4a;">ISD</span>' : ''}</div>
+    <div class="modal-title">${escHtml(charName)}${(d.is_isd && canReview) ? ' <span class="isd-badge">ISD</span>' : ''}</div>
     <div class="modal-meta">
       <div class="modal-meta-item"><div class="modal-meta-label">Discord</div><div class="modal-meta-val">${escHtml(c.discord_username || '—')}</div></div>
       <div class="modal-meta-item"><div class="modal-meta-label">Method</div><div class="modal-meta-val">${c.method === 'googledoc' ? 'Google Doc' : c.method === 'wikidot' ? 'Wikidot' : 'Website'}</div></div>
@@ -1154,6 +1263,7 @@ function openCharModal(id) {
       <div class="modal-meta-item"><div class="modal-meta-label">Status</div><div class="modal-meta-val"><span class="status-tag st-${c.status}">${statusLabel(c.status)}</span></div></div>
     </div>
     ${topLink}
+    ${isdBlock}
     <div class="modal-qa">${detailRows}</div>
     <div class="modal-actions" style="flex-wrap:wrap;gap:.5rem;">${actionsHtml}</div>`;
   document.getElementById('modal-overlay').classList.add('open');
@@ -1167,7 +1277,7 @@ async function saveCharReview(id) {
   if (error) { alert('Failed: ' + error.message); return; }
   const c = allCharacters.find(x => x.id === id);
   if (c) { c.status = status; c.staff_reason = reason; }
-  renderCharTable('all'); renderCharTable(c?.type);
+  renderCharTable('all'); renderCharTable(c?.type); renderCharTable('isd');
   updateDashboard();
   closeModal();
 }
@@ -1179,7 +1289,7 @@ async function deleteChar(id, fromModal = false) {
   if (error) { alert('Failed: ' + error.message); return; }
   allCharacters = allCharacters.filter(c => c.id !== id);
   if (fromModal) closeModal();
-  ['all','foundation','scp','unaffiliated'].forEach(t => renderCharTable(t));
+  ['all','foundation','scp','unaffiliated','isd'].forEach(t => renderCharTable(t));
   updateDashboard();
 }
 

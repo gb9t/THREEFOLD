@@ -100,6 +100,115 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:56px;background:rgba(
 .cls-d .cls-card-letter{color:var(--light);}.cls-d .cls-card-title{color:var(--light);}
 .cls-e .cls-card-letter{color:var(--amber-bright);}.cls-e .cls-card-title{color:var(--amber-bright);}
 
+/* === CLEARANCE LEVELS === */
+.clr-section{margin-bottom:3rem;border:1px solid var(--border);background:var(--deep);}
+.clr-toggle{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.5rem;cursor:pointer;transition:background .2s;user-select:none;}
+.clr-toggle:hover{background:rgba(255,255,255,.02);}
+.clr-toggle-label{font-family:var(--mono);font-size:9.5px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:.75rem;}
+.clr-toggle-label::before{content:'CL';font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:0.15em;color:var(--amber-bright);border:1px solid var(--amber);padding:2px 7px;}
+.clr-chevron{font-family:var(--mono);font-size:14px;color:var(--border);transition:transform .25s;}
+.clr-chevron.open{transform:rotate(90deg);}
+.clr-body{display:none;border-top:1px solid var(--border);}
+.clr-body.show{display:block;}
+.clr-overview{padding:1.25rem 1.5rem;font-family:var(--typewriter);font-size:12px;color:var(--light);line-height:1.8;border-bottom:1px solid var(--border);background:var(--deep);}
+.clr-cards{display:grid;grid-template-columns:repeat(7,1fr);}
+.clr-card{padding:1.35rem 1.1rem;border-right:1px solid var(--border);position:relative;background:var(--deep);transition:background .25s;}
+.clr-card:last-child{border-right:none;}
+.clr-card:hover{background:var(--dark);}
+.clr-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.clr-card-num{font-family:var(--display);font-size:40px;font-weight:800;letter-spacing:0.04em;line-height:1;margin-bottom:.35rem;}
+.clr-card-label{font-family:var(--mono);font-size:8px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:.75rem;padding-bottom:.5rem;border-bottom:1px dashed var(--border);}
+.clr-card-name{font-family:var(--mono);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:.5rem;color:var(--pale);}
+.clr-card-desc{font-family:var(--typewriter);font-size:11px;color:var(--light);line-height:1.7;}
+.clr-card-key{display:inline-block;margin-top:.65rem;font-family:var(--mono);font-size:8px;letter-spacing:0.2em;text-transform:uppercase;padding:2px 7px;border:1px solid;}
+/* Colour coding: 0 grey, 1 green, 2 blue, 3 yellow, 4 orange, 5 red, 6 black/deep-red */
+.clr-0 .clr-card-num,.clr-0 .clr-card-name{color:var(--muted);}
+.clr-0::before{background:var(--muted);}
+.clr-0 .clr-card-key{border-color:var(--border);color:var(--muted);}
+.clr-1 .clr-card-num,.clr-1 .clr-card-name{color:var(--green-bright);}
+.clr-1::before{background:var(--green);}
+.clr-1 .clr-card-key{border-color:var(--green);color:var(--green-bright);}
+.clr-2 .clr-card-num,.clr-2 .clr-card-name{color:var(--blue-bright);}
+.clr-2::before{background:var(--blue);}
+.clr-2 .clr-card-key{border-color:var(--blue);color:var(--blue-bright);}
+.clr-3 .clr-card-num,.clr-3 .clr-card-name{color:var(--amber-bright);}
+.clr-3::before{background:var(--amber);}
+.clr-3 .clr-card-key{border-color:var(--amber);color:var(--amber-bright);}
+.clr-4 .clr-card-num,.clr-4 .clr-card-name{color:#d4832c;}
+.clr-4::before{background:#a06020;}
+.clr-4 .clr-card-key{border-color:#a06020;color:#d4832c;}
+.clr-5 .clr-card-num,.clr-5 .clr-card-name{color:var(--red-bright);}
+.clr-5::before{background:var(--red);}
+.clr-5 .clr-card-key{border-color:var(--red);color:var(--red-bright);}
+.clr-6 .clr-card-num,.clr-6 .clr-card-name{color:#5a0a0a;text-shadow:0 0 8px rgba(187,58,58,0.4);}
+.clr-6::before{background:#3a0a0a;}
+.clr-6 .clr-card-key{border-color:#3a0a0a;color:#7a2a2a;background:rgba(138,42,42,0.08);}
+
+/* === HIERARCHY GRAPH === */
+.hier-wrap{border:1px solid var(--border);background:var(--deep);padding:1.75rem 1.5rem;margin-bottom:3rem;position:relative;}
+.hier-wrap::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(to right,var(--red) 0%,var(--amber) 35%,var(--blue) 70%,var(--green) 100%);}
+.hier-tag{font-family:var(--mono);font-size:9.5px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;}
+.hier-sub{font-family:var(--typewriter);font-size:11.5px;color:var(--light);line-height:1.7;margin-bottom:2rem;max-width:720px;}
+.hier-grid{display:grid;gap:1.4rem;position:relative;}
+.hier-tier{position:relative;padding-left:2.2rem;}
+.hier-tier::before{content:'';position:absolute;left:14px;top:10px;bottom:-24px;width:1px;background:var(--border);}
+.hier-tier:last-child::before{display:none;}
+.hier-tier-head{display:flex;align-items:center;gap:.75rem;margin-bottom:.9rem;position:relative;}
+.hier-tier-head::before{content:'';position:absolute;left:-2.2rem;top:50%;transform:translateY(-50%);width:28px;height:28px;border:1px solid var(--border);background:var(--deep);display:flex;align-items:center;justify-content:center;}
+.hier-tier-num{position:absolute;left:-2.2rem;top:50%;transform:translateY(-50%);width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:13px;font-weight:700;color:var(--muted);letter-spacing:0;z-index:2;}
+.hier-tier-label{font-family:var(--display);font-size:17px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--pale);}
+.hier-tier-cl{font-family:var(--mono);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;padding:2px 8px;border:1px solid;}
+.hier-tier-note{font-family:var(--typewriter);font-size:11px;color:var(--muted);margin-left:.75rem;}
+.hier-nodes{display:flex;flex-wrap:wrap;gap:.55rem;}
+.hier-node{border:1px solid var(--border);background:var(--dark);padding:.55rem .85rem;display:flex;align-items:center;gap:.55rem;min-width:0;position:relative;transition:border-color .2s,background .2s;}
+.hier-node:hover{border-color:var(--light);background:var(--deep);}
+.hier-node::before{content:'';position:absolute;top:0;left:0;bottom:0;width:2px;background:var(--border);}
+.hier-node-abbr{font-family:var(--mono);font-size:9.5px;letter-spacing:0.15em;font-weight:700;color:var(--pale);}
+.hier-node-name{font-family:var(--typewriter);font-size:11px;color:var(--muted);}
+.hier-node.t-cmd::before{background:#5a0a0a;}.hier-node.t-cmd .hier-node-abbr{color:#d0605a;}
+.hier-node.t-dir::before{background:var(--red);}.hier-node.t-dir .hier-node-abbr{color:var(--red-bright);}
+.hier-node.t-head::before{background:#a06020;}.hier-node.t-head .hier-node-abbr{color:#d4832c;}
+.hier-node.t-sr::before{background:var(--amber);}.hier-node.t-sr .hier-node-abbr{color:var(--amber-bright);}
+.hier-node.t-mid::before{background:var(--blue);}.hier-node.t-mid .hier-node-abbr{color:var(--blue-bright);}
+.hier-node.t-jr::before{background:var(--green);}.hier-node.t-jr .hier-node-abbr{color:var(--green-bright);}
+.hier-node.t-isd::before{background:#1a1a2a;}.hier-node.t-isd .hier-node-abbr{color:var(--muted);}
+.hier-node.t-isd .hier-node-name{color:var(--border);}
+.hier-node.t-isd-d::before{background:#4a1a2a;}.hier-node.t-isd-d .hier-node-abbr{color:#9a5a6a;}
+.hier-node.t-isd-d .hier-node-name{color:var(--muted);}
+.hier-node.t-isd-h::before{background:#3a2a1a;}.hier-node.t-isd-h .hier-node-abbr{color:#8a6a4a;}
+.hier-node.t-isd-h .hier-node-name{color:var(--muted);}
+
+.hier-tier.t-cmd .hier-tier-label{color:#d0605a;}
+.hier-tier.t-cmd .hier-tier-cl{border-color:#5a0a0a;color:#d0605a;}
+.hier-tier.t-cmd .hier-tier-num{color:#d0605a;}
+.hier-tier.t-dir .hier-tier-label{color:var(--red-bright);}
+.hier-tier.t-dir .hier-tier-cl{border-color:var(--red);color:var(--red-bright);}
+.hier-tier.t-dir .hier-tier-num{color:var(--red-bright);}
+.hier-tier.t-head .hier-tier-label{color:#d4832c;}
+.hier-tier.t-head .hier-tier-cl{border-color:#a06020;color:#d4832c;}
+.hier-tier.t-head .hier-tier-num{color:#d4832c;}
+.hier-tier.t-sr .hier-tier-label{color:var(--amber-bright);}
+.hier-tier.t-sr .hier-tier-cl{border-color:var(--amber);color:var(--amber-bright);}
+.hier-tier.t-sr .hier-tier-num{color:var(--amber-bright);}
+.hier-tier.t-mid .hier-tier-label{color:var(--blue-bright);}
+.hier-tier.t-mid .hier-tier-cl{border-color:var(--blue);color:var(--blue-bright);}
+.hier-tier.t-mid .hier-tier-num{color:var(--blue-bright);}
+.hier-tier.t-jr .hier-tier-label{color:var(--green-bright);}
+.hier-tier.t-jr .hier-tier-cl{border-color:var(--green);color:var(--green-bright);}
+.hier-tier.t-jr .hier-tier-num{color:var(--green-bright);}
+.hier-tier.t-isd .hier-tier-label{color:var(--light);}
+.hier-tier.t-isd .hier-tier-cl{border-color:#333;color:var(--muted);}
+.hier-tier.t-isd .hier-tier-num{color:var(--muted);}
+.hier-tier.t-isd .hier-tier-note{color:var(--border);font-style:italic;}
+.hier-tier.t-isd-d .hier-tier-label{color:#9a5a6a;}
+.hier-tier.t-isd-d .hier-tier-cl{border-color:#4a1a2a;color:#9a5a6a;}
+.hier-tier.t-isd-d .hier-tier-num{color:#9a5a6a;}
+.hier-tier.t-isd-d .hier-tier-note{color:var(--muted);font-style:italic;}
+.hier-tier.t-isd-h .hier-tier-label{color:#8a6a4a;}
+.hier-tier.t-isd-h .hier-tier-cl{border-color:#3a2a1a;color:#8a6a4a;}
+.hier-tier.t-isd-h .hier-tier-num{color:#8a6a4a;}
+.hier-tier.t-isd-h .hier-tier-note{color:var(--muted);font-style:italic;}
+
 /* DEPARTMENT GRID (file-index cards) */
 .dept-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;}
 .dept-card{
@@ -303,6 +412,9 @@ footer{border-top:1px solid var(--dark);padding:2rem 3rem;display:flex;justify-c
   .cls-card:nth-child(3){border-right:none;}
   .cls-card:nth-child(4){border-top:1px solid var(--border);}
   .cls-card:nth-child(5){border-top:1px solid var(--border);border-right:none;}
+  .clr-cards{grid-template-columns:repeat(4,1fr);}
+  .clr-card:nth-child(4){border-right:none;}
+  .clr-card:nth-child(n+5){border-top:1px solid var(--border);}
 }
 @media(max-width:768px){
   nav{padding:0 1.2rem;}.nav-logo-sub{display:none;}
@@ -316,6 +428,12 @@ footer{border-top:1px solid var(--dark);padding:2rem 3rem;display:flex;justify-c
   .cls-cards{grid-template-columns:1fr 1fr;}
   .cls-card:nth-child(2n){border-right:none;}
   .cls-card:nth-child(n+3){border-top:1px solid var(--border);}
+  .clr-cards{grid-template-columns:1fr 1fr;}
+  .clr-card{border-right:1px solid var(--border) !important;}
+  .clr-card:nth-child(2n){border-right:none !important;}
+  .clr-card:nth-child(n+3){border-top:1px solid var(--border);}
+  .hier-wrap{overflow-x:auto;}
+  .hier-grid{min-width:780px;}
   footer{flex-direction:column;gap:.5rem;text-align:center;}
   .detail-panel{width:100%;}
   .detail-content{padding:1.5rem;}
@@ -414,6 +532,77 @@ footer{border-top:1px solid var(--dark);padding:2rem 3rem;display:flex;justify-c
 
     <div class="stag">Operational Departments <strong>&middot; 10 Divisions on Record</strong></div>
     <div class="dept-grid" id="dept-grid"></div>
+
+    <div class="stag">Security Clearance Levels <strong>&middot; Level 0 through Level 6</strong></div>
+    <div class="clr-section">
+      <div class="clr-toggle" onclick="toggleClr()">
+        <span class="clr-toggle-label">Security clearance levels represent the highest tier of information personnel may be granted access to. Click to expand.</span>
+        <span class="clr-chevron" id="clr-chevron">&#8250;</span>
+      </div>
+      <div class="clr-body" id="clr-body">
+        <div class="clr-overview">
+          <strong style="color:var(--pale);font-weight:600;">Overview.</strong> Foundation security clearances represent the highest level or type of information to which personnel may be granted access. However, holding any given clearance does not automatically grant access to all information at that level. Personnel are only granted access to information on a "need-to-know" basis, at the discretion of the designated disclosure officer overseeing their respective department.
+        </div>
+        <div class="clr-cards">
+          <div class="clr-card clr-0">
+            <div class="clr-card-num">0</div>
+            <div class="clr-card-label">Official Use Only</div>
+            <div class="clr-card-name">Non-Essential</div>
+            <div class="clr-card-desc">Granted to non-essential personnel such as logistical, administrative, or janitorial staff working in facilities with little to no anomalous material. Also granted to allied GoI visitors. No keycards are issued at this level.</div>
+            <span class="clr-card-key">No Keycard</span>
+          </div>
+          <div class="clr-card clr-1">
+            <div class="clr-card-num">1</div>
+            <div class="clr-card-label">Unrestricted (UR)</div>
+            <div class="clr-card-name">Baseline Access</div>
+            <div class="clr-card-desc">Granted to non-essential personnel working in facilities that hold anomalous material. Class-D personnel are always held at this clearance. Little documentation or sensitive data is available. Keycards display a prominent green colour.</div>
+            <span class="clr-card-key">Green Keycard</span>
+          </div>
+          <div class="clr-card clr-2">
+            <div class="clr-card-num">2</div>
+            <div class="clr-card-label">Restricted (RS)</div>
+            <div class="clr-card-name">Operational Tier</div>
+            <div class="clr-card-desc">Granted to security and research personnel requiring access to anomalous entities or documentation. Staff with subordinates typically hold this clearance. Essential documentation and sensitive data is available. Keycards display a prominent blue colour.</div>
+            <span class="clr-card-key">Blue Keycard</span>
+          </div>
+          <div class="clr-card clr-3">
+            <div class="clr-card-num">3</div>
+            <div class="clr-card-label">Confidential (CF)</div>
+            <div class="clr-card-name">Senior Tier</div>
+            <div class="clr-card-desc">Granted to higher-ranking security and research personnel requiring access to specific anomaly data, containment procedures, and prior experiment records. MTF operatives and senior staff typically hold this clearance. Keycards display a prominent yellow colour.</div>
+            <span class="clr-card-key">Yellow Keycard</span>
+          </div>
+          <div class="clr-card clr-4">
+            <div class="clr-card-num">4</div>
+            <div class="clr-card-label">Secret (SC)</div>
+            <div class="clr-card-name">Command Tier</div>
+            <div class="clr-card-desc">Granted to staff requiring knowledge of highly sensitive Foundation data or anomalous objects. Typically held by site directors, security directors, and other high-ranking personnel. Occasionally granted to lower-ranking staff for specific task requirements. Keycards display an orange colour.</div>
+            <span class="clr-card-key">Orange Keycard</span>
+          </div>
+          <div class="clr-card clr-5">
+            <div class="clr-card-num">5</div>
+            <div class="clr-card-label">Top Secret (TS)</div>
+            <div class="clr-card-name">Council Tier</div>
+            <div class="clr-card-desc">Granted only to staff working directly under the O5 Council, personnel essential to Foundation operations, and Ethics Committee leadership. Very rarely issued. Biometric ID and kill-agents are used in place of keycards due to the security risk.</div>
+            <span class="clr-card-key">Biometric / Kill-Agent</span>
+          </div>
+          <div class="clr-card clr-6">
+            <div class="clr-card-num">6</div>
+            <div class="clr-card-label">Cosmic Top Secret (CTS)</div>
+            <div class="clr-card-name">Absolute Tier</div>
+            <div class="clr-card-desc">Exclusively granted to the Administrator and the O5 Council. Access is only permitted by O5 sanction. Biometric ID and kill-agents are used. This is the rarest clearance in existence, reserved for information that would fundamentally compromise the Foundation or the human race if exposed.</div>
+            <span class="clr-card-key">O5 Sanction Only</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stag">Command Hierarchy <strong>&middot; Chain of Authority</strong></div>
+    <div class="hier-wrap">
+      <div class="hier-tag">Foundation Chain of Command</div>
+      <div class="hier-sub">Reading top to bottom: authority flows from the Administrator's Office down to probationary staff. Each tier groups the unique leadership positions at that rank across all departments. Special-authority positions (Ethics, ISD) operate adjacent to the hierarchy rather than within it.</div>
+      <div class="hier-grid" id="hier-grid"></div>
+    </div>
   </div>
 
   <footer>
@@ -509,8 +698,8 @@ const DEPARTMENTS = [
     ranks:[
       {name:'Head of Ethics',          cl:6, cls:'A', note:'Operates at O5 Council level. A peer authority, not subordinate to O5, site command, or the Administrator on ethical matters.'},
       {name:'Ethics Commissioner',     cl:4, cls:'B', note:'Senior EC authority. Coordinates cross-site investigations and policy enforcement.'},
-      {name:'Senior Ethics Liaison',   cl:4, cls:'B', note:'Leads complex investigations and formal disciplinary proceedings.'},
-      {name:'Ethics Liaison',          cl:3, cls:'C', note:'Conducts inquiries and compliance reviews. First point of contact for reported violations.'},
+      {name:'Senior Ethics Liaison',   cl:3, cls:'B', note:'Leads complex investigations and formal disciplinary proceedings.'},
+      {name:'Ethics Liaison',          cl:2, cls:'C', note:'Conducts inquiries and compliance reviews. First point of contact for reported violations.'},
     ],
     units:null,
   },
@@ -527,7 +716,7 @@ const DEPARTMENTS = [
       {name:'MTF Lieutenant',  cl:3, cls:'C', note:'Team leader. Coordinates unit-level tactics during operations.'},
       {name:'MTF Sergeant',    cl:2, cls:'C', note:'Non-commissioned leader. Manages squad operations in the field.'},
       {name:'MTF Specialist',  cl:2, cls:'C', note:'Trained in a specific discipline: demolitions, anomaly handling, etc.'},
-      {name:'MTF Operative',   cl:2, cls:'C', note:'Core MTF personnel. Field-deployed following full selection and training.'},
+      {name:'MTF Operative',   cl:1, cls:'C', note:'Core MTF personnel. Field-deployed following full selection and training.'},
     ],
     units:null,
     taskForces:[
@@ -552,7 +741,7 @@ const DEPARTMENTS = [
     border:'#1a7a3a', cl:{border:'#1a7a3a',color:'#3a9a5a'}, range:'CL0 to CL4',
     tagline:'Keeping what remains of personnel functional.',
     classified:false,
-    desc:`The Medical Department maintains the physical and psychological welfare of all Foundation personnel. Operating in conditions that have no equivalent in civilian healthcare (anomalous pathogens, cognitohazardous exposure, reality instability, and trauma from regular containment failures). MD staff are among the most resilient in the organisation.\n\nSpecialisations within the department include anomalous pathology, psychotropic containment therapy, post-incident trauma response, and Scranton reality research. The Medical Department also manages D-Class health screening prior to experimental assignment and provides post-experiment evaluations for all participants.`,
+    desc:`The Medical Department maintains the physical and psychological welfare of all Foundation personnel. Operating in conditions that have no equivalent in civilian healthcare (anomalous pathogens, cognitohazardous exposure, reality instability, and trauma from regular containment failures). MD staff are among the most resilient in the organisation.\n\nSpecialisations within the department include anomalous pathology, psychotropic containment therapy, and post-incident trauma response. The Medical Department also manages D-Class health screening prior to experimental assignment and provides post-experiment evaluations for all participants.`,
     mandate:'To preserve the health and operational capability of Foundation personnel, and to study biological phenomena arising from anomalous exposure.',
     ranks:[
       {name:'Director of Medicine',      cl:4, cls:'B', note:'Department head. Oversees all medical operations across the site.'},
@@ -569,13 +758,13 @@ const DEPARTMENTS = [
     border:'#1a3a6a', cl:{border:'#1a3a6a',color:'#3a5aaa'}, range:'CL3 to CL4',
     tagline:'Information is containment before containment is needed.',
     classified:false,
-    desc:`The Intelligence Agency is the Foundation's primary external information-gathering body. IA agents operate embedded within governments, rival organisations, civilian institutions, and areas of known anomalous interest. Their intelligence informs containment strategies before threats materialise, rather than after.\n\nIA personnel rarely interact directly with standard site staff. Field agents operate with significant autonomy and are trained to maintain cover across extended deployment periods. The Agency coordinates closely with ISD on matters where internal and external intelligence overlap.`,
+    desc:`The Intelligence Agency is the Foundation's primary external information-gathering body. IA agents operate embedded within governments, hostile Groups-of-Interest, civilian institutions, and areas of known anomalous interest.\n\nIA personnel rarely interact directly with standard site staff. Field agents operate with significant autonomy and are trained to maintain cover across extended deployment periods. The Agency coordinates closely with ISD on matters where internal and external intelligence overlap.`,
     mandate:'To gather, analyse, and act upon intelligence relating to anomalous threats, hostile groups of interest, and Foundation operational security.',
     ranks:[
       {name:'Intelligence Director',   cl:4, cls:'B', note:'Heads the agency. Reports directly to the O5 Council.'},
       {name:'Intelligence Officer',    cl:3, cls:'B', note:'Senior field authority. Coordinates multi-agent operations and strategy.'},
-      {name:'Senior Field Agent',      cl:3, cls:'C', note:'Experienced operative with expanded mission authority and autonomy.'},
-      {name:'Field Agent',             cl:3, cls:'C', note:'Core IA personnel. Conducts field operations and intelligence gathering.'},
+      {name:'Senior Field Agent',      cl:2, cls:'C', note:'Experienced operative with expanded mission authority and autonomy.'},
+      {name:'Field Agent',             cl:1, cls:'C', note:'Core IA personnel. Conducts field operations and intelligence gathering.'},
     ],
     units:null,
   },
@@ -599,7 +788,7 @@ const DEPARTMENTS = [
     border:'#6a2a1a', cl:{border:'#6a2a1a',color:'#9a5a3a'}, range:'CL4',
     tagline:'Command of the installation. Responsibility for everything inside it.',
     classified:false,
-    desc:`Site Directors are the commanding officers of individual Foundation installations. They hold authority over all departmental operations within their site, manage inter-site communications, and bear direct personal responsibility for any containment failure, personnel casualty, or resource misallocation that occurs under their watch.\n\nSite Directors report upward to the Administrator's Office and are expected to maintain full operational readiness at all times. The role of Assistant Site Director exists to ensure continuity of command and to develop candidates for future Site Director appointments.`,
+    desc:`Site Directors are the core of individual Foundation installations. They hold authority over all departmental operations within their site, manage inter-site communications, and bear direct personal responsibility for any containment failure, personnel casualty, or resource misallocation that occurs under their watch.\n\nSite Directors report upward to the Administrator's Office and are expected to maintain full operational readiness at all times. The role of Assistant Site Director exists to ensure continuity of command and to develop candidates for future Site Director appointments.`,
     mandate:"To maintain full operational control of an assigned Foundation site, uphold containment protocols, and be personally accountable for everything that happens within it.",
     ranks:[
       {name:'Site Director',            cl:4, cls:'B', note:"Commanding officer of the installation. Reports to the Administrator's Office."},
@@ -850,6 +1039,150 @@ function toggleCls() {
   chev.classList.toggle('open', !open);
 }
 
+function toggleClr() {
+  const body = document.getElementById('clr-body');
+  const chev = document.getElementById('clr-chevron');
+  const open = body.classList.contains('show');
+  body.classList.toggle('show', !open);
+  chev.classList.toggle('open', !open);
+}
+
+/* =====================================================
+   HIERARCHY GRAPH
+===================================================== */
+const HIERARCHY_TIERS = [
+  {
+    id:'t-cmd', label:'Foundation Command', cl:'CL5 to CL6',
+    note:'Above site-level authority. Sets all mandate.',
+    nodes:[
+      {abbr:'AO',  name:'Administrator'},
+      {abbr:'O5',  name:'O5 Council Member'},
+      {abbr:'EC',  name:'Head of Ethics', aside:true},
+      {abbr:'FTM', name:'Factotum'},
+    ],
+  },
+  {
+    id:'t-dir', label:'Site Leadership', cl:'CL4',
+    note:'Command of an installation.',
+    nodes:[
+      {abbr:'SD',  name:'Site Director'},
+      {abbr:'ASD', name:'Assistant Site Director'},
+    ],
+  },
+  {
+    id:'t-head', label:'Department Heads', cl:'CL4',
+    note:'Authority over an entire department.',
+    nodes:[
+      {abbr:'ScD',  name:'Research Director'},
+      {abbr:'SecD', name:'Security Director'},
+      {abbr:'MedD', name:'Director of Medicine'},
+      {abbr:'EngD', name:'Director of Engineering'},
+      {abbr:'IntD', name:'Intelligence Director'},
+      {abbr:'MTF-C',name:'MTF Commander'},
+      {abbr:'EC-C', name:'Ethics Commissioner'},
+    ],
+  },
+  {
+    id:'t-sr', label:'Senior Staff', cl:'CL3 to CL4',
+    note:'Team-level authority. Second tier of command.',
+    nodes:[
+      {abbr:'HoR',  name:'Head of Research'},
+      {abbr:'ResSup',name:'Research Supervisor'},
+      {abbr:'SecM', name:'Security Major'},
+      {abbr:'CMO',  name:'Chief Medical Officer'},
+      {abbr:'ChE',  name:'Chief Engineer'},
+      {abbr:'LE',   name:'Lead Engineer'},
+      {abbr:'IntO', name:'Intelligence Officer'},
+      {abbr:'MTF-Cp',name:'MTF Captain'},
+      {abbr:'MTF-Lt',name:'MTF Lieutenant'},
+      {abbr:'SEL',  name:'Senior Ethics Liaison'},
+    ],
+  },
+  {
+    id:'t-mid', label:'Mid-Level Staff', cl:'CL2',
+    note:'Core operational personnel with independent authority.',
+    nodes:[
+      {abbr:'LR',   name:'Lead Researcher'},
+      {abbr:'SR',   name:'Senior Researcher'},
+      {abbr:'Res',  name:'Researcher'},
+      {abbr:'SecCp',name:'Security Captain'},
+      {abbr:'SecLt',name:'Security Lieutenant'},
+      {abbr:'SecSgt',name:'Security Sergeant'},
+      {abbr:'SMO',  name:'Senior Medical Officer'},
+      {abbr:'MO',   name:'Medical Officer'},
+      {abbr:'SEng', name:'Senior Engineer'},
+      {abbr:'Eng',  name:'Engineer'},
+      {abbr:'SFA',  name:'Senior Field Agent'},
+      {abbr:'MTF-Sgt',name:'MTF Sergeant'},
+      {abbr:'MTF-Sp',name:'MTF Specialist'},
+      {abbr:'EL',   name:'Ethics Liaison'},
+    ],
+  },
+  {
+    id:'t-jr', label:'Junior Staff', cl:'CL0 to CL1',
+    note:'Entry tier. Supervised duties; limited clearance.',
+    nodes:[
+      {abbr:'JR',   name:'Junior Researcher'},
+      {abbr:'Int',  name:'Research Intern'},
+      {abbr:'SecCp',name:'Security Corporal'},
+      {abbr:'SecO', name:'Security Officer'},
+      {abbr:'SecC', name:'Security Cadet'},
+      {abbr:'Medic',name:'Medic'},
+      {abbr:'MedI', name:'Medical Intern'},
+      {abbr:'EngT', name:'Engineering Technician'},
+      {abbr:'EngA', name:'Engineering Apprentice'},
+      {abbr:'FA',   name:'Field Agent'},
+      {abbr:'MTF-O',name:'MTF Operative'},
+    ],
+  },
+  {
+    id:'t-isd-d', label:'ISD Director (Autonomous)', cl:'CL5 / Class A',
+    note:'Reports directly to O5. All operations withheld from site command.',
+    nodes:[
+      {abbr:'ISD-D', name:'ISD Director'},
+    ],
+  },
+  {
+    id:'t-isd-h', label:'ISD Handler (Autonomous)', cl:'CL4 / Class B',
+    note:'Manages active investigations and coordinates field deployments.',
+    nodes:[
+      {abbr:'ISD-H', name:'ISD Handler'},
+    ],
+  },
+  {
+    id:'t-isd', label:'ISD Field Agents (Autonomous)', cl:'Classified',
+    note:'Operate under cover-role clearance. True affiliation unrecorded.',
+    nodes:[
+      {abbr:'Sr.ISD', name:'Senior ISD Agent'},
+      {abbr:'ISD-A',  name:'ISD Agent'},
+      {abbr:'Jr.ISD', name:'Junior ISD Agent'},
+    ],
+  },
+];
+
+function renderHierarchy() {
+  const grid = document.getElementById('hier-grid');
+  if (!grid) return;
+  grid.innerHTML = HIERARCHY_TIERS.map((tier, i) => {
+    const nodesHtml = tier.nodes.map(n => {
+      const asideTag = n.aside ? ' <span style="font-family:var(--mono);font-size:7.5px;letter-spacing:0.15em;color:var(--muted);margin-left:.3rem;">[ADJACENT]</span>' : '';
+      return `<div class="hier-node ${tier.id}">
+        <span class="hier-node-abbr">${n.abbr}</span>
+        <span class="hier-node-name">${n.name}${asideTag}</span>
+      </div>`;
+    }).join('');
+    return `<div class="hier-tier ${tier.id}">
+      <div class="hier-tier-head">
+        <span class="hier-tier-num">${String(i+1).padStart(2,'0')}</span>
+        <span class="hier-tier-label">${tier.label}</span>
+        <span class="hier-tier-cl">${tier.cl}</span>
+        <span class="hier-tier-note">${tier.note}</span>
+      </div>
+      <div class="hier-nodes">${nodesHtml}</div>
+    </div>`;
+  }).join('');
+}
+
 /* =====================================================
    CLASSIFIED AUTH GATE
 ===================================================== */
@@ -914,6 +1247,7 @@ function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 ===================================================== */
 document.addEventListener('DOMContentLoaded', () => {
   renderCards();
+  renderHierarchy();
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') { closeDetail(); closeAuth(); }
   });

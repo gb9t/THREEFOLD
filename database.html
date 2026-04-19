@@ -178,6 +178,23 @@ nav ul a:hover{color:var(--white);}
 .rchar-meta-chip{font-family:var(--mono);font-size:7.5px;letter-spacing:0.18em;text-transform:uppercase;padding:2px 6px;border:1px solid;}
 .rchar-dept-line{font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;color:var(--muted);text-transform:uppercase;padding-top:.45rem;border-top:1px dashed var(--border);}
 .rchar-gdoc{font-family:var(--mono);font-size:7.5px;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold-dim);padding:1px 6px;display:inline-block;margin-top:.4rem;background:rgba(200,150,10,.04);}
+.rchar-icon{position:absolute;top:.85rem;right:.85rem;width:32px;height:32px;object-fit:contain;mix-blend-mode:screen;opacity:.8;z-index:2;}
+.rchar-card .rchar-tab{right:auto;left:0;border-left:none;border-right:1px solid var(--border);}
+.scp-card-status{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--muted);padding-top:.45rem;border-top:1px dashed var(--border);
+}
+.scp-card-status strong{font-weight:400;}
+.scp-card-status.st-contained strong{color:#8aea9a;}
+.scp-card-status.st-uncontained strong{color:#ea6a5a;}
+.scp-card-status.st-goi-item strong{color:#eadf7a;}
+
+.rchip.st-contained{border-color:#2a6a3a;color:#3a9a5a;}
+.rchip.st-contained.active{background:rgba(42,138,72,.15);color:#5ada7a;}
+.rchip.st-uncontained{border-color:#8a1a1a;color:#ba3a3a;}
+.rchip.st-uncontained.active{background:rgba(138,26,26,.15);color:#ea5a4a;}
+.rchip.st-goi-item{border-color:#8a7a1a;color:#baa03a;}
+.rchip.st-goi-item.active{background:rgba(138,122,26,.15);color:var(--gold);}
 
 /* SCP CARD */
 .scp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.75rem;}
@@ -392,7 +409,7 @@ footer{border-top:1px solid var(--border);padding:2rem 3rem;display:flex;justify
         </div>
         <div class="cover-tag">Approved Personnel Registry / Public Database</div>
         <h1>Data <em>base</em></h1>
-        <p class="cover-desc">Every approved character on record. Foundation personnel sorted by department, SCP entries with full ACS data, unaligned individuals. Filter by clearance level, containment class, or affiliation.</p>
+        <p class="cover-desc">Every approved character on record. Foundation personnel sorted by department and unit, SCP entries by object class and containment status, unaligned individuals by affiliation.</p>
       </div>
       <div class="cover-right">
         <div class="cover-fileno">
@@ -428,8 +445,8 @@ footer{border-top:1px solid var(--border);padding:2rem 3rem;display:flex;justify
           <div id="dept-pills" style="display:flex;gap:.45rem;flex-wrap:wrap;"></div>
         </div>
         <div class="rfilter-row">
-          <span class="rfilter-label">Clearance</span>
-          <div id="cl-pills" style="display:flex;gap:.45rem;flex-wrap:wrap;"></div>
+          <span class="rfilter-label">Unit</span>
+          <div id="subunit-pills" style="display:none;gap:.45rem;flex-wrap:wrap;"></div>
         </div>
       </div>
       <div id="foundation-content"></div>
@@ -439,8 +456,12 @@ footer{border-top:1px solid var(--border);padding:2rem 3rem;display:flex;justify
     <div class="rtab-panel" id="rtab-scp">
       <div class="roster-filters" id="scp-filters" style="display:none;">
         <div class="rfilter-row">
-          <span class="rfilter-label">Containment</span>
+          <span class="rfilter-label">Object Class</span>
           <div id="cc-pills" style="display:flex;gap:.45rem;flex-wrap:wrap;"></div>
+        </div>
+        <div class="rfilter-row">
+          <span class="rfilter-label">Status</span>
+          <div id="status-pills" style="display:flex;gap:.45rem;flex-wrap:wrap;"></div>
         </div>
       </div>
       <div class="scp-grid" id="scp-content"></div>
@@ -472,8 +493,8 @@ footer{border-top:1px solid var(--border);padding:2rem 3rem;display:flex;justify
 
 <script>
 let _allChars = [];
-let _fnDeptFilter = 'all', _fnClFilter = 'all';
-let _scpClassFilter = 'all';
+let _fnDeptFilter = 'all', _fnSubFilter = 'all';
+let _scpClassFilter = 'all', _scpStatusFilter = 'all';
 let _uaAffFilter = 'all';
 
 function showPage(id){
@@ -510,6 +531,15 @@ function getDeptIcon(dept){
   const loose = {science:'img/Science.png',research:'img/Science.png',security:'img/Security.png',ethics:'img/Ethics.png',task:'img/MTF.png',mtf:'img/MTF.png',medical:'img/Medical.png',intelligence:'img/Intelligence.png',admin:'img/AdministratorsOffice.png',o5:'img/AdministratorsOffice.png',director:'img/SiteDirectorship.png',engineer:'img/Engineering.png',internal:'img/ISD.png',isd:'img/ISD.png'};
   for (const [k, v] of Object.entries(loose)) { if (n.includes(k)) return v; }
   return 'img/Base.png';
+}
+
+/* Return the most specific icon available for a character:
+   prefer the sub-unit's icon (e.g. MTF Xi-13) over the department icon. */
+function getCharIcon(c) {
+  const d = c.character_data || {};
+  if (d.sub_unit_icon) return d.sub_unit_icon;
+  if (d.department_icon) return d.department_icon;
+  return getDeptIcon(d.department);
 }
 
 const CL_COLORS = {0:'#666',1:'#4a9a4a',2:'#4a6aaa',3:'#baa03a',4:'#ba6a3a',5:'#ba3a3a',6:'#444'};
@@ -567,29 +597,46 @@ function renderFoundationTab(){
       return `<button class="rchip ${_fnDeptFilter===d?'active':''}" onclick="setFnDeptFilter('${escAttr(d)}',this)"><img src="${icon}" alt="">${escHtml(abbr)}<span class="count">${deptCounts[d]}</span></button>`;
     }).join('');
 
-  const clCounts = {0:0,1:0,2:0,3:0,4:0,5:0};
-  chars.forEach(c => {
-    const cl = c.character_data?.clearance ?? 0;
-    if (clCounts[cl] !== undefined) clCounts[cl]++;
-  });
-  const clPills = document.getElementById('cl-pills');
-  clPills.innerHTML = `<button class="rchip ${_fnClFilter==='all'?'active':''}" onclick="setFnClFilter('all',this)">All</button>` +
-    [1,2,3,4,5].filter(l => clCounts[l] > 0).map(l =>
-      `<button class="rchip cl-${l} ${_fnClFilter===String(l)?'active':''}" onclick="setFnClFilter('${l}',this)">L${l}<span class="count">${clCounts[l]}</span></button>`
-    ).join('');
+  // Sub-unit filter (rendered only if the current department filter has sub-units present)
+  renderSubUnitPills(chars);
 
   renderFoundationSections(chars);
 }
 
+function renderSubUnitPills(chars) {
+  const wrap = document.getElementById('subunit-pills');
+  if (!wrap) return;
+  if (_fnDeptFilter === 'all') { wrap.innerHTML = ''; wrap.style.display = 'none'; return; }
+
+  const inDept = chars.filter(c => (c.character_data?.department || '').trim() === _fnDeptFilter);
+  const subCounts = {};
+  inDept.forEach(c => {
+    const s = (c.character_data?.sub_unit || '').trim();
+    if (s) subCounts[s] = (subCounts[s] || 0) + 1;
+  });
+  const subNames = Object.keys(subCounts).sort();
+  if (!subNames.length) { wrap.innerHTML = ''; wrap.style.display = 'none'; return; }
+
+  wrap.style.display = '';
+  wrap.innerHTML = `<button class="rchip ${_fnSubFilter==='all'?'active':''}" onclick="setFnSubFilter('all',this)">All Units</button>` +
+    subNames.map(s => {
+      const example = inDept.find(c => (c.character_data?.sub_unit || '').trim() === s);
+      const icon = example && example.character_data?.sub_unit_icon ? example.character_data.sub_unit_icon : '';
+      return `<button class="rchip ${_fnSubFilter===s?'active':''}" onclick="setFnSubFilter('${escAttr(s)}',this)">${icon?`<img src="${escAttr(icon)}" alt="">`:''}${escHtml(s)}<span class="count">${subCounts[s]}</span></button>`;
+    }).join('');
+}
+
 function setFnDeptFilter(dept, btn){
   _fnDeptFilter = dept;
+  _fnSubFilter = 'all';
   document.querySelectorAll('#dept-pills .rchip').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
+  renderSubUnitPills(_allChars.filter(c => c.type === 'foundation'));
   renderFoundationSections(_allChars.filter(c => c.type === 'foundation'));
 }
-function setFnClFilter(cl, btn){
-  _fnClFilter = cl;
-  document.querySelectorAll('#cl-pills .rchip').forEach(b => b.classList.remove('active'));
+function setFnSubFilter(sub, btn){
+  _fnSubFilter = sub;
+  document.querySelectorAll('#subunit-pills .rchip').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
   renderFoundationSections(_allChars.filter(c => c.type === 'foundation'));
 }
@@ -597,7 +644,7 @@ function setFnClFilter(cl, btn){
 function renderFoundationSections(chars){
   let filtered = chars.slice();
   if (_fnDeptFilter !== 'all') filtered = filtered.filter(c => (c.character_data?.department || 'Unassigned').trim() === _fnDeptFilter);
-  if (_fnClFilter !== 'all') filtered = filtered.filter(c => String(c.character_data?.clearance ?? 0) === _fnClFilter);
+  if (_fnSubFilter  !== 'all') filtered = filtered.filter(c => (c.character_data?.sub_unit || '').trim() === _fnSubFilter);
 
   const contentEl = document.getElementById('foundation-content');
   if (!filtered.length) {
@@ -605,31 +652,40 @@ function renderFoundationSections(chars){
     return;
   }
 
+  // Group primarily by department, then secondarily by sub-unit
   const groups = {};
   filtered.forEach(c => {
     const d = (c.character_data?.department || 'Unassigned').trim();
-    if (!groups[d]) groups[d] = [];
-    groups[d].push(c);
+    const s = (c.character_data?.sub_unit || '').trim();
+    const key = s ? `${d} :: ${s}` : d;
+    if (!groups[key]) groups[key] = { dept: d, sub: s, list: [] };
+    groups[key].list.push(c);
   });
-  Object.values(groups).forEach(arr => arr.sort((a,b) => (b.character_data?.clearance||0) - (a.character_data?.clearance||0)));
-  const deptNames = Object.keys(groups).sort();
+  const keys = Object.keys(groups).sort();
 
-  contentEl.innerHTML = deptNames.map(dept => {
-    const list = groups[dept];
-    const icon = getDeptIcon(dept);
-    const abbr = DEPT_ABBR[dept] || dept.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,4);
+  contentEl.innerHTML = keys.map(key => {
+    const g = groups[key];
+    const example = g.list[0];
+    const icon = g.sub && example.character_data?.sub_unit_icon
+      ? example.character_data.sub_unit_icon
+      : getDeptIcon(g.dept);
+    const deptAbbr = DEPT_ABBR[g.dept] || g.dept.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,4);
+    const sectionName = g.sub ? `${g.dept} / ${g.sub}` : g.dept;
+    const ref = g.sub
+      ? 'TF / DEPT / ' + escHtml(deptAbbr.toUpperCase()) + ' / ' + escHtml(g.sub.toUpperCase())
+      : 'TF / DEPT / ' + escHtml(deptAbbr.toUpperCase());
     return `
-      <div class="dept-section" data-dept="${escAttr(dept)}">
+      <div class="dept-section" data-dept="${escAttr(g.dept)}" data-sub="${escAttr(g.sub)}">
         <div class="dept-sec-hdr">
           <img class="dept-sec-icon" src="${icon}" alt="">
           <div>
-            <div class="dept-sec-name">${escHtml(dept)}</div>
-            <div class="dept-sec-ref">TF / DEPT / ${escHtml(abbr.toUpperCase())}</div>
+            <div class="dept-sec-name">${escHtml(sectionName)}</div>
+            <div class="dept-sec-ref">${ref}</div>
           </div>
-          <div class="dept-sec-meta">${list.length} Personnel</div>
+          <div class="dept-sec-meta">${g.list.length} Personnel</div>
         </div>
         <div class="rchar-grid">
-          ${list.map(c => foundationCard(c)).join('')}
+          ${g.list.map(c => foundationCard(c)).join('')}
         </div>
       </div>
     `;
@@ -638,29 +694,23 @@ function renderFoundationSections(chars){
 
 function foundationCard(c){
   const d = c.character_data || {};
-  const cl = d.clearance ?? 0;
-  const cls = d.classification || '';
-  const clColor = CL_COLORS[cl] || '#666';
-  const clBorder = CL_BORDER[cl] || '#333';
-  const clsBorder = CLS_COLORS[cls] || '#444';
-  const dept = d.department || '';
-  const abbr = DEPT_ABBR[dept] || dept.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,4);
+  const dept = d.department || 'Unassigned';
+  const subUnit = d.sub_unit || '';
+  const deptAbbr = DEPT_ABBR[dept] || dept.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,4);
+  const tabLabel = subUnit || deptAbbr;
   const lastName = (d.full_name || 'unknown').split(' ').slice(-1)[0];
   const fileRef = 'TF / PERS / ' + escHtml(lastName.toUpperCase().slice(0,8));
+  const icon = getCharIcon(c);
   const click = c.method === 'googledoc' ? `window.open('${escAttr(c.gdoc_url||'')}','_blank')` : `viewChar('${escAttr(c.id)}')`;
   return `
     <div class="rchar-card" onclick="${click}">
-      <div class="rchar-accent" style="background:${clBorder}"></div>
-      <div class="rchar-tab">${escHtml(abbr)}</div>
+      <div class="rchar-accent" style="background:var(--border);"></div>
+      <div class="rchar-tab">${escHtml(tabLabel)}</div>
       <div class="rchar-body">
+        <img class="rchar-icon" src="${icon}" alt="" onerror="this.style.display='none'">
         <div class="rchar-fileref">${fileRef}</div>
         <div class="rchar-name">${escHtml(d.full_name || 'Unknown')}</div>
-        <div class="rchar-role">${escHtml(d.role || 'Unassigned')}</div>
-        <div class="rchar-meta">
-          <span class="rchar-meta-chip" style="border-color:${clBorder};color:${clColor}">CL-${cl}</span>
-          ${cls ? `<span class="rchar-meta-chip" style="border-color:${clsBorder};color:${clsBorder}">Class ${cls}</span>` : ''}
-        </div>
-        <div class="rchar-dept-line">${escHtml(dept || 'Unassigned')}</div>
+        <div class="rchar-dept-line">${escHtml(dept)}${subUnit ? ' / ' + escHtml(subUnit) : ''}</div>
         ${c.method === 'googledoc' ? '<span class="rchar-gdoc">Google Doc</span>' : ''}
       </div>
     </div>
@@ -687,7 +737,7 @@ function renderScpTab(){
     const cc = s.character_data?.containment_class || 'Pending';
     ccCounts[cc] = (ccCounts[cc] || 0) + 1;
   });
-  const ccOrder = ['Safe','Euclid','Keter','Neutralized','Pending','Explained','Esoteric'];
+  const ccOrder = ['Safe','Euclid','Keter','Esoteric','Neutralized','Pending','Explained'];
   const ccNames = ccOrder.filter(c => ccCounts[c]);
   Object.keys(ccCounts).forEach(c => { if (!ccOrder.includes(c)) ccNames.push(c); });
 
@@ -697,6 +747,30 @@ function renderScpTab(){
       const key = cc.toLowerCase();
       return `<button class="rchip cc-${key} ${_scpClassFilter===cc?'active':''}" onclick="setScpClassFilter('${escAttr(cc)}',this)">${escHtml(cc)}<span class="count">${ccCounts[cc]}</span></button>`;
     }).join('');
+
+  // Status pills (Contained / Uncontained / GOI Item)
+  const statusCounts = {};
+  chars.forEach(s => {
+    const st = (s.character_data?.containment_status || '').trim();
+    if (st) statusCounts[st] = (statusCounts[st] || 0) + 1;
+  });
+  const statusOrder = ['Contained','Uncontained','GOI Item'];
+  const statusNames = statusOrder.filter(s => statusCounts[s]);
+  Object.keys(statusCounts).forEach(s => { if (!statusOrder.includes(s)) statusNames.push(s); });
+  const statusPills = document.getElementById('status-pills');
+  if (statusPills) {
+    if (!statusNames.length) {
+      statusPills.innerHTML = '';
+      statusPills.style.display = 'none';
+    } else {
+      statusPills.style.display = '';
+      statusPills.innerHTML = `<button class="rchip ${_scpStatusFilter==='all'?'active':''}" onclick="setScpStatusFilter('all',this)">All</button>` +
+        statusNames.map(s => {
+          const key = s.toLowerCase().replace(/\s+/g,'-');
+          return `<button class="rchip st-${key} ${_scpStatusFilter===s?'active':''}" onclick="setScpStatusFilter('${escAttr(s)}',this)">${escHtml(s)}<span class="count">${statusCounts[s]}</span></button>`;
+        }).join('');
+    }
+  }
 
   renderScpCards(chars);
 }
@@ -708,9 +782,17 @@ function setScpClassFilter(cc, btn){
   renderScpCards(_allChars.filter(c => c.type === 'scp'));
 }
 
+function setScpStatusFilter(st, btn){
+  _scpStatusFilter = st;
+  document.querySelectorAll('#status-pills .rchip').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderScpCards(_allChars.filter(c => c.type === 'scp'));
+}
+
 function renderScpCards(chars){
   let filtered = chars.slice();
-  if (_scpClassFilter !== 'all') filtered = filtered.filter(s => (s.character_data?.containment_class || 'Pending') === _scpClassFilter);
+  if (_scpClassFilter  !== 'all') filtered = filtered.filter(s => (s.character_data?.containment_class || 'Pending') === _scpClassFilter);
+  if (_scpStatusFilter !== 'all') filtered = filtered.filter(s => (s.character_data?.containment_status || '') === _scpStatusFilter);
   filtered.sort((a, b) => {
     const na = parseInt((a.character_data?.item_number || '').replace(/\D/g,'')) || 9999;
     const nb = parseInt((b.character_data?.item_number || '').replace(/\D/g,'')) || 9999;
@@ -726,9 +808,10 @@ function renderScpCards(chars){
 
 function scpCard(c){
   const d = c.character_data || {};
-  const cls = d.containment_class || 'Pending';
+  const cls = d.containment_class || d.object_class || 'Pending';
   const clsKey = cls.toLowerCase();
-  const secondary = d.secondary_class || '';
+  const status = (d.containment_status || '').trim();
+  const statusKey = status.toLowerCase().replace(/\s+/g,'-');
   const click = c.method === 'googledoc' ? `window.open('${escAttr(c.gdoc_url||'')}','_blank')` : `viewChar('${escAttr(c.id)}')`;
   return `
     <div class="scp-card" onclick="${click}">
@@ -738,11 +821,7 @@ function scpCard(c){
         <span class="scp-class-block cc-${clsKey}">${escHtml(cls)}</span>
       </div>
       <div class="scp-card-body">
-        ${secondary ? `<div class="scp-card-sec">${escHtml(secondary)}</div>` : ''}
-        <div class="scp-card-meta-row">
-          <div>Disruption / <strong>${escHtml(d.disruption_class || '---')}</strong></div>
-          <div>Risk / <strong>${escHtml(d.risk_class || '---')}</strong></div>
-        </div>
+        ${status ? `<div class="scp-card-status st-${statusKey}">Status / <strong>${escHtml(status)}</strong></div>` : ''}
         ${c.method === 'googledoc' ? '<span class="rchar-gdoc" style="margin-top:.5rem;display:inline-block">Google Doc</span>' : ''}
       </div>
     </div>
@@ -839,56 +918,43 @@ async function viewChar(id){
   let html = '';
 
   if (data.type === 'foundation') {
-    const cl = d.clearance ?? 0;
-    const cls = d.classification || '';
     const lastName = (d.full_name || 'unknown').split(' ').slice(-1)[0];
     const fileRef = 'TF / PERS / ' + escHtml((d.personnel_id || lastName).toString().toUpperCase().slice(0,10));
-    const stampTier = cl >= 4 ? 'red' : cl >= 3 ? 'gold' : 'grey';
+    const dept = d.department || '';
+    const subUnit = d.sub_unit || '';
+    const icon = getCharIcon(data);
     html = `
       <div class="cv-cover-stamps">
-        <span class="cv-stamp ${stampTier}">Clearance Level ${cl}</span>
-        ${cls ? `<span class="cv-stamp gold">Class ${escHtml(cls)}</span>` : ''}
-        ${d.is_isd ? '<span class="cv-stamp red">Cover Assignment</span>' : ''}
         <span class="cv-stamp grey">Approved File</span>
+        ${dept ? `<span class="cv-stamp grey">${escHtml(dept)}</span>` : ''}
+        ${subUnit ? `<span class="cv-stamp gold">${escHtml(subUnit)}</span>` : ''}
       </div>
       <div class="cv-fnd-header">
-        ${d.image_url ? `<img class="cv-fnd-img" src="${escAttr(d.image_url)}" alt="Character">` : '<div class="cv-fnd-img-ph">No Image<br>On File</div>'}
+        ${d.image_url ? `<img class="cv-fnd-img" src="${escAttr(d.image_url)}" alt="Character">` :
+          `<div class="cv-fnd-img-ph" style="display:flex;align-items:center;justify-content:center;background:#0f0f0f;border:1px solid var(--border);"><img src="${icon}" alt="" style="max-width:60%;max-height:60%;object-fit:contain;mix-blend-mode:screen;opacity:.8;"></div>`}
         <div>
           <div class="cv-fileref">${fileRef}</div>
           <div class="cv-fnd-name">${escHtml(d.full_name || 'Unknown')}</div>
-          <div class="cv-fnd-role">${escHtml(d.role || 'Unassigned')}</div>
-          ${d.department ? `<div class="cv-fnd-dept">${escHtml(d.department)}${d.sd_unit ? ' / ' + escHtml(d.sd_unit) : ''}${d.mtf_unit ? ' / ' + escHtml(d.mtf_unit) : ''}</div>` : ''}
+          ${dept ? `<div class="cv-fnd-dept">${escHtml(dept)}${subUnit ? ' / ' + escHtml(subUnit) : ''}</div>` : ''}
           <table class="cv-table">
             ${d.alias ? `<tr><td>Alias</td><td>${escHtml(d.alias)}</td></tr>` : ''}
             ${d.age ? `<tr><td>Age</td><td>${escHtml(d.age)}</td></tr>` : ''}
             ${d.nationality ? `<tr><td>Nationality</td><td>${escHtml(d.nationality)}</td></tr>` : ''}
             ${d.gender ? `<tr><td>Gender</td><td>${escHtml(d.gender)}</td></tr>` : ''}
             ${d.height ? `<tr><td>Height</td><td>${escHtml(d.height)}</td></tr>` : ''}
-            ${d.blood_type ? `<tr><td>Blood Type</td><td>${escHtml(d.blood_type)}</td></tr>` : ''}
-            ${d.scipnet ? `<tr><td>SCiPNET</td><td>${escHtml(d.scipnet)}</td></tr>` : ''}
-            ${d.personnel_id ? `<tr><td>Personnel ID</td><td>${escHtml(d.personnel_id)}</td></tr>` : ''}
-            ${d.mbti ? `<tr><td>MBTI</td><td>${escHtml(d.mbti)}</td></tr>` : ''}
-            ${d.loyalty ? `<tr><td>Loyalty Index</td><td>${escHtml(d.loyalty)}</td></tr>` : ''}
-            ${d.mars ? `<tr><td>MARS Score</td><td>${escHtml(d.mars)}</td></tr>` : ''}
-            ${d.education ? `<tr><td>Education</td><td>${escHtml(d.education)}</td></tr>` : ''}
-            ${d.experience ? `<tr><td>Experience</td><td>${escHtml(d.experience)}</td></tr>` : ''}
           </table>
         </div>
       </div>
       ${cvSection('Physical Description', d.physical_desc)}
       ${cvSection('Backstory', d.backstory)}
       ${cvSection('Psychological Profile', d.psych_profile)}
-      ${cvSection('Employment History', d.employment)}
-      ${cvSection('Notable Incidents / Logs', d.incidents)}
       ${cvSection('Additional Notes', d.notes)}
     `;
   } else if (data.type === 'scp') {
-    const lvl = d.clearance_level;
-    const clsKey = (d.containment_class || '').toLowerCase();
-    const acsLvlBg = ACS_CL[String(lvl)] || '#161616';
+    const clsKey = (d.containment_class || d.object_class || '').toLowerCase();
     const acsClassBg = ACS_CC[clsKey] || '#1a1a1a';
-    const acsDiaBg = ACS_DI[(d.disruption_class || '').toLowerCase()] || '#111';
-    const acsRiskBg = ACS_RI[(d.risk_class || '').toLowerCase()] || '#111';
+    const status = (d.containment_status || '').trim();
+    const statusKey = status.toLowerCase().replace(/\s+/g,'-');
     const addendaHtml = (d.addenda || []).map((a, i) => `
       <div class="cv-addendum">
         <button class="cv-addendum-toggle" onclick="toggleAddendum(this)">${escHtml(a.title || 'Addendum ' + (i+1))}</button>
@@ -897,23 +963,23 @@ async function viewChar(id){
     html = `
       <div class="cv-cover-stamps">
         <span class="cv-stamp red">Classified Anomaly</span>
-        ${lvl ? `<span class="cv-stamp ${lvl>=4?'red':lvl>=3?'gold':'grey'}">Clearance Level ${lvl}</span>` : ''}
         ${d.containment_class ? `<span class="cv-stamp gold">${escHtml(d.containment_class)}</span>` : ''}
+        ${status ? `<span class="cv-stamp ${statusKey==='uncontained'?'red':statusKey==='goi-item'?'gold':'grey'}">${escHtml(status)}</span>` : ''}
         <span class="cv-stamp grey">Approved File</span>
       </div>
       <div class="acs-bar">
         <div class="acs-top">
           <div class="acs-item-num">ITEM #: ${escHtml(d.item_number || 'SCP-???')}</div>
-          <div class="acs-level-tag" style="background:${acsLvlBg}">LEVEL ${lvl || '?'}/${escHtml(d.item_number || 'SCP-???')}</div>
           <div class="acs-class-block" style="background:${acsClassBg}">
             <span class="acs-class-header">OBJECT CLASS</span>
-            <span class="acs-class-value">${escHtml((d.containment_class || 'PENDING').toUpperCase())}</span>
-            ${d.secondary_class ? `<span style="font-size:9px;display:block;color:rgba(255,255,255,.5)">${escHtml(d.secondary_class)}</span>` : ''}
+            <span class="acs-class-value">${escHtml((d.containment_class || d.object_class || 'PENDING').toUpperCase())}</span>
           </div>
         </div>
         <div class="acs-bottom">
-          <div class="acs-disruption" style="background:${acsDiaBg}"><span class="acs-meta-label">DISRUPTION CLASS</span><span class="acs-meta-value">${escHtml(d.disruption_class || '---')}</span></div>
-          <div class="acs-risk" style="background:${acsRiskBg}"><span class="acs-meta-label">RISK CLASS</span><span class="acs-meta-value">${escHtml(d.risk_class || '---')}</span></div>
+          <div class="acs-disruption" style="background:#111;grid-column:span 2;text-align:center;">
+            <span class="acs-meta-label">CONTAINMENT STATUS</span>
+            <span class="acs-meta-value">${escHtml(status || 'UNKNOWN').toUpperCase()}</span>
+          </div>
         </div>
       </div>
       <div class="cv-scp-doc">

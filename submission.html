@@ -1142,7 +1142,7 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
       <div class="form-section-label">Your Details</div>
       <div class="field"><label>Discord Username <span class="req">*</span></label><input type="text" id="gd-discord" placeholder="yourname or yourname#0000"></div>
       <div class="field"><label>Character Type <span class="req">*</span></label>
-        <select id="gd-type">
+        <select id="gd-type" onchange="onTypeChange('gd')">
           <option value="">Select type...</option>
           <option value="foundation">Foundation Personnel</option>
           <option value="scp">SCP Entry</option>
@@ -1152,6 +1152,29 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
       <div class="field"><label>Character Name <span class="req">*</span></label>
         <input type="text" id="gd-name" placeholder="e.g. Dr. Jane Doe, or SCP-XXXX">
         <span class="field-hint">For SCP entries, use the item number (e.g. SCP-4821).</span>
+      </div>
+      <!-- Foundation-only: department + optional sub-unit -->
+      <div class="field" id="gd-dept-field" style="display:none;"><label>Department <span class="req">*</span></label>
+        <select id="gd-dept" onchange="onDeptChange('gd')">
+          <option value="">Select department...</option>
+        </select>
+      </div>
+      <div class="field" id="gd-sub-field" style="display:none;"><label id="gd-sub-label">Sub-Unit <span class="req">*</span></label>
+        <select id="gd-sub">
+          <option value="">Select...</option>
+        </select>
+        <span class="field-hint" id="gd-sub-hint">Choose the specific unit your character belongs to.</span>
+      </div>
+      <!-- SCP-only: object class + status -->
+      <div class="field" id="gd-class-field" style="display:none;"><label>Object Class <span class="req">*</span></label>
+        <select id="gd-class">
+          <option value="">Select class...</option>
+        </select>
+      </div>
+      <div class="field" id="gd-status-field" style="display:none;"><label>Containment Status <span class="req">*</span></label>
+        <select id="gd-status">
+          <option value="">Select status...</option>
+        </select>
       </div>
     </div>
     <div class="form-section">
@@ -1186,7 +1209,7 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
       <div class="form-section-label">Your Details</div>
       <div class="field"><label>Discord Username <span class="req">*</span></label><input type="text" id="wk-discord" placeholder="yourname or yourname#0000"></div>
       <div class="field"><label>Character Type <span class="req">*</span></label>
-        <select id="wk-type">
+        <select id="wk-type" onchange="onTypeChange('wk')">
           <option value="">Select type...</option>
           <option value="foundation">Foundation Personnel</option>
           <option value="scp">SCP Entry</option>
@@ -1196,6 +1219,27 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
       <div class="field"><label>Character Name <span class="req">*</span></label>
         <input type="text" id="wk-name" placeholder="e.g. Dr. Jane Doe, or SCP-XXXX">
         <span class="field-hint">For SCP entries, use the item number (e.g. SCP-4821).</span>
+      </div>
+      <div class="field" id="wk-dept-field" style="display:none;"><label>Department <span class="req">*</span></label>
+        <select id="wk-dept" onchange="onDeptChange('wk')">
+          <option value="">Select department...</option>
+        </select>
+      </div>
+      <div class="field" id="wk-sub-field" style="display:none;"><label id="wk-sub-label">Sub-Unit <span class="req">*</span></label>
+        <select id="wk-sub">
+          <option value="">Select...</option>
+        </select>
+        <span class="field-hint" id="wk-sub-hint">Choose the specific unit your character belongs to.</span>
+      </div>
+      <div class="field" id="wk-class-field" style="display:none;"><label>Object Class <span class="req">*</span></label>
+        <select id="wk-class">
+          <option value="">Select class...</option>
+        </select>
+      </div>
+      <div class="field" id="wk-status-field" style="display:none;"><label>Containment Status <span class="req">*</span></label>
+        <select id="wk-status">
+          <option value="">Select status...</option>
+        </select>
       </div>
     </div>
     <div class="form-section">
@@ -1298,6 +1342,118 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
 
 <script>
 /* ═══════════════════════════════════════════
+   SHARED CONFIG
+   Edit these to add new departments, sub-units,
+   object classes, or statuses. Everything else
+   pulls from here, so changes propagate automatically.
+══════════════════════════════════════════════ */
+const DEPT_OPTIONS = [
+  { id:'science',      name:'Science Department',          abbr:'ScD',  icon:'img/Science.png',              subLabel:null,        subOptions:[] },
+  { id:'security',     name:'Security Department',         abbr:'SD',   icon:'img/Security.png',             subLabel:'Unit',      subOptions:[
+      // Add Security sub-units here when they open up
+      // { id:'sru', name:'Security Response Unit',   abbr:'SRU', icon:'img/Security.png' },
+    ] },
+  { id:'medical',      name:'Medical Department',          abbr:'MD',   icon:'img/Medical.png',              subLabel:null,        subOptions:[] },
+  { id:'engineering',  name:'Engineering Department',      abbr:'Eng',  icon:'img/Engineering.png',          subLabel:null,        subOptions:[] },
+  { id:'intelligence', name:'Intelligence Agency',         abbr:'IA',   icon:'img/Intelligence.png',         subLabel:null,        subOptions:[] },
+  { id:'mtf',          name:'Mobile Task Forces',          abbr:'MTF',  icon:'img/MTF.png',                  subLabel:'Task Force', subOptions:[
+      { id:'xi13', name:'MTF Xi-13',  full:'Armed Mobile Task Force Xi-13', icon:'img/Xi13.png' },
+      // Add more task forces here as they open up, e.g.:
+      // { id:'alpha1', name:'MTF Alpha-1', full:'Mobile Task Force Alpha-1 ("Red Right Hand")', icon:'img/Alpha1.png' },
+    ] },
+  { id:'ethics',       name:'Ethics Committee',            abbr:'EC',   icon:'img/Ethics.png',               subLabel:null,        subOptions:[] },
+  { id:'directorship', name:'Site Directorship',           abbr:'SDir', icon:'img/SiteDirectorship.png',     subLabel:null,        subOptions:[] },
+  { id:'admin',        name:"Administrator's Office",      abbr:'O5',   icon:'img/AdministratorsOffice.png', subLabel:null,        subOptions:[] },
+];
+
+const SCP_CLASSES = [
+  { id:'safe',     name:'Safe' },
+  { id:'euclid',   name:'Euclid' },
+  { id:'keter',    name:'Keter' },
+  { id:'esoteric', name:'Esoteric' },
+];
+
+const SCP_STATUSES = [
+  { id:'contained',   name:'Contained',   desc:'Currently held under Foundation containment.' },
+  { id:'uncontained', name:'Uncontained', desc:'At large. Active Foundation pursuit / no secure containment.' },
+  { id:'goi_item',    name:'GOI Item',    desc:'Anomaly held, used, or associated with another Group of Interest.' },
+];
+
+/* Helpers to look up by id */
+function getDeptById(id)    { return DEPT_OPTIONS.find(d => d.id === id); }
+function getSubById(deptId, subId) {
+  const d = getDeptById(deptId);
+  return d ? d.subOptions.find(s => s.id === subId) : null;
+}
+
+/* Populate all the conditional selects on page load */
+function populateLinkFormSelects() {
+  ['gd','wk'].forEach(prefix => {
+    const deptEl = document.getElementById(prefix + '-dept');
+    if (deptEl) {
+      deptEl.innerHTML = '<option value="">Select department...</option>' +
+        DEPT_OPTIONS.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
+    }
+    const classEl = document.getElementById(prefix + '-class');
+    if (classEl) {
+      classEl.innerHTML = '<option value="">Select class...</option>' +
+        SCP_CLASSES.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+    }
+    const statusEl = document.getElementById(prefix + '-status');
+    if (statusEl) {
+      statusEl.innerHTML = '<option value="">Select status...</option>' +
+        SCP_STATUSES.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+    }
+  });
+}
+
+/* Toggle conditional field visibility based on Character Type */
+function onTypeChange(prefix) {
+  const type = document.getElementById(prefix + '-type').value;
+  const show = (id, v) => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = v ? '' : 'none';
+  };
+  show(prefix + '-dept-field',   type === 'foundation');
+  show(prefix + '-sub-field',    false);
+  show(prefix + '-class-field',  type === 'scp');
+  show(prefix + '-status-field', type === 'scp');
+  // reset values so stale data from a previous type doesn't leak through
+  if (type !== 'foundation') {
+    const d = document.getElementById(prefix + '-dept'); if (d) d.value = '';
+    const s = document.getElementById(prefix + '-sub');  if (s) s.value = '';
+  }
+  if (type !== 'scp') {
+    const c = document.getElementById(prefix + '-class');  if (c) c.value = '';
+    const st= document.getElementById(prefix + '-status'); if (st) st.value = '';
+  }
+}
+
+/* When a department is picked, decide whether to show the sub-unit dropdown */
+function onDeptChange(prefix) {
+  const deptId = document.getElementById(prefix + '-dept').value;
+  const subField = document.getElementById(prefix + '-sub-field');
+  const subLabel = document.getElementById(prefix + '-sub-label');
+  const subHint  = document.getElementById(prefix + '-sub-hint');
+  const subSel   = document.getElementById(prefix + '-sub');
+  if (!deptId) { if (subField) subField.style.display = 'none'; return; }
+  const dept = getDeptById(deptId);
+  if (!dept || !dept.subOptions || !dept.subOptions.length) {
+    if (subField) subField.style.display = 'none';
+    if (subSel)   subSel.value = '';
+    return;
+  }
+  if (subField) subField.style.display = '';
+  if (subLabel) subLabel.innerHTML = `${dept.subLabel || 'Sub-Unit'} <span class="req">*</span>`;
+  if (subHint)  subHint.textContent = `Choose the specific ${dept.subLabel ? dept.subLabel.toLowerCase() : 'unit'} your character belongs to.`;
+  if (subSel) {
+    subSel.innerHTML = `<option value="">Select ${dept.subLabel ? dept.subLabel.toLowerCase() : 'unit'}...</option>` +
+      dept.subOptions.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+    subSel.value = '';
+  }
+}
+
+/* ═══════════════════════════════════════════
    STATE
 ══════════════════════════════════════════════ */
 let _method = null, _type = null, _focusedField = null, _allChars = [];
@@ -1326,11 +1482,13 @@ function setType(t) {
   _type = t;
   if (_method === 'googledoc') {
     document.getElementById('gd-type').value = t;
+    onTypeChange('gd');
     showView('v-gdoc');
     return;
   }
   if (_method === 'wikidot') {
     document.getElementById('wk-type').value = t;
+    onTypeChange('wk');
     showView('v-wikidot');
     return;
   }
@@ -1506,8 +1664,45 @@ async function submitGDoc() {
   const url = g('gd-url');
   if (!discord || !type || !name || !url) { setMsg(msg,'error','All fields are required.'); return; }
   if (!url.includes('docs.google.com')) { setMsg(msg,'error','Please enter a valid Google Docs link.'); return; }
+
+  const charData = {};
+  if (type === 'scp') charData.item_number = name; else charData.full_name = name;
+
+  if (type === 'foundation') {
+    const deptId = g('gd-dept');
+    if (!deptId) { setMsg(msg,'error','Please select a department.'); return; }
+    const dept = getDeptById(deptId);
+    if (!dept) { setMsg(msg,'error','Invalid department.'); return; }
+    charData.department_id = dept.id;
+    charData.department    = dept.name;
+    charData.department_icon = dept.icon;
+    if (dept.subOptions && dept.subOptions.length) {
+      const subId = g('gd-sub');
+      if (!subId) { setMsg(msg,'error',`Please select a ${dept.subLabel ? dept.subLabel.toLowerCase() : 'sub-unit'}.`); return; }
+      const sub = getSubById(dept.id, subId);
+      if (!sub) { setMsg(msg,'error','Invalid sub-unit.'); return; }
+      charData.sub_unit_id   = sub.id;
+      charData.sub_unit      = sub.name;
+      charData.sub_unit_full = sub.full || sub.name;
+      charData.sub_unit_icon = sub.icon;
+    }
+  }
+
+  if (type === 'scp') {
+    const classId = g('gd-class');
+    const statusId = g('gd-status');
+    if (!classId)  { setMsg(msg,'error','Please select an object class.'); return; }
+    if (!statusId) { setMsg(msg,'error','Please select a containment status.'); return; }
+    const cls    = SCP_CLASSES.find(c => c.id === classId);
+    const status = SCP_STATUSES.find(s => s.id === statusId);
+    charData.object_class_id    = cls.id;
+    charData.object_class       = cls.name;
+    charData.containment_class  = cls.name;      // legacy field for existing filters
+    charData.status_id          = status.id;
+    charData.containment_status = status.name;
+  }
+
   setMsg(msg,'loading','Submitting...');
-  const charData = type === 'scp' ? { item_number: name } : { full_name: name };
   const {data:result,error} = await submitCharacter(type,'googledoc',discord,charData,url);
   if (error) { setMsg(msg,'error','Submission failed: '+error.message); return; }
   document.getElementById('success-num').textContent = result.seq || '?';
@@ -1522,8 +1717,45 @@ async function submitWikidot() {
   const url = g('wk-url');
   if (!discord || !type || !name || !url) { setMsg(msg,'error','All fields are required.'); return; }
   if (!url.includes('wikidot.com')) { setMsg(msg,'error','Please enter a valid Wikidot link.'); return; }
+
+  const charData = {};
+  if (type === 'scp') charData.item_number = name; else charData.full_name = name;
+
+  if (type === 'foundation') {
+    const deptId = g('wk-dept');
+    if (!deptId) { setMsg(msg,'error','Please select a department.'); return; }
+    const dept = getDeptById(deptId);
+    if (!dept) { setMsg(msg,'error','Invalid department.'); return; }
+    charData.department_id = dept.id;
+    charData.department    = dept.name;
+    charData.department_icon = dept.icon;
+    if (dept.subOptions && dept.subOptions.length) {
+      const subId = g('wk-sub');
+      if (!subId) { setMsg(msg,'error',`Please select a ${dept.subLabel ? dept.subLabel.toLowerCase() : 'sub-unit'}.`); return; }
+      const sub = getSubById(dept.id, subId);
+      if (!sub) { setMsg(msg,'error','Invalid sub-unit.'); return; }
+      charData.sub_unit_id   = sub.id;
+      charData.sub_unit      = sub.name;
+      charData.sub_unit_full = sub.full || sub.name;
+      charData.sub_unit_icon = sub.icon;
+    }
+  }
+
+  if (type === 'scp') {
+    const classId = g('wk-class');
+    const statusId = g('wk-status');
+    if (!classId)  { setMsg(msg,'error','Please select an object class.'); return; }
+    if (!statusId) { setMsg(msg,'error','Please select a containment status.'); return; }
+    const cls    = SCP_CLASSES.find(c => c.id === classId);
+    const status = SCP_STATUSES.find(s => s.id === statusId);
+    charData.object_class_id    = cls.id;
+    charData.object_class       = cls.name;
+    charData.containment_class  = cls.name;
+    charData.status_id          = status.id;
+    charData.containment_status = status.name;
+  }
+
   setMsg(msg,'loading','Submitting...');
-  const charData = type === 'scp' ? { item_number: name } : { full_name: name };
   const {data:result,error} = await submitCharacter(type,'wikidot',discord,charData,url);
   if (error) { setMsg(msg,'error','Submission failed: '+error.message); return; }
   document.getElementById('success-num').textContent = result.seq || '?';
@@ -2581,6 +2813,7 @@ document.addEventListener('DOMContentLoaded', () => {
   wireFnPreview();
   wireScpPreview();
   wireUaPreview();
+  populateLinkFormSelects();
   const ti = document.getElementById('tracker-input');
   if (ti) ti.addEventListener('keydown', e => { if(e.key==='Enter') doTrack(); });
 });

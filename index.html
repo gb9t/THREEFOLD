@@ -100,6 +100,13 @@ nav {
 }
 .nav-discord:hover { border-color:var(--white) !important; color:var(--white) !important; }
 .nav-discord::after { display:none !important; }
+.nav-stafflogin {
+  font-size:9px !important; letter-spacing:0.2em !important;
+  color:var(--muted) !important; margin-left:6px;
+  padding:6px 12px !important; opacity:.7;
+}
+.nav-stafflogin:hover { color:var(--pale) !important; opacity:1; }
+.nav-stafflogin::after { background:var(--muted) !important; }
 
 /* ===== PAGES ===== */
 .page { display:none; min-height:100vh; padding-top:56px; }
@@ -360,6 +367,14 @@ nav {
 }
 .ph-desc { margin-top:1.25rem; font-size:15px; color:var(--light); max-width:560px; }
 
+/* Interior-page stamps, matching cover-stamps */
+.ph-stamps { display:flex; gap:.5rem; flex-wrap:wrap; margin-bottom:1.25rem; animation:riseIn .6s ease both; }
+
+/* Accent h2 for interior pages */
+.two-col h2 em {
+  font-style:normal; color:var(--red-bright); font-weight:800;
+}
+
 /* ===== WRAP ===== */
 .wrap { max-width:1000px; margin:0 auto; padding:4rem 3rem; }
 .stag {
@@ -427,18 +442,45 @@ nav {
 .rt-ban  { border-color:var(--danger); color:var(--danger); }
 
 /* ===== JOIN ===== */
-.step { display:grid; grid-template-columns:64px 1fr; gap:2rem; align-items:start; margin-bottom:3rem; }
+.step { display:grid; grid-template-columns:64px 1fr; gap:2rem; align-items:start; margin-bottom:3rem; position:relative; }
 .step-badge {
   width:64px; height:64px; border:1px solid var(--border);
   display:flex; align-items:center; justify-content:center;
   font-family:var(--display); font-size:28px; font-weight:700; color:var(--border); flex-shrink:0;
+  transition:border-color .25s, color .25s;
 }
+.step:hover .step-badge { border-color:var(--red); color:var(--red-bright); }
 .step h3 {
   font-family:var(--display); font-size:24px; font-weight:600;
   letter-spacing:0.05em; text-transform:uppercase; color:var(--white); margin-bottom:.5rem;
 }
 .step p { font-size:14px; color:var(--muted); line-height:1.85; }
 .step p strong { color:var(--pale); font-weight:400; }
+.step-substeps { margin-top:.9rem; padding-left:1.1rem; border-left:1px solid var(--border); }
+.step-substeps .sub {
+  font-family:var(--mono); font-size:10px; letter-spacing:0.1em;
+  text-transform:uppercase; color:var(--muted); margin-bottom:.5rem;
+  line-height:1.7; position:relative;
+}
+.step-substeps .sub::before {
+  content:'\203A'; color:var(--border); margin-right:.5rem;
+}
+.step-substeps .sub strong { color:var(--light); font-weight:400; text-transform:none; letter-spacing:0; font-size:12px; font-family:var(--body); }
+.btn-inline {
+  display:inline-flex; align-items:center; gap:.5rem;
+  font-family:var(--mono); font-size:9.5px; letter-spacing:0.18em;
+  text-transform:uppercase; color:var(--pale);
+  border:1px solid var(--border); background:var(--deep);
+  padding:6px 14px; margin-top:.65rem; cursor:pointer;
+  text-decoration:none; transition:all .2s;
+}
+.btn-inline:hover { border-color:var(--white); color:var(--white); background:var(--dark); }
+.btn-inline .arr { color:var(--muted); transition:color .2s; }
+.btn-inline:hover .arr { color:var(--white); }
+.ch-code {
+  font-family:var(--mono); background:var(--dark); border:1px solid var(--border);
+  padding:1px 7px; color:var(--pale); font-size:12px; letter-spacing:0.02em;
+}
 code {
   font-family:var(--mono); font-size:12px;
   background:var(--dark); border:1px solid var(--border); padding:2px 8px; color:var(--pale);
@@ -454,9 +496,14 @@ code {
 }
 .staff-card::before {
   content:''; position:absolute; top:0; left:0; width:3px; height:100%;
-  background:var(--border);
+  background:var(--border); transition:background .25s;
 }
 .staff-card:hover { border-color:var(--muted); transform:translateY(-3px); }
+.staff-card:hover::before { background:var(--light); }
+.staff-card.r-leadership::before { background:var(--red); }
+.staff-card.r-leadership:hover::before { background:var(--red-bright); }
+.staff-card.r-lore::before { background:var(--amber); }
+.staff-card.r-lore:hover::before { background:var(--amber-bright); }
 .staff-init {
   width:48px; height:48px; border:1px solid var(--border);
   display:flex; align-items:center; justify-content:center;
@@ -922,6 +969,7 @@ footer {
     <li><button onclick="showPage('join')">How to Join</button></li>
     <li><button onclick="showPage('staff')">Staff</button></li>
     <li><button class="nav-discord" onclick="showPage('discord')">Discord</button></li>
+    <li><button class="nav-stafflogin" onclick="location.href='staff.html'">Staff Login</button></li>
   </ul>
 </nav>
 
@@ -1215,7 +1263,6 @@ footer {
 <section id="page-about" class="page">
   <div class="ph">
     <div class="ph-bgword">ABOUT</div>
-    <div class="ph-tag">General Info &mdash; No Clearance Required</div>
     <h1>About<br>Threefold</h1>
     <p class="ph-desc">Here's the plain-English version of what we are, what we do, and whether this place might be for you.</p>
   </div>
@@ -1223,25 +1270,27 @@ footer {
     <div class="stag">The Short Version</div>
     <div class="two-col">
       <div class="col">
-        <h2>What Is This?</h2>
-        <p>Threefold is a text-based SCP roleplay server. You write your character's actions and dialogue in Discord channels, collaborating with other players to build scenes and storylines. Think of it like collaborative fiction with a bit of structure holding it together.</p>
-        <p>We're semi-serious &mdash; we love good lore and proper RP, but we're also a bunch of people who want to actually have fun. There's no entry exam. If you can write a sentence and get along with people, you'll fit in.</p>
+        <h2>What <em>Is</em> This?</h2>
+        <p>Threefold is a text-to-play SCP roleplay server. You write your character's actions and dialogue in Discord channels, collaborating with other players to build scenes and storylines. Think of it like collaborative fiction with a bit of structure holding it together.</p>
+        <p>We're semi-serious. We love good lore and proper RP, but we're also a bunch of people who want to actually have fun. There's no entry exam. If you can write a sentence and get along with people, you'll fit in.</p>
       </div>
       <div class="col">
-        <h2>The Setting</h2>
-        <p>We build on the SCP Foundation universe &mdash; the wiki lore, the anomalies, the factions &mdash; but with our own layer on top. The name "Threefold" comes from a specific in-server event that cracked things open a bit. Three power structures now operate in uneasy balance.</p>
-        <p>Every anomaly is a thread. Pull one and something unravels. Whether that's good depends entirely on who's pulling.</p>
+        <h2>The <em>Setting</em></h2>
+        <p>We build on the SCP Foundation universe: the wiki, the anomalies, the factions. We don't follow any one specific canon. The wiki has hundreds of contradicting takes on the same stuff, and we try to stay inclusive to all of it rather than picking sides.</p>
+        <p>Mostly, though, Threefold is trying to be its <em>own</em> thing. We borrow the aesthetic and the broad strokes, then build from there. If a piece of wiki lore fits, great. If it doesn't, we don't force it.</p>
       </div>
     </div>
     <div class="stag">Is This For You?</div>
     <div class="two-col">
       <div class="col">
         <h2>You'll Like It If...</h2>
-        <p>You enjoy collaborative writing and want your choices to actually matter. You're into the SCP aesthetic but also want to hang out with people who get it.</p>
+        <p>You enjoy collaborative writing and want your choices to actually matter. Threefold is built around <strong>player-led lore</strong>. What your character does can shape the world, shift faction tensions, and change what future players walk into. Make a big enough impact and you might end up referenced on the server's own lore page.</p>
+        <p>If you're the kind of person who likes long threads, character arcs that go somewhere, and a setting that remembers what you did last week, you're in the right place.</p>
       </div>
       <div class="col">
         <h2>Probably Not If...</h2>
-        <p>You want a game rather than a story, or you're looking to "win" RP. We're not the right fit for everyone &mdash; and that's genuinely fine.</p>
+        <p>You want a game rather than a story, or you're here to constantly win with no setbacks. Combat-RP slop, power-creeping, and "my character is untouchable" energy don't land well here. Defeats, complications, and losses are where the good writing actually happens.</p>
+        <p>We're not the right fit for everyone, and that's genuinely fine.</p>
       </div>
     </div>
   </div>
@@ -1252,21 +1301,67 @@ footer {
 <section id="page-join" class="page">
   <div class="ph">
     <div class="ph-bgword">JOIN</div>
-    <div class="ph-tag">New Members &mdash; Five Steps</div>
-    <h1>How to<br>Join</h1>
+    <h1>How to<br>Take Part</h1>
     <p class="ph-desc">It's not complicated. The only real prerequisite is that you actually want to be here.</p>
   </div>
   <div class="wrap">
-    <div class="step"><div class="step-badge">01</div><div><h3>Join the Discord</h3><p>Hit the Discord button and join. Read <code>#welcome</code> and <code>#rules</code> in full before doing anything else. Takes about three minutes.</p></div></div>
-    <div class="step"><div class="step-badge">02</div><div><h3>Read the lore docs</h3><p>The <code>#lore-library</code> has faction overviews, active anomalies, site maps, and the backstory. Worth an hour of your time before writing a character.</p></div></div>
-    <div class="step"><div class="step-badge">03</div><div><h3>Submit a character</h3><p>The template is in <code>#character-submissions</code>. Name, background, faction preference, rough personality. <strong>A paragraph or two is plenty.</strong></p></div></div>
-    <div class="step"><div class="step-badge">04</div><div><h3>Staff review</h3><p>Someone will look at your sheet within 48 hours. They might suggest small tweaks. Once approved, you get your faction role and full channel access.</p></div></div>
-    <div class="step"><div class="step-badge">05</div><div><h3>Jump in</h3><p>Find an open scene in your faction's IC channel, or introduce yourself in <code>#arrivals</code>. Stuck? Ask in <code>#ooc-general</code> &mdash; someone'll point you the right way.</p></div></div>
+
+    <div class="step">
+      <div class="step-badge">01</div>
+      <div>
+        <h3>Read the Server Lore</h3>
+        <p>Before anything else, get a feel for the setting. Our lore page has the factions, timeline, and the major events that shaped the current state of the world.</p>
+        <a href="lore.html" class="btn-inline">Open Lore Page <span class="arr">&rarr;</span></a>
+        <div class="step-substeps">
+          <div class="sub"><strong>Optional,</strong> head to the World Map and scroll the Timeline to see what's active right now.</div>
+          <a href="worldmap.html" class="btn-inline">World Map <span class="arr">&rarr;</span></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-badge">02</div>
+      <div>
+        <h3>Join the Discord</h3>
+        <p>Everything happens on Discord. Hop in, say hi in the welcome channel, and get your bearings.</p>
+        <a href="https://discord.gg/6RSqWgk2Gn" target="_blank" rel="noopener" class="btn-inline">Join Discord <span class="arr">&rarr;</span></a>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-badge">03</div>
+      <div>
+        <h3>Check out <span class="ch-code">&#128213;&#65049;𝐑ules</span></h3>
+        <p>Quick read. Covers what's expected from everyone in terms of conduct, RP etiquette, and the broad rules that keep the place functional. Don't skip it.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-badge">04</div>
+      <div>
+        <h3>Go to <span class="ch-code">&#8988;&#128187;&#8989;&#65049;𝐑esources</span></h3>
+        <p>Character templates are situated here. Pick the one that matches what you want to play (Foundation personnel, SCP entry, or Unaffiliated) and fill it in. Then submit it on the site.</p>
+        <a href="submission.html" class="btn-inline">Submit a Character <span class="arr">&rarr;</span></a>
+        <div class="step-substeps">
+          <div class="sub"><strong>Once submitted,</strong> a forum thread will be created for your character automatically.</div>
+          <div class="sub"><strong>Once reviewed,</strong> the staff response (approval, feedback, or requested changes) gets posted directly in that forum.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-badge">05</div>
+      <div>
+        <h3>Enjoy the Server</h3>
+        <p>That's everything. From here on out, it's about having a good time and making the world yours. Enjoy yourself.</p>
+      </div>
+    </div>
+
     <div style="text-align:center;margin-top:3rem;">
-      <button class="btn btn-fill" onclick="showPage('discord')">Head to Discord &rarr;</button>
+      <a href="https://discord.gg/6RSqWgk2Gn" target="_blank" rel="noopener" class="btn btn-fill" style="text-decoration:none;display:inline-block;">Head to Discord &rarr;</a>
     </div>
   </div>
-  <footer><span>THREEFOLD</span><span>Join &mdash; 48h Turnaround</span></footer>
+  <footer><span>THREEFOLD</span><span>Join, 48h Turnaround</span></footer>
 </section>
 
 <!-- ======== APPLICATIONS ======== -->
@@ -1305,22 +1400,27 @@ footer {
     <div class="ph-bgword">STAFF</div>
     <div class="ph-tag">The People Running Things</div>
     <h1>The<br>Staff Team</h1>
-    <p class="ph-desc">The people keeping this from falling apart. Swap placeholders with real names before launch.</p>
+    <p class="ph-desc">The people keeping this place functional. Moderation, lore, appeals, and anything that needs a decision. It goes through these names.</p>
   </div>
   <div class="wrap">
-    <div class="callout" style="margin-bottom:2.5rem;">
-      <span class="callout-ico">&mdash;</span>
-      <p>To update these: open <code>index.html</code> in VS Code, search <code>staff-card</code>, and swap in real names, initials, roles, and bios.</p>
+    <div class="stag">Leadership</div>
+    <div class="staff-grid" style="margin-bottom:2rem;">
+      <div class="staff-card r-leadership"><div class="staff-init">OW</div><div class="staff-name">Your Name</div><div class="staff-role">Owner, Founder</div><div class="staff-bio">Runs the server. Final say on big-picture direction and anything that needs the top-level sign-off.</div></div>
+      <div class="staff-card r-leadership"><div class="staff-init">HL</div><div class="staff-name">Head of Lore</div><div class="staff-role">Head of Lore Team</div><div class="staff-bio">Keeps the world consistent, approves major lore entries, and runs big server-wide events. Holds final authority on all canon and lore decisions.</div></div>
+      <div class="staff-card r-leadership"><div class="staff-init">AD</div><div class="staff-name">Admin Name</div><div class="staff-role">Head Admin</div><div class="staff-bio">Handles appeals, server administration, and senior-level community decisions outside of lore.</div></div>
     </div>
+
+    <div class="stag">Lore Team</div>
+    <div class="staff-grid" style="margin-bottom:2rem;">
+      <div class="staff-card r-lore"><div class="staff-init">LT</div><div class="staff-name">Lore Member</div><div class="staff-role">Lore Team</div><div class="staff-bio">Contributes to the setting, reviews and approves character submissions, writes events and anomalies.</div></div>
+    </div>
+
+    <div class="stag">Moderation</div>
     <div class="staff-grid">
-      <div class="staff-card"><div class="staff-init">OW</div><div class="staff-name">Your Name</div><div class="staff-role">Owner &mdash; Founder</div><div class="staff-bio">Replace with a short bio. A sentence or two is plenty.</div></div>
-      <div class="staff-card"><div class="staff-init">AD</div><div class="staff-name">Admin Name</div><div class="staff-role">Head Admin</div><div class="staff-bio">Handles appeals, big canon decisions, and anything needing a senior sign-off.</div></div>
-      <div class="staff-card"><div class="staff-init">HL</div><div class="staff-name">Head of Lore</div><div class="staff-role">Head of Lore Team</div><div class="staff-bio">Keeps the world consistent, approves new SCP entries, runs major events.</div></div>
-      <div class="staff-card"><div class="staff-init">LT</div><div class="staff-name">Lore Member</div><div class="staff-role">Lore Team</div><div class="staff-bio">Contributes to canon, reviews lore submissions, writes events and anomalies.</div></div>
-      <div class="staff-card"><div class="staff-init">MD</div><div class="staff-name">Moderator</div><div class="staff-role">Moderation</div><div class="staff-bio">Day-to-day moderation, character approvals, general community support.</div></div>
+      <div class="staff-card"><div class="staff-init">MD</div><div class="staff-name">Moderator</div><div class="staff-role">Moderation</div><div class="staff-bio">Day-to-day moderation, rule enforcement, and general community support.</div></div>
     </div>
   </div>
-  <footer><span>THREEFOLD</span><span>Staff &mdash; Update Before Launch</span></footer>
+  <footer><span>THREEFOLD</span><span>Staff</span></footer>
 </section>
 
 <!-- ======== DISCORD ======== -->
@@ -1329,12 +1429,12 @@ footer {
     <div class="discord-content">
       <div class="discord-icon">&#9997;</div>
       <h2>Come Join Us</h2>
-      <p>Everything happens on Discord. Swap the button below with your invite link when it's ready.</p>
-      <button class="btn btn-fill" style="opacity:.4;cursor:not-allowed;">Discord Link Coming Soon</button>
-      <div class="discord-pending">Add your Discord invite link here &mdash; search "discord-pending" in VS Code</div>
+      <p>Everything happens on Discord &mdash; scenes, scheduling, announcements, character chatter, the lot. Click below and you're in.</p>
+      <a href="https://discord.gg/6RSqWgk2Gn" target="_blank" rel="noopener" class="btn btn-fill" style="text-decoration:none;display:inline-block;">Join the Discord &rarr;</a>
+      <div class="discord-pending" style="color:var(--muted);margin-top:1.5rem;font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;">discord.gg/6RSqWgk2Gn</div>
     </div>
   </div>
-  <footer><span>THREEFOLD</span><span>Discord &mdash; Link Pending</span></footer>
+  <footer><span>THREEFOLD</span><span>Discord</span></footer>
 </section>
 
 <script>

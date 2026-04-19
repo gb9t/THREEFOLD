@@ -277,6 +277,52 @@ nav{
 .field textarea{resize:vertical;min-height:80px;line-height:1.7;}
 .field select option{background:var(--dark);}
 .field-hint{font-family:var(--mono);font-size:9px;letter-spacing:0.05em;color:var(--muted);margin-top:.2rem;}
+
+/* === LOGO-BUTTON OPTION GRID === */
+.opt-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+  gap:.5rem;margin-top:.15rem;
+}
+.opt-grid.scp-class{grid-template-columns:repeat(4,1fr);}
+.opt-grid.scp-status{grid-template-columns:repeat(3,1fr);}
+.opt-btn{
+  position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+  gap:.5rem;padding:.9rem .6rem .75rem;
+  background:var(--deep);border:1px solid var(--border);color:var(--pale);
+  cursor:pointer;transition:border-color .2s,background .2s,transform .15s;
+  font-family:var(--mono);font-size:9px;letter-spacing:0.14em;text-transform:uppercase;
+  text-align:center;line-height:1.4;min-height:96px;
+}
+.opt-btn:hover{border-color:var(--border-hi);background:var(--dark);}
+.opt-btn img{
+  width:40px;height:40px;object-fit:contain;
+  mix-blend-mode:screen;opacity:.85;transition:opacity .2s,transform .2s;flex-shrink:0;
+}
+.opt-btn:hover img{opacity:1;transform:scale(1.04);}
+.opt-btn .opt-label{color:var(--light);}
+.opt-btn .opt-sub{font-size:8px;letter-spacing:0.1em;color:var(--muted);text-transform:none;font-family:var(--body);}
+.opt-btn.selected{
+  border-color:var(--accent,var(--pale));background:var(--dark);
+  box-shadow:inset 0 0 0 1px var(--accent,var(--pale));
+}
+.opt-btn.selected img{opacity:1;}
+.opt-btn.selected .opt-label{color:var(--white);}
+.opt-btn.selected::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--accent,var(--pale));
+}
+/* Larger logos on SCP class buttons since they're a featured choice */
+.opt-grid.scp-class .opt-btn{min-height:110px;padding-top:1.1rem;}
+.opt-grid.scp-class .opt-btn img{width:48px;height:48px;}
+
+@media(max-width:600px){
+  .opt-grid{grid-template-columns:repeat(2,1fr);}
+  .opt-grid.scp-class{grid-template-columns:repeat(2,1fr);}
+  .opt-grid.scp-status{grid-template-columns:repeat(3,1fr);}
+  .opt-btn{min-height:84px;padding:.7rem .45rem .55rem;}
+  .opt-btn img{width:32px;height:32px;}
+  .opt-grid.scp-class .opt-btn img{width:40px;height:40px;}
+}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
 .three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;}
 
@@ -1155,26 +1201,22 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
       </div>
       <!-- Foundation-only: department + optional sub-unit -->
       <div class="field" id="gd-dept-field" style="display:none;"><label>Department <span class="req">*</span></label>
-        <select id="gd-dept" onchange="onDeptChange('gd')">
-          <option value="">Select department...</option>
-        </select>
+        <div class="opt-grid" id="gd-dept-grid"></div>
+        <input type="hidden" id="gd-dept">
       </div>
       <div class="field" id="gd-sub-field" style="display:none;"><label id="gd-sub-label">Sub-Unit <span class="req">*</span></label>
-        <select id="gd-sub">
-          <option value="">Select...</option>
-        </select>
+        <div class="opt-grid" id="gd-sub-grid"></div>
+        <input type="hidden" id="gd-sub">
         <span class="field-hint" id="gd-sub-hint">Choose the specific unit your character belongs to.</span>
       </div>
       <!-- SCP-only: object class + status -->
       <div class="field" id="gd-class-field" style="display:none;"><label>Object Class <span class="req">*</span></label>
-        <select id="gd-class">
-          <option value="">Select class...</option>
-        </select>
+        <div class="opt-grid scp-class" id="gd-class-grid"></div>
+        <input type="hidden" id="gd-class">
       </div>
       <div class="field" id="gd-status-field" style="display:none;"><label>Containment Status <span class="req">*</span></label>
-        <select id="gd-status">
-          <option value="">Select status...</option>
-        </select>
+        <div class="opt-grid scp-status" id="gd-status-grid"></div>
+        <input type="hidden" id="gd-status">
       </div>
     </div>
     <div class="form-section">
@@ -1221,25 +1263,21 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
         <span class="field-hint">For SCP entries, use the item number (e.g. SCP-4821).</span>
       </div>
       <div class="field" id="wk-dept-field" style="display:none;"><label>Department <span class="req">*</span></label>
-        <select id="wk-dept" onchange="onDeptChange('wk')">
-          <option value="">Select department...</option>
-        </select>
+        <div class="opt-grid" id="wk-dept-grid"></div>
+        <input type="hidden" id="wk-dept">
       </div>
       <div class="field" id="wk-sub-field" style="display:none;"><label id="wk-sub-label">Sub-Unit <span class="req">*</span></label>
-        <select id="wk-sub">
-          <option value="">Select...</option>
-        </select>
+        <div class="opt-grid" id="wk-sub-grid"></div>
+        <input type="hidden" id="wk-sub">
         <span class="field-hint" id="wk-sub-hint">Choose the specific unit your character belongs to.</span>
       </div>
       <div class="field" id="wk-class-field" style="display:none;"><label>Object Class <span class="req">*</span></label>
-        <select id="wk-class">
-          <option value="">Select class...</option>
-        </select>
+        <div class="opt-grid scp-class" id="wk-class-grid"></div>
+        <input type="hidden" id="wk-class">
       </div>
       <div class="field" id="wk-status-field" style="display:none;"><label>Containment Status <span class="req">*</span></label>
-        <select id="wk-status">
-          <option value="">Select status...</option>
-        </select>
+        <div class="opt-grid scp-status" id="wk-status-grid"></div>
+        <input type="hidden" id="wk-status">
       </div>
     </div>
     <div class="form-section">
@@ -1367,16 +1405,16 @@ const DEPT_OPTIONS = [
 ];
 
 const SCP_CLASSES = [
-  { id:'safe',     name:'Safe' },
-  { id:'euclid',   name:'Euclid' },
-  { id:'keter',    name:'Keter' },
-  { id:'esoteric', name:'Esoteric' },
+  { id:'safe',     name:'Safe',     icon:'img/Safe.png',     accent:'#5ada7a' },
+  { id:'euclid',   name:'Euclid',   icon:'img/Euclid.png',   accent:'#eadf7a' },
+  { id:'keter',    name:'Keter',    icon:'img/Keter.png',    accent:'#ea5a4a' },
+  { id:'esoteric', name:'Esoteric', icon:'img/Esoteric.png', accent:'#da7ada' },
 ];
 
 const SCP_STATUSES = [
-  { id:'contained',   name:'Contained',   desc:'Currently held under Foundation containment.' },
-  { id:'uncontained', name:'Uncontained', desc:'At large. Active Foundation pursuit / no secure containment.' },
-  { id:'goi_item',    name:'GOI Item',    desc:'Anomaly held, used, or associated with another Group of Interest.' },
+  { id:'contained',   name:'Contained',   icon:'img/Contained.png',   accent:'#efefef', desc:'Currently held under Foundation containment.' },
+  { id:'uncontained', name:'Uncontained', icon:'img/Uncontained.png', accent:'#efefef', desc:'At large. Active Foundation pursuit / no secure containment.' },
+  { id:'goi_item',    name:'GOI Item',    icon:'img/GOIItem.png',     accent:'#7ab4ea', desc:'Anomaly held, used, or associated with another Group of Interest.' },
 ];
 
 /* Helpers to look up by id */
@@ -1386,25 +1424,56 @@ function getSubById(deptId, subId) {
   return d ? d.subOptions.find(s => s.id === subId) : null;
 }
 
-/* Populate all the conditional selects on page load */
+/* Build a logo-button grid for the option grid elements. The helper
+   writes the hidden input's value when a button is clicked and toggles the
+   visual "selected" state. */
+function buildOptGrid(gridEl, hiddenEl, items, onSelect) {
+  if (!gridEl || !hiddenEl) return;
+  gridEl.innerHTML = items.map(it => {
+    const accent = it.accent ? ` style="--accent:${it.accent};"` : '';
+    const icon = it.icon ? `<img src="${it.icon}" alt="${it.name}" onerror="this.style.display='none'">` : '';
+    return `<button type="button" class="opt-btn" data-id="${it.id}"${accent}>
+      ${icon}
+      <span class="opt-label">${it.name}</span>
+    </button>`;
+  }).join('');
+  gridEl.querySelectorAll('.opt-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-id');
+      hiddenEl.value = id;
+      gridEl.querySelectorAll('.opt-btn').forEach(b => b.classList.toggle('selected', b === btn));
+      if (typeof onSelect === 'function') onSelect(id);
+    });
+  });
+}
+
+/* Populate all the conditional option grids on page load */
 function populateLinkFormSelects() {
   ['gd','wk'].forEach(prefix => {
-    const deptEl = document.getElementById(prefix + '-dept');
-    if (deptEl) {
-      deptEl.innerHTML = '<option value="">Select department...</option>' +
-        DEPT_OPTIONS.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
+    const deptGrid   = document.getElementById(prefix + '-dept-grid');
+    const deptHidden = document.getElementById(prefix + '-dept');
+    if (deptGrid && deptHidden) {
+      // Departments get a subtle default accent per dept — reuse the pale for now
+      const deptItems = DEPT_OPTIONS.map(d => ({ id:d.id, name:d.name, icon:d.icon }));
+      buildOptGrid(deptGrid, deptHidden, deptItems, () => onDeptChange(prefix));
     }
-    const classEl = document.getElementById(prefix + '-class');
-    if (classEl) {
-      classEl.innerHTML = '<option value="">Select class...</option>' +
-        SCP_CLASSES.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-    }
-    const statusEl = document.getElementById(prefix + '-status');
-    if (statusEl) {
-      statusEl.innerHTML = '<option value="">Select status...</option>' +
-        SCP_STATUSES.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
-    }
+    const classGrid   = document.getElementById(prefix + '-class-grid');
+    const classHidden = document.getElementById(prefix + '-class');
+    if (classGrid && classHidden) buildOptGrid(classGrid, classHidden, SCP_CLASSES);
+
+    const statusGrid   = document.getElementById(prefix + '-status-grid');
+    const statusHidden = document.getElementById(prefix + '-status');
+    if (statusGrid && statusHidden) buildOptGrid(statusGrid, statusHidden, SCP_STATUSES);
   });
+}
+
+/* Reset all button-grid selections for a given prefix (used when Character
+   Type changes so stale state never leaks through). */
+function clearOptGrid(prefix, key) {
+  const grid   = document.getElementById(prefix + '-' + key + '-grid');
+  const hidden = document.getElementById(prefix + '-' + key);
+  if (grid)   grid.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('selected'));
+  if (hidden) hidden.value = '';
 }
 
 /* Toggle conditional field visibility based on Character Type */
@@ -1420,36 +1489,36 @@ function onTypeChange(prefix) {
   show(prefix + '-status-field', type === 'scp');
   // reset values so stale data from a previous type doesn't leak through
   if (type !== 'foundation') {
-    const d = document.getElementById(prefix + '-dept'); if (d) d.value = '';
-    const s = document.getElementById(prefix + '-sub');  if (s) s.value = '';
+    clearOptGrid(prefix, 'dept');
+    clearOptGrid(prefix, 'sub');
   }
   if (type !== 'scp') {
-    const c = document.getElementById(prefix + '-class');  if (c) c.value = '';
-    const st= document.getElementById(prefix + '-status'); if (st) st.value = '';
+    clearOptGrid(prefix, 'class');
+    clearOptGrid(prefix, 'status');
   }
 }
 
-/* When a department is picked, decide whether to show the sub-unit dropdown */
+/* When a department is picked, decide whether to show the sub-unit grid */
 function onDeptChange(prefix) {
-  const deptId = document.getElementById(prefix + '-dept').value;
+  const deptId   = document.getElementById(prefix + '-dept').value;
   const subField = document.getElementById(prefix + '-sub-field');
   const subLabel = document.getElementById(prefix + '-sub-label');
   const subHint  = document.getElementById(prefix + '-sub-hint');
-  const subSel   = document.getElementById(prefix + '-sub');
+  const subGrid  = document.getElementById(prefix + '-sub-grid');
+  const subHidden= document.getElementById(prefix + '-sub');
   if (!deptId) { if (subField) subField.style.display = 'none'; return; }
   const dept = getDeptById(deptId);
   if (!dept || !dept.subOptions || !dept.subOptions.length) {
     if (subField) subField.style.display = 'none';
-    if (subSel)   subSel.value = '';
+    if (subHidden) subHidden.value = '';
     return;
   }
   if (subField) subField.style.display = '';
   if (subLabel) subLabel.innerHTML = `${dept.subLabel || 'Sub-Unit'} <span class="req">*</span>`;
   if (subHint)  subHint.textContent = `Choose the specific ${dept.subLabel ? dept.subLabel.toLowerCase() : 'unit'} your character belongs to.`;
-  if (subSel) {
-    subSel.innerHTML = `<option value="">Select ${dept.subLabel ? dept.subLabel.toLowerCase() : 'unit'}...</option>` +
-      dept.subOptions.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
-    subSel.value = '';
+  if (subGrid && subHidden) {
+    buildOptGrid(subGrid, subHidden, dept.subOptions);
+    subHidden.value = '';
   }
 }
 

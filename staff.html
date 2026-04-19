@@ -12,374 +12,198 @@
 <script src="supabase.js"></script>
 <style>
 :root {
-  --black:   #0a0a0a;
-  --deep:    #111111;
-  --dark:    #1a1a1a;
-  --mid:     #2e2e2e;
-  --border:  #3a3a3a;
-  --muted:   #666666;
-  --light:   #999999;
-  --pale:    #cccccc;
-  --white:   #f0f0f0;
-  --danger:  #cc2200;
-  --green:   #3a7a4a;
-  --green-l: #4a9a5a;
-  --amber:   #8a6a1a;
-  --mono:    'Share Tech Mono', monospace;
-  --display: 'Barlow Condensed', sans-serif;
-  --body:    'Barlow', sans-serif;
+  --black:#0a0a0a; --deep:#111; --dark:#1a1a1a; --mid:#2e2e2e;
+  --border:#3a3a3a; --muted:#666; --light:#999; --pale:#ccc; --white:#f0f0f0;
+  --danger:#cc2200; --green:#3a7a4a; --green-l:#4a9a5a; --amber:#8a6a1a;
+  --ok:#4a9a5a; --warn:#c8981a; --err:#cc2200;
+  --mono:'Share Tech Mono',monospace;
+  --display:'Barlow Condensed',sans-serif;
+  --body:'Barlow',sans-serif;
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--pale);font-family:var(--body);font-weight:300;font-size:15px;line-height:1.7;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.07) 2px,rgba(0,0,0,0.07) 4px);pointer-events:none;z-index:9999;}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,0.5) 100%);pointer-events:none;z-index:9998;}
 
-body {
-  background:var(--black); color:var(--pale);
-  font-family:var(--body); font-weight:300;
-  font-size:15px; line-height:1.7;
-  min-height:100vh; overflow-x:hidden;
-}
-body::before {
-  content:''; position:fixed; inset:0;
-  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.07) 2px,rgba(0,0,0,0.07) 4px);
-  pointer-events:none; z-index:9999;
-}
-body::after {
-  content:''; position:fixed; inset:0;
-  background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,0.5) 100%);
-  pointer-events:none; z-index:9998;
-}
+/* ========== LOGIN ========== */
+#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;}
+#login-screen::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;}
+.login-box{position:relative;z-index:2;width:380px;background:var(--deep);border:1px solid var(--border);padding:3rem;}
+.login-logo{font-family:var(--display);font-size:32px;font-weight:700;letter-spacing:0.2em;color:var(--white);text-transform:uppercase;display:block;margin-bottom:.25rem;}
+.login-sub{font-family:var(--mono);font-size:9px;letter-spacing:0.25em;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:2.5rem;}
+.field{display:flex;flex-direction:column;gap:.4rem;margin-bottom:1.25rem;}
+.field label{font-family:var(--mono);font-size:9.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--light);}
+.field input{background:var(--dark);border:1px solid var(--border);color:var(--pale);font-family:var(--body);font-size:14px;padding:10px 14px;transition:border-color .2s;outline:none;width:100%;}
+.field input:focus{border-color:var(--light);}
 
-/* ===== LOGIN SCREEN ===== */
-#login-screen {
-  min-height:100vh; display:flex; align-items:center; justify-content:center;
-  position:relative; overflow:hidden;
-}
-#login-screen::before {
-  content:'';position:absolute;inset:0;
-  background-image:
-    linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);
-  background-size:60px 60px; pointer-events:none;
-}
-.login-box {
-  position:relative; z-index:2;
-  width:380px; background:var(--deep); border:1px solid var(--border); padding:3rem;
-}
-.login-logo {
-  font-family:var(--display); font-size:32px; font-weight:700;
-  letter-spacing:0.2em; color:var(--white); text-transform:uppercase;
-  display:block; margin-bottom:.25rem;
-}
-.login-sub {
-  font-family:var(--mono); font-size:9px; letter-spacing:0.25em;
-  color:var(--muted); text-transform:uppercase; display:block; margin-bottom:2.5rem;
-}
-.field { display:flex; flex-direction:column; gap:.4rem; margin-bottom:1.25rem; }
-.field label {
-  font-family:var(--mono); font-size:9.5px; letter-spacing:0.2em;
-  text-transform:uppercase; color:var(--light);
-}
-.field input {
-  background:var(--dark); border:1px solid var(--border); color:var(--pale);
-  font-family:var(--body); font-size:14px; padding:10px 14px;
-  transition:border-color .2s; outline:none; width:100%;
-}
-.field input:focus { border-color:var(--light); }
-.btn {
-  font-family:var(--mono); font-size:10.5px; letter-spacing:0.2em;
-  text-transform:uppercase; padding:12px 24px; border:1px solid;
-  background:transparent; cursor:pointer; transition:all .2s; width:100%;
-}
-.btn-fill  { border-color:var(--white); color:var(--white); }
-.btn-fill:hover  { background:var(--white); color:var(--black); }
-.btn-ghost { border-color:var(--border); color:var(--light); }
-.btn-ghost:hover { border-color:var(--light); color:var(--pale); }
-.btn-danger { border-color:var(--danger); color:var(--danger); }
-.btn-danger:hover { background:var(--danger); color:var(--white); }
-.btn-sm { padding:6px 14px; font-size:9px; width:auto; }
-.btn-xs { padding:4px 10px; font-size:8.5px; width:auto; }
-.login-err {
-  font-family:var(--mono); font-size:10px; letter-spacing:0.1em;
-  color:var(--danger); margin-top:1rem; display:none;
-}
+/* ========== BUTTONS ========== */
+.btn{font-family:var(--mono);font-size:10.5px;letter-spacing:0.2em;text-transform:uppercase;padding:12px 24px;border:1px solid;background:transparent;cursor:pointer;transition:all .2s;width:100%;}
+.btn-fill{border-color:var(--white);color:var(--white);}
+.btn-fill:hover{background:var(--white);color:var(--black);}
+.btn-ghost{border-color:var(--border);color:var(--light);}
+.btn-ghost:hover{border-color:var(--light);color:var(--pale);}
+.btn-danger{border-color:var(--danger);color:var(--danger);}
+.btn-danger:hover{background:var(--danger);color:var(--white);}
+.btn-sm{padding:6px 14px;font-size:9px;width:auto;}
+.btn-xs{padding:4px 10px;font-size:8.5px;width:auto;}
+.login-err{font-family:var(--mono);font-size:10px;letter-spacing:0.1em;color:var(--danger);margin-top:1rem;display:none;}
 
-/* ===== APP SHELL ===== */
-#app-shell { display:none; min-height:100vh; }
+/* ========== APP SHELL ========== */
+#app-shell{display:none;min-height:100vh;}
+.topbar{position:fixed;top:0;left:220px;right:0;height:52px;z-index:100;background:rgba(10,10,10,0.97);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;backdrop-filter:blur(6px);}
+.topbar-title{font-family:var(--display);font-size:18px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:var(--pale);}
+.topbar-user{display:flex;align-items:center;gap:1rem;}
+.topbar-role{font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);border:1px solid var(--border);padding:3px 10px;}
+.topbar-name{font-family:var(--mono);font-size:10px;letter-spacing:0.15em;color:var(--light);}
+.btn-logout{font-family:var(--mono);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--muted);padding:5px 12px;cursor:pointer;transition:all .2s;}
+.btn-logout:hover{border-color:var(--danger);color:var(--danger);}
 
-/* ===== TOP BAR ===== */
-.topbar {
-  position:fixed; top:0; left:220px; right:0; height:52px; z-index:100;
-  background:rgba(10,10,10,0.97); border-bottom:1px solid var(--border);
-  display:flex; align-items:center; justify-content:space-between;
-  padding:0 2rem; backdrop-filter:blur(6px);
-}
-.topbar-title {
-  font-family:var(--display); font-size:18px; font-weight:600;
-  letter-spacing:0.15em; text-transform:uppercase; color:var(--pale);
-}
-.topbar-user {
-  display:flex; align-items:center; gap:1rem;
-}
-.topbar-role {
-  font-family:var(--mono); font-size:9px; letter-spacing:0.2em;
-  text-transform:uppercase; color:var(--muted); border:1px solid var(--border);
-  padding:3px 10px;
-}
-.topbar-name {
-  font-family:var(--mono); font-size:10px; letter-spacing:0.15em; color:var(--light);
-}
-.btn-logout {
-  font-family:var(--mono); font-size:9px; letter-spacing:0.15em;
-  text-transform:uppercase; background:none; border:1px solid var(--border);
-  color:var(--muted); padding:5px 12px; cursor:pointer; transition:all .2s;
-}
-.btn-logout:hover { border-color:var(--danger); color:var(--danger); }
+/* ========== SIDEBAR ========== */
+.sidebar{position:fixed;top:0;left:0;bottom:0;width:220px;background:var(--deep);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:200;overflow-y:auto;}
+.sidebar-brand{padding:1.5rem 1.5rem 1rem;border-bottom:1px solid var(--border);}
+.sidebar-brand-name{font-family:var(--display);font-size:20px;font-weight:700;letter-spacing:0.25em;color:var(--white);text-transform:uppercase;display:block;}
+.sidebar-brand-sub{font-family:var(--mono);font-size:8px;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;display:block;margin-top:2px;}
+.sidebar-section{font-family:var(--mono);font-size:8.5px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);padding:.75rem 1.5rem .4rem;}
+.sidebar-nav{list-style:none;}
+.sidebar-nav li button{display:block;width:100%;text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--light);background:none;border:none;padding:.65rem 1.5rem;cursor:pointer;transition:background .15s,color .15s;border-left:2px solid transparent;}
+.sidebar-nav li button:hover{background:var(--dark);color:var(--pale);}
+.sidebar-nav li button.active{color:var(--white);border-left-color:var(--white);background:var(--dark);}
+.sidebar-nav li button .nav-badge{display:inline-block;margin-left:.4rem;font-size:8.5px;background:var(--amber);color:#000;padding:1px 5px;border-radius:2px;vertical-align:middle;}
+.sidebar-footer{margin-top:auto;padding:1rem 1.5rem;border-top:1px solid var(--border);}
+.sidebar-footer a{font-family:var(--mono);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);text-decoration:none;display:block;padding:.4rem 0;transition:color .2s;}
+.sidebar-footer a:hover{color:var(--pale);}
 
-/* ===== SIDEBAR ===== */
-.sidebar {
-  position:fixed; top:0; left:0; bottom:0; width:220px;
-  background:var(--deep); border-right:1px solid var(--border);
-  display:flex; flex-direction:column; z-index:200; overflow-y:auto;
-}
-.sidebar-brand {
-  padding:1.5rem 1.5rem 1rem;
-  border-bottom:1px solid var(--border);
-}
-.sidebar-brand-name {
-  font-family:var(--display); font-size:20px; font-weight:700;
-  letter-spacing:0.25em; color:var(--white); text-transform:uppercase; display:block;
-}
-.sidebar-brand-sub {
-  font-family:var(--mono); font-size:8px; letter-spacing:0.2em;
-  color:var(--muted); text-transform:uppercase; display:block; margin-top:2px;
-}
-.sidebar-section {
-  font-family:var(--mono); font-size:8.5px; letter-spacing:0.25em;
-  text-transform:uppercase; color:var(--muted); padding:.75rem 1.5rem .4rem;
-}
-.sidebar-nav { list-style:none; }
-.sidebar-nav li button {
-  display:block; width:100%; text-align:left;
-  font-family:var(--mono); font-size:10px; letter-spacing:0.12em;
-  text-transform:uppercase; color:var(--light);
-  background:none; border:none; padding:.65rem 1.5rem;
-  cursor:pointer; transition:background .15s,color .15s;
-  border-left:2px solid transparent;
-}
-.sidebar-nav li button:hover { background:var(--dark); color:var(--pale); }
-.sidebar-nav li button.active { color:var(--white); border-left-color:var(--white); background:var(--dark); }
+/* ========== MAIN ========== */
+.main{margin-left:220px;padding-top:52px;min-height:100vh;}
+.panel{display:none;padding:2.5rem;}
+.panel.active{display:block;}
+.panel-header{margin-bottom:2rem;}
+.panel-header h1{font-family:var(--display);font-size:40px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--white);line-height:1;margin-bottom:.4rem;}
+.panel-header p{font-size:13px;color:var(--muted);}
 
-.sidebar-footer {
-  margin-top:auto; padding:1rem 1.5rem;
-  border-top:1px solid var(--border);
-}
-.sidebar-footer a {
-  font-family:var(--mono); font-size:9px; letter-spacing:0.15em;
-  text-transform:uppercase; color:var(--muted); text-decoration:none;
-  display:block; padding:.4rem 0; transition:color .2s;
-}
-.sidebar-footer a:hover { color:var(--pale); }
+/* ========== SYSTEM STATUS STRIP (new — never silently fails again) ========== */
+.sysstatus{border:1px solid var(--border);background:var(--deep);padding:.9rem 1.25rem;margin-bottom:2rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+.sysstatus-label{font-family:var(--mono);font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);}
+.syspill{display:inline-flex;align-items:center;gap:.4rem;font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;padding:3px 10px;border:1px solid;}
+.syspill .d{width:6px;height:6px;border-radius:50%;}
+.syspill.ok{border-color:var(--ok);color:var(--ok);}
+.syspill.ok .d{background:var(--ok);}
+.syspill.warn{border-color:var(--warn);color:var(--warn);}
+.syspill.warn .d{background:var(--warn);}
+.syspill.err{border-color:var(--err);color:var(--err);}
+.syspill.err .d{background:var(--err);}
+.syspill.pending{border-color:var(--muted);color:var(--muted);}
+.syspill.pending .d{background:var(--muted);}
+.sysstatus-detail{flex-basis:100%;font-family:var(--mono);font-size:10px;color:var(--err);margin-top:.5rem;display:none;}
+.sysstatus-detail.on{display:block;}
 
-/* ===== MAIN CONTENT ===== */
-.main { margin-left:220px; padding-top:52px; min-height:100vh; }
-.panel { display:none; padding:2.5rem; }
-.panel.active { display:block; }
+/* ========== STATS ========== */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2.5rem;}
+.stat-card{background:var(--deep);border:1px solid var(--border);padding:1.25rem 1.5rem;}
+.stat-label{font-family:var(--mono);font-size:8.5px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem;}
+.stat-num{font-family:var(--display);font-size:42px;font-weight:700;letter-spacing:0.04em;color:var(--white);line-height:1;}
 
-.panel-header { margin-bottom:2rem; }
-.panel-header h1 {
-  font-family:var(--display); font-size:40px; font-weight:700;
-  letter-spacing:0.06em; text-transform:uppercase; color:var(--white); line-height:1;
-  margin-bottom:.4rem;
-}
-.panel-header p { font-size:13px; color:var(--muted); }
+/* ========== SECTION DIVIDER ========== */
+.sdiv{font-family:var(--mono);font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;margin-top:2rem;}
+.sdiv::after{content:'';flex:1;height:1px;background:var(--border);}
 
-/* ===== STATS ROW ===== */
-.stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:2.5rem; }
-.stat-card {
-  background:var(--deep); border:1px solid var(--border); padding:1.25rem 1.5rem;
-}
-.stat-label { font-family:var(--mono); font-size:8.5px; letter-spacing:0.25em; text-transform:uppercase; color:var(--muted); margin-bottom:.4rem; }
-.stat-num { font-family:var(--display); font-size:42px; font-weight:700; letter-spacing:0.04em; color:var(--white); line-height:1; }
-.stat-sub { font-family:var(--mono); font-size:9px; letter-spacing:0.15em; color:var(--muted); margin-top:.2rem; }
+/* ========== FILTER BAR ========== */
+.filter-bar{display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;margin-bottom:1.5rem;}
+.filter-btn{font-family:var(--mono);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--muted);padding:5px 14px;cursor:pointer;transition:all .2s;}
+.filter-btn:hover{border-color:var(--light);color:var(--pale);}
+.filter-btn.active{border-color:var(--pale);color:var(--pale);}
 
-/* ===== SECTION DIVIDER ===== */
-.sdiv {
-  font-family:var(--mono); font-size:9px; letter-spacing:0.3em;
-  text-transform:uppercase; color:var(--muted);
-  display:flex; align-items:center; gap:1rem; margin-bottom:1.25rem; margin-top:2rem;
-}
-.sdiv::after { content:''; flex:1; height:1px; background:var(--border); }
+/* ========== TABLES ========== */
+.app-table{width:100%;border-collapse:collapse;}
+.app-table th{font-family:var(--mono);font-size:8.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);padding:.6rem 1rem;text-align:left;border-bottom:1px solid var(--border);}
+.app-table td{padding:.9rem 1rem;border-bottom:1px solid var(--dark);font-size:13px;color:var(--light);vertical-align:top;}
+.app-table tr:hover td{background:var(--deep);}
+.app-num{font-family:var(--mono);font-size:11px;color:var(--muted);}
+.app-type-tag{font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;padding:2px 8px;border:1px solid;}
+.tt-lore{border-color:#4477aa;color:#4477aa;}
+.tt-staff{border-color:#777;color:#777;}
+.tt-gm{border-color:#774477;color:#774477;}
 
-/* ===== FILTER BAR ===== */
-.filter-bar {
-  display:flex; gap:.75rem; align-items:center; flex-wrap:wrap; margin-bottom:1.5rem;
-}
-.filter-btn {
-  font-family:var(--mono); font-size:9px; letter-spacing:0.15em;
-  text-transform:uppercase; background:none; border:1px solid var(--border);
-  color:var(--muted); padding:5px 14px; cursor:pointer; transition:all .2s;
-}
-.filter-btn:hover { border-color:var(--light); color:var(--pale); }
-.filter-btn.active { border-color:var(--pale); color:var(--pale); }
-.filter-spacer { margin-left:auto; }
+.status-tag{font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;padding:2px 8px;border:1px solid;cursor:pointer;transition:all .2s;display:inline-block;}
+.st-pending{border-color:#666;color:#888;}
+.st-review{border-color:#8a6a1a;color:#c8981a;}
+.st-approved{border-color:#3a7a4a;color:#4a9a5a;}
+.st-denied{border-color:var(--danger);color:var(--danger);}
 
-/* ===== APPLICATION TABLE ===== */
-.app-table { width:100%; border-collapse:collapse; }
-.app-table th {
-  font-family:var(--mono); font-size:8.5px; letter-spacing:0.2em;
-  text-transform:uppercase; color:var(--muted);
-  padding:.6rem 1rem; text-align:left;
-  border-bottom:1px solid var(--border);
-}
-.app-table td {
-  padding:.9rem 1rem; border-bottom:1px solid var(--dark);
-  font-size:13px; color:var(--light); vertical-align:top;
-}
-.app-table tr:hover td { background:var(--deep); }
-.app-num { font-family:var(--mono); font-size:11px; color:var(--muted); }
-.app-type-tag {
-  font-family:var(--mono); font-size:8.5px; letter-spacing:0.15em;
-  text-transform:uppercase; padding:2px 8px; border:1px solid;
-}
-.tt-lore  { border-color:#4477aa; color:#4477aa; }
-.tt-staff { border-color:#777;    color:#777; }
-.tt-gm    { border-color:#774477; color:#774477; }
+.app-actions{display:flex;gap:.5rem;align-items:center;}
+.btn-view-app{font-family:var(--mono);font-size:8.5px;letter-spacing:0.1em;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--light);padding:4px 12px;cursor:pointer;transition:all .2s;}
+.btn-view-app:hover{border-color:var(--light);color:var(--pale);}
+.btn-del-app{font-family:var(--mono);font-size:8.5px;letter-spacing:0.1em;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--muted);padding:4px 12px;cursor:pointer;transition:all .2s;}
+.btn-del-app:hover{border-color:var(--danger);color:var(--danger);}
 
-.status-tag {
-  font-family:var(--mono); font-size:8.5px; letter-spacing:0.15em;
-  text-transform:uppercase; padding:2px 8px; border:1px solid; cursor:pointer;
-  transition:all .2s;
-}
-.st-pending  { border-color:#666; color:#888; }
-.st-review   { border-color:#8a6a1a; color:#c8981a; }
-.st-approved { border-color:#3a7a4a; color:#4a9a5a; }
-.st-denied   { border-color:var(--danger); color:var(--danger); }
+.empty-state{text-align:center;padding:4rem 2rem;font-family:var(--mono);font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--border);}
+.empty-state.err{color:var(--danger);border:1px dashed var(--danger);}
 
-.app-actions { display:flex; gap:.5rem; align-items:center; }
-.btn-view-app {
-  font-family:var(--mono); font-size:8.5px; letter-spacing:0.1em;
-  text-transform:uppercase; background:none; border:1px solid var(--border);
-  color:var(--light); padding:4px 12px; cursor:pointer; transition:all .2s;
-}
-.btn-view-app:hover { border-color:var(--light); color:var(--pale); }
-.btn-del-app {
-  font-family:var(--mono); font-size:8.5px; letter-spacing:0.1em;
-  text-transform:uppercase; background:none; border:1px solid var(--border);
-  color:var(--muted); padding:4px 12px; cursor:pointer; transition:all .2s;
-}
-.btn-del-app:hover { border-color:var(--danger); color:var(--danger); }
+/* ========== MODAL ========== */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:2000;display:none;align-items:flex-start;justify-content:center;padding:3rem 1rem;overflow-y:auto;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--deep);border:1px solid var(--border);width:100%;max-width:680px;padding:2.5rem;position:relative;flex-shrink:0;}
+.modal-close{position:absolute;top:1.25rem;right:1.25rem;font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--muted);padding:4px 12px;cursor:pointer;transition:all .2s;}
+.modal-close:hover{border-color:var(--light);color:var(--pale);}
+.modal-app-num{font-family:var(--mono);font-size:10px;letter-spacing:0.25em;color:var(--muted);text-transform:uppercase;margin-bottom:.5rem;}
+.modal-title{font-family:var(--display);font-size:32px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--white);margin-bottom:1.5rem;}
+.modal-meta{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border);}
+.modal-meta-label{font-family:var(--mono);font-size:8.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:.2rem;}
+.modal-meta-val{font-size:13px;color:var(--pale);}
+.modal-qa{margin-bottom:2rem;}
+.modal-q{font-family:var(--mono);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem;margin-top:1.25rem;}
+.modal-a{font-size:14px;color:var(--light);line-height:1.8;white-space:pre-wrap;}
+.modal-actions{display:flex;gap:.75rem;flex-wrap:wrap;padding-top:1.5rem;border-top:1px solid var(--border);}
+.modal-status-select{font-family:var(--mono);font-size:10px;letter-spacing:0.1em;background:var(--dark);border:1px solid var(--border);color:var(--pale);padding:8px 14px;cursor:pointer;outline:none;}
 
-.empty-state {
-  text-align:center; padding:4rem 2rem;
-  font-family:var(--mono); font-size:11px; letter-spacing:0.15em;
-  text-transform:uppercase; color:var(--border);
-}
+/* ========== POSITIONS ========== */
+.pos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.pos-card{background:var(--deep);border:1px solid var(--border);padding:1.5rem;}
+.pos-card-name{font-family:var(--display);font-size:20px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--pale);margin-bottom:.25rem;}
+.pos-card-count{font-family:var(--mono);font-size:9px;letter-spacing:0.15em;color:var(--muted);margin-bottom:1rem;}
+.toggle-wrap{display:flex;align-items:center;gap:.75rem;}
+.toggle{position:relative;width:44px;height:24px;cursor:pointer;background:var(--mid);border:1px solid var(--border);transition:background .2s;}
+.toggle.on{background:#2a5a3a;border-color:#3a7a4a;}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;background:var(--muted);transition:transform .2s,background .2s;}
+.toggle.on::after{transform:translateX(20px);background:#4a9a5a;}
+.toggle-label{font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);}
+.toggle.on + .toggle-label{color:#4a9a5a;}
 
-/* ===== APPLICATION DETAIL MODAL ===== */
-.modal-overlay {
-  position:fixed; inset:0; background:rgba(0,0,0,0.85);
-  z-index:2000; display:none; align-items:flex-start; justify-content:center;
-  padding:3rem 1rem; overflow-y:auto;
-}
-.modal-overlay.open { display:flex; }
-.modal {
-  background:var(--deep); border:1px solid var(--border);
-  width:100%; max-width:680px; padding:2.5rem;
-  position:relative; flex-shrink:0;
-}
-.modal-close {
-  position:absolute; top:1.25rem; right:1.25rem;
-  font-family:var(--mono); font-size:10px; letter-spacing:0.15em;
-  text-transform:uppercase; background:none; border:1px solid var(--border);
-  color:var(--muted); padding:4px 12px; cursor:pointer; transition:all .2s;
-}
-.modal-close:hover { border-color:var(--light); color:var(--pale); }
-.modal-app-num {
-  font-family:var(--mono); font-size:10px; letter-spacing:0.25em;
-  color:var(--muted); text-transform:uppercase; margin-bottom:.5rem;
-}
-.modal-title {
-  font-family:var(--display); font-size:32px; font-weight:700;
-  letter-spacing:0.06em; text-transform:uppercase; color:var(--white);
-  margin-bottom:1.5rem;
-}
-.modal-meta {
-  display:grid; grid-template-columns:1fr 1fr; gap:.75rem; margin-bottom:1.5rem;
-  padding-bottom:1.5rem; border-bottom:1px solid var(--border);
-}
-.modal-meta-label {
-  font-family:var(--mono); font-size:8.5px; letter-spacing:0.2em;
-  text-transform:uppercase; color:var(--muted); margin-bottom:.2rem;
-}
-.modal-meta-val { font-size:13px; color:var(--pale); }
-.modal-qa { margin-bottom:2rem; }
-.modal-q {
-  font-family:var(--mono); font-size:9px; letter-spacing:0.15em;
-  text-transform:uppercase; color:var(--muted); margin-bottom:.4rem; margin-top:1.25rem;
-}
-.modal-a { font-size:14px; color:var(--light); line-height:1.8; white-space:pre-wrap; }
-.modal-actions {
-  display:flex; gap:.75rem; flex-wrap:wrap; padding-top:1.5rem;
-  border-top:1px solid var(--border);
-}
-.modal-status-select {
-  font-family:var(--mono); font-size:10px; letter-spacing:0.1em;
-  background:var(--dark); border:1px solid var(--border); color:var(--pale);
-  padding:8px 14px; cursor:pointer; outline:none;
-}
+/* ========== STAFF ========== */
+.staff-table{width:100%;border-collapse:collapse;}
+.staff-table th{font-family:var(--mono);font-size:8.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);padding:.6rem 1rem;text-align:left;border-bottom:1px solid var(--border);}
+.staff-table td{padding:.9rem 1rem;border-bottom:1px solid var(--dark);font-size:13px;color:var(--light);}
+.staff-table tr:hover td{background:var(--deep);}
+.staff-table tr.you td{background:var(--deep);}
+.role-select{font-family:var(--mono);font-size:9.5px;letter-spacing:0.1em;background:var(--dark);border:1px solid var(--border);color:var(--pale);padding:5px 10px;cursor:pointer;outline:none;}
+.you-tag{font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--white);background:var(--mid);padding:2px 8px;}
 
-/* ===== POSITION TOGGLES ===== */
-.pos-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; }
-.pos-card {
-  background:var(--deep); border:1px solid var(--border); padding:1.5rem;
-}
-.pos-card-name {
-  font-family:var(--display); font-size:20px; font-weight:600;
-  letter-spacing:0.06em; text-transform:uppercase; color:var(--pale);
-  margin-bottom:.25rem;
-}
-.pos-card-count { font-family:var(--mono); font-size:9px; letter-spacing:0.15em; color:var(--muted); margin-bottom:1rem; }
-.toggle-wrap { display:flex; align-items:center; gap:.75rem; }
-.toggle {
-  position:relative; width:44px; height:24px; cursor:pointer;
-  background:var(--mid); border:1px solid var(--border);
-  transition:background .2s;
-}
-.toggle.on { background:#2a5a3a; border-color:#3a7a4a; }
-.toggle::after {
-  content:''; position:absolute; top:3px; left:3px;
-  width:16px; height:16px; background:var(--muted);
-  transition:transform .2s, background .2s;
-}
-.toggle.on::after { transform:translateX(20px); background:#4a9a5a; }
-.toggle-label { font-family:var(--mono); font-size:9px; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); }
-.toggle.on + .toggle-label { color:#4a9a5a; }
+/* ========== CALLOUT ========== */
+.callout{display:flex;gap:1rem;align-items:flex-start;border-left:2px solid var(--border);padding:1rem 1.5rem;background:var(--deep);margin-bottom:1.5rem;}
+.callout-ico{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap;margin-top:2px;}
+.callout p{font-size:13px;color:var(--muted);line-height:1.75;}
+.callout.err{border-left-color:var(--danger);}
+.callout.err p{color:var(--pale);}
 
-/* ===== STAFF MANAGEMENT ===== */
-.staff-table { width:100%; border-collapse:collapse; }
-.staff-table th {
-  font-family:var(--mono); font-size:8.5px; letter-spacing:0.2em;
-  text-transform:uppercase; color:var(--muted); padding:.6rem 1rem;
-  text-align:left; border-bottom:1px solid var(--border);
-}
-.staff-table td { padding:.9rem 1rem; border-bottom:1px solid var(--dark); font-size:13px; color:var(--light); }
-.staff-table tr:hover td { background:var(--deep); }
-.role-select {
-  font-family:var(--mono); font-size:9.5px; letter-spacing:0.1em;
-  background:var(--dark); border:1px solid var(--border); color:var(--pale);
-  padding:5px 10px; cursor:pointer; outline:none;
-}
+/* ========== WORLD STATE forms ========== */
+.ws-card{border:1px solid var(--border);background:var(--deep);padding:1.5rem;margin-bottom:2rem;}
+.ws-card-title{font-family:var(--mono);font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-bottom:1.25rem;display:flex;align-items:center;gap:.75rem;}
+.ws-card-title::after{content:'';flex:1;height:1px;background:var(--border);}
+.ws-label{font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.35rem;}
+.ws-input,.ws-select,.ws-textarea{width:100%;background:var(--dark);border:1px solid var(--border);color:var(--pale);font-size:13px;padding:8px 12px;outline:none;}
+.ws-input,.ws-textarea{font-family:var(--body);}
+.ws-select{font-family:var(--mono);font-size:11px;}
+.ws-textarea{resize:vertical;line-height:1.7;}
+.ws-btn{font-family:var(--mono);font-size:9.5px;letter-spacing:0.2em;text-transform:uppercase;background:var(--pale);color:var(--black);border:none;padding:9px 20px;cursor:pointer;}
+.ws-msg{font-family:var(--mono);font-size:10px;color:var(--muted);}
 
-/* ===== CALLOUT ===== */
-.callout {
-  display:flex; gap:1rem; align-items:flex-start;
-  border-left:2px solid var(--border); padding:1rem 1.5rem;
-  background:var(--deep); margin-bottom:1.5rem;
-}
-.callout-ico { font-family:var(--mono); font-size:12px; color:var(--muted); white-space:nowrap; margin-top:2px; }
-.callout p { font-size:13px; color:var(--muted); line-height:1.75; }
+/* ========== TENSIONS ========== */
+.tpick{flex:1;border:1px solid var(--border);padding:.75rem .5rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--dark);}
+.tpick-num{font-family:var(--display);font-size:26px;font-weight:700;}
+.tpick-lbl{font-family:var(--mono);font-size:7px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);}
 
-/* ===== GOI BUBBLE PREVIEW ===== */
+/* ========== GOI ========== */
 .goi-bubble-wrap{position:relative;width:100%;background:var(--deep);border:1px solid var(--border);overflow:hidden;margin-top:1.5rem;}
 #goi-canvas-staff{display:block;width:100%;cursor:grab;}
 #goi-canvas-staff:active{cursor:grabbing;}
@@ -387,19 +211,17 @@ body::after {
 .goi-tooltip-staff .tt-name{font-family:var(--display);font-size:14px;font-weight:600;letter-spacing:0.1em;color:var(--white);display:block;margin-bottom:.3rem;}
 .goi-tooltip-staff .tt-rel{display:flex;align-items:center;gap:.5rem;margin-top:.25rem;}
 .goi-tooltip-staff .tt-dot{width:8px;height:8px;border:1px solid;flex-shrink:0;}
-/* Legend + reset (mirrors worldstate.html) */
 .goi-legend-staff{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin-top:1.25rem;}
 .goi-legend-staff .gli{display:flex;align-items:center;gap:.4rem;font-family:var(--mono);font-size:8.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);}
 .goi-legend-staff .gli-dot{width:10px;height:10px;border:1px solid;flex-shrink:0;}
-.goi-legend-staff .gli-dot.enemy   {border-color:#7a1a1a;background:rgba(120,20,20,.35);}
-.goi-legend-staff .gli-dot.hostile {border-color:#7a4a1a;background:rgba(100,50,10,.35);}
-.goi-legend-staff .gli-dot.neutral {border-color:#3a3a3a;background:rgba(40,40,40,.6);}
-.goi-legend-staff .gli-dot.indiff  {border-color:#2a2a4a;background:rgba(25,25,50,.6);}
+.goi-legend-staff .gli-dot.enemy{border-color:#7a1a1a;background:rgba(120,20,20,.35);}
+.goi-legend-staff .gli-dot.hostile{border-color:#7a4a1a;background:rgba(100,50,10,.35);}
+.goi-legend-staff .gli-dot.neutral{border-color:#3a3a3a;background:rgba(40,40,40,.6);}
+.goi-legend-staff .gli-dot.indiff{border-color:#2a2a4a;background:rgba(25,25,50,.6);}
 .goi-legend-staff .gli-dot.friendly{border-color:#1a5a1a;background:rgba(15,65,20,.4);}
-.goi-legend-staff .gli-dot.allied  {border-color:#1a3a6a;background:rgba(10,50,80,.4);}
+.goi-legend-staff .gli-dot.allied{border-color:#1a3a6a;background:rgba(10,50,80,.4);}
 .goi-reset-btn{margin-left:auto;font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--muted);padding:6px 12px;cursor:pointer;transition:all .2s;}
 .goi-reset-btn:hover{border-color:var(--pale);color:var(--pale);}
-/* Relation matrix */
 .rel-matrix{display:flex;flex-direction:column;gap:.3rem;max-height:480px;overflow-y:auto;padding-right:.25rem;}
 .rel-matrix::-webkit-scrollbar{width:6px;}
 .rel-matrix::-webkit-scrollbar-track{background:var(--dark);}
@@ -416,13 +238,20 @@ body::after {
 .rel-row .rel-arrow{font-family:var(--mono);font-size:11px;color:var(--border);}
 .rel-row select{width:100%;background:var(--deep);border:1px solid var(--border);color:var(--pale);font-family:var(--mono);font-size:10.5px;padding:6px 8px;outline:none;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;}
 .rel-row select:hover{border-color:#555;}
-.rel-row select.s-allied  {border-left:3px solid #3a6aaa;}
+.rel-row select.s-allied{border-left:3px solid #3a6aaa;}
 .rel-row select.s-friendly{border-left:3px solid #3a9a3a;}
-.rel-row select.s-neutral {border-left:3px solid #555;}
-.rel-row select.s-indiff  {border-left:3px solid #4a4a7a;}
-.rel-row select.s-hostile {border-left:3px solid #aa6a3a;}
-.rel-row select.s-enemy   {border-left:3px solid #aa3a3a;}
+.rel-row select.s-neutral{border-left:3px solid #555;}
+.rel-row select.s-indiff{border-left:3px solid #4a4a7a;}
+.rel-row select.s-hostile{border-left:3px solid #aa6a3a;}
+.rel-row select.s-enemy{border-left:3px solid #aa3a3a;}
 .rel-empty{font-family:var(--mono);font-size:10px;color:var(--border);letter-spacing:0.1em;text-align:center;padding:2rem;border:1px dashed var(--border);}
+
+/* ========== RESPONSIVE ========== */
+@media(max-width:900px){
+  .stats-row{grid-template-columns:repeat(2,1fr);}
+  .pos-grid{grid-template-columns:1fr;}
+  .modal-meta{grid-template-columns:1fr;}
+}
 @media(max-width:720px){
   .rel-row{grid-template-columns:1fr;gap:.35rem;}
   .rel-row .rel-goi.to{justify-content:flex-start;text-align:left;}
@@ -433,58 +262,44 @@ body::after {
 </head>
 <body>
 
-<!-- ============================
-     LOGIN SCREEN
-============================= -->
+<!-- ═══════════════════ LOGIN ═══════════════════ -->
 <div id="login-screen">
   <div class="login-box">
-    <span class="login-logo">THREEFOLD</span>
-    <span class="login-sub">Staff Panel &mdash; Authorised Access Only</span>
+    <span class="login-logo">Threefold</span>
+    <span class="login-sub">Staff Panel &mdash; Restricted Access</span>
     <div class="field">
-      <label for="login-email">Email Address</label>
-      <input type="email" id="login-email" placeholder="your@email.com" autocomplete="email">
+      <label for="login-email">Email</label>
+      <input type="email" id="login-email" autocomplete="email" placeholder="you@example.com">
     </div>
     <div class="field">
       <label for="login-pass">Password</label>
-      <input type="password" id="login-pass" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="current-password">
+      <input type="password" id="login-pass" autocomplete="current-password">
     </div>
     <button class="btn btn-fill" onclick="doLogin()">Sign In</button>
     <div class="login-err" id="login-err">Invalid credentials. Please try again.</div>
   </div>
 </div>
 
-<!-- ============================
-     APP SHELL (shown after login)
-============================= -->
+<!-- ═══════════════════ APP SHELL ═══════════════════ -->
 <div id="app-shell">
 
-  <!-- Sidebar -->
   <nav class="sidebar">
     <div class="sidebar-brand">
       <span class="sidebar-brand-name">THREEFOLD</span>
       <span class="sidebar-brand-sub">Staff Panel</span>
     </div>
 
+    <span class="sidebar-section">Overview</span>
+    <ul class="sidebar-nav">
+      <li><button onclick="showPanel('dash')" id="nav-dash" class="active">Dashboard</button></li>
+    </ul>
+
     <span class="sidebar-section">Applications</span>
     <ul class="sidebar-nav">
-      <li><button onclick="showPanel('dash')" id="nav-dash">Dashboard</button></li>
       <li><button onclick="showPanel('apps-all')" id="nav-apps-all">All Applications</button></li>
       <li><button onclick="showPanel('apps-lore')" id="nav-apps-lore">&#8250; Lore Team</button></li>
       <li><button onclick="showPanel('apps-staff')" id="nav-apps-staff">&#8250; Staff / Mod</button></li>
       <li><button onclick="showPanel('apps-gm')" id="nav-apps-gm">&#8250; Gamemaster</button></li>
-    </ul>
-
-    <span class="sidebar-section">Management</span>
-    <ul class="sidebar-nav" id="manage-nav">
-      <li><button onclick="showPanel('positions')" id="nav-positions">Open / Close Positions</button></li>
-      <li><button onclick="showPanel('staff-mgmt')" id="nav-staff-mgmt">Staff Members</button></li>
-    </ul>
-
-    <span class="sidebar-section">World State</span>
-    <ul class="sidebar-nav">
-      <li><button onclick="showPanel('ws-news')" id="nav-ws-news">World News</button></li>
-      <li><button onclick="showPanel('ws-tensions')" id="nav-ws-tensions">Global Tensions</button></li>
-      <li><button onclick="showPanel('ws-goi')" id="nav-ws-goi">GOI Relations</button></li>
     </ul>
 
     <span class="sidebar-section">Characters</span>
@@ -495,12 +310,24 @@ body::after {
       <li><button onclick="showPanel('chars-unaff')" id="nav-chars-unaff">&#8250; Unaffiliated</button></li>
     </ul>
 
+    <span class="sidebar-section">Management</span>
+    <ul class="sidebar-nav">
+      <li><button onclick="showPanel('positions')" id="nav-positions">Positions</button></li>
+      <li><button onclick="showPanel('staff-mgmt')" id="nav-staff-mgmt">Staff Members</button></li>
+    </ul>
+
+    <span class="sidebar-section">World State</span>
+    <ul class="sidebar-nav">
+      <li><button onclick="showPanel('ws-news')" id="nav-ws-news">World News</button></li>
+      <li><button onclick="showPanel('ws-tensions')" id="nav-ws-tensions">Global Tensions</button></li>
+      <li><button onclick="showPanel('ws-goi')" id="nav-ws-goi">GOI Relations</button></li>
+    </ul>
+
     <div class="sidebar-footer">
       <a href="index.html" target="_blank">&#8592; Back to Site</a>
     </div>
   </nav>
 
-  <!-- Top bar -->
   <div class="topbar">
     <div class="topbar-title" id="topbar-title">Dashboard</div>
     <div class="topbar-user">
@@ -510,39 +337,44 @@ body::after {
     </div>
   </div>
 
-  <!-- Main -->
   <main class="main">
 
-    <!-- DASHBOARD -->
+    <!-- ═══════ DASHBOARD ═══════ -->
     <div class="panel active" id="panel-dash">
       <div class="panel-header">
         <h1>Dashboard</h1>
-        <p>Overview of all pending applications and recent activity.</p>
+        <p>System status and a snapshot of what needs review.</p>
       </div>
+
+      <!-- System status strip -->
+      <div class="sysstatus" id="sysstatus">
+        <span class="sysstatus-label">System:</span>
+        <span class="syspill pending" id="pill-profiles"><span class="d"></span>Profiles</span>
+        <span class="syspill pending" id="pill-characters"><span class="d"></span>Characters</span>
+        <span class="syspill pending" id="pill-applications"><span class="d"></span>Applications</span>
+        <span class="syspill pending" id="pill-positions"><span class="d"></span>Positions</span>
+        <span class="syspill pending" id="pill-worldstate"><span class="d"></span>World State</span>
+        <div class="sysstatus-detail" id="sysstatus-detail"></div>
+      </div>
+
       <div class="stats-row">
-        <div class="stat-card"><div class="stat-label">Total Pending</div><div class="stat-num" id="stat-pending">—</div></div>
-        <div class="stat-card"><div class="stat-label">Under Review</div><div class="stat-num" id="stat-review">—</div></div>
-        <div class="stat-card"><div class="stat-label">Approved</div><div class="stat-num" id="stat-approved">—</div></div>
-        <div class="stat-card"><div class="stat-label">Total Received</div><div class="stat-num" id="stat-total">—</div></div>
+        <div class="stat-card"><div class="stat-label">Pending Apps</div><div class="stat-num" id="stat-app-pending">&mdash;</div></div>
+        <div class="stat-card"><div class="stat-label">Pending Chars</div><div class="stat-num" id="stat-char-pending">&mdash;</div></div>
+        <div class="stat-card"><div class="stat-label">Under Review</div><div class="stat-num" id="stat-review">&mdash;</div></div>
+        <div class="stat-card"><div class="stat-label">Total Received</div><div class="stat-num" id="stat-total">&mdash;</div></div>
       </div>
-      <div class="sdiv">Recent Pending Applications</div>
-      <div id="dash-recent-wrap">
-        <table class="app-table" id="dash-recent-table">
-          <thead><tr>
-            <th>#</th><th>Type</th><th>Discord</th><th>Submitted</th><th>Status</th><th>Actions</th>
-          </tr></thead>
-          <tbody id="dash-recent-body"></tbody>
-        </table>
-        <div class="empty-state" id="dash-empty" style="display:none;">No pending applications right now.</div>
-      </div>
+
+      <div class="sdiv">Recent &mdash; Needs Action</div>
+      <table class="app-table" id="dash-recent-table">
+        <thead><tr><th>#</th><th>Kind</th><th>Detail</th><th>Discord</th><th>Submitted</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="dash-recent-body"></tbody>
+      </table>
+      <div class="empty-state" id="dash-empty" style="display:none;">No pending items. All clear.</div>
     </div>
 
-    <!-- ALL APPLICATIONS -->
+    <!-- ═══════ APPLICATIONS ═══════ -->
     <div class="panel" id="panel-apps-all">
-      <div class="panel-header">
-        <h1>All Applications</h1>
-        <p>Every application across all types. Use the filters to narrow down.</p>
-      </div>
+      <div class="panel-header"><h1>All Applications</h1><p>Every application across all types.</p></div>
       <div class="filter-bar" id="filter-all">
         <button class="filter-btn active" onclick="filterApps('all','all',this)">All</button>
         <button class="filter-btn" onclick="filterApps('all','pending',this)">Pending</button>
@@ -550,14 +382,11 @@ body::after {
         <button class="filter-btn" onclick="filterApps('all','approved',this)">Approved</button>
         <button class="filter-btn" onclick="filterApps('all','denied',this)">Denied</button>
       </div>
-      <table class="app-table">
-        <thead><tr><th>#</th><th>Type</th><th>Discord</th><th>Submitted</th><th>Status</th><th>Actions</th></tr></thead>
-        <tbody id="apps-all-body"></tbody>
-      </table>
+      <table class="app-table"><thead><tr><th>#</th><th>Type</th><th>Discord</th><th>Submitted</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="apps-all-body"></tbody></table>
       <div class="empty-state" id="apps-all-empty" style="display:none;">No applications found.</div>
     </div>
 
-    <!-- LORE APPLICATIONS -->
     <div class="panel" id="panel-apps-lore">
       <div class="panel-header"><h1>Lore Team</h1><p>Applications for the Lore Team position.</p></div>
       <div class="filter-bar" id="filter-lore">
@@ -567,14 +396,11 @@ body::after {
         <button class="filter-btn" onclick="filterApps('lore','approved',this)">Approved</button>
         <button class="filter-btn" onclick="filterApps('lore','denied',this)">Denied</button>
       </div>
-      <table class="app-table">
-        <thead><tr><th>#</th><th>Discord</th><th>Submitted</th><th>Status</th><th>Actions</th></tr></thead>
-        <tbody id="apps-lore-body"></tbody>
-      </table>
+      <table class="app-table"><thead><tr><th>#</th><th>Discord</th><th>Submitted</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="apps-lore-body"></tbody></table>
       <div class="empty-state" id="apps-lore-empty" style="display:none;">No Lore Team applications yet.</div>
     </div>
 
-    <!-- STAFF APPLICATIONS -->
     <div class="panel" id="panel-apps-staff">
       <div class="panel-header"><h1>Staff / Mod</h1><p>Applications for the Moderation team.</p></div>
       <div class="filter-bar" id="filter-staff">
@@ -584,14 +410,11 @@ body::after {
         <button class="filter-btn" onclick="filterApps('staff','approved',this)">Approved</button>
         <button class="filter-btn" onclick="filterApps('staff','denied',this)">Denied</button>
       </div>
-      <table class="app-table">
-        <thead><tr><th>#</th><th>Discord</th><th>Submitted</th><th>Status</th><th>Actions</th></tr></thead>
-        <tbody id="apps-staff-body"></tbody>
-      </table>
+      <table class="app-table"><thead><tr><th>#</th><th>Discord</th><th>Submitted</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="apps-staff-body"></tbody></table>
       <div class="empty-state" id="apps-staff-empty" style="display:none;">No Staff applications yet.</div>
     </div>
 
-    <!-- GM APPLICATIONS -->
     <div class="panel" id="panel-apps-gm">
       <div class="panel-header"><h1>Gamemaster</h1><p>Applications for the GM position.</p></div>
       <div class="filter-bar" id="filter-gm">
@@ -601,27 +424,12 @@ body::after {
         <button class="filter-btn" onclick="filterApps('gm','approved',this)">Approved</button>
         <button class="filter-btn" onclick="filterApps('gm','denied',this)">Denied</button>
       </div>
-      <table class="app-table">
-        <thead><tr><th>#</th><th>Discord</th><th>Submitted</th><th>Status</th><th>Actions</th></tr></thead>
-        <tbody id="apps-gm-body"></tbody>
-      </table>
+      <table class="app-table"><thead><tr><th>#</th><th>Discord</th><th>Submitted</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="apps-gm-body"></tbody></table>
       <div class="empty-state" id="apps-gm-empty" style="display:none;">No GM applications yet.</div>
     </div>
 
-    <!-- POSITIONS -->
-    <div class="panel" id="panel-positions">
-      <div class="panel-header">
-        <h1>Open / Close Positions</h1>
-        <p>Toggle which application types are currently accepting submissions.</p>
-      </div>
-      <div class="callout" id="positions-access-note" style="display:none;">
-        <span class="callout-ico">&mdash;</span>
-        <p>Your role can view positions but not change them. Only Owner and Admin can toggle these.</p>
-      </div>
-      <div class="pos-grid" id="pos-grid"></div>
-    </div>
-
-    <!-- CHARS ALL -->
+    <!-- ═══════ CHARACTERS ═══════ -->
     <div class="panel" id="panel-chars-all">
       <div class="panel-header"><h1>All Character Submissions</h1><p>Every character submission across all types.</p></div>
       <div class="filter-bar" id="filter-chars-all">
@@ -633,12 +441,11 @@ body::after {
       </div>
       <table class="app-table"><thead><tr><th>#</th><th>Type</th><th>Method</th><th>Discord</th><th>Character</th><th>Submitted</th><th>Status</th><th>Actions</th></tr></thead>
       <tbody id="chars-all-body"></tbody></table>
-      <div class="empty-state" id="chars-all-empty" style="display:none;">No submissions yet.</div>
+      <div class="empty-state" id="chars-all-empty" style="display:none;">No character submissions yet.</div>
     </div>
 
-    <!-- CHARS FOUNDATION -->
     <div class="panel" id="panel-chars-foundation">
-      <div class="panel-header"><h1>Foundation</h1><p>Foundation personnel submissions.</p></div>
+      <div class="panel-header"><h1>Foundation Personnel</h1><p>Foundation character submissions.</p></div>
       <div class="filter-bar" id="filter-chars-foundation">
         <button class="filter-btn active" onclick="filterChars('foundation','all',this)">All</button>
         <button class="filter-btn" onclick="filterChars('foundation','pending',this)">Pending</button>
@@ -651,9 +458,8 @@ body::after {
       <div class="empty-state" id="chars-foundation-empty" style="display:none;">No Foundation submissions.</div>
     </div>
 
-    <!-- CHARS SCP -->
     <div class="panel" id="panel-chars-scp">
-      <div class="panel-header"><h1>SCP Entries</h1><p>SCP entry submissions.</p></div>
+      <div class="panel-header"><h1>SCP Submissions</h1><p>Anomaly submissions and containment proposals.</p></div>
       <div class="filter-bar" id="filter-chars-scp">
         <button class="filter-btn active" onclick="filterChars('scp','all',this)">All</button>
         <button class="filter-btn" onclick="filterChars('scp','pending',this)">Pending</button>
@@ -666,7 +472,6 @@ body::after {
       <div class="empty-state" id="chars-scp-empty" style="display:none;">No SCP submissions.</div>
     </div>
 
-    <!-- CHARS UNAFFILIATED -->
     <div class="panel" id="panel-chars-unaff">
       <div class="panel-header"><h1>Unaffiliated</h1><p>Unaffiliated personnel submissions.</p></div>
       <div class="filter-bar" id="filter-chars-unaff">
@@ -680,166 +485,132 @@ body::after {
       <tbody id="chars-unaff-body"></tbody></table>
       <div class="empty-state" id="chars-unaff-empty" style="display:none;">No Unaffiliated submissions.</div>
     </div>
-    <div class="panel" id="panel-staff-mgmt">
-      <div class="panel-header">
-        <h1>Staff Members</h1>
-        <p>All staff accounts. Only the Owner can change roles.</p>
+
+    <!-- ═══════ POSITIONS ═══════ -->
+    <div class="panel" id="panel-positions">
+      <div class="panel-header"><h1>Positions</h1><p>Toggle which application types are accepting submissions.</p></div>
+      <div class="callout" id="positions-access-note" style="display:none;">
+        <span class="callout-ico">&mdash;</span>
+        <p>Your role can view positions but not change them. Only Owner and Admin can toggle these.</p>
       </div>
+      <div class="pos-grid" id="pos-grid"></div>
+    </div>
+
+    <!-- ═══════ STAFF MEMBERS ═══════ -->
+    <div class="panel" id="panel-staff-mgmt">
+      <div class="panel-header"><h1>Staff Members</h1><p>All staff accounts and their roles.</p></div>
       <div class="callout">
         <span class="callout-ico">&mdash;</span>
-        <p>Staff accounts are created in the Supabase dashboard. Once created, their role can be assigned here. New accounts start with no panel access until a role is set.</p>
+        <p>Staff accounts are created in the Supabase dashboard (Authentication &rarr; Users). Once an account is created, the Owner can assign a role here. New accounts start at "None" and have no panel access until promoted.</p>
       </div>
-      <table class="staff-table" id="staff-table">
-        <thead><tr><th>Display Name</th><th>Discord</th><th>Role</th><th>Actions</th></tr></thead>
+      <div id="staff-access-note"></div>
+      <table class="staff-table">
+        <thead><tr><th>Display Name</th><th>Discord</th><th>Role</th><th></th></tr></thead>
         <tbody id="staff-body"></tbody>
       </table>
       <div class="empty-state" id="staff-empty" style="display:none;">No staff members found.</div>
     </div>
 
-
-  <!-- ═══════════════════════════════
-       WORLD STATE — NEWS
-  ═══════════════════════════════ -->
-  <div class="panel" id="panel-ws-news">
-    <div class="panel-header">
-      <h1>World News</h1>
-      <p>Add, edit, and remove news dispatches. Each entry is timestamped, tagged above/below the veil, and appears on the public World State page in reverse-chronological order.</p>
-    </div>
-
-    <!-- Add news form -->
-    <div style="border:1px solid var(--border);background:var(--deep);padding:1.5rem;margin-bottom:2rem;">
-      <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-bottom:1.25rem;display:flex;align-items:center;gap:.75rem;">Add New Dispatch<span style="flex:1;height:1px;background:var(--border);display:block;"></span></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
-        <div><label style="font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.35rem;">Headline *</label>
-          <input type="text" id="news-headline" placeholder="e.g. Unusual seismic activity reported near Norton Sound" style="width:100%;background:var(--dark);border:1px solid var(--border);color:var(--pale);font-family:var(--body);font-size:13px;padding:8px 12px;outline:none;"></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;">
-          <div><label style="font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.35rem;">Tag</label>
-            <select id="news-tag" style="width:100%;background:var(--dark);border:1px solid var(--border);color:var(--pale);font-family:var(--mono);font-size:11px;padding:8px 10px;outline:none;">
-              <option value="other">Other</option>
-              <option value="anomalous">Anomalous</option>
-              <option value="conflict">Conflict</option>
-              <option value="political">Political</option>
-              <option value="natural">Natural</option>
-              <option value="foundation">Foundation</option>
-            </select></div>
-          <div><label style="font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.35rem;">Veil</label>
-            <select id="news-veil" style="width:100%;background:var(--dark);border:1px solid var(--border);color:var(--pale);font-family:var(--mono);font-size:11px;padding:8px 10px;outline:none;">
-              <option value="both">Both</option>
-              <option value="above">Above Veil</option>
-              <option value="below">Below Veil</option>
-            </select></div>
+    <!-- ═══════ WORLD NEWS ═══════ -->
+    <div class="panel" id="panel-ws-news">
+      <div class="panel-header"><h1>World News</h1><p>Add, edit, and remove news dispatches.</p></div>
+      <div class="ws-card">
+        <div class="ws-card-title">Add New Dispatch</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+          <div><label class="ws-label">Headline *</label>
+            <input type="text" id="news-headline" class="ws-input" placeholder="e.g. Unusual seismic activity reported near Norton Sound"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;">
+            <div><label class="ws-label">Tag</label>
+              <select id="news-tag" class="ws-select">
+                <option value="other">Other</option><option value="anomalous">Anomalous</option>
+                <option value="conflict">Conflict</option><option value="political">Political</option>
+                <option value="natural">Natural</option><option value="foundation">Foundation</option>
+              </select></div>
+            <div><label class="ws-label">Veil</label>
+              <select id="news-veil" class="ws-select">
+                <option value="both">Both</option><option value="above">Above Veil</option><option value="below">Below Veil</option>
+              </select></div>
+          </div>
+        </div>
+        <div style="margin-bottom:1rem;"><label class="ws-label">Body *</label>
+          <textarea id="news-body" class="ws-textarea" rows="3" placeholder="Brief summary of the dispatch..."></textarea></div>
+        <div style="display:flex;align-items:center;gap:1rem;">
+          <button onclick="addNewsEntry()" class="ws-btn">Publish Dispatch</button>
+          <span id="news-msg" class="ws-msg"></span>
         </div>
       </div>
-      <div style="margin-bottom:1rem;"><label style="font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.35rem;">Body *</label>
-        <textarea id="news-body" rows="3" placeholder="Brief summary of the dispatch..." style="width:100%;background:var(--dark);border:1px solid var(--border);color:var(--pale);font-family:var(--body);font-size:13px;padding:8px 12px;outline:none;resize:vertical;line-height:1.7;"></textarea></div>
-      <div style="display:flex;align-items:center;gap:1rem;">
-        <button onclick="addNewsEntry()" style="font-family:var(--mono);font-size:9.5px;letter-spacing:0.2em;text-transform:uppercase;background:var(--pale);color:var(--black);border:none;padding:9px 20px;cursor:pointer;">Publish Dispatch</button>
-        <span id="news-msg" style="font-family:var(--mono);font-size:10px;color:var(--muted);"></span>
+      <div id="news-entries-list"><div style="font-family:var(--mono);font-size:10px;color:var(--border);letter-spacing:0.1em;">Loading...</div></div>
+    </div>
+
+    <!-- ═══════ TENSIONS ═══════ -->
+    <div class="panel" id="panel-ws-tensions">
+      <div class="panel-header"><h1>Global Tensions</h1><p>Set the current global tension level (1&ndash;5) and provide a short note explaining the current state of world affairs.</p></div>
+      <div class="ws-card" style="max-width:600px;">
+        <div class="ws-card-title">Set Tension Level</div>
+        <div style="display:flex;gap:.4rem;margin-bottom:1.25rem;" id="tension-picker">
+          <div class="tpick" data-lv="1" onclick="pickTension(1,this)"><div class="tpick-num" style="color:#2a8a2a;">1</div><div class="tpick-lbl">Calm</div></div>
+          <div class="tpick" data-lv="2" onclick="pickTension(2,this)"><div class="tpick-num" style="color:#9a9a2a;">2</div><div class="tpick-lbl">Uneasy</div></div>
+          <div class="tpick" data-lv="3" onclick="pickTension(3,this)"><div class="tpick-num" style="color:#ba7a2a;">3</div><div class="tpick-lbl">Volatile</div></div>
+          <div class="tpick" data-lv="4" onclick="pickTension(4,this)"><div class="tpick-num" style="color:#ba2a2a;">4</div><div class="tpick-lbl">Critical</div></div>
+          <div class="tpick" data-lv="5" onclick="pickTension(5,this)"><div class="tpick-num" style="color:#7a0a0a;">5</div><div class="tpick-lbl">Collapse</div></div>
+        </div>
+        <input type="hidden" id="tension-level-val" value="">
+        <div style="margin-bottom:1rem;"><label class="ws-label">Custom Note (optional)</label>
+          <input type="text" id="tension-note" class="ws-input" placeholder="e.g. CI forces reportedly amassing near Site-7 perimeter."></div>
+        <div style="display:flex;align-items:center;gap:1rem;">
+          <button onclick="saveTension()" class="ws-btn">Save Tension Level</button>
+          <span id="tension-msg" class="ws-msg"></span>
+        </div>
       </div>
     </div>
 
-    <!-- Existing entries -->
-    <div id="news-entries-list"><div style="font-family:var(--mono);font-size:10px;color:var(--border);letter-spacing:0.1em;">Loading...</div></div>
-  </div>
-
-  <!-- ═══════════════════════════════
-       WORLD STATE — TENSIONS
-  ═══════════════════════════════ -->
-  <div class="panel" id="panel-ws-tensions">
-    <div class="panel-header">
-      <h1>Global Tensions</h1>
-      <p>Set the current global tension level (1–5) and provide a short note explaining the current state of world affairs. Shown prominently on the public World State page.</p>
-    </div>
-    <div style="border:1px solid var(--border);background:var(--deep);padding:1.5rem;max-width:600px;">
-      <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-bottom:1.25rem;display:flex;align-items:center;gap:.75rem;">Set Tension Level<span style="flex:1;height:1px;background:var(--border);display:block;"></span></div>
-      <div style="display:flex;gap:.4rem;margin-bottom:1.25rem;" id="tension-picker">
-        <div class="tpick" data-lv="1" onclick="pickTension(1,this)" style="flex:1;border:1px solid var(--border);padding:.75rem .5rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--dark);">
-          <div style="font-family:var(--display);font-size:26px;font-weight:700;color:#2a8a2a;">1</div>
-          <div style="font-family:var(--mono);font-size:7px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);">Calm</div></div>
-        <div class="tpick" data-lv="2" onclick="pickTension(2,this)" style="flex:1;border:1px solid var(--border);padding:.75rem .5rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--dark);">
-          <div style="font-family:var(--display);font-size:26px;font-weight:700;color:#9a9a2a;">2</div>
-          <div style="font-family:var(--mono);font-size:7px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);">Uneasy</div></div>
-        <div class="tpick" data-lv="3" onclick="pickTension(3,this)" style="flex:1;border:1px solid var(--border);padding:.75rem .5rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--dark);">
-          <div style="font-family:var(--display);font-size:26px;font-weight:700;color:#ba7a2a;">3</div>
-          <div style="font-family:var(--mono);font-size:7px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);">Volatile</div></div>
-        <div class="tpick" data-lv="4" onclick="pickTension(4,this)" style="flex:1;border:1px solid var(--border);padding:.75rem .5rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--dark);">
-          <div style="font-family:var(--display);font-size:26px;font-weight:700;color:#ba2a2a;">4</div>
-          <div style="font-family:var(--mono);font-size:7px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);">Critical</div></div>
-        <div class="tpick" data-lv="5" onclick="pickTension(5,this)" style="flex:1;border:1px solid var(--border);padding:.75rem .5rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--dark);">
-          <div style="font-family:var(--display);font-size:26px;font-weight:700;color:#7a0a0a;">5</div>
-          <div style="font-family:var(--mono);font-size:7px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);">Collapse</div></div>
+    <!-- ═══════ GOI RELATIONS ═══════ -->
+    <div class="panel" id="panel-ws-goi">
+      <div class="panel-header"><h1>GOI Relations</h1><p>Manage Groups of Interest, their logos, and their relations with each other.</p></div>
+      <div class="ws-card">
+        <div class="ws-card-title">Add New GOI</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:.75rem;align-items:end;margin-bottom:.75rem;">
+          <div><label class="ws-label">Full Name *</label><input type="text" id="goi-name" class="ws-input" placeholder="e.g. Serpent's Hand"></div>
+          <div><label class="ws-label">Abbreviation *</label><input type="text" id="goi-abbr" class="ws-input" style="text-transform:uppercase;" placeholder="e.g. SH" oninput="this.value=this.value.toUpperCase()"></div>
+          <div><label class="ws-label">Logo (PNG only, max 256KB)</label><input type="file" id="goi-logo-file" accept=".png" style="font-family:var(--mono);font-size:10px;color:var(--muted);width:100%;"></div>
+          <button onclick="addGOI()" class="ws-btn" style="padding:9px 14px;font-size:9px;">Add GOI</button>
+        </div>
+        <div id="goi-add-msg" class="ws-msg"></div>
       </div>
-      <input type="hidden" id="tension-level-val" value="">
-      <div style="margin-bottom:1rem;"><label style="font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.35rem;">Custom Note (optional — leave blank for default text)</label>
-        <input type="text" id="tension-note" placeholder="e.g. CI forces reportedly amassing near Site-7 perimeter." style="width:100%;background:var(--dark);border:1px solid var(--border);color:var(--pale);font-family:var(--body);font-size:13px;padding:8px 12px;outline:none;"></div>
-      <div style="display:flex;align-items:center;gap:1rem;">
-        <button onclick="saveTension()" style="font-family:var(--mono);font-size:9.5px;letter-spacing:0.2em;text-transform:uppercase;background:var(--pale);color:var(--black);border:none;padding:9px 20px;cursor:pointer;">Save Tension Level</button>
-        <span id="tension-msg" style="font-family:var(--mono);font-size:10px;color:var(--muted);"></span>
+
+      <div id="goi-list-wrap"><div style="font-family:var(--mono);font-size:10px;color:var(--border);letter-spacing:0.1em;">Loading...</div></div>
+
+      <div class="sdiv">Live Relation Preview</div>
+      <div class="goi-bubble-wrap" id="goi-bubble-wrap-staff">
+        <canvas id="goi-canvas-staff"></canvas>
+        <div class="goi-tooltip-staff" id="goi-tooltip-staff"><span class="tt-name"></span><div id="tt-rels-staff"></div></div>
+      </div>
+      <div class="goi-legend-staff">
+        <div class="gli"><div class="gli-dot allied"></div>Allied</div>
+        <div class="gli"><div class="gli-dot friendly"></div>Friendly</div>
+        <div class="gli"><div class="gli-dot neutral"></div>Neutral</div>
+        <div class="gli"><div class="gli-dot indiff"></div>Indifferent</div>
+        <div class="gli"><div class="gli-dot hostile"></div>Hostile</div>
+        <div class="gli"><div class="gli-dot enemy"></div>Enemy</div>
+        <button type="button" onclick="resetStaffLayout()" class="goi-reset-btn">Reset Layout</button>
+      </div>
+
+      <div class="ws-card" style="margin-top:2rem;">
+        <div class="ws-card-title" style="flex-wrap:wrap;">
+          <span>Relation Matrix</span>
+          <span style="flex:1;height:1px;background:var(--border);min-width:1rem;"></span>
+          <input type="text" id="rel-matrix-filter" placeholder="Filter pairs..." oninput="renderRelMatrix()" style="background:var(--dark);border:1px solid var(--border);color:var(--pale);font-family:var(--mono);font-size:10px;padding:5px 10px;outline:none;width:160px;letter-spacing:0.05em;text-transform:none;">
+        </div>
+        <div style="font-family:var(--mono);font-size:9.5px;color:var(--muted);margin-bottom:1rem;letter-spacing:0.03em;">Every unique GOI pair. Change a dropdown to update its relation &mdash; saves automatically.</div>
+        <div id="rel-matrix-wrap"></div>
+        <div id="rel-msg" class="ws-msg" style="margin-top:.75rem;"></div>
       </div>
     </div>
-  </div>
-
-  <!-- ═══════════════════════════════
-       WORLD STATE — GOI RELATIONS
-  ═══════════════════════════════ -->
-  <div class="panel" id="panel-ws-goi">
-    <div class="panel-header">
-      <h1>GOI Relations</h1>
-      <p>Manage Groups of Interest, their logos, and their relations with each other. Only PNG logos are accepted. Images are force-cropped to 64×64px on display.</p>
-    </div>
-
-    <!-- Add GOI -->
-    <div style="border:1px solid var(--border);background:var(--deep);padding:1.5rem;margin-bottom:2rem;">
-      <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-bottom:1.25rem;display:flex;align-items:center;gap:.75rem;">Add New GOI<span style="flex:1;height:1px;background:var(--border);display:block;"></span></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:.75rem;align-items:end;margin-bottom:.75rem;">
-        <div><label style="font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.35rem;">Full Name *</label>
-          <input type="text" id="goi-name" placeholder="e.g. Serpent's Hand" style="width:100%;background:var(--dark);border:1px solid var(--border);color:var(--pale);font-family:var(--body);font-size:13px;padding:8px 12px;outline:none;"></div>
-        <div><label style="font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.35rem;">Abbreviation *</label>
-          <input type="text" id="goi-abbr" placeholder="e.g. SH" style="width:100%;background:var(--dark);border:1px solid var(--border);color:var(--pale);font-family:var(--mono);font-size:13px;padding:8px 12px;outline:none;text-transform:uppercase;" oninput="this.value=this.value.toUpperCase()"></div>
-        <div><label style="font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.35rem;">Logo (PNG only, max 256KB)</label>
-          <input type="file" id="goi-logo-file" accept=".png" style="font-family:var(--mono);font-size:10px;color:var(--muted);width:100%;"></div>
-        <button onclick="addGOI()" style="font-family:var(--mono);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;background:var(--pale);color:var(--black);border:none;padding:9px 14px;cursor:pointer;white-space:nowrap;">Add GOI</button>
-      </div>
-      <div id="goi-add-msg" style="font-family:var(--mono);font-size:10px;color:var(--muted);"></div>
-    </div>
-
-    <!-- GOI list + relation editor -->
-    <div id="goi-list-wrap"><div style="font-family:var(--mono);font-size:10px;color:var(--border);letter-spacing:0.1em;">Loading...</div></div>
-
-    <!-- Bubble chart preview -->
-    <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-top:2rem;margin-bottom:.75rem;display:flex;align-items:center;gap:.75rem;">Live Relation Preview<span style="flex:1;height:1px;background:var(--border);display:block;"></span></div>
-    <div class="goi-bubble-wrap" id="goi-bubble-wrap-staff">
-      <canvas id="goi-canvas-staff"></canvas>
-      <div class="goi-tooltip-staff" id="goi-tooltip-staff"><span class="tt-name"></span><div id="tt-rels-staff"></div></div>
-    </div>
-    <div class="goi-legend-staff">
-      <div class="gli"><div class="gli-dot allied"></div>Allied</div>
-      <div class="gli"><div class="gli-dot friendly"></div>Friendly</div>
-      <div class="gli"><div class="gli-dot neutral"></div>Neutral</div>
-      <div class="gli"><div class="gli-dot indiff"></div>Indifferent</div>
-      <div class="gli"><div class="gli-dot hostile"></div>Hostile</div>
-      <div class="gli"><div class="gli-dot enemy"></div>Enemy</div>
-      <button type="button" onclick="resetStaffLayout()" class="goi-reset-btn">Reset Layout</button>
-    </div>
-    <div style="font-family:var(--mono);font-size:8.5px;letter-spacing:0.12em;color:var(--muted);text-transform:uppercase;margin-top:.5rem;">Hover to highlight connections &mdash; drag to rearrange &mdash; chart updates automatically when relations change</div>
-
-    <!-- Relation matrix -->
-    <div style="border:1px solid var(--border);background:var(--deep);padding:1.5rem;margin-top:2rem;">
-      <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-bottom:1.25rem;display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;">
-        <span>Relation Matrix</span>
-        <span style="flex:1;height:1px;background:var(--border);display:block;min-width:1rem;"></span>
-        <input type="text" id="rel-matrix-filter" placeholder="Filter pairs..." oninput="renderRelMatrix()" style="background:var(--dark);border:1px solid var(--border);color:var(--pale);font-family:var(--mono);font-size:10px;padding:5px 10px;outline:none;width:160px;letter-spacing:0.05em;text-transform:none;">
-      </div>
-      <div style="font-family:var(--mono);font-size:9.5px;color:var(--muted);margin-bottom:1rem;letter-spacing:0.03em;">Every unique GOI pair. Change a dropdown to update its relation &mdash; saves automatically. Pairs left on <em style="color:var(--light);font-style:normal;">Neutral</em> are rendered as faint grey lines.</div>
-      <div id="rel-matrix-wrap"></div>
-      <div id="rel-msg" style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:.75rem;"></div>
-    </div>
-  </div>
 
   </main>
 </div>
 
-<!-- APPLICATION DETAIL MODAL -->
+<!-- ═══════════════════ MODAL ═══════════════════ -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModalIfBg(event)">
   <div class="modal" id="modal-box">
     <button class="modal-close" onclick="closeModal()">Close &#215;</button>
@@ -848,25 +619,30 @@ body::after {
 </div>
 
 <script>
-/* =========================================================
+/* ═══════════════════════════════════════════════════════════════
    STATE
-========================================================= */
-let currentProfile = null;
+═══════════════════════════════════════════════════════════════ */
+let currentProfile  = null;
 let allApplications = [];
-let activeFilter = { type: 'all', status: 'all' };
+let allCharacters   = [];
+let allStaff        = [];
+let sysStatus       = { profiles:'pending', characters:'pending', applications:'pending', positions:'pending', worldstate:'pending' };
+let sysErrors       = [];
 
-/* =========================================================
+/* ═══════════════════════════════════════════════════════════════
    AUTH
-========================================================= */
+═══════════════════════════════════════════════════════════════ */
 async function doLogin() {
   const email = document.getElementById('login-email').value.trim();
   const pass  = document.getElementById('login-pass').value;
   const errEl = document.getElementById('login-err');
   errEl.style.display = 'none';
-
   const { error } = await db.auth.signInWithPassword({ email, password: pass });
-  if (error) { errEl.style.display = 'block'; return; }
-
+  if (error) {
+    errEl.textContent = error.message || 'Invalid credentials. Please try again.';
+    errEl.style.display = 'block';
+    return;
+  }
   await initShell();
 }
 
@@ -880,32 +656,78 @@ async function initShell() {
   if (!session) return;
 
   currentProfile = await getCurrentProfile();
-  if (!currentProfile || !CAN_VIEW.includes(currentProfile.role)) {
-    document.getElementById('login-err').textContent = 'Your account does not have panel access.';
-    document.getElementById('login-err').style.display = 'block';
+
+  // If no profile row exists, show a helpful message
+  if (!currentProfile) {
+    const errEl = document.getElementById('login-err');
+    errEl.textContent = 'Signed in, but no profile row was found for your account. Check that the profiles table trigger is set up.';
+    errEl.style.display = 'block';
+    await db.auth.signOut();
+    return;
+  }
+
+  // If profile exists but has no role yet (role 'none'), tell them so they know it's not a bug
+  if (!CAN_VIEW.includes(currentProfile.role)) {
+    const errEl = document.getElementById('login-err');
+    errEl.textContent = `Signed in as ${currentProfile.display_name || session.user.email}, but your role is "${roleName(currentProfile.role)}" — no panel access. Ask the Owner to assign you a role.`;
+    errEl.style.display = 'block';
     await db.auth.signOut();
     return;
   }
 
   document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app-shell').style.display = 'block';
-  document.getElementById('topbar-name').textContent = currentProfile.display_name || session.user.email;
-  document.getElementById('topbar-role').textContent = roleName(currentProfile.role);
+  document.getElementById('app-shell').style.display    = 'block';
+  document.getElementById('topbar-name').textContent    = currentProfile.display_name || session.user.email;
+  document.getElementById('topbar-role').textContent    = roleName(currentProfile.role);
 
-  // Hide manage nav for non-admins... actually allow viewing but restrict actions
-  // (position toggles and role changes are gated per-action)
-
-  await loadDashboard();
-  await loadAllApps();
-  await loadPositions();
-  await loadStaffMembers();
-  await loadAllChars();
-  await loadWSData();
+  // Load everything — each loader updates the system status strip
+  await Promise.all([
+    loadAllApps(),
+    loadAllChars(),
+    loadStaffMembers(),
+    loadPositions(),
+    loadWSData(),
+  ]);
+  updateDashboard();
+  renderSysStatus();
 }
 
-/* =========================================================
-   PANEL NAVIGATION
-========================================================= */
+/* ═══════════════════════════════════════════════════════════════
+   SYSTEM STATUS STRIP
+═══════════════════════════════════════════════════════════════ */
+function setSysStatus(key, state, errMsg) {
+  sysStatus[key] = state;
+  if (state === 'err' && errMsg) {
+    sysErrors.push(`${key}: ${errMsg}`);
+  }
+}
+
+function renderSysStatus() {
+  const map = {
+    profiles:    'pill-profiles',
+    characters:  'pill-characters',
+    applications:'pill-applications',
+    positions:   'pill-positions',
+    worldstate:  'pill-worldstate',
+  };
+  Object.entries(map).forEach(([k, elId]) => {
+    const el = document.getElementById(elId);
+    if (!el) return;
+    el.classList.remove('ok','warn','err','pending');
+    el.classList.add(sysStatus[k] || 'pending');
+  });
+  const detail = document.getElementById('sysstatus-detail');
+  if (sysErrors.length) {
+    detail.textContent = 'Errors — ' + sysErrors.join(' | ');
+    detail.classList.add('on');
+  } else {
+    detail.classList.remove('on');
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   NAV
+═══════════════════════════════════════════════════════════════ */
 function showPanel(id) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.sidebar-nav button').forEach(b => b.classList.remove('active'));
@@ -913,55 +735,97 @@ function showPanel(id) {
   const nav   = document.getElementById('nav-' + id);
   if (panel) panel.classList.add('active');
   if (nav)   nav.classList.add('active');
-
   const titles = {
     'dash':'Dashboard','apps-all':'All Applications',
+    'apps-lore':'Lore Team','apps-staff':'Staff / Mod','apps-gm':'Gamemaster',
+    'chars-all':'All Characters','chars-foundation':'Foundation','chars-scp':'SCP','chars-unaff':'Unaffiliated',
+    'positions':'Positions','staff-mgmt':'Staff Members',
     'ws-news':'World News','ws-tensions':'Global Tensions','ws-goi':'GOI Relations',
-    'apps-lore':'Lore Team Applications','apps-staff':'Staff Applications',
-    'apps-gm':'GM Applications','positions':'Open / Close Positions',
-    'staff-mgmt':'Staff Members',
   };
   document.getElementById('topbar-title').textContent = titles[id] || 'Panel';
 }
 
-/* =========================================================
+/* ═══════════════════════════════════════════════════════════════
    DASHBOARD
-========================================================= */
-async function loadDashboard() {
-  const { data } = await getApplications();
-  if (!data) return;
-  allApplications = data;
+═══════════════════════════════════════════════════════════════ */
+function updateDashboard() {
+  const appPending  = allApplications.filter(a => a.status === 'pending').length;
+  const charPending = allCharacters.filter(c => c.status === 'pending').length;
+  const review      = allApplications.filter(a => a.status === 'review').length
+                    + allCharacters.filter(c => c.status === 'review').length;
+  const total       = allApplications.length + allCharacters.length;
 
-  const pending  = data.filter(a => a.status === 'pending');
-  const review   = data.filter(a => a.status === 'review');
-  const approved = data.filter(a => a.status === 'approved');
+  document.getElementById('stat-app-pending').textContent  = appPending;
+  document.getElementById('stat-char-pending').textContent = charPending;
+  document.getElementById('stat-review').textContent       = review;
+  document.getElementById('stat-total').textContent        = total;
 
-  document.getElementById('stat-pending').textContent  = pending.length;
-  document.getElementById('stat-review').textContent   = review.length;
-  document.getElementById('stat-approved').textContent = approved.length;
-  document.getElementById('stat-total').textContent    = data.length;
+  // Combined "needs action" table
+  const apps  = allApplications.filter(a => a.status === 'pending' || a.status === 'review')
+                .map(a => ({ kind: 'app', data: a }));
+  const chars = allCharacters.filter(c => c.status === 'pending' || c.status === 'review')
+                .map(c => ({ kind: 'char', data: c }));
+  const all = [...apps, ...chars].sort((a,b) =>
+    new Date(b.data.created_at || 0) - new Date(a.data.created_at || 0)
+  ).slice(0, 10);
 
-  const recent = [...pending, ...review].slice(0, 8);
-  const tbody  = document.getElementById('dash-recent-body');
-  const empty  = document.getElementById('dash-empty');
+  const tbody = document.getElementById('dash-recent-body');
+  const empty = document.getElementById('dash-empty');
+  const table = document.getElementById('dash-recent-table');
+  if (!all.length) {
+    tbody.innerHTML = '';
+    table.style.display = 'none';
+    empty.style.display = 'block';
+    return;
+  }
+  table.style.display = '';
+  empty.style.display = 'none';
 
-  if (!recent.length) { tbody.closest('table').style.display='none'; empty.style.display='block'; return; }
-  tbody.innerHTML = recent.map(a => appRow(a, true)).join('');
+  tbody.innerHTML = all.map(item => {
+    if (item.kind === 'app') {
+      const a = item.data;
+      const label = { lore:'Lore', staff:'Staff', gm:'GM' }[a.type] || a.type;
+      return `<tr>
+        <td class="app-num">A#${a.seq ?? '?'}</td>
+        <td><span class="app-type-tag tt-${a.type}">${label}</span></td>
+        <td style="font-size:12px;color:var(--muted)">Application</td>
+        <td>${escHtml(a.form_data?.discord_username || '—')}</td>
+        <td>${fmtDate(a.created_at)}</td>
+        <td><span class="status-tag st-${a.status}">${statusLabel(a.status)}</span></td>
+        <td class="app-actions"><button class="btn-view-app" onclick="openAppModal('${a.id}')">View</button></td>
+      </tr>`;
+    } else {
+      const c = item.data;
+      const d = c.character_data || {};
+      const typeLabel = { foundation:'Foundation', scp:'SCP', unaffiliated:'Unaff.' }[c.type] || c.type;
+      const name = c.type === 'scp' ? (d.item_number || 'SCP-???') : (d.full_name || '—');
+      return `<tr>
+        <td class="app-num">C#${c.seq ?? '?'}</td>
+        <td><span class="app-type-tag" style="border-color:#666;color:#888;">${typeLabel}</span></td>
+        <td style="font-size:12px;color:var(--pale)">${escHtml(name)}</td>
+        <td>${escHtml(c.discord_username || '—')}</td>
+        <td>${fmtDate(c.created_at)}</td>
+        <td><span class="status-tag st-${c.status}">${statusLabel(c.status)}</span></td>
+        <td class="app-actions"><button class="btn-view-app" onclick="openCharModal('${c.id}')">Review</button></td>
+      </tr>`;
+    }
+  }).join('');
 }
 
-/* =========================================================
-   ALL APPLICATIONS
-========================================================= */
+/* ═══════════════════════════════════════════════════════════════
+   APPLICATIONS
+═══════════════════════════════════════════════════════════════ */
 async function loadAllApps() {
   const { data, error } = await getApplications();
   if (error) {
-    console.error('[staff] getApplications failed:', error);
+    setSysStatus('applications', 'err', error.message || 'fetch failed');
+    allApplications = [];
+    renderAppTable('all'); renderAppTable('lore'); renderAppTable('staff'); renderAppTable('gm');
+    return;
   }
+  setSysStatus('applications', 'ok');
   allApplications = data || [];
-  renderAppTable('all');
-  renderAppTable('lore');
-  renderAppTable('staff');
-  renderAppTable('gm');
+  renderAppTable('all'); renderAppTable('lore'); renderAppTable('staff'); renderAppTable('gm');
 }
 
 function renderAppTable(typeKey, statusFilter = 'all') {
@@ -971,23 +835,23 @@ function renderAppTable(typeKey, statusFilter = 'all') {
   const empty   = document.getElementById(emptyId);
   if (!tbody) return;
 
-  let apps = typeKey === 'all'
-    ? allApplications
-    : allApplications.filter(a => a.type === typeKey);
-
+  let apps = typeKey === 'all' ? allApplications : allApplications.filter(a => a.type === typeKey);
   if (statusFilter !== 'all') apps = apps.filter(a => a.status === statusFilter);
 
   if (!apps.length) {
     tbody.innerHTML = '';
-    if (empty) empty.style.display = 'block';
+    empty.style.display = 'block';
+    empty.textContent = sysStatus.applications === 'err'
+      ? 'Could not load applications — check the system status strip on the dashboard.'
+      : 'No applications found.';
+    empty.classList.toggle('err', sysStatus.applications === 'err');
     return;
   }
-  if (empty) empty.style.display = 'none';
+  empty.style.display = 'none';
   tbody.innerHTML = apps.map(a => appRow(a, typeKey === 'all')).join('');
 }
 
 function filterApps(typeKey, status, btn) {
-  // Update active button
   const bar = document.getElementById('filter-' + typeKey);
   if (bar) bar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
@@ -996,16 +860,14 @@ function filterApps(typeKey, status, btn) {
 
 function appRow(a, showType = false) {
   const canManage = CAN_MANAGE.includes(currentProfile?.role);
-  const typeMap = { lore:'tt-lore', staff:'tt-staff', gm:'tt-gm' };
+  const typeMap   = { lore:'tt-lore', staff:'tt-staff', gm:'tt-gm' };
   const typeLabel = { lore:'Lore', staff:'Staff', gm:'GM' };
-  const submitted = a.created_at ? new Date(a.created_at).toLocaleDateString('en-GB') : '—';
-
   return `<tr>
     <td class="app-num">#${a.seq ?? '?'}</td>
     ${showType ? `<td><span class="app-type-tag ${typeMap[a.type] || ''}">${typeLabel[a.type] || a.type}</span></td>` : ''}
     <td>${escHtml(a.form_data?.discord_username || '—')}</td>
-    <td>${submitted}</td>
-    <td><span class="status-tag st-${a.status}" ${canManage ? `onclick="quickStatus('${a.id}', this)"` : ''} title="${canManage ? 'Click to cycle status' : ''}">${statusLabel(a.status)}</span></td>
+    <td>${fmtDate(a.created_at)}</td>
+    <td><span class="status-tag st-${a.status}" ${canManage ? `onclick="quickAppStatus('${a.id}',this)"` : ''} title="${canManage ? 'Click to cycle status' : ''}">${statusLabel(a.status)}</span></td>
     <td class="app-actions">
       <button class="btn-view-app" onclick="openAppModal('${a.id}')">View</button>
       ${canManage ? `<button class="btn-del-app" onclick="deleteApp('${a.id}')">Delete</button>` : ''}
@@ -1013,27 +875,23 @@ function appRow(a, showType = false) {
   </tr>`;
 }
 
-/* =========================================================
-   QUICK STATUS CYCLE
-========================================================= */
 const STATUS_CYCLE = ['pending', 'review', 'approved', 'denied'];
 
-async function quickStatus(id, el) {
+async function quickAppStatus(id, el) {
   if (!CAN_MANAGE.includes(currentProfile?.role)) return;
   const app = allApplications.find(a => a.id === id);
   if (!app) return;
   const next = STATUS_CYCLE[(STATUS_CYCLE.indexOf(app.status) + 1) % STATUS_CYCLE.length];
-  await updateApplicationStatus(id, next);
+  const { error } = await updateApplicationStatus(id, next);
+  if (error) { alert('Failed: ' + error.message); return; }
   app.status = next;
   el.className = 'status-tag st-' + next;
   el.textContent = statusLabel(next);
+  updateDashboard();
 }
 
-/* =========================================================
-   APP MODAL
-========================================================= */
 function openAppModal(id) {
-  const a = allApplications.find(a => a.id === id);
+  const a = allApplications.find(x => x.id === id);
   if (!a) return;
   const canManage = CAN_MANAGE.includes(currentProfile?.role);
   const APP_DEFS = {
@@ -1053,7 +911,6 @@ function openAppModal(id) {
   };
   const def = APP_DEFS[a.type] || { title: a.type, questions: [] };
   const fd  = a.form_data || {};
-  const submitted = a.created_at ? new Date(a.created_at).toLocaleDateString('en-GB') : '—';
 
   let qaHtml = def.questions.map(q => `
     <div class="modal-q">${escHtml(q.label)}</div>
@@ -1063,13 +920,15 @@ function openAppModal(id) {
   let actionsHtml = '';
   if (canManage) {
     actionsHtml = `
-      <select class="modal-status-select" id="modal-status-sel" onchange="setModalStatus('${a.id}')">
+      <select class="modal-status-select" id="modal-status-sel">
         <option value="pending"  ${a.status==='pending' ?'selected':''}>Pending</option>
         <option value="review"   ${a.status==='review'  ?'selected':''}>Under Review</option>
         <option value="approved" ${a.status==='approved'?'selected':''}>Approved</option>
         <option value="denied"   ${a.status==='denied'  ?'selected':''}>Denied</option>
       </select>
-      <button class="btn btn-sm btn-danger" onclick="deleteApp('${a.id}', true)">Delete Application</button>
+      <input type="text" id="modal-reason" placeholder="Reason (optional, shown to applicant)" value="${escHtml(a.staff_reason||'')}" style="flex:1;min-width:240px;background:var(--dark);border:1px solid var(--border);color:var(--pale);font-family:var(--body);font-size:13px;padding:7px 12px;outline:none;">
+      <button class="btn btn-sm btn-fill" onclick="saveAppReview('${a.id}')">Save</button>
+      <button class="btn btn-sm btn-danger" onclick="deleteApp('${a.id}', true)">Delete</button>
     `;
   }
 
@@ -1079,67 +938,322 @@ function openAppModal(id) {
     <div class="modal-meta">
       <div class="modal-meta-item"><div class="modal-meta-label">Discord User ID</div><div class="modal-meta-val">${escHtml(fd.discord_user_id || '—')}</div></div>
       <div class="modal-meta-item"><div class="modal-meta-label">Timezone</div><div class="modal-meta-val">${escHtml(fd.timezone || '—')}</div></div>
-      <div class="modal-meta-item"><div class="modal-meta-label">Submitted</div><div class="modal-meta-val">${submitted}</div></div>
+      <div class="modal-meta-item"><div class="modal-meta-label">Submitted</div><div class="modal-meta-val">${fmtDate(a.created_at)}</div></div>
       <div class="modal-meta-item"><div class="modal-meta-label">Status</div><div class="modal-meta-val"><span class="status-tag st-${a.status}">${statusLabel(a.status)}</span></div></div>
     </div>
     <div class="modal-qa">${qaHtml}</div>
-    <div class="modal-actions">${actionsHtml}</div>
+    <div class="modal-actions" style="flex-wrap:wrap;">${actionsHtml}</div>
   `;
   document.getElementById('modal-overlay').classList.add('open');
 }
 
-async function setModalStatus(id) {
-  const sel  = document.getElementById('modal-status-sel');
-  const status = sel.value;
-  await updateApplicationStatus(id, status);
+async function saveAppReview(id) {
+  const status = document.getElementById('modal-status-sel').value;
+  const reason = document.getElementById('modal-reason').value.trim();
+  const { error } = await updateApplicationStatus(id, status, reason, currentProfile?.display_name);
+  if (error) { alert('Failed: ' + error.message); return; }
   const app = allApplications.find(a => a.id === id);
-  if (app) app.status = status;
-  renderAppTable('all');
-  renderAppTable(app?.type);
-  loadDashboard();
+  if (app) { app.status = status; app.staff_reason = reason; }
+  renderAppTable('all'); renderAppTable(app?.type);
+  updateDashboard();
+  closeModal();
+}
+
+async function deleteApp(id, fromModal = false) {
+  if (!CAN_MANAGE.includes(currentProfile?.role)) return;
+  if (!confirm('Delete this application? This cannot be undone.')) return;
+  const { error } = await deleteApplication(id);
+  if (error) { alert('Failed: ' + error.message); return; }
+  if (fromModal) closeModal();
+  await loadAllApps();
+  updateDashboard();
 }
 
 function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
 function closeModalIfBg(e) { if (e.target === document.getElementById('modal-overlay')) closeModal(); }
 
-/* =========================================================
-   DELETE APPLICATION
-========================================================= */
-async function deleteApp(id, fromModal = false) {
-  if (!CAN_MANAGE.includes(currentProfile?.role)) return;
-  if (!confirm('Delete this application? This cannot be undone.')) return;
-  await deleteApplication(id);
-  if (fromModal) closeModal();
-  await loadAllApps();
-  await loadDashboard();
+/* ═══════════════════════════════════════════════════════════════
+   CHARACTERS
+═══════════════════════════════════════════════════════════════ */
+async function loadAllChars() {
+  const { data, error } = await getCharacters();
+  if (error) {
+    setSysStatus('characters', 'err', error.message || 'fetch failed');
+    allCharacters = [];
+    ['all','foundation','scp','unaffiliated'].forEach(t => renderCharTable(t));
+    return;
+  }
+  setSysStatus('characters', 'ok');
+  allCharacters = data || [];
+  ['all','foundation','scp','unaffiliated'].forEach(t => renderCharTable(t));
 }
 
-/* =========================================================
+function renderCharTable(typeKey, statusFilter = 'all') {
+  const suffix = typeKey === 'all' ? 'all' : typeKey === 'unaffiliated' ? 'unaff' : typeKey;
+  const bodyId  = 'chars-' + suffix + '-body';
+  const emptyId = 'chars-' + suffix + '-empty';
+  const tbody = document.getElementById(bodyId);
+  const empty = document.getElementById(emptyId);
+  if (!tbody) return;
+
+  let chars = typeKey === 'all' ? allCharacters : allCharacters.filter(c => c.type === typeKey);
+  if (statusFilter !== 'all') chars = chars.filter(c => c.status === statusFilter);
+
+  if (!chars.length) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    empty.textContent = sysStatus.characters === 'err'
+      ? 'Could not load characters — check the system status strip on the dashboard.'
+      : (typeKey === 'all' ? 'No character submissions yet.' : 'No submissions of this type.');
+    empty.classList.toggle('err', sysStatus.characters === 'err');
+    return;
+  }
+  empty.style.display = 'none';
+  const canManage = CAN_MANAGE.includes(currentProfile?.role);
+  const canEdit   = currentProfile && [ROLES.OWNER, ROLES.HEAD_LORE].includes(currentProfile.role);
+  const showType  = typeKey === 'all';
+
+  tbody.innerHTML = chars.map(c => {
+    const d = c.character_data || {};
+    const charName = c.type === 'scp' ? (d.item_number || 'SCP-???') : (d.full_name || '—');
+    const methodTag = `<span style="font-family:var(--mono);font-size:8px;color:var(--muted)">${c.method === 'googledoc' ? 'G-Doc' : c.method === 'wikidot' ? 'Wiki' : 'Site'}</span>`;
+    const typeTag = { foundation:'Foundation', scp:'SCP', unaffiliated:'Unaff.' }[c.type] || c.type;
+    return `<tr>
+      <td class="app-num">#${c.seq || '?'}</td>
+      ${showType ? `<td style="font-family:var(--mono);font-size:9px;color:var(--muted)">${typeTag}</td>` : ''}
+      <td>${methodTag}</td>
+      <td style="font-size:12px">${escHtml(c.discord_username || '—')}</td>
+      <td style="font-size:12px">${escHtml(charName)}</td>
+      <td>${fmtDate(c.created_at)}</td>
+      <td><span class="status-tag st-${c.status}" ${canManage ? `onclick="cycleCharStatus('${c.id}',this)"` : ''} title="${canManage ? 'Click to cycle' : ''}">${statusLabel(c.status)}</span></td>
+      <td class="app-actions">
+        <button class="btn-view-app" onclick="openCharModal('${c.id}')">Review</button>
+        ${canEdit && c.method === 'website' && c.status === 'approved' ? `<button class="btn-view-app" onclick="window.open('submission.html?edit=${c.id}','_blank')">Edit</button>` : ''}
+        ${canManage ? `<button class="btn-del-app" onclick="deleteChar('${c.id}')">Delete</button>` : ''}
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function filterChars(typeKey, status, btn) {
+  const suffix = typeKey === 'all' ? 'all' : typeKey === 'unaffiliated' ? 'unaff' : typeKey;
+  const bar = document.getElementById('filter-chars-' + suffix);
+  if (bar) bar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderCharTable(typeKey, status);
+}
+
+async function cycleCharStatus(id, el) {
+  if (!CAN_MANAGE.includes(currentProfile?.role)) return;
+  const c = allCharacters.find(x => x.id === id);
+  if (!c) return;
+  const next = STATUS_CYCLE[(STATUS_CYCLE.indexOf(c.status) + 1) % STATUS_CYCLE.length];
+  const { error } = await updateCharacterStatus(id, next, c.staff_reason, currentProfile?.display_name);
+  if (error) { alert('Failed: ' + error.message); return; }
+  c.status = next;
+  el.className = 'status-tag st-' + next;
+  el.textContent = statusLabel(next);
+  updateDashboard();
+}
+
+function openCharModal(id) {
+  const c = allCharacters.find(x => x.id === id);
+  if (!c) return;
+  const canManage = CAN_MANAGE.includes(currentProfile?.role);
+  const d = c.character_data || {};
+  const charName = c.type === 'scp' ? (d.item_number || 'SCP-???') : (d.full_name || '—');
+
+  let detailRows = '';
+  if (c.type === 'foundation') {
+    detailRows = `
+      <div class="modal-q">Clearance / Classification</div><div class="modal-a">Level ${d.clearance ?? '?'} / Class ${d.classification || '?'}</div>
+      <div class="modal-q">Department</div><div class="modal-a">${escHtml(d.department || '—')}</div>
+      <div class="modal-q">Role</div><div class="modal-a">${escHtml(d.role || '—')}</div>
+      <div class="modal-q">Age / Nationality</div><div class="modal-a">${escHtml(d.age || '—')} / ${escHtml(d.nationality || '—')}</div>
+      ${d.image_url ? `<div class="modal-q">Image</div><div class="modal-a"><img src="${escHtml(d.image_url)}" style="max-width:200px;max-height:150px;border:1px solid var(--border)"></div>` : ''}
+      <div class="modal-q">Physical Description</div><div class="modal-a" style="max-height:100px;overflow:auto;">${escHtml(d.physical_desc || '—')}</div>
+      <div class="modal-q">Psychological Profile</div><div class="modal-a" style="max-height:100px;overflow:auto;">${escHtml(d.psych_profile || '—')}</div>
+      <div class="modal-q">Employment</div><div class="modal-a" style="max-height:80px;overflow:auto;">${escHtml(d.employment || '—')}</div>`;
+  } else if (c.type === 'scp') {
+    detailRows = `
+      <div class="modal-q">Containment Class / Clearance</div><div class="modal-a">${escHtml(d.containment_class || '?')} / Level ${escHtml(d.clearance_level || '?')}</div>
+      <div class="modal-q">Disruption / Risk</div><div class="modal-a">${escHtml(d.disruption_class || '?')} / ${escHtml(d.risk_class || '?')}</div>
+      ${d.secondary_class ? `<div class="modal-q">Secondary Class</div><div class="modal-a">${escHtml(d.secondary_class)}</div>` : ''}
+      <div class="modal-q">Containment Procedures</div><div class="modal-a" style="max-height:100px;overflow:auto;">${escHtml(d.containment_procedures || '—')}</div>
+      <div class="modal-q">Description</div><div class="modal-a" style="max-height:100px;overflow:auto;">${escHtml(d.description || '—')}</div>
+      <div class="modal-q">Abilities</div><div class="modal-a" style="max-height:80px;overflow:auto;">${escHtml(d.abilities || '—')}</div>
+      <div class="modal-q">Addenda</div><div class="modal-a">${(d.addenda || []).length} addendum(a)</div>`;
+  } else {
+    detailRows = `
+      <div class="modal-q">Affiliation</div><div class="modal-a">${escHtml(d.affiliation || 'None listed')}</div>
+      ${d.image_url ? `<div class="modal-q">Image</div><div class="modal-a"><img src="${escHtml(d.image_url)}" style="max-width:200px;max-height:150px;border:1px solid var(--border)"></div>` : ''}
+      <div class="modal-q">Background</div><div class="modal-a" style="max-height:100px;overflow:auto;">${escHtml(d.background || '—')}</div>
+      <div class="modal-q">Skills</div><div class="modal-a" style="max-height:80px;overflow:auto;">${escHtml(d.skills || '—')}</div>`;
+  }
+
+  let actionsHtml = '';
+  if (canManage) {
+    actionsHtml = `
+      <select class="modal-status-select" id="char-modal-status">
+        <option value="pending" ${c.status==='pending'?'selected':''}>Pending</option>
+        <option value="review" ${c.status==='review'?'selected':''}>Under Review</option>
+        <option value="approved" ${c.status==='approved'?'selected':''}>Approved</option>
+        <option value="denied" ${c.status==='denied'?'selected':''}>Denied</option>
+      </select>
+      <input type="text" id="char-modal-reason" placeholder="Staff reason (shown publicly)" value="${escHtml(c.staff_reason||'')}" style="flex:1;min-width:240px;background:var(--dark);border:1px solid var(--border);color:var(--pale);font-family:var(--body);font-size:13px;padding:7px 12px;outline:none;">
+      <button class="btn btn-sm btn-fill" onclick="saveCharReview('${c.id}')">Save</button>
+      <button class="btn btn-sm btn-danger" onclick="deleteChar('${c.id}',true)">Delete</button>`;
+  }
+
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-app-num">Character #${c.seq || '?'} &mdash; ${c.type.charAt(0).toUpperCase()+c.type.slice(1)}</div>
+    <div class="modal-title">${escHtml(charName)}</div>
+    <div class="modal-meta">
+      <div class="modal-meta-item"><div class="modal-meta-label">Discord</div><div class="modal-meta-val">${escHtml(c.discord_username || '—')}</div></div>
+      <div class="modal-meta-item"><div class="modal-meta-label">Method</div><div class="modal-meta-val">${c.method === 'googledoc' ? 'Google Doc' : c.method === 'wikidot' ? 'Wikidot' : 'Website'}</div></div>
+      <div class="modal-meta-item"><div class="modal-meta-label">Submitted</div><div class="modal-meta-val">${fmtDate(c.created_at)}</div></div>
+      <div class="modal-meta-item"><div class="modal-meta-label">Status</div><div class="modal-meta-val"><span class="status-tag st-${c.status}">${statusLabel(c.status)}</span></div></div>
+    </div>
+    ${c.method === 'googledoc' ? `<div style="margin-bottom:1rem;"><a href="${escHtml(c.gdoc_url||'')}" target="_blank" style="font-family:var(--mono);font-size:10px;letter-spacing:0.1em;color:var(--light);">Open Google Doc &#8599;</a></div>` : ''}
+    <div class="modal-qa">${detailRows}</div>
+    <div class="modal-actions" style="flex-wrap:wrap;gap:.5rem;">${actionsHtml}</div>`;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+async function saveCharReview(id) {
+  const status = document.getElementById('char-modal-status').value;
+  const reason = document.getElementById('char-modal-reason').value.trim();
+  const { error } = await updateCharacterStatus(id, status, reason, currentProfile?.display_name);
+  if (error) { alert('Failed: ' + error.message); return; }
+  const c = allCharacters.find(x => x.id === id);
+  if (c) { c.status = status; c.staff_reason = reason; }
+  renderCharTable('all'); renderCharTable(c?.type);
+  updateDashboard();
+  closeModal();
+}
+
+async function deleteChar(id, fromModal = false) {
+  if (!CAN_MANAGE.includes(currentProfile?.role)) return;
+  if (!confirm('Delete this character submission? This cannot be undone.')) return;
+  const { error } = await deleteCharacter(id);
+  if (error) { alert('Failed: ' + error.message); return; }
+  allCharacters = allCharacters.filter(c => c.id !== id);
+  if (fromModal) closeModal();
+  ['all','foundation','scp','unaffiliated'].forEach(t => renderCharTable(t));
+  updateDashboard();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   STAFF MEMBERS
+═══════════════════════════════════════════════════════════════ */
+async function loadStaffMembers() {
+  const { data, error } = await getAllProfiles();
+  if (error) {
+    setSysStatus('profiles', 'err', error.message || 'fetch failed');
+    allStaff = [];
+    renderStaffTable();
+    return;
+  }
+  setSysStatus('profiles', (data && data.length > 1) ? 'ok' : 'warn');
+  allStaff = data || [];
+  renderStaffTable();
+}
+
+function renderStaffTable() {
+  const tbody = document.getElementById('staff-body');
+  const empty = document.getElementById('staff-empty');
+  const note  = document.getElementById('staff-access-note');
+
+  if (sysStatus.profiles === 'err') {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    empty.textContent = 'Could not load staff list. Check the dashboard system status strip for the error.';
+    empty.classList.add('err');
+    return;
+  }
+
+  // Always show current user first, even if query returned only them
+  let rows = allStaff.slice();
+  if (currentProfile && !rows.find(r => r.id === currentProfile.id)) {
+    rows.unshift(currentProfile);
+  }
+
+  if (!rows.length) {
+    empty.style.display = 'block';
+    empty.textContent = 'No staff members found.';
+    empty.classList.remove('err');
+    return;
+  }
+  empty.style.display = 'none';
+
+  // Warning if only the current user visible
+  if (rows.length === 1 && currentProfile) {
+    note.innerHTML = `<div class="callout" style="border-left-color:var(--warn);">
+      <span class="callout-ico" style="color:var(--warn);">!</span>
+      <p style="color:var(--pale);">Only your profile is visible. This usually means the profiles table SELECT policy is not set to <code>TO authenticated USING (true)</code>. Check the SQL setup file.</p>
+    </div>`;
+  } else {
+    note.innerHTML = '';
+  }
+
+  const canEditRoles = CAN_MANAGE_STAFF.includes(currentProfile?.role);
+  tbody.innerHTML = rows.map(m => {
+    const isYou = m.id === currentProfile?.id;
+    return `<tr class="${isYou?'you':''}">
+      <td>${escHtml(m.display_name || '—')}</td>
+      <td>${escHtml(m.discord_username || '—')}</td>
+      <td>
+        ${canEditRoles && !isYou
+          ? `<select class="role-select" onchange="changeRole('${m.id}',this.value)">
+               ${['none',...Object.values(ROLES)].map(r=>`<option value="${r}" ${m.role===r?'selected':''}>${roleName(r)}</option>`).join('')}
+             </select>`
+          : `<span style="font-family:var(--mono);font-size:10px;letter-spacing:0.1em;color:var(--light)">${roleName(m.role)}</span>`}
+      </td>
+      <td>${isYou ? '<span class="you-tag">You</span>' : ''}</td>
+    </tr>`;
+  }).join('');
+}
+
+async function changeRole(userId, role) {
+  if (!CAN_MANAGE_STAFF.includes(currentProfile?.role)) return;
+  const { error } = await updateStaffRole(userId, role);
+  if (error) { alert('Failed: ' + error.message); return; }
+  await loadStaffMembers();
+}
+
+/* ═══════════════════════════════════════════════════════════════
    POSITIONS
-========================================================= */
+═══════════════════════════════════════════════════════════════ */
 async function loadPositions() {
-  const positions = await getPositions();
-  const canEdit   = CAN_MANAGE.includes(currentProfile?.role);
+  try {
+    const positions = await getPositions();
+    setSysStatus('positions', 'ok');
+    renderPositions(positions);
+  } catch (e) {
+    setSysStatus('positions', 'err', e.message || 'fetch failed');
+    renderPositions([]);
+  }
+}
+
+function renderPositions(positions) {
+  const canEdit = CAN_MANAGE.includes(currentProfile?.role);
   document.getElementById('positions-access-note').style.display = canEdit ? 'none' : 'flex';
 
-  const appDefs = [
+  const defs = [
     { id:'lore',  name:'Lore Team',       pending: allApplications.filter(a=>a.type==='lore'&&a.status==='pending').length },
     { id:'staff', name:'Staff / Mod',     pending: allApplications.filter(a=>a.type==='staff'&&a.status==='pending').length },
     { id:'gm',    name:'Gamemaster (GM)', pending: allApplications.filter(a=>a.type==='gm'&&a.status==='pending').length },
   ];
 
-  document.getElementById('pos-grid').innerHTML = appDefs.map(def => {
+  document.getElementById('pos-grid').innerHTML = defs.map(def => {
     const pos  = positions.find(p => p.type === def.id);
     const open = pos ? pos.is_open : false;
-    return `
-    <div class="pos-card">
+    return `<div class="pos-card">
       <div class="pos-card-name">${def.name}</div>
       <div class="pos-card-count">${def.pending} pending application${def.pending!==1?'s':''}</div>
       <div class="toggle-wrap">
-        <div class="toggle ${open?'on':''} ${canEdit?'':''}\"
-             id="toggle-${def.id}"
-             ${canEdit ? `onclick="togglePosition('${def.id}',this)"` : 'style="cursor:not-allowed;opacity:.5;"'}
-        ></div>
+        <div class="toggle ${open?'on':''}" id="toggle-${def.id}"
+          ${canEdit ? `onclick="togglePosition('${def.id}',this)"` : 'style="cursor:not-allowed;opacity:.5;"'}></div>
         <span class="toggle-label">${open ? 'Open' : 'Closed'}</span>
       </div>
     </div>`;
@@ -1151,94 +1265,20 @@ async function togglePosition(type, el) {
   const isOn = el.classList.contains('on');
   el.classList.toggle('on', !isOn);
   el.nextElementSibling.textContent = !isOn ? 'Open' : 'Closed';
-  await setPositionOpen(type, !isOn);
-}
-
-/* =========================================================
-   STAFF MANAGEMENT
-========================================================= */
-async function loadStaffMembers() {
-  const { data, error } = await getStaffMembers();
-  const tbody = document.getElementById('staff-body');
-  const empty = document.getElementById('staff-empty');
+  const { error } = await setPositionOpen(type, !isOn);
   if (error) {
-    console.error('[staff] getStaffMembers failed:', error);
-    if (empty) {
-      empty.style.display = 'block';
-      empty.textContent = 'Could not load staff list — check browser console. Likely a Row Level Security policy on the profiles table. See fix in chat.';
-    }
-    return;
+    alert('Failed: ' + error.message);
+    el.classList.toggle('on', isOn);
+    el.nextElementSibling.textContent = isOn ? 'Open' : 'Closed';
   }
-  // Fallback: if query returned empty but we have a current profile (RLS blocking other rows),
-  // show at least the current user so the panel isn't misleading.
-  let staff = data || [];
-  if (!staff.length && currentProfile) {
-    staff = [currentProfile];
-    if (empty) {
-      empty.style.display = 'block';
-      empty.textContent = 'Showing only your profile. The profiles table is likely missing a SELECT policy allowing authenticated users to see other staff rows.';
-    }
-  } else if (!staff.length) {
-    if (empty) empty.style.display = 'block';
-    return;
-  } else if (empty) {
-    empty.style.display = 'none';
-  }
-  const canEditRoles = CAN_MANAGE_STAFF.includes(currentProfile?.role);
-  const roleOptions  = Object.values(ROLES).map(r => `<option value="${r}">${roleName(r)}</option>`).join('');
-  tbody.innerHTML = staff.map(m => `
-    <tr>
-      <td>${escHtml(m.display_name || '—')}</td>
-      <td>${escHtml(m.discord_username || '—')}</td>
-      <td>
-        ${canEditRoles
-          ? `<select class="role-select" onchange="changeRole('${m.id}',this.value)">
-               ${Object.values(ROLES).map(r=>`<option value="${r}" ${m.role===r?'selected':''}>${roleName(r)}</option>`).join('')}
-             </select>`
-          : `<span style="font-family:var(--mono);font-size:10px;letter-spacing:0.1em;color:var(--light)">${roleName(m.role)}</span>`
-        }
-      </td>
-      <td>${m.id === currentProfile?.id ? '<span style="font-family:var(--mono);font-size:9px;color:var(--muted)">You</span>' : ''}</td>
-    </tr>
-  `).join('');
 }
 
-async function changeRole(userId, role) {
-  if (!CAN_MANAGE_STAFF.includes(currentProfile?.role)) return;
-  await updateStaffRole(userId, role);
-}
-
-/* =========================================================
-   WORLD STATE — NEWS
-========================================================= */
-let _wsNews   = [];
-let _wsGOIs   = [];
-let _wsRels   = [];
-
-async function loadWSData() {
-  try {
-    const { data } = await db.from('world_state').select('*');
-    if (!data) return;
-    const kv = {};
-    data.forEach(r => kv[r.key] = r.value);
-
-    // Tensions
-    const tl = kv.tensions;
-    if (tl && tl.level) {
-      pickTension(tl.level, document.querySelector('.tpick[data-lv="'+tl.level+'"]'));
-      if (tl.note) document.getElementById('tension-note').value = tl.note;
-    }
-
-    // News
-    _wsNews = (kv.world_news && kv.world_news.entries) || [];
-    renderNewsAdmin();
-
-    // GOIs
-    _wsGOIs = (kv.gois && kv.gois.list) || DEFAULT_WS_GOIS;
-    _wsRels = (kv.goi_relations && kv.goi_relations.list) || DEFAULT_WS_RELS;
-    renderGOIAdmin();
-  } catch(e) { console.error('WS load error:', e); }
-}
+/* ═══════════════════════════════════════════════════════════════
+   WORLD STATE — shared loader
+═══════════════════════════════════════════════════════════════ */
+let _wsNews = [];
+let _wsGOIs = [];
+let _wsRels = [];
 
 const DEFAULT_WS_GOIS = [
   {id:'foundation',name:'SCP Foundation',abbr:'SCPF',logo:'img/Base.png'},
@@ -1263,6 +1303,33 @@ const DEFAULT_WS_RELS = [
   {from:'sc',to:'uiu',status:'enemy'},
 ];
 
+async function loadWSData() {
+  try {
+    const { data, error } = await db.from('world_state').select('*');
+    if (error) throw error;
+    setSysStatus('worldstate', 'ok');
+    const kv = {};
+    (data || []).forEach(r => kv[r.key] = r.value);
+
+    const tl = kv.tensions;
+    if (tl && tl.level) {
+      pickTension(tl.level, document.querySelector('.tpick[data-lv="'+tl.level+'"]'));
+      if (tl.note) document.getElementById('tension-note').value = tl.note;
+    }
+
+    _wsNews = (kv.world_news && kv.world_news.entries) || [];
+    renderNewsAdmin();
+
+    _wsGOIs = (kv.gois && kv.gois.list) || DEFAULT_WS_GOIS;
+    _wsRels = (kv.goi_relations && kv.goi_relations.list) || DEFAULT_WS_RELS;
+    renderGOIAdmin();
+  } catch(e) {
+    setSysStatus('worldstate', 'err', e.message || 'fetch failed');
+    console.error('[staff] World state load:', e);
+  }
+}
+
+/* ═══════ NEWS ═══════ */
 function renderNewsAdmin() {
   const wrap = document.getElementById('news-entries-list');
   if (!_wsNews.length) { wrap.innerHTML = '<div style="font-family:var(--mono);font-size:10px;color:var(--border);letter-spacing:0.1em;">No dispatches yet.</div>'; return; }
@@ -1272,36 +1339,37 @@ function renderNewsAdmin() {
     return `<div style="border:1px solid var(--border);background:var(--deep);padding:1rem 1.25rem;margin-bottom:.5rem;display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;">
       <div>
         <div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:0.1em;margin-bottom:.25rem;">${ts} &bull; ${e.tag||'other'} &bull; ${e.veil||'both'}</div>
-        <div style="font-family:var(--display);font-size:17px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:var(--pale);">${e.headline||'Untitled'}</div>
-        <div style="font-size:12px;color:var(--muted);margin-top:.25rem;">${(e.body||'').substring(0,120)}${(e.body||'').length>120?'…':''}</div>
+        <div style="font-family:var(--display);font-size:17px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:var(--pale);">${escHtml(e.headline||'Untitled')}</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:.25rem;">${escHtml((e.body||'').substring(0,120))}${(e.body||'').length>120?'…':''}</div>
       </div>
-      <button onclick="deleteNewsEntry(${i})" style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--muted);padding:5px 10px;cursor:pointer;flex-shrink:0;" onmouseover="this.style.borderColor='#7a1a1a';this.style.color='#aa3a3a';" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)';">Delete</button>
+      <button onclick="deleteNewsEntry(${i})" style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--muted);padding:5px 10px;cursor:pointer;flex-shrink:0;">Delete</button>
     </div>`;
   }).join('');
 }
 
 async function addNewsEntry() {
-  const canEdit = currentProfile && (currentProfile.role==='owner'||currentProfile.role==='head_lore'||currentProfile.role==='admin');
-  if (!canEdit) { document.getElementById('news-msg').textContent='Permission denied.'; return; }
+  const canEdit = currentProfile && [ROLES.OWNER, ROLES.HEAD_LORE, ROLES.ADMIN].includes(currentProfile.role);
+  const msg = document.getElementById('news-msg');
+  if (!canEdit) { msg.textContent = 'Permission denied.'; return; }
   const headline = document.getElementById('news-headline').value.trim();
   const body     = document.getElementById('news-body').value.trim();
   const tag      = document.getElementById('news-tag').value;
   const veil     = document.getElementById('news-veil').value;
-  if (!headline || !body) { document.getElementById('news-msg').textContent='Headline and body are required.'; return; }
-  document.getElementById('news-msg').textContent = 'Saving...';
+  if (!headline || !body) { msg.textContent = 'Headline and body are required.'; return; }
+  msg.textContent = 'Saving...';
   const entry = { headline, body, tag, veil, timestamp: new Date().toISOString() };
   _wsNews.push(entry);
   const { error } = await db.from('world_state').upsert({ key:'world_news', value:{ entries: _wsNews }, updated_at: new Date().toISOString(), updated_by: currentProfile.display_name });
-  if (error) { document.getElementById('news-msg').textContent='Error: '+error.message; _wsNews.pop(); return; }
-  document.getElementById('news-headline').value='';
-  document.getElementById('news-body').value='';
-  document.getElementById('news-msg').textContent='Published.';
+  if (error) { msg.textContent = 'Error: ' + error.message; _wsNews.pop(); return; }
+  document.getElementById('news-headline').value = '';
+  document.getElementById('news-body').value = '';
+  msg.textContent = 'Published.';
   renderNewsAdmin();
-  setTimeout(()=>{ document.getElementById('news-msg').textContent=''; },3000);
+  setTimeout(() => { msg.textContent = ''; }, 3000);
 }
 
 async function deleteNewsEntry(idx) {
-  const canEdit = currentProfile && (currentProfile.role==='owner'||currentProfile.role==='head_lore'||currentProfile.role==='admin');
+  const canEdit = currentProfile && [ROLES.OWNER, ROLES.HEAD_LORE, ROLES.ADMIN].includes(currentProfile.role);
   if (!canEdit) return;
   if (!confirm('Delete this dispatch?')) return;
   const sorted = [..._wsNews].sort((a,b)=>new Date(b.timestamp||0)-new Date(a.timestamp||0));
@@ -1311,61 +1379,50 @@ async function deleteNewsEntry(idx) {
   renderNewsAdmin();
 }
 
-/* ── TENSIONS ── */
+/* ═══════ TENSIONS ═══════ */
 function pickTension(lv, el) {
-  document.querySelectorAll('.tpick').forEach(b => b.style.outline='none');
+  document.querySelectorAll('.tpick').forEach(b => b.style.outline = 'none');
   if (el) el.style.outline = '2px solid var(--pale)';
   document.getElementById('tension-level-val').value = lv;
 }
 
 async function saveTension() {
-  const canEdit = currentProfile && (currentProfile.role==='owner'||currentProfile.role==='head_lore'||currentProfile.role==='admin');
-  if (!canEdit) { document.getElementById('tension-msg').textContent='Permission denied.'; return; }
+  const canEdit = currentProfile && [ROLES.OWNER, ROLES.HEAD_LORE, ROLES.ADMIN].includes(currentProfile.role);
+  const msg = document.getElementById('tension-msg');
+  if (!canEdit) { msg.textContent = 'Permission denied.'; return; }
   const level = parseInt(document.getElementById('tension-level-val').value);
-  if (!level) { document.getElementById('tension-msg').textContent='Select a tension level first.'; return; }
+  if (!level) { msg.textContent = 'Select a tension level first.'; return; }
   const note = document.getElementById('tension-note').value.trim();
-  document.getElementById('tension-msg').textContent='Saving...';
+  msg.textContent = 'Saving...';
   const { error } = await db.from('world_state').upsert({ key:'tensions', value:{ level, note }, updated_at: new Date().toISOString(), updated_by: currentProfile.display_name });
-  document.getElementById('tension-msg').textContent = error ? 'Error: '+error.message : 'Saved.';
-  setTimeout(()=>{ document.getElementById('tension-msg').textContent=''; },3000);
+  msg.textContent = error ? ('Error: ' + error.message) : 'Saved.';
+  setTimeout(() => { msg.textContent = ''; }, 3000);
 }
 
-/* ── GOI ── */
+/* ═══════ GOI ═══════ */
 function renderGOIAdmin() {
   const wrap = document.getElementById('goi-list-wrap');
-  wrap.innerHTML = `<div style="font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:.75rem;display:flex;align-items:center;gap:.75rem;">Registered GOIs<span style="flex:1;height:1px;background:var(--border);display:block;"></span></div>
+  wrap.innerHTML = `<div class="ws-card-title">Registered GOIs</div>
     <div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem;">
       ${_wsGOIs.map((g,i) => `<div style="border:1px solid var(--border);background:var(--deep);padding:.5rem .75rem;display:flex;align-items:center;gap:.5rem;">
-        <img src="${g.logo}" style="width:28px;height:28px;object-fit:contain;mix-blend-mode:screen;flex-shrink:0;" onerror="this.style.display='none'">
-        <span style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--pale);">${g.abbr}</span>
+        <img src="${escHtml(g.logo)}" style="width:28px;height:28px;object-fit:contain;mix-blend-mode:screen;flex-shrink:0;" onerror="this.style.display='none'">
+        <span style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--pale);">${escHtml(g.abbr)}</span>
         ${g.id!=='foundation'?`<button onclick="removeGOI(${i})" style="background:none;border:none;color:var(--muted);cursor:pointer;font-family:var(--mono);font-size:11px;padding:0 3px;" title="Remove">✕</button>`:''}
       </div>`).join('')}
     </div>`;
-  // Refresh matrix + bubble chart
   renderRelMatrix();
-  setTimeout(()=>initStaffBubble(_wsGOIs, _wsRels), 50);
+  setTimeout(() => initStaffBubble(_wsGOIs, _wsRels), 50);
 }
 
-/* ── RELATION MATRIX ──
-   Shows every unique GOI pair as a row with a status dropdown.
-   Change any dropdown → saves automatically → live preview updates.
-   Much faster than From/To/Set when adding a new GOI. */
 const REL_STATUS_OPTIONS = [
-  {v:'neutral', label:'Neutral'},
-  {v:'allied',  label:'Allied'},
-  {v:'friendly',label:'Friendly'},
-  {v:'indiff',  label:'Indifferent'},
-  {v:'hostile', label:'Hostile'},
-  {v:'enemy',   label:'Enemy'},
+  {v:'neutral', label:'Neutral'},{v:'allied', label:'Allied'},{v:'friendly',label:'Friendly'},
+  {v:'indiff', label:'Indifferent'},{v:'hostile',label:'Hostile'},{v:'enemy', label:'Enemy'},
 ];
 
 function renderRelMatrix() {
   const wrap = document.getElementById('rel-matrix-wrap');
   if (!wrap) return;
-  if (_wsGOIs.length < 2) {
-    wrap.innerHTML = '<div class="rel-empty">Add at least two GOIs to edit relations.</div>';
-    return;
-  }
+  if (_wsGOIs.length < 2) { wrap.innerHTML = '<div class="rel-empty">Add at least two GOIs to edit relations.</div>'; return; }
   const filter = (document.getElementById('rel-matrix-filter')?.value || '').trim().toLowerCase();
   const relMap = {};
   _wsRels.forEach(r => { relMap[r.from+'|'+r.to] = r.status; relMap[r.to+'|'+r.from] = r.status; });
@@ -1380,99 +1437,74 @@ function renderRelMatrix() {
       }
       const status = relMap[a.id+'|'+b.id] || 'neutral';
       const isUnset = !relMap[a.id+'|'+b.id];
-      const opts = REL_STATUS_OPTIONS.map(o =>
-        `<option value="${o.v}" ${o.v===status?'selected':''}>${o.label}</option>`).join('');
+      const opts = REL_STATUS_OPTIONS.map(o => `<option value="${o.v}" ${o.v===status?'selected':''}>${o.label}</option>`).join('');
       rows.push(`<div class="rel-row ${isUnset?'unset':''}" data-a="${a.id}" data-b="${b.id}">
-        <div class="rel-goi from">
-          <img src="${a.logo}" onerror="this.style.display='none'">
-          <span class="abbr">${a.abbr}</span>
-          <span class="name">${a.name}</span>
-        </div>
+        <div class="rel-goi from"><img src="${escHtml(a.logo)}" onerror="this.style.display='none'"><span class="abbr">${escHtml(a.abbr)}</span><span class="name">${escHtml(a.name)}</span></div>
         <div class="rel-arrow">&harr;</div>
-        <div class="rel-goi to">
-          <span class="name">${b.name}</span>
-          <span class="abbr">${b.abbr}</span>
-          <img src="${b.logo}" onerror="this.style.display='none'">
-        </div>
+        <div class="rel-goi to"><span class="name">${escHtml(b.name)}</span><span class="abbr">${escHtml(b.abbr)}</span><img src="${escHtml(b.logo)}" onerror="this.style.display='none'"></div>
         <select class="s-${status}" onchange="onRelChange('${a.id}','${b.id}',this)">${opts}</select>
       </div>`);
     }
   }
-  wrap.innerHTML = rows.length
-    ? `<div class="rel-matrix">${rows.join('')}</div>`
-    : '<div class="rel-empty">No pairs match that filter.</div>';
+  wrap.innerHTML = rows.length ? `<div class="rel-matrix">${rows.join('')}</div>` : '<div class="rel-empty">No pairs match that filter.</div>';
 }
 
 async function onRelChange(fromId, toId, selectEl) {
-  const canEdit = currentProfile && (currentProfile.role==='owner'||currentProfile.role==='head_lore'||currentProfile.role==='admin');
+  const canEdit = currentProfile && [ROLES.OWNER, ROLES.HEAD_LORE, ROLES.ADMIN].includes(currentProfile.role);
   const msg = document.getElementById('rel-msg');
-  if (!canEdit) {
-    msg.textContent = 'Permission denied — reverting.';
-    renderRelMatrix();
-    setTimeout(()=>{ msg.textContent=''; }, 2500);
-    return;
-  }
+  if (!canEdit) { msg.textContent = 'Permission denied — reverting.'; renderRelMatrix(); setTimeout(()=>{msg.textContent='';},2500); return; }
   const status = selectEl.value;
-  // Update the visual left-border colour immediately
   selectEl.className = 's-' + status;
-  // Drop any existing pair (either direction) then push fresh
   _wsRels = _wsRels.filter(r => !((r.from===fromId&&r.to===toId)||(r.from===toId&&r.to===fromId)));
   _wsRels.push({ from: fromId, to: toId, status });
-  // Row no longer "unset"
   selectEl.closest('.rel-row')?.classList.remove('unset');
   msg.textContent = 'Saving...';
   const { error } = await db.from('world_state').upsert({
-    key:'goi_relations',
-    value:{ list: _wsRels },
-    updated_at: new Date().toISOString(),
-    updated_by: currentProfile?.display_name
+    key:'goi_relations', value:{ list: _wsRels },
+    updated_at: new Date().toISOString(), updated_by: currentProfile?.display_name
   });
-  if (error) {
-    msg.textContent = 'Error: ' + error.message;
-  } else {
+  if (error) { msg.textContent = 'Error: ' + error.message; }
+  else {
     msg.textContent = `Saved: ${fromId.toUpperCase()} ↔ ${toId.toUpperCase()} = ${status.toUpperCase()}`;
     setTimeout(()=>{ if(msg.textContent.startsWith('Saved')) msg.textContent=''; }, 2500);
   }
-  // Refresh live preview
   initStaffBubble(_wsGOIs, _wsRels);
 }
 
 async function addGOI() {
-  const canEdit = currentProfile && (currentProfile.role==='owner'||currentProfile.role==='head_lore'||currentProfile.role==='admin');
-  if (!canEdit) { document.getElementById('goi-add-msg').textContent='Permission denied.'; return; }
+  const canEdit = currentProfile && [ROLES.OWNER, ROLES.HEAD_LORE, ROLES.ADMIN].includes(currentProfile.role);
+  const msg = document.getElementById('goi-add-msg');
+  if (!canEdit) { msg.textContent='Permission denied.'; return; }
   const name   = document.getElementById('goi-name').value.trim();
   const abbr   = document.getElementById('goi-abbr').value.trim().toUpperCase();
   const fileEl = document.getElementById('goi-logo-file');
   const file   = fileEl.files[0];
-  if (!name || !abbr) { document.getElementById('goi-add-msg').textContent='Name and abbreviation are required.'; return; }
-  if (file && file.type !== 'image/png') { document.getElementById('goi-add-msg').textContent='Logo must be a PNG file.'; return; }
-  if (file && file.size > 256*1024) { document.getElementById('goi-add-msg').textContent='Logo must be under 256KB.'; return; }
+  if (!name || !abbr) { msg.textContent='Name and abbreviation are required.'; return; }
+  if (file && file.type !== 'image/png') { msg.textContent='Logo must be a PNG file.'; return; }
+  if (file && file.size > 256*1024) { msg.textContent='Logo must be under 256KB.'; return; }
 
-  document.getElementById('goi-add-msg').textContent='Saving...';
+  msg.textContent = 'Saving...';
   let logoPath = 'img/Base.png';
-
   if (file) {
-    // Upload to Supabase storage
     const fname = 'goi-' + abbr.toLowerCase() + '-' + Date.now() + '.png';
     const { error: upErr } = await db.storage.from('character-images').upload('goi/' + fname, file, { cacheControl:'3600', upsert:true, contentType:'image/png' });
-    if (upErr) { document.getElementById('goi-add-msg').textContent='Logo upload failed: '+upErr.message; return; }
+    if (upErr) { msg.textContent='Logo upload failed: '+upErr.message; return; }
     const { data: urlData } = db.storage.from('character-images').getPublicUrl('goi/' + fname);
     logoPath = urlData.publicUrl;
   }
-
   const id = abbr.toLowerCase().replace(/[^a-z0-9]/g,'');
   _wsGOIs.push({ id, name, abbr, logo: logoPath });
   await saveGOIs();
   document.getElementById('goi-name').value='';
   document.getElementById('goi-abbr').value='';
   fileEl.value='';
-  document.getElementById('goi-add-msg').textContent='GOI added.';
+  msg.textContent = 'GOI added.';
   renderGOIAdmin();
-  setTimeout(()=>{ document.getElementById('goi-add-msg').textContent=''; },3000);
+  setTimeout(() => { msg.textContent = ''; }, 3000);
 }
 
 async function removeGOI(idx) {
-  const canEdit = currentProfile && (currentProfile.role==='owner'||currentProfile.role==='head_lore'||currentProfile.role==='admin');
+  const canEdit = currentProfile && [ROLES.OWNER, ROLES.HEAD_LORE, ROLES.ADMIN].includes(currentProfile.role);
   if (!canEdit) return;
   const g = _wsGOIs[idx];
   if (!confirm('Remove '+g.name+' from the GOI list? This will also remove all their relations.')) return;
@@ -1490,26 +1522,9 @@ async function saveRelations() {
   await db.from('world_state').upsert({ key:'goi_relations', value:{ list: _wsRels }, updated_at: new Date().toISOString(), updated_by: currentProfile?.display_name });
 }
 
-/* =========================================================
-   HELPERS
-========================================================= */
-function statusLabel(s) {
-  return { pending:'Pending', review:'Under Review', approved:'Approved', denied:'Denied' }[s] || s;
-}
-function roleName(r) {
-  return {
-    owner:'Owner', admin:'Admin', head_lore:'Head of Lore',
-    lore:'Lore Team', trial_lore:'Trial Lore', mod:'Moderator',
-    trial_mod:'Trial Mod',
-  }[r] || r;
-}
-function escHtml(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-/* =========================================================
+/* ═══════════════════════════════════════════════════════════════
    GOI BUBBLE CHART (staff preview)
-========================================================= */
+═══════════════════════════════════════════════════════════════ */
 const STAFF_REL_COLORS = {
   allied:  {stroke:'#3a6aaa',fill:'rgba(10,50,80,0.55)',label:'#3a6aaa'},
   friendly:{stroke:'#3a9a3a',fill:'rgba(15,65,20,0.55)',label:'#3a9a3a'},
@@ -1518,7 +1533,6 @@ const STAFF_REL_COLORS = {
   hostile: {stroke:'#aa6a3a',fill:'rgba(100,50,10,0.55)',label:'#aa6a3a'},
   enemy:   {stroke:'#aa3a3a',fill:'rgba(120,20,20,0.55)',label:'#aa3a3a'},
 };
-
 let _sNodes=[], _sEdges=[], _sHov=null, _sDrag=null, _sDragOX=0, _sDragOY=0;
 let _sAnimFrame=null, _sLogoCache={};
 
@@ -1538,11 +1552,7 @@ function initStaffBubble(gois, rels) {
   });
   _sEdges=rels.map(r=>({from:r.from,to:r.to,status:r.status||'neutral'}));
   _sLogoCache={};
-  gois.forEach(g=>{
-    if(!g.logo) return;
-    const img=new Image(); img.src=g.logo;
-    img.onload=()=>{ _sLogoCache[g.id]=img; };
-  });
+  gois.forEach(g=>{ if(!g.logo) return; const img=new Image(); img.src=g.logo; img.onload=()=>{ _sLogoCache[g.id]=img; }; });
   canvas.onmousedown=sDown; canvas.onmousemove=sMove; canvas.onmouseup=sUp; canvas.onmouseleave=sLeave;
   canvas.ontouchstart=e=>{e.preventDefault();const t=e.touches[0];sDown({currentTarget:e.currentTarget,clientX:t.clientX,clientY:t.clientY});};
   canvas.ontouchmove=e=>{e.preventDefault();const t=e.touches[0];sMove({currentTarget:e.currentTarget,clientX:t.clientX,clientY:t.clientY});};
@@ -1551,20 +1561,16 @@ function initStaffBubble(gois, rels) {
   sTick();
 }
 
-// Snap nodes back to default circular layout
 function resetStaffLayout(){
   if(!_sNodes.length) return;
   const canvas=document.getElementById('goi-canvas-staff');
   if(!canvas) return;
-  const W=canvas.width, H=canvas.height;
-  const n=_sNodes.length;
+  const W=canvas.width, H=canvas.height, n=_sNodes.length;
   const ringR=Math.min(W,H)*(n>9?0.38:n>6?0.35:0.33);
   const cx=W/2, cy=H/2;
   _sNodes.forEach((node,i)=>{
     const a=(2*Math.PI*i/n)-Math.PI/2;
-    node.x=cx+ringR*Math.cos(a);
-    node.y=cy+ringR*Math.sin(a);
-    node.vx=0; node.vy=0;
+    node.x=cx+ringR*Math.cos(a); node.y=cy+ringR*Math.sin(a); node.vx=0; node.vy=0;
   });
 }
 
@@ -1576,7 +1582,6 @@ function sTick(){
 }
 
 function sSimulate(){
-  // Static — clamp only
   const canvas=document.getElementById('goi-canvas-staff');
   if(!canvas) return;
   const W=canvas.width, H=canvas.height;
@@ -1593,9 +1598,9 @@ function sDraw(canvas){
   ctx.strokeStyle='rgba(255,255,255,0.025)'; ctx.lineWidth=1;
   for(let x=0;x<W;x+=60){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
   for(let y=0;y<H;y+=60){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
-  const nm={};_sNodes.forEach(n=>nm[n.id]=n);
+  const nm={}; _sNodes.forEach(n=>nm[n.id]=n);
   _sEdges.forEach(e=>{
-    const a=nm[e.from],b=nm[e.to]; if(!a||!b) return;
+    const a=nm[e.from], b=nm[e.to]; if(!a||!b) return;
     const col=STAFF_REL_COLORS[e.status]||STAFF_REL_COLORS.neutral;
     const isH=_sHov&&(e.from===_sHov.id||e.to===_sHov.id);
     const alpha=_sHov?(isH?1:0.08):(e.status==='neutral'?0.18:0.45);
@@ -1673,189 +1678,35 @@ function sMoveTooltip(canvas,x,y){
   tt.style.left=lx+'px'; tt.style.top=ly+'px';
 }
 
-/* =========================================================
-   INIT — check existing session on load
-========================================================= */
-/* =========================================================
-   CHARACTER MANAGEMENT
-========================================================= */
-let allCharacters = [];
-
-async function loadAllChars() {
-  const { data, error } = await db.from('characters').select('*').order('seq', { ascending: true });
-  if (error) {
-    console.error('[staff] loadAllChars failed:', error);
-  }
-  allCharacters = data || [];
-  renderCharTable('all');
-  renderCharTable('foundation');
-  renderCharTable('scp');
-  renderCharTable('unaffiliated');
+/* ═══════════════════════════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════════════════════════ */
+function statusLabel(s) {
+  return { pending:'Pending', review:'Under Review', approved:'Approved', denied:'Denied' }[s] || s;
+}
+function roleName(r) {
+  return {
+    none:'None',
+    owner:'Owner', admin:'Admin', head_lore:'Head of Lore',
+    lore:'Lore Team', trial_lore:'Trial Lore', mod:'Moderator', trial_mod:'Trial Mod',
+  }[r] || r;
+}
+function escHtml(s) {
+  return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function fmtDate(s) {
+  if (!s) return '—';
+  try { return new Date(s).toLocaleDateString('en-GB'); } catch(e) { return '—'; }
 }
 
-function renderCharTable(typeKey, statusFilter = 'all') {
-  const suffix = typeKey === 'all' ? 'all' : typeKey === 'unaffiliated' ? 'unaff' : typeKey;
-  const bodyId = 'chars-' + suffix + '-body';
-  const emptyId = 'chars-' + suffix + '-empty';
-  const tbody = document.getElementById(bodyId);
-  const empty = document.getElementById(emptyId);
-  if (!tbody) return;
-
-  let chars = typeKey === 'all' ? allCharacters : allCharacters.filter(c => c.type === typeKey);
-  if (statusFilter !== 'all') chars = chars.filter(c => c.status === statusFilter);
-
-  if (!chars.length) { tbody.innerHTML = ''; if (empty) empty.style.display = 'block'; return; }
-  if (empty) empty.style.display = 'none';
-  const canManage = CAN_MANAGE.includes(currentProfile?.role);
-  const canEdit = currentProfile && [ROLES.OWNER, ROLES.HEAD_LORE].includes(currentProfile.role);
-  const showType = typeKey === 'all';
-
-  tbody.innerHTML = chars.map(c => {
-    const d = c.character_data || {};
-    const charName = c.type === 'scp' ? (d.item_number || 'SCP-???') : (d.full_name || '—');
-    const date = c.created_at ? new Date(c.created_at).toLocaleDateString('en-GB') : '—';
-    const methodTag = c.method === 'googledoc' ? '<span style="font-family:var(--mono);font-size:8px;color:var(--muted)">G-Doc</span>' : '<span style="font-family:var(--mono);font-size:8px;color:var(--muted)">Site</span>';
-    const typeTag = { foundation: 'Foundation', scp: 'SCP', unaffiliated: 'Unaff.' }[c.type] || c.type;
-    return `<tr>
-      <td class="app-num">#${c.seq || '?'}</td>
-      ${showType ? `<td style="font-family:var(--mono);font-size:9px;color:var(--muted)">${typeTag}</td>` : ''}
-      <td>${methodTag}</td>
-      <td style="font-size:12px">${escHtml(c.discord_username || '—')}</td>
-      <td style="font-size:12px">${escHtml(charName)}</td>
-      <td style="font-family:var(--mono);font-size:10px;color:var(--muted)">${date}</td>
-      <td><span class="status-tag st-${c.status}" ${canManage ? `onclick="cycleCharStatus('${c.id}',this)"` : ''} title="${canManage ? 'Click to cycle' : ''}">${statusLabel(c.status)}</span></td>
-      <td class="app-actions">
-        <button class="btn-view-app" onclick="openCharModal('${c.id}')">Review</button>
-        ${canEdit && c.method === 'website' && c.status === 'approved' ? `<button class="btn-view-app" onclick="window.open('submission.html?edit=${c.id}','_blank')">Edit</button>` : ''}
-        ${canManage ? `<button class="btn-del-app" onclick="deleteChar('${c.id}')">Delete</button>` : ''}
-      </td>
-    </tr>`;
-  }).join('');
-}
-
-function filterChars(typeKey, status, btn) {
-  const suffix = typeKey === 'all' ? 'all' : typeKey === 'unaffiliated' ? 'unaff' : typeKey;
-  const bar = document.getElementById('filter-chars-' + suffix);
-  if (bar) bar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  renderCharTable(typeKey, status);
-}
-
-async function cycleCharStatus(id, el) {
-  if (!CAN_MANAGE.includes(currentProfile?.role)) return;
-  const c = allCharacters.find(x => x.id === id);
-  if (!c) return;
-  const cycle = ['pending', 'review', 'approved', 'denied'];
-  const next = cycle[(cycle.indexOf(c.status) + 1) % cycle.length];
-  await db.from('characters').update({ status: next, updated_at: new Date().toISOString() }).eq('id', id);
-  c.status = next;
-  el.className = 'status-tag st-' + next;
-  el.textContent = statusLabel(next);
-}
-
-async function openCharModal(id) {
-  const c = allCharacters.find(x => x.id === id);
-  if (!c) return;
-  const canManage = CAN_MANAGE.includes(currentProfile?.role);
-  const d = c.character_data || {};
-  const charName = c.type === 'scp' ? (d.item_number || 'SCP-???') : (d.full_name || '—');
-  const date = c.created_at ? new Date(c.created_at).toLocaleDateString('en-GB') : '—';
-
-  let detailRows = '';
-  if (c.type === 'foundation') {
-    detailRows = `
-      <div class="modal-q">Clearance / Classification</div><div class="modal-a">Level ${d.clearance ?? '?'} / Class ${d.classification || '?'}</div>
-      <div class="modal-q">Department</div><div class="modal-a">${escHtml(d.department || '—')}</div>
-      <div class="modal-q">Role</div><div class="modal-a">${escHtml(d.role || '—')}</div>
-      <div class="modal-q">Age / Nationality</div><div class="modal-a">${escHtml(d.age || '—')} / ${escHtml(d.nationality || '—')}</div>
-      ${d.image_url ? `<div class="modal-q">Image</div><div class="modal-a"><img src="${d.image_url}" style="max-width:200px;max-height:150px;border:1px solid var(--border)"></div>` : ''}
-      <div class="modal-q">Physical Description</div><div class="modal-a" style="max-height:100px;overflow:auto;">${d.physical_desc || '—'}</div>
-      <div class="modal-q">Psychological Profile</div><div class="modal-a" style="max-height:100px;overflow:auto;">${d.psych_profile || '—'}</div>
-      <div class="modal-q">Employment</div><div class="modal-a" style="max-height:80px;overflow:auto;">${d.employment || '—'}</div>`;
-  } else if (c.type === 'scp') {
-    detailRows = `
-      <div class="modal-q">Containment Class / Clearance</div><div class="modal-a">${escHtml(d.containment_class || '?')} / Level ${d.clearance_level || '?'}</div>
-      <div class="modal-q">Disruption / Risk</div><div class="modal-a">${escHtml(d.disruption_class || '?')} / ${escHtml(d.risk_class || '?')}</div>
-      ${d.secondary_class ? `<div class="modal-q">Secondary Class</div><div class="modal-a">${escHtml(d.secondary_class)}</div>` : ''}
-      <div class="modal-q">Containment Procedures</div><div class="modal-a" style="max-height:100px;overflow:auto;">${d.containment_procedures || '—'}</div>
-      <div class="modal-q">Description</div><div class="modal-a" style="max-height:100px;overflow:auto;">${d.description || '—'}</div>
-      <div class="modal-q">Abilities</div><div class="modal-a" style="max-height:80px;overflow:auto;">${d.abilities || '—'}</div>
-      <div class="modal-q">Addenda</div><div class="modal-a">${(d.addenda || []).length} addendum(a)</div>`;
-  } else {
-    detailRows = `
-      <div class="modal-q">Affiliation</div><div class="modal-a">${escHtml(d.affiliation || 'None listed')}</div>
-      ${d.image_url ? `<div class="modal-q">Image</div><div class="modal-a"><img src="${d.image_url}" style="max-width:200px;max-height:150px;border:1px solid var(--border)"></div>` : ''}
-      <div class="modal-q">Background</div><div class="modal-a" style="max-height:100px;overflow:auto;">${d.background || '—'}</div>
-      <div class="modal-q">Skills</div><div class="modal-a" style="max-height:80px;overflow:auto;">${d.skills || '—'}</div>`;
-  }
-
-  let actionsHtml = '';
-  if (canManage) {
-    actionsHtml = `
-      <select class="modal-status-select" id="char-modal-status" onchange="setCharStatus('${c.id}')">
-        <option value="pending" ${c.status==='pending'?'selected':''}>Pending</option>
-        <option value="review" ${c.status==='review'?'selected':''}>Under Review</option>
-        <option value="approved" ${c.status==='approved'?'selected':''}>Approved</option>
-        <option value="denied" ${c.status==='denied'?'selected':''}>Denied</option>
-      </select>
-      <input type="text" id="char-modal-reason" placeholder="Staff reason (shown publicly)" value="${escHtml(c.staff_reason||'')}" style="flex:1;background:var(--dark);border:1px solid var(--border);color:var(--pale);font-family:var(--body);font-size:13px;padding:7px 12px;outline:none;">
-      <button class="btn btn-sm btn-fill" onclick="saveCharReview('${c.id}')">Save</button>
-      <button class="btn btn-sm btn-danger" onclick="deleteChar('${c.id}',true)">Delete</button>`;
-  }
-
-  document.getElementById('modal-content').innerHTML = `
-    <div class="modal-app-num">Character #${c.seq || '?'} &mdash; ${c.type.charAt(0).toUpperCase()+c.type.slice(1)}</div>
-    <div class="modal-title">${escHtml(charName)}</div>
-    <div class="modal-meta">
-      <div class="modal-meta-item"><div class="modal-meta-label">Discord</div><div class="modal-meta-val">${escHtml(c.discord_username || '—')}</div></div>
-      <div class="modal-meta-item"><div class="modal-meta-label">Method</div><div class="modal-meta-val">${c.method === 'googledoc' ? 'Google Doc' : 'Website'}</div></div>
-      <div class="modal-meta-item"><div class="modal-meta-label">Submitted</div><div class="modal-meta-val">${date}</div></div>
-      <div class="modal-meta-item"><div class="modal-meta-label">Status</div><div class="modal-meta-val"><span class="status-tag st-${c.status}">${statusLabel(c.status)}</span></div></div>
-    </div>
-    ${c.method === 'googledoc' ? `<div style="margin-bottom:1rem;"><a href="${escHtml(c.gdoc_url||'')}" target="_blank" style="font-family:var(--mono);font-size:10px;letter-spacing:0.1em;color:var(--light);">Open Google Doc &#8599;</a></div>` : ''}
-    <div class="modal-qa">${detailRows}</div>
-    <div class="modal-actions" style="flex-wrap:wrap;gap:.5rem;">${actionsHtml}</div>`;
-  document.getElementById('modal-overlay').classList.add('open');
-}
-
-async function setCharStatus(id) {
-  const status = document.getElementById('char-modal-status').value;
-  const c = allCharacters.find(x => x.id === id);
-  if (c) c.status = status;
-}
-
-async function saveCharReview(id) {
-  const status = document.getElementById('char-modal-status').value;
-  const reason = document.getElementById('char-modal-reason').value.trim();
-  await db.from('characters').update({ status, staff_reason: reason || null, reviewed_by: currentProfile?.display_name, updated_at: new Date().toISOString() }).eq('id', id);
-  const c = allCharacters.find(x => x.id === id);
-  if (c) { c.status = status; c.staff_reason = reason; }
-  renderCharTable('all'); renderCharTable(c?.type);
-  closeModal();
-}
-
-async function deleteChar(id, fromModal = false) {
-  if (!CAN_MANAGE.includes(currentProfile?.role)) return;
-  if (!confirm('Delete this character submission? This cannot be undone.')) return;
-  await db.from('characters').delete().eq('id', id);
-  allCharacters = allCharacters.filter(c => c.id !== id);
-  if (fromModal) closeModal();
-  renderCharTable('all'); renderCharTable('foundation'); renderCharTable('scp'); renderCharTable('unaffiliated');
-}
-
-/* END CHARACTER MANAGEMENT */
-
-/* =========================================================
-   INIT — check existing session on load
-========================================================= */
+/* ═══════════════════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', async () => {
   const session = await getSession();
-  if (session) {
-    await initShell();
-  }
+  if (session) await initShell();
 });
 
-// Enter key on login
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && document.getElementById('login-screen').style.display !== 'none') {
     doLogin();

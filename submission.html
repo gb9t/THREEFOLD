@@ -298,6 +298,9 @@ nav{
   width:40px;height:40px;object-fit:contain;
   mix-blend-mode:screen;opacity:.85;transition:opacity .2s,transform .2s;flex-shrink:0;
 }
+.opt-btn img[data-invert="1"]{
+  mix-blend-mode:normal; filter:invert(1) brightness(1.05);
+}
 .opt-btn:hover img{opacity:1;transform:scale(1.04);}
 .opt-btn .opt-label{color:var(--light);}
 .opt-btn .opt-sub{font-size:8px;letter-spacing:0.1em;color:var(--muted);text-transform:none;font-family:var(--body);}
@@ -312,8 +315,33 @@ nav{
   background:var(--accent,var(--pale));
 }
 /* Larger logos on SCP class buttons since they're a featured choice */
-.opt-grid.scp-class .opt-btn{min-height:110px;padding-top:1.1rem;}
-.opt-grid.scp-class .opt-btn img{width:48px;height:48px;}
+.opt-grid.scp-class .opt-btn{
+  min-height:110px;padding-top:1.1rem;
+  background:color-mix(in srgb, var(--accent, var(--pale)) 22%, var(--deep));
+  border-color:color-mix(in srgb, var(--accent, var(--pale)) 45%, var(--border));
+}
+.opt-grid.scp-class .opt-btn:hover{
+  background:color-mix(in srgb, var(--accent, var(--pale)) 30%, var(--dark));
+  border-color:color-mix(in srgb, var(--accent, var(--pale)) 70%, var(--border));
+}
+.opt-grid.scp-class .opt-btn.selected{
+  background:color-mix(in srgb, var(--accent, var(--pale)) 38%, var(--dark));
+}
+.opt-grid.scp-class .opt-btn img{width:48px;height:48px;mix-blend-mode:normal;}
+
+/* SCP status: tint only the GOI Item one since Contained / Uncontained are white */
+.opt-grid.scp-status .opt-btn{
+  background:color-mix(in srgb, var(--accent, var(--pale)) 18%, var(--deep));
+  border-color:color-mix(in srgb, var(--accent, var(--pale)) 40%, var(--border));
+}
+.opt-grid.scp-status .opt-btn:hover{
+  background:color-mix(in srgb, var(--accent, var(--pale)) 26%, var(--dark));
+  border-color:color-mix(in srgb, var(--accent, var(--pale)) 60%, var(--border));
+}
+.opt-grid.scp-status .opt-btn.selected{
+  background:color-mix(in srgb, var(--accent, var(--pale)) 34%, var(--dark));
+}
+.opt-grid.scp-status .opt-btn img{mix-blend-mode:normal;}
 
 @media(max-width:600px){
   .opt-grid{grid-template-columns:repeat(2,1fr);}
@@ -1388,14 +1416,16 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
 const DEPT_OPTIONS = [
   { id:'science',      name:'Science Department',          abbr:'ScD',  icon:'img/Science.png',              subLabel:null,        subOptions:[] },
   { id:'security',     name:'Security Department',         abbr:'SD',   icon:'img/Security.png',             subLabel:'Unit',      subOptions:[
-      // Add Security sub-units here when they open up
-      // { id:'sru', name:'Security Response Unit',   abbr:'SRU', icon:'img/Security.png' },
+      { id:'sru', name:'SRU', full:'Security Response Unit',     icon:'img/Security.png' },
+      { id:'scu', name:'SCU', full:'Security Containment Unit',  icon:'img/Security.png' },
+      { id:'seu', name:'SEU', full:'Security Enforcement Unit',  icon:'img/Security.png' },
+      { id:'siu', name:'SIU', full:'Security Intelligence Unit', icon:'img/Security.png' },
     ] },
   { id:'medical',      name:'Medical Department',          abbr:'MD',   icon:'img/Medical.png',              subLabel:null,        subOptions:[] },
   { id:'engineering',  name:'Engineering Department',      abbr:'Eng',  icon:'img/Engineering.png',          subLabel:null,        subOptions:[] },
   { id:'intelligence', name:'Intelligence Agency',         abbr:'IA',   icon:'img/Intelligence.png',         subLabel:null,        subOptions:[] },
   { id:'mtf',          name:'Mobile Task Forces',          abbr:'MTF',  icon:'img/MTF.png',                  subLabel:'Task Force', subOptions:[
-      { id:'xi13', name:'MTF Xi-13',  full:'Armed Mobile Task Force Xi-13', icon:'img/Xi13.png' },
+      { id:'xi13', name:'MTF Xi-13',  full:'Armed Mobile Task Force Xi-13', icon:'img/Xi13.png', invertLogo:true },
       // Add more task forces here as they open up, e.g.:
       // { id:'alpha1', name:'MTF Alpha-1', full:'Mobile Task Force Alpha-1 ("Red Right Hand")', icon:'img/Alpha1.png' },
     ] },
@@ -1412,8 +1442,8 @@ const SCP_CLASSES = [
 ];
 
 const SCP_STATUSES = [
-  { id:'contained',   name:'Contained',   icon:'img/Contained.png',   accent:'#efefef', desc:'Currently held under Foundation containment.' },
-  { id:'uncontained', name:'Uncontained', icon:'img/Uncontained.png', accent:'#efefef', desc:'At large. Active Foundation pursuit / no secure containment.' },
+  { id:'contained',   name:'Contained',   icon:'img/Contained.png',   accent:'#4a7a4a', desc:'Currently held under Foundation containment.' },
+  { id:'uncontained', name:'Uncontained', icon:'img/Uncontained.png', accent:'#7a3a3a', desc:'At large. Active Foundation pursuit / no secure containment.' },
   { id:'goi_item',    name:'GOI Item',    icon:'img/GOIItem.png',     accent:'#7ab4ea', desc:'Anomaly held, used, or associated with another Group of Interest.' },
 ];
 
@@ -1431,7 +1461,8 @@ function buildOptGrid(gridEl, hiddenEl, items, onSelect) {
   if (!gridEl || !hiddenEl) return;
   gridEl.innerHTML = items.map(it => {
     const accent = it.accent ? ` style="--accent:${it.accent};"` : '';
-    const icon = it.icon ? `<img src="${it.icon}" alt="${it.name}" onerror="this.style.display='none'">` : '';
+    const invAttr = it.invertLogo ? ' data-invert="1"' : '';
+    const icon = it.icon ? `<img src="${it.icon}" alt="${it.name}"${invAttr} onerror="this.style.display='none'">` : '';
     return `<button type="button" class="opt-btn" data-id="${it.id}"${accent}>
       ${icon}
       <span class="opt-label">${it.name}</span>

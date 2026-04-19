@@ -896,17 +896,33 @@ function openAppModal(id) {
   const canManage = CAN_MANAGE.includes(currentProfile?.role);
   const APP_DEFS = {
     lore:  { title:'Lore Team Application', questions:[
-      {id:'writing_sample',label:'Writing Sample'},{id:'scp_knowledge',label:'SCP Familiarity'},
-      {id:'availability',label:'Availability'},{id:'why_lore',label:'Why Lore Team?'},
+      {id:'writing_sample',      label:'Writing Sample'},
+      {id:'scp_knowledge',       label:'SCP Wiki Familiarity'},
+      {id:'canon_philosophy',    label:'Canon / Multi-Canon Handling'},
+      {id:'scenario_derail',     label:'Scenario: Event Derail (Unapproved Ability)'},
+      {id:'scenario_submission', label:'Scenario: Overlapping Character Submission'},
+      {id:'player_led_lore',     label:'Player-Led Lore: Your Approach'},
+      {id:'availability',        label:'Weekly Availability'},
+      {id:'why_lore',            label:'Why Lore Team?'},
     ]},
-    staff: { title:'Staff Application', questions:[
-      {id:'mod_experience',label:'Moderation Experience'},{id:'scenario',label:'Scenario Response'},
-      {id:'availability',label:'Availability'},{id:'why_mod',label:'Why Mod?'},
+    staff: { title:'Staff / Moderation Application', questions:[
+      {id:'mod_experience',   label:'Prior Moderation Experience'},
+      {id:'scenario_argument',label:'Scenario: Public OOC Argument'},
+      {id:'scenario_rule',    label:'Scenario: Long-Standing Member Breaks Rule'},
+      {id:'scenario_bias',    label:'Scenario: Personal Bias Conflict'},
+      {id:'community_health', label:'Vision of a Healthy Community'},
+      {id:'availability',     label:'Weekly Availability'},
+      {id:'why_mod',          label:'Why Moderator?'},
     ]},
-    gm:    { title:'GM Application', questions:[
-      {id:'gm_experience',label:'GM Experience'},{id:'event_idea',label:'Event Pitch'},
-      {id:'improvise',label:'Improvisation Scenario'},{id:'availability',label:'Availability'},
-      {id:'why_gm',label:'Why GM?'},
+    gm:    { title:'Gamemaster Application', questions:[
+      {id:'gm_experience',    label:'Prior GM Experience'},
+      {id:'gm_style',         label:'GM Style Preference'},
+      {id:'story_types',      label:'Preferred Story Types'},
+      {id:'event_idea',       label:'Event Pitch'},
+      {id:'scenario_derail',  label:'Scenario: Players Derail Planned Event'},
+      {id:'lore_coordination',label:'Working Under Lore Team Supervision'},
+      {id:'availability',     label:'Availability (incl. event times)'},
+      {id:'why_gm',           label:'Why GM over Lore?'},
     ]},
   };
   const def = APP_DEFS[a.type] || { title: a.type, questions: [] };

@@ -585,6 +585,39 @@ code {
 .field textarea { resize:vertical; min-height:100px; line-height:1.7; }
 .field select option { background:var(--dark); }
 .field-hint { font-size:12px; color:var(--muted); margin-top:.25rem; }
+.field-scenario {
+  font-family:var(--typewriter, 'Special Elite', monospace);
+  font-size:13px; color:var(--light); line-height:1.75;
+  background:var(--deep); border:1px solid var(--border); border-left:2px solid var(--amber);
+  padding:.85rem 1.1rem; margin-top:.2rem; margin-bottom:.25rem;
+}
+.radio-group { display:flex; flex-direction:column; gap:.4rem; }
+.radio-option {
+  display:flex; align-items:flex-start; gap:.75rem; cursor:pointer;
+  padding:.7rem .9rem; border:1px solid var(--border); background:var(--deep);
+  transition:border-color .2s, background .2s;
+}
+.radio-option:hover { border-color:var(--light); background:var(--dark); }
+.radio-option input[type="radio"] {
+  appearance:none; -webkit-appearance:none; width:auto !important; flex-shrink:0;
+  min-width:14px; width:14px !important; height:14px; border:1px solid var(--muted);
+  border-radius:50%; background:var(--black); margin:0; padding:0 !important;
+  position:relative; top:4px; cursor:pointer; transition:border-color .2s;
+}
+.radio-option input[type="radio"]:checked { border-color:var(--white); }
+.radio-option input[type="radio"]:checked::after {
+  content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:6px; height:6px; border-radius:50%; background:var(--white);
+}
+.radio-option:has(input:checked) { border-color:var(--pale); background:var(--dark); }
+.radio-option-text {
+  font-family:var(--body); font-size:14px; color:var(--pale);
+  font-weight:300; letter-spacing:0; text-transform:none; line-height:1.6;
+}
+.q-note {
+  font-family:var(--mono); font-size:9px; letter-spacing:0.15em;
+  color:var(--muted); text-transform:uppercase; margin-top:.4rem;
+}
 .form-submit-row { margin-top:2.5rem; display:flex; align-items:center; gap:1.5rem; }
 .form-msg {
   font-family:var(--mono); font-size:11px; letter-spacing:0.1em;
@@ -1368,14 +1401,14 @@ footer {
 <section id="page-applications" class="page">
   <div class="ph">
     <div class="ph-bgword">APPLY</div>
-    <div class="ph-tag">Open Positions &mdash; Staff &amp; Crew</div>
+    <div class="ph-tag">Open Positions, Staff &amp; Crew</div>
     <h1>Applications</h1>
     <p class="ph-desc">These are the positions you can currently apply for. Check the status of each one before starting an application.</p>
   </div>
   <div class="wrap">
     <div class="callout" style="margin-bottom:2.5rem;">
-      <span class="callout-ico">&mdash;</span>
-      <p>Even if a position shows as open, there's no guarantee of acceptance &mdash; we only bring on people when the fit's right. If a position is closed, it means we're either at capacity or not actively recruiting for that role right now.</p>
+      <span class="callout-ico">&middot;</span>
+      <p>Even if a position shows as open, there's no guarantee of acceptance. We only bring on people when the fit's right. If a position is closed, it means we're either at capacity or not actively recruiting for that role right now.</p>
     </div>
     <div class="app-cards" id="app-cards-container">
       <!-- Rendered by JS -->
@@ -1456,58 +1489,181 @@ const APP_TYPES = [
     id: 'lore',
     title: 'Lore Team',
     tag: 'lore-team',
-    desc: 'The Lore Team is responsible for building and maintaining the world of Threefold. If you love writing, world-building, and making the setting feel alive, this is where you belong.',
+    desc: 'The Lore Team handles everything lore-related on the server. That means reviewing and approving character submissions, making sure major events play out well, maintaining canon consistency, and shaping the world as it evolves. If you love writing, world-building, and keeping the setting feel alive, this is the role for you.',
     entails: [
-      'Writing and maintaining SCP entries for the server',
-      'Developing in-world documents, incident reports, and lore drops',
-      'Reviewing player-submitted lore for canon consistency',
-      'Collaborating with GMs on event storylines',
-      'Running lore channels and answering player questions about the setting',
+      'Reviewing and approving character submissions',
+      'Writing and maintaining in-world documents, SCP entries, and lore drops',
+      'Overseeing major server-wide events to make sure they land well',
+      'Keeping canon consistent across player actions and GM arcs',
+      'Answering player questions about the setting and lore interpretation',
     ],
     questions: [
-      { id: 'writing_sample', label: 'Writing Sample', type: 'textarea', placeholder: 'Paste a short piece of writing (100–300 words). It can be anything — fiction, an SCP entry, even a short scene.', required: true },
-      { id: 'scp_knowledge', label: 'How familiar are you with the SCP wiki?', type: 'textarea', placeholder: 'Tell us roughly how long you\'ve been reading it, any favourite entries, etc.', required: true },
-      { id: 'availability', label: 'How much time can you realistically commit per week?', type: 'text', placeholder: 'e.g. "3–5 hours, evenings"', required: true },
-      { id: 'why_lore', label: 'Why do you want to join the Lore Team specifically?', type: 'textarea', placeholder: 'Be honest. We\'re not looking for a pitch, just the real answer.', required: true },
+      { id: 'writing_sample', label: 'Writing Sample', type: 'textarea',
+        placeholder: 'Paste a short piece of writing (100 to 300 words). It can be anything: fiction, an SCP entry, an incident report, a short scene. We just want to see how you write.',
+        required: true },
+      { id: 'scp_knowledge', label: 'How familiar are you with the SCP Wiki?', type: 'textarea',
+        placeholder: 'How long have you been reading it? What are some entries that stuck with you? Are there any canons or groups of interest you particularly like?',
+        required: true },
+      { id: 'canon_philosophy', label: 'Threefold does not follow any one specific wiki canon. How do you feel about that?', type: 'textarea',
+        placeholder: 'How would you handle a player who wants to use lore from a canon that contradicts something already established on the server?',
+        required: true },
+      {
+        id: 'scenario_derail',
+        label: 'Scenario: A major lore event is happening, and a player decides their character suddenly has an ability or connection that was never established before. It is throwing the whole scene off. What is your first move?',
+        type: 'radio',
+        note: 'No wrong answers. We are trying to understand how you think.',
+        options: [
+          'Pause the scene OOC, pull them aside, and talk through what they are going for before anything is decided.',
+          'Let the scene continue but mark it as non-canon until Lore can review it properly afterwards.',
+          'Ask another Lore member or the Head of Lore to weigh in before making a call.',
+          'Allow it to play out, then address it in a dedicated debrief with the player after the event.',
+        ],
+        required: true,
+      },
+      {
+        id: 'scenario_submission',
+        label: 'Scenario: A character submission comes in that is well-written but uses a concept very close to an already-approved character. How do you handle the review?',
+        type: 'radio',
+        note: 'Again, none of these are wrong. Pick what feels closest to your instinct.',
+        options: [
+          'Approve it but reach out to suggest a distinguishing tweak so the two do not overlap too much.',
+          'Ask the applicant to rework the concept before approval.',
+          'Loop in the existing character\'s player and see if both are happy with the overlap.',
+          'Approve it. Overlap between characters is fine and often leads to interesting stories.',
+        ],
+        required: true,
+      },
+      { id: 'player_led_lore', label: 'Threefold emphasizes player-led lore. What does that mean to you, and how would you support it as a Lore member?', type: 'textarea',
+        placeholder: 'Players changing the world through their actions is a core thing we want to encourage. How do you see your role in making that happen?',
+        required: true },
+      { id: 'availability', label: 'How much time can you realistically commit per week?', type: 'text',
+        placeholder: 'e.g. "3 to 5 hours, evenings UK time"', required: true },
+      { id: 'why_lore', label: 'Why do you want to join the Lore Team specifically?', type: 'textarea',
+        placeholder: 'Be honest. We are not looking for a polished pitch, just the real reason.',
+        required: true },
     ],
   },
   {
     id: 'staff',
     title: 'Staff / Moderation',
     tag: 'moderation',
-    desc: 'Moderators keep the community running smoothly. This is less about policing and more about being someone people can rely on. If you\'re level-headed and genuinely want to help, this might be for you.',
+    desc: 'Moderators are an OOC position focused on keeping the community healthy and happy. This role is not about policing; it is about being someone people can rely on when things get heated, and about watching out for the overall vibe of the server. If you are level-headed, approachable, and genuinely want to help, this is where you fit.',
     entails: [
-      'Monitoring channels and handling rule violations fairly',
-      'Reviewing and approving character applications within 48 hours',
-      'Mediating OOC disputes and de-escalating situations',
-      'Welcoming and guiding new members through the joining process',
-      'Communicating with staff about recurring issues or concerns',
+      'Monitoring OOC channels and keeping conversations healthy',
+      'Handling rule violations fairly and consistently',
+      'Mediating OOC disputes between members',
+      'Welcoming new members and helping them settle in',
+      'Flagging recurring community issues to leadership',
     ],
     questions: [
-      { id: 'mod_experience', label: 'Any previous moderation experience?', type: 'textarea', placeholder: 'Doesn\'t have to be formal. Managing a friend group server counts. If none, just say so.', required: false },
-      { id: 'scenario', label: 'Scenario: Two members are publicly arguing OOC about an IC dispute. How do you handle it?', type: 'textarea', placeholder: 'Walk us through your approach.', required: true },
-      { id: 'availability', label: 'How much time can you realistically commit per week?', type: 'text', placeholder: 'e.g. "5–8 hours, varies by week"', required: true },
-      { id: 'why_mod', label: 'Why do you want to be a moderator on Threefold specifically?', type: 'textarea', placeholder: 'Again, the honest answer is better than the polished one.', required: true },
+      { id: 'mod_experience', label: 'Any previous moderation experience?', type: 'textarea',
+        placeholder: 'Does not need to be formal. Running a Discord server, helping moderate a group chat, anything counts. If you have none, just say so. We are not exclusionary about it.',
+        required: false },
+      {
+        id: 'scenario_argument',
+        label: 'Scenario: Two members are publicly arguing in an OOC channel. It started over something small, but it is escalating and others are starting to pile in. What is your first move?',
+        type: 'radio',
+        note: 'None of these answers are wrong. We want to see how you approach conflict.',
+        options: [
+          'Step in immediately in the channel, ask both of them to take it to DMs or a private thread.',
+          'Quietly DM both parties separately to get their side before saying anything publicly.',
+          'Lock the channel temporarily to cool things down, then address it once heads are clearer.',
+          'Let the exchange settle naturally unless it crosses a rule, then follow up individually.',
+        ],
+        required: true,
+      },
+      {
+        id: 'scenario_rule',
+        label: 'Scenario: A long-standing, well-liked member breaks a rule that would normally be a warning-worthy offense. How do you handle it?',
+        type: 'radio',
+        note: 'We want to understand your consistency and judgment.',
+        options: [
+          'Give the warning as you would to anyone else. Rules apply evenly regardless of tenure.',
+          'Talk to them privately first to understand the context, then decide on the appropriate response.',
+          'Flag it to other staff and decide together how to handle it so one person is not making the call alone.',
+          'Issue a softer verbal reminder this time given their history, and note it in staff records.',
+        ],
+        required: true,
+      },
+      {
+        id: 'scenario_bias',
+        label: 'Scenario: You and another player get into a heated disagreement OOC. Later, that same player reports someone else for a rule violation. How do you approach it?',
+        type: 'radio',
+        options: [
+          'Handle the report yourself, but loop in another moderator for a second opinion before acting.',
+          'Recuse yourself entirely and ask another moderator to take the report.',
+          'Take the report at face value and investigate normally. Personal history should not affect the job.',
+          'Take the report, but be extra cautious and transparent with the other party about your prior disagreement.',
+        ],
+        required: true,
+      },
+      { id: 'community_health', label: 'What does a healthy roleplay community look like to you?', type: 'textarea',
+        placeholder: 'Big question, short answer is fine. What makes a server feel good to be in?',
+        required: true },
+      { id: 'availability', label: 'How much time can you realistically commit per week?', type: 'text',
+        placeholder: 'e.g. "5 to 8 hours, varies week to week"', required: true },
+      { id: 'why_mod', label: 'Why do you want to be a moderator on Threefold specifically?', type: 'textarea',
+        placeholder: 'Honest answer is better than the polished one.', required: true },
     ],
   },
   {
     id: 'gm',
     title: 'Gamemaster (GM)',
     tag: 'gamemaster',
-    desc: 'GMs run events, drive the narrative, and play the world around the players. It\'s a creative role that requires both planning ability and the flexibility to throw your plans out when players do something unexpected.',
+    desc: 'Gamemasters are not a staff position. GMs exist to make sure players always have something to do: running events, playing NPCs, driving scenes forward, and creating arcs that can carry real lore weight for the server. GMs operate under the supervision of the Lore Team at all times, which means your events and arcs are developed in coordination with them. If you want to tell stories that leave a mark on the world, this is the role.',
     entails: [
-      'Planning and running multi-session RP events for the server',
+      'Planning and running RP events for the server',
       'Playing NPCs, anomalies, and environmental elements during scenes',
-      'Coordinating with Lore Team to keep events canon-consistent',
-      'Adapting storylines in real-time based on player choices',
-      'Debriefing players after events and incorporating feedback',
+      'Working under Lore Team supervision on all arcs and major events',
+      'Creating storylines that can have lasting lore consequences',
+      'Adapting in real-time when players take things in unexpected directions',
     ],
     questions: [
-      { id: 'gm_experience', label: 'Have you run tabletop RPGs, RP events, or anything similar before?', type: 'textarea', placeholder: 'D&D, Pathfinder, forum RP, Discord RP events — anything relevant.', required: false },
-      { id: 'event_idea', label: 'Pitch us a brief event idea for Threefold', type: 'textarea', placeholder: 'A few sentences is fine. We\'re not looking for a full script, just a sense of how you think.', required: true },
-      { id: 'improvise', label: 'Players have completely derailed your planned event. What do you do?', type: 'textarea', placeholder: 'Tell us how you\'d handle it in the moment.', required: true },
-      { id: 'availability', label: 'How much time can you realistically commit per week?', type: 'text', placeholder: 'And are you available for scheduled events on weekends?', required: true },
-      { id: 'why_gm', label: 'What draws you to the GM role over, say, Lore Team or Moderation?', type: 'textarea', placeholder: 'Helps us understand how you\'d fit.', required: true },
+      { id: 'gm_experience', label: 'Have you run tabletop RPGs, forum RP, Discord events, or anything similar before?', type: 'textarea',
+        placeholder: 'D&D, Pathfinder, PbtA, forum RP, one-shot Discord events. Anything relevant. Not required; we will train you if you are new to it.',
+        required: false },
+      {
+        id: 'gm_style',
+        label: 'What kind of GM do you want to be?',
+        type: 'radio',
+        note: 'Pick the one that feels closest. You can elaborate in the next question.',
+        options: [
+          'Plot-driven. I like planning intricate arcs with clear beats and payoffs.',
+          'Sandbox. I like setting up a situation and seeing what players do with it.',
+          'Character-driven. My events react to whichever player stories feel ripe at the moment.',
+          'Horror / tone-focused. My priority is atmosphere, dread, and making scenes feel weighty.',
+          'Action / encounter-driven. I like running dynamic combat scenes, chases, and tactical problems.',
+        ],
+        required: true,
+      },
+      { id: 'story_types', label: 'What kinds of stories do you want to tell on Threefold?', type: 'textarea',
+        placeholder: 'Slow-burn horror? Fast-paced containment breaches? Political intrigue? Personal arcs? What draws you in?',
+        required: true },
+      { id: 'event_idea', label: 'Pitch us a brief event idea you could run on Threefold', type: 'textarea',
+        placeholder: 'A few sentences is fine. A premise, what players would be doing, what kind of hook you would open with. We just want a sense of how you think about events.',
+        required: true },
+      {
+        id: 'scenario_derail',
+        label: 'Scenario: Your players have completely ignored your planned event hook and gone in a totally different direction. You are 20 minutes in. What do you do?',
+        type: 'radio',
+        note: 'All valid approaches. We want to see your instinct.',
+        options: [
+          'Roll with it. Improvise. The players found something they want to engage with, which is the goal.',
+          'Drop a softer nudge back toward the plot, but let them keep agency over the direction.',
+          'Pause briefly OOC to check where they thought the event was going, then realign.',
+          'Let this session go where it goes, then pick up the original plot next session.',
+        ],
+        required: true,
+      },
+      { id: 'lore_coordination', label: 'GMs work under Lore Team supervision. How do you feel about that?', type: 'textarea',
+        placeholder: 'Events and arcs with lore weight need coordination. How do you see yourself working with Lore on approvals, adjustments, and follow-through?',
+        required: true },
+      { id: 'availability', label: 'How much time can you commit per week, and are you available for scheduled events?', type: 'text',
+        placeholder: 'e.g. "6 to 10 hours, available most weekend evenings GMT"',
+        required: true },
+      { id: 'why_gm', label: 'What draws you to GM specifically over Lore Team?', type: 'textarea',
+        placeholder: 'Both roles are creative and both touch lore. What makes GM the one for you?',
+        required: true },
     ],
   },
 ];
@@ -1559,7 +1715,7 @@ function openApplicationForm(typeId) {
   const inner = document.getElementById('form-inner');
   inner.innerHTML = `
     <div class="form-title">${app.title}</div>
-    <div class="form-subtitle">Application &mdash; ${app.tag}</div>
+    <div class="form-subtitle">Application, ${app.tag}</div>
 
     <div class="form-section-title">Basic Info</div>
 
@@ -1569,7 +1725,7 @@ function openApplicationForm(typeId) {
     </div>
     <div class="field">
       <label for="f-userid">Discord User ID <span style="color:var(--danger)">*</span></label>
-      <input type="text" id="f-userid" placeholder="18-digit number — Settings → Advanced → Developer Mode, then right-click your name">
+      <input type="text" id="f-userid" placeholder="18-digit number. Settings, Advanced, Developer Mode, then right-click your name">
       <span class="field-hint">Enable Developer Mode in Discord settings, then right-click your username and copy ID.</span>
     </div>
     <div class="field">
@@ -1590,14 +1746,42 @@ function openApplicationForm(typeId) {
 
     <div class="form-section-title">Role-Specific Questions</div>
 
-    ${app.questions.map(q => `
-    <div class="field">
-      <label for="f-${q.id}">${q.label}${q.required ? ' <span style="color:var(--danger)">*</span>' : ' <span style="color:var(--muted);font-size:9px">(optional)</span>'}</label>
-      ${q.type === 'textarea'
-        ? `<textarea id="f-${q.id}" placeholder="${q.placeholder}" ${q.required ? 'required' : ''}></textarea>`
-        : `<input type="${q.type}" id="f-${q.id}" placeholder="${q.placeholder}" ${q.required ? 'required' : ''}>`
+    ${app.questions.map(q => {
+      const labelSuffix = q.required ? ' <span style="color:var(--danger)">*</span>' : ' <span style="color:var(--muted);font-size:9px">(optional)</span>';
+      const noteHtml = q.note ? `<div class="q-note">${q.note}</div>` : '';
+      const isScenario = /^Scenario:/.test(q.label);
+      const labelHtml = isScenario
+        ? `<label>${q.label.replace(/^Scenario:\s*/,'<span style="color:var(--amber-bright)">Scenario:</span> ')}${labelSuffix}</label>`
+        : `<label for="f-${q.id}">${q.label}${labelSuffix}</label>`;
+
+      if (q.type === 'radio') {
+        const opts = (q.options || []).map((opt, i) => `
+          <label class="radio-option">
+            <input type="radio" name="f-${q.id}" value="${opt.replace(/"/g,'&quot;')}" ${q.required ? 'required' : ''}>
+            <span class="radio-option-text">${opt}</span>
+          </label>`).join('');
+        return `<div class="field">
+          ${labelHtml}
+          ${noteHtml}
+          <div class="radio-group">${opts}</div>
+        </div>`;
       }
-    </div>`).join('')}
+
+      if (q.type === 'textarea') {
+        return `<div class="field">
+          ${labelHtml}
+          ${noteHtml}
+          <textarea id="f-${q.id}" placeholder="${q.placeholder || ''}" ${q.required ? 'required' : ''}></textarea>
+        </div>`;
+      }
+
+      // text / default
+      return `<div class="field">
+        ${labelHtml}
+        ${noteHtml}
+        <input type="${q.type}" id="f-${q.id}" placeholder="${q.placeholder || ''}" ${q.required ? 'required' : ''}>
+      </div>`;
+    }).join('')}
 
     <div class="form-submit-row">
       <button class="btn btn-fill" onclick="submitAppForm('${typeId}')">Submit Application</button>
@@ -1607,7 +1791,7 @@ function openApplicationForm(typeId) {
     <div class="success-screen" id="form-success">
       <div class="success-num">#<span id="success-num">--</span></div>
       <div class="success-title">Application Received</div>
-      <p class="success-msg">We'll get back to you on Discord. Keep an eye on your DMs &mdash; we usually respond within a few days. In the meantime, feel free to hang around the server.</p>
+      <p class="success-msg">We'll get back to you on Discord. Keep an eye on your DMs; we usually respond within a few days. In the meantime, feel free to hang around the server.</p>
       <button class="btn btn-ghost" onclick="showPage('applications')">Back to Applications</button>
     </div>
   `;
@@ -1632,14 +1816,23 @@ async function submitAppForm(typeId) {
   }
 
   const formData = { discord_username: username, discord_user_id: userid, timezone };
-  app.questions.forEach(q => {
-    const el = document.getElementById('f-' + q.id);
-    if (el) formData[q.id] = el.value.trim();
-    if (q.required && el && !el.value.trim()) {
-      showMsg(msg, 'error', `Please fill in: "${q.label}"`);
-      return;
+  let missingField = null;
+  for (const q of app.questions) {
+    let val = '';
+    if (q.type === 'radio') {
+      const chosen = document.querySelector(`input[name="f-${q.id}"]:checked`);
+      val = chosen ? chosen.value : '';
+    } else {
+      const el = document.getElementById('f-' + q.id);
+      val = el ? el.value.trim() : '';
     }
-  });
+    formData[q.id] = val;
+    if (q.required && !val && !missingField) missingField = q.label;
+  }
+  if (missingField) {
+    showMsg(msg, 'error', `Please answer: "${missingField}"`);
+    return;
+  }
 
   showMsg(msg, '', 'Submitting...');
   msg.style.display = 'block';

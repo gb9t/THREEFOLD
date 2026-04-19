@@ -953,7 +953,10 @@ async function loadDashboard() {
    ALL APPLICATIONS
 ========================================================= */
 async function loadAllApps() {
-  const { data } = await getApplications();
+  const { data, error } = await getApplications();
+  if (error) {
+    console.error('[staff] getApplications failed:', error);
+  }
   allApplications = data || [];
   renderAppTable('all');
   renderAppTable('lore');
@@ -1155,16 +1158,35 @@ async function togglePosition(type, el) {
    STAFF MANAGEMENT
 ========================================================= */
 async function loadStaffMembers() {
-  const { data } = await getStaffMembers();
+  const { data, error } = await getStaffMembers();
   const tbody = document.getElementById('staff-body');
   const empty = document.getElementById('staff-empty');
-  if (!data || !data.length) {
+  if (error) {
+    console.error('[staff] getStaffMembers failed:', error);
+    if (empty) {
+      empty.style.display = 'block';
+      empty.textContent = 'Could not load staff list — check browser console. Likely a Row Level Security policy on the profiles table. See fix in chat.';
+    }
+    return;
+  }
+  // Fallback: if query returned empty but we have a current profile (RLS blocking other rows),
+  // show at least the current user so the panel isn't misleading.
+  let staff = data || [];
+  if (!staff.length && currentProfile) {
+    staff = [currentProfile];
+    if (empty) {
+      empty.style.display = 'block';
+      empty.textContent = 'Showing only your profile. The profiles table is likely missing a SELECT policy allowing authenticated users to see other staff rows.';
+    }
+  } else if (!staff.length) {
     if (empty) empty.style.display = 'block';
     return;
+  } else if (empty) {
+    empty.style.display = 'none';
   }
   const canEditRoles = CAN_MANAGE_STAFF.includes(currentProfile?.role);
   const roleOptions  = Object.values(ROLES).map(r => `<option value="${r}">${roleName(r)}</option>`).join('');
-  tbody.innerHTML = data.map(m => `
+  tbody.innerHTML = staff.map(m => `
     <tr>
       <td>${escHtml(m.display_name || '—')}</td>
       <td>${escHtml(m.discord_username || '—')}</td>
@@ -1660,7 +1682,10 @@ function sMoveTooltip(canvas,x,y){
 let allCharacters = [];
 
 async function loadAllChars() {
-  const { data } = await db.from('characters').select('*').order('seq', { ascending: true });
+  const { data, error } = await db.from('characters').select('*').order('seq', { ascending: true });
+  if (error) {
+    console.error('[staff] loadAllChars failed:', error);
+  }
   allCharacters = data || [];
   renderCharTable('all');
   renderCharTable('foundation');

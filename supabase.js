@@ -2,8 +2,8 @@
    supabase.js — shared config + helpers
    ============================================================ */
 
-const SUPABASE_URL  = 'https://gcyrfrbkqxnkdbsbcppa.supabase.co';
-const SUPABASE_ANON = 'sb_publishable_NrC_oU2QqkS5YLrG0W5u-A_eP4lRni_';
+const SUPABASE_URL  = 'https://ejzhpwcxsqmxqshcqmwg.supabase.co';
+const SUPABASE_ANON = 'sb_publishable_twCTVIseleRSKRZoobqpNg_lSs0A7yq';
 
 const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_ANON);

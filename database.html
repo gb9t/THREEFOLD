@@ -652,13 +652,17 @@ function renderFoundationSections(chars){
     return;
   }
 
-  // Group primarily by department, then secondarily by sub-unit
+  // When viewing "All" departments, collapse sub-units into their parent department
+  // so the overview stays compact. Only split by sub-unit when a specific department
+  // is being browsed.
+  const splitBySubUnit = _fnDeptFilter !== 'all';
+
   const groups = {};
   filtered.forEach(c => {
     const d = (c.character_data?.department || 'Unassigned').trim();
     const s = (c.character_data?.sub_unit || '').trim();
-    const key = s ? `${d} :: ${s}` : d;
-    if (!groups[key]) groups[key] = { dept: d, sub: s, list: [] };
+    const key = splitBySubUnit && s ? `${d} :: ${s}` : d;
+    if (!groups[key]) groups[key] = { dept: d, sub: splitBySubUnit ? s : '', list: [] };
     groups[key].list.push(c);
   });
   const keys = Object.keys(groups).sort();

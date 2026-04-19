@@ -1149,6 +1149,10 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
           <option value="unaffiliated">Unaffiliated</option>
         </select>
       </div>
+      <div class="field"><label>Character Name <span class="req">*</span></label>
+        <input type="text" id="gd-name" placeholder="e.g. Dr. Jane Doe, or SCP-XXXX">
+        <span class="field-hint">For SCP entries, use the item number (e.g. SCP-4821).</span>
+      </div>
     </div>
     <div class="form-section">
       <div class="form-section-label">Google Doc Link</div>
@@ -1188,6 +1192,10 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
           <option value="scp">SCP Entry</option>
           <option value="unaffiliated">Unaffiliated</option>
         </select>
+      </div>
+      <div class="field"><label>Character Name <span class="req">*</span></label>
+        <input type="text" id="wk-name" placeholder="e.g. Dr. Jane Doe, or SCP-XXXX">
+        <span class="field-hint">For SCP entries, use the item number (e.g. SCP-4821).</span>
       </div>
     </div>
     <div class="form-section">
@@ -1494,11 +1502,13 @@ async function submitGDoc() {
   const msg = document.getElementById('gd-msg');
   const discord = g('gd-discord');
   const type = g('gd-type');
+  const name = g('gd-name');
   const url = g('gd-url');
-  if (!discord || !type || !url) { setMsg(msg,'error','All fields are required.'); return; }
+  if (!discord || !type || !name || !url) { setMsg(msg,'error','All fields are required.'); return; }
   if (!url.includes('docs.google.com')) { setMsg(msg,'error','Please enter a valid Google Docs link.'); return; }
   setMsg(msg,'loading','Submitting...');
-  const {data:result,error} = await submitCharacter(type,'googledoc',discord,{},url);
+  const charData = type === 'scp' ? { item_number: name } : { full_name: name };
+  const {data:result,error} = await submitCharacter(type,'googledoc',discord,charData,url);
   if (error) { setMsg(msg,'error','Submission failed: '+error.message); return; }
   document.getElementById('success-num').textContent = result.seq || '?';
   showView('v-success');
@@ -1508,11 +1518,13 @@ async function submitWikidot() {
   const msg = document.getElementById('wk-msg');
   const discord = g('wk-discord');
   const type = g('wk-type');
+  const name = g('wk-name');
   const url = g('wk-url');
-  if (!discord || !type || !url) { setMsg(msg,'error','All fields are required.'); return; }
+  if (!discord || !type || !name || !url) { setMsg(msg,'error','All fields are required.'); return; }
   if (!url.includes('wikidot.com')) { setMsg(msg,'error','Please enter a valid Wikidot link.'); return; }
   setMsg(msg,'loading','Submitting...');
-  const {data:result,error} = await submitCharacter(type,'wikidot',discord,{},url);
+  const charData = type === 'scp' ? { item_number: name } : { full_name: name };
+  const {data:result,error} = await submitCharacter(type,'wikidot',discord,charData,url);
   if (error) { setMsg(msg,'error','Submission failed: '+error.message); return; }
   document.getElementById('success-num').textContent = result.seq || '?';
   showView('v-success');

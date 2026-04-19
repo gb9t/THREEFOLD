@@ -1063,8 +1063,22 @@ function openCharModal(id) {
   const d = c.character_data || {};
   const charName = c.type === 'scp' ? (d.item_number || 'SCP-???') : (d.full_name || '—');
 
+  // For googledoc/wikidot submissions we don't store all the website-form fields.
+  // Show a minimal view that just surfaces the link + any data that's actually been saved.
   let detailRows = '';
-  if (c.type === 'foundation') {
+  if (c.method === 'googledoc' || c.method === 'wikidot') {
+    const linkLabel = c.method === 'googledoc' ? 'Google Doc' : 'Wikidot Page';
+    const linkUrl   = c.gdoc_url || '';
+    detailRows = `
+      <div class="modal-q">Character Name</div>
+      <div class="modal-a">${escHtml(charName)}</div>
+      <div class="modal-q">${linkLabel}</div>
+      <div class="modal-a">${linkUrl
+        ? `<a href="${escHtml(linkUrl)}" target="_blank" style="color:var(--pale);text-decoration:underline;">${escHtml(linkUrl)} &#8599;</a>`
+        : '<span style="color:var(--muted)">No link provided</span>'}</div>
+      ${c.staff_reason ? `<div class="modal-q">Staff Feedback</div><div class="modal-a">${escHtml(c.staff_reason)}</div>` : ''}
+    `;
+  } else if (c.type === 'foundation') {
     detailRows = `
       <div class="modal-q">Clearance / Classification</div><div class="modal-a">Level ${d.clearance ?? '?'} / Class ${d.classification || '?'}</div>
       <div class="modal-q">Department</div><div class="modal-a">${escHtml(d.department || '—')}</div>
@@ -1105,6 +1119,13 @@ function openCharModal(id) {
       <button class="btn btn-sm btn-danger" onclick="deleteChar('${c.id}',true)">Delete</button>`;
   }
 
+  // Top-of-modal link block for gdoc/wikidot (also keeps backwards-compat with the old inline link)
+  let topLink = '';
+  if ((c.method === 'googledoc' || c.method === 'wikidot') && c.gdoc_url) {
+    const lbl = c.method === 'googledoc' ? 'Open Google Doc' : 'Open Wikidot Page';
+    topLink = `<div style="margin-bottom:1rem;"><a href="${escHtml(c.gdoc_url)}" target="_blank" style="font-family:var(--mono);font-size:10px;letter-spacing:0.1em;color:var(--light);">${lbl} &#8599;</a></div>`;
+  }
+
   document.getElementById('modal-content').innerHTML = `
     <div class="modal-app-num">Character #${c.seq || '?'} &mdash; ${c.type.charAt(0).toUpperCase()+c.type.slice(1)}</div>
     <div class="modal-title">${escHtml(charName)}</div>
@@ -1114,7 +1135,7 @@ function openCharModal(id) {
       <div class="modal-meta-item"><div class="modal-meta-label">Submitted</div><div class="modal-meta-val">${fmtDate(c.created_at)}</div></div>
       <div class="modal-meta-item"><div class="modal-meta-label">Status</div><div class="modal-meta-val"><span class="status-tag st-${c.status}">${statusLabel(c.status)}</span></div></div>
     </div>
-    ${c.method === 'googledoc' ? `<div style="margin-bottom:1rem;"><a href="${escHtml(c.gdoc_url||'')}" target="_blank" style="font-family:var(--mono);font-size:10px;letter-spacing:0.1em;color:var(--light);">Open Google Doc &#8599;</a></div>` : ''}
+    ${topLink}
     <div class="modal-qa">${detailRows}</div>
     <div class="modal-actions" style="flex-wrap:wrap;gap:.5rem;">${actionsHtml}</div>`;
   document.getElementById('modal-overlay').classList.add('open');

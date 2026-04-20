@@ -1525,7 +1525,7 @@ const DEPT_OPTIONS = [
       { id:'siu', name:'SIU', full:'Security Intelligence Unit', icon:'img/Security.png' },
     ] },
   { id:'medical',      name:'Medical Department',          abbr:'MD',   icon:'img/Medical.png',              subLabel:null,        subOptions:[] },
-  { id:'engineering',  name:'Engineering Department',      abbr:'Eng',  icon:'img/Engineering.png',          subLabel:null,        subOptions:[] },
+  { id:'engineering',  name:'Engineering Department',      abbr:'Eng',  icon:'img/Engineering.png',          subLabel:null,        subOptions:[], invertLogo:true },
   { id:'intelligence', name:'Intelligence Agency',         abbr:'IA',   icon:'img/Intelligence.png',         subLabel:null,        subOptions:[] },
   { id:'mtf',          name:'Mobile Task Forces',          abbr:'MTF',  icon:'img/MTF.png',                  subLabel:'Task Force', subOptions:[
       { id:'xi13', name:'MTF Xi-13',  full:'Armed Mobile Task Force Xi-13', icon:'img/Xi13.png' },
@@ -1588,7 +1588,7 @@ function populateLinkFormSelects() {
     const deptHidden = document.getElementById(prefix + '-dept');
     if (deptGrid && deptHidden) {
       // Departments get a subtle default accent per dept — reuse the pale for now
-      const deptItems = DEPT_OPTIONS.map(d => ({ id:d.id, name:d.name, icon:d.icon }));
+      const deptItems = DEPT_OPTIONS.map(d => ({ id:d.id, name:d.name, icon:d.icon, invertLogo:d.invertLogo }));
       buildOptGrid(deptGrid, deptHidden, deptItems, () => onDeptChange(prefix));
     }
     const classGrid   = document.getElementById(prefix + '-class-grid');

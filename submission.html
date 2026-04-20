@@ -296,7 +296,7 @@ nav{
 .opt-btn:hover{border-color:var(--border-hi);background:var(--dark);}
 .opt-btn img{
   width:40px;height:40px;object-fit:contain;
-  mix-blend-mode:screen;opacity:.85;transition:opacity .2s,transform .2s;flex-shrink:0;
+  opacity:.9;transition:opacity .2s,transform .2s;flex-shrink:0;
 }
 .opt-btn img[data-invert="1"]{
   mix-blend-mode:normal; filter:invert(1) brightness(1.05);
@@ -1525,7 +1525,7 @@ const DEPT_OPTIONS = [
       { id:'siu', name:'SIU', full:'Security Intelligence Unit', icon:'img/Security.png' },
     ] },
   { id:'medical',      name:'Medical Department',          abbr:'MD',   icon:'img/Medical.png',              subLabel:null,        subOptions:[] },
-  { id:'engineering',  name:'Engineering Department',      abbr:'Eng',  icon:'img/Engineering.png',          subLabel:null,        subOptions:[], invertLogo:true },
+  { id:'engineering',  name:'Engineering Department',      abbr:'Eng',  icon:'img/Engineering.png',          subLabel:null,        subOptions:[] },
   { id:'intelligence', name:'Intelligence Agency',         abbr:'IA',   icon:'img/Intelligence.png',         subLabel:null,        subOptions:[] },
   { id:'mtf',          name:'Mobile Task Forces',          abbr:'MTF',  icon:'img/MTF.png',                  subLabel:'Task Force', subOptions:[
       { id:'xi13', name:'MTF Xi-13',  full:'Armed Mobile Task Force Xi-13', icon:'img/Xi13.png' },

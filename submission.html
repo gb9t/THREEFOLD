@@ -361,6 +361,42 @@ nav{
 }
 .opt-grid.equip-gen .opt-btn img{width:48px;height:48px;mix-blend-mode:normal;}
 
+/* Generation-class description panel — swaps to show the selected class's briefing.
+   Uses --accent set on the panel by JS to match the selected class's tint. */
+.gen-desc-panel{
+  margin-top:.85rem;background:var(--deep);border:1px solid var(--border);
+  border-left:3px solid var(--accent,var(--border-hi));
+  padding:.95rem 1.1rem 1rem;position:relative;transition:border-color .25s,background .25s;
+  min-height:76px;
+}
+.gen-desc-panel.has-selection{
+  background:color-mix(in srgb, var(--accent, var(--pale)) 6%, var(--deep));
+}
+.gen-desc-prompt{
+  font-family:var(--mono);font-size:10px;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--muted);line-height:1.7;
+}
+.gen-desc-head{
+  display:flex;align-items:baseline;gap:.75rem;flex-wrap:wrap;
+  padding-bottom:.55rem;margin-bottom:.55rem;border-bottom:1px dashed var(--border);
+}
+.gen-desc-stamp{
+  font-family:var(--mono);font-size:8.5px;letter-spacing:0.28em;text-transform:uppercase;
+  color:var(--accent,var(--pale));padding:2px 7px;
+  border:1px solid var(--accent,var(--border-hi));
+  background:color-mix(in srgb, var(--accent, var(--pale)) 14%, transparent);
+}
+.gen-desc-name{
+  font-family:var(--display);font-size:16px;font-weight:700;letter-spacing:0.06em;
+  text-transform:uppercase;color:var(--white);
+}
+.gen-desc-alt{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:.45rem;
+}
+.gen-desc-alt strong{color:var(--pale);font-weight:400;}
+.gen-desc-body{font-size:13px;color:var(--pale);line-height:1.75;}
+
 @media(max-width:600px){
   .opt-grid{grid-template-columns:repeat(2,1fr);}
   .opt-grid.scp-class{grid-template-columns:repeat(2,1fr);}
@@ -1353,7 +1389,9 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
       <div class="field" id="gd-gen-field" style="display:none;"><label>Generation Class <span class="req">*</span></label>
         <div class="opt-grid equip-gen" id="gd-gen-grid"></div>
         <input type="hidden" id="gd-gen">
-        <span class="field-hint" id="gd-gen-hint">Select the technological generation — hover any option for details.</span>
+        <div class="gen-desc-panel" id="gd-gen-desc">
+          <div class="gen-desc-prompt">Select a generation class above to see its classification briefing.</div>
+        </div>
       </div>
     </div>
     <div class="form-section">
@@ -1441,7 +1479,9 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
       <div class="field" id="wk-gen-field" style="display:none;"><label>Generation Class <span class="req">*</span></label>
         <div class="opt-grid equip-gen" id="wk-gen-grid"></div>
         <input type="hidden" id="wk-gen">
-        <span class="field-hint" id="wk-gen-hint">Select the technological generation — hover any option for details.</span>
+        <div class="gen-desc-panel" id="wk-gen-desc">
+          <div class="gen-desc-prompt">Select a generation class above to see its classification briefing.</div>
+        </div>
       </div>
     </div>
     <div class="form-section">
@@ -1593,16 +1633,16 @@ const SCP_STATUSES = [
 /* Equipment generation classes (used by the "Equipment" submission type).
    Gen0-TanGenT share the TanGenT black/white family; EigenWeapon is black/red. */
 const EQUIP_GEN = [
-  { id:'gen0',        name:'Gen0',        full:'Current Gen',           icon:'img/Gen0.png',        accent:'#8a8a8a',
-    desc:'Also known as Current Gen or Gen0. Readily available at the current level of technological advancement. The majority of equipment issued by the Foundation is Current Gen; loss is of minimal concern.' },
-  { id:'gen1',        name:'Gen+',        full:'Gen+ / +1Gen',          icon:'img/Gen1.png',        accent:'#c0c0c0',
-    desc:'Cutting-edge or advanced technology that could conceivably exist as a prototype. Loss may necessitate action to minimize Veil concerns, but is generally not cause for undue alarm.' },
-  { id:'gen2',        name:'Gen++',       full:'Gen++ / +2Gen',         icon:'img/Gen2.png',        accent:'#eaeaea',
-    desc:'Technology clearly beyond the current level of advancement to produce. All Gen+2 technology issued to Operatives must include a readily accessible self-destruct device.' },
-  { id:'tangent',     name:'TanGenT',     full:'Tangential Technology', icon:'img/TanGenT.png',     accent:'#b4b4b4',
-    desc:'Tangential Technology — relies on principles other than science, such as magic or faith. Loss results in O4 Command action to prevent public discovery.' },
-  { id:'eigenweapon', name:'EigenWeapon', full:'Superweapon / WMD',     icon:'img/EigenWeapon.png', accent:'#c03a3a',
-    desc:'A weapon of anomalous origin, incorporating occult paratechnology, or intended for mass destruction. Classified as a WMD.' },
+  { id:'gen0',        name:'Gen0',        full:'Current Gen',                icon:'img/Gen0.png',        accent:'#8a8a8a',
+    desc:'Refers to any technology that is readily available at the current level of technological advancement. Loss of Gen0 equipment is generally of minimal concern. The majority of equipment issued by the Foundation is Current Gen.' },
+  { id:'gen1',        name:'Gen+',        full:'Gen+ / +1Gen',               icon:'img/Gen1.png',        accent:'#c0c0c0',
+    desc:'Refers to any technology considered cutting edge or advanced given the current level of technological advancement, but could conceivably exist as a prototype or specially constructed item. Loss of Gen+1 technology may necessitate action in order to minimize concerns regarding the Veil, but is generally not a cause for undue alarm.' },
+  { id:'gen2',        name:'Gen++',       full:'Gen++ / +2Gen',              icon:'img/Gen2.png',        accent:'#eaeaea',
+    desc:'Refers to any technology clearly beyond the ability of the current level of technological advancement to produce. All Gen+2 technology issued to Operatives must include a readily accessible self-destruct device to prevent downstream technology from falling into the hands of the public.' },
+  { id:'tangent',     name:'TanGenT',     full:'GenAlt / Tangential Tech',   icon:'img/TanGenT.png',     accent:'#b4b4b4',
+    desc:'Tangential Technology is any technology that relies on principles other than those of science, such as magic or faith. Tangential Technology not in the possession of an Operative must be considered hostile. Loss of Tangential Technology will result in O4 Command action to prevent the item from being discovered by the public.' },
+  { id:'eigenweapon', name:'EigenWeapon', full:'Superweapon / Wonder Weapon', icon:'img/EigenWeapon.png', accent:'#c03a3a',
+    desc:'An eigenweapon is defined as a weapon that is either of anomalous origin, incorporates occult paratechnology, or is intended for mass destruction. It is classified as a WMD.' },
 ];
 
 /* Helpers to look up by id */
@@ -1656,8 +1696,41 @@ function populateLinkFormSelects() {
 
     const genGrid   = document.getElementById(prefix + '-gen-grid');
     const genHidden = document.getElementById(prefix + '-gen');
-    if (genGrid && genHidden) buildOptGrid(genGrid, genHidden, EQUIP_GEN);
+    if (genGrid && genHidden) buildOptGrid(genGrid, genHidden, EQUIP_GEN, (id) => updateGenDesc(prefix, id));
   });
+}
+
+/* Render the briefing panel that describes the currently-selected Gen Class.
+   Called when a class button is clicked, and when the grid is cleared. */
+function updateGenDesc(prefix, id) {
+  const panel = document.getElementById(prefix + '-gen-desc');
+  if (!panel) return;
+  if (!id) {
+    panel.style.removeProperty('--accent');
+    panel.classList.remove('has-selection');
+    panel.innerHTML = `<div class="gen-desc-prompt">Select a generation class above to see its classification briefing.</div>`;
+    return;
+  }
+  const gen = EQUIP_GEN.find(g => g.id === id);
+  if (!gen) return;
+  panel.style.setProperty('--accent', gen.accent || '#9a9a9a');
+  panel.classList.add('has-selection');
+  const alt = gen.full ? `<div class="gen-desc-alt">Also known as <strong>${escHtmlSafe(gen.full)}</strong>.</div>` : '';
+  panel.innerHTML = `
+    <div class="gen-desc-head">
+      <span class="gen-desc-stamp">Classification</span>
+      <span class="gen-desc-name">${escHtmlSafe(gen.name)}</span>
+    </div>
+    ${alt}
+    <div class="gen-desc-body">${escHtmlSafe(gen.desc || '')}</div>
+  `;
+}
+
+/* Small local escape helper so we never inject raw strings into innerHTML. */
+function escHtmlSafe(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
 }
 
 /* Reset all button-grid selections for a given prefix (used when Character
@@ -1667,6 +1740,8 @@ function clearOptGrid(prefix, key) {
   const hidden = document.getElementById(prefix + '-' + key);
   if (grid)   grid.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('selected'));
   if (hidden) hidden.value = '';
+  // Equipment: also reset the description panel so stale text doesn't linger.
+  if (key === 'gen') updateGenDesc(prefix, null);
 }
 
 /* Toggle conditional field visibility based on Character Type */

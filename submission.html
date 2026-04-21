@@ -217,7 +217,7 @@ nav{
 .method-card:hover .method-card-cta{color:var(--white);}
 
 /* Type cards */
-.type-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;}
+.type-row{display:grid;grid-template-columns:repeat(2,1fr);gap:1.25rem;}
 .type-card{
   border:1px solid var(--border);padding:2.25rem 1.75rem;
   cursor:pointer;transition:all .3s;position:relative;overflow:hidden;
@@ -234,6 +234,8 @@ nav{
 .type-card.scp:hover{border-color:#903030;}
 .type-card.unaff::before{background:linear-gradient(180deg,#1a4a90,#0a2050);}
 .type-card.unaff:hover{border-color:#1a3a70;}
+.type-card.equipment::before{background:linear-gradient(180deg,#8a7a2a,#3a3010);}
+.type-card.equipment:hover{border-color:#6a5a20;}
 .type-card-icon{
   font-family:var(--mono);font-size:10px;letter-spacing:0.3em;text-transform:uppercase;
   color:var(--muted);margin-bottom:1.25rem;display:block;
@@ -285,6 +287,7 @@ nav{
 }
 .opt-grid.scp-class{grid-template-columns:repeat(4,1fr);}
 .opt-grid.scp-status{grid-template-columns:repeat(3,1fr);}
+.opt-grid.equip-gen{grid-template-columns:repeat(5,1fr);}
 .opt-btn{
   position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
   gap:.5rem;padding:.9rem .6rem .75rem;
@@ -343,13 +346,30 @@ nav{
 }
 .opt-grid.scp-status .opt-btn img{mix-blend-mode:normal;}
 
+/* Equipment generation grid: similar feel to scp-class, logos are white so invert handling is not needed */
+.opt-grid.equip-gen .opt-btn{
+  min-height:110px;padding-top:1.1rem;
+  background:color-mix(in srgb, var(--accent, var(--pale)) 22%, var(--deep));
+  border-color:color-mix(in srgb, var(--accent, var(--pale)) 45%, var(--border));
+}
+.opt-grid.equip-gen .opt-btn:hover{
+  background:color-mix(in srgb, var(--accent, var(--pale)) 30%, var(--dark));
+  border-color:color-mix(in srgb, var(--accent, var(--pale)) 70%, var(--border));
+}
+.opt-grid.equip-gen .opt-btn.selected{
+  background:color-mix(in srgb, var(--accent, var(--pale)) 38%, var(--dark));
+}
+.opt-grid.equip-gen .opt-btn img{width:48px;height:48px;mix-blend-mode:normal;}
+
 @media(max-width:600px){
   .opt-grid{grid-template-columns:repeat(2,1fr);}
   .opt-grid.scp-class{grid-template-columns:repeat(2,1fr);}
   .opt-grid.scp-status{grid-template-columns:repeat(3,1fr);}
+  .opt-grid.equip-gen{grid-template-columns:repeat(3,1fr);}
   .opt-btn{min-height:84px;padding:.7rem .45rem .55rem;}
   .opt-btn img{width:32px;height:32px;}
   .opt-grid.scp-class .opt-btn img{width:40px;height:40px;}
+  .opt-grid.equip-gen .opt-btn img{width:40px;height:40px;}
 }
 
 /* === ISD CLASSIFIED TOGGLE === */
@@ -1259,6 +1279,12 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
         <p>Characters operating outside the Foundation — civilians, rogue agents, Group of Interest members, or anyone who doesn't fit neatly into a box. Open format, more freedom.</p>
         <span class="type-card-arrow">Select →</span>
       </div>
+      <div class="type-card equipment" onclick="setType('equipment')">
+        <span class="type-card-icon">CLR-04 — ASSET</span>
+        <h2>Equipment</h2>
+        <p>Submit a piece of gear, tool, weapon, or paratechnology. Select a generation class — from standard-issue Gen0 to anomalous EigenWeapons — and link the full record.</p>
+        <span class="type-card-arrow">Select →</span>
+      </div>
     </div>
   </div>
 </div>
@@ -1284,11 +1310,12 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
           <option value="foundation">Foundation Personnel</option>
           <option value="scp">SCP Entry</option>
           <option value="unaffiliated">Unaffiliated</option>
+          <option value="equipment">Equipment</option>
         </select>
       </div>
-      <div class="field"><label>Character Name <span class="req">*</span></label>
+      <div class="field"><label id="gd-name-label">Character Name <span class="req">*</span></label>
         <input type="text" id="gd-name" placeholder="e.g. Dr. Jane Doe, or SCP-XXXX">
-        <span class="field-hint">For SCP entries, use the item number (e.g. SCP-4821).</span>
+        <span class="field-hint" id="gd-name-hint">For SCP entries, use the item number (e.g. SCP-4821).</span>
       </div>
       <!-- Foundation-only: department + optional sub-unit -->
       <div class="field" id="gd-dept-field" style="display:none;"><label>Department <span class="req">*</span></label>
@@ -1321,6 +1348,12 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
       <div class="field" id="gd-status-field" style="display:none;"><label>Containment Status <span class="req">*</span></label>
         <div class="opt-grid scp-status" id="gd-status-grid"></div>
         <input type="hidden" id="gd-status">
+      </div>
+      <!-- Equipment-only: generation class -->
+      <div class="field" id="gd-gen-field" style="display:none;"><label>Generation Class <span class="req">*</span></label>
+        <div class="opt-grid equip-gen" id="gd-gen-grid"></div>
+        <input type="hidden" id="gd-gen">
+        <span class="field-hint" id="gd-gen-hint">Select the technological generation — hover any option for details.</span>
       </div>
     </div>
     <div class="form-section">
@@ -1367,11 +1400,12 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
           <option value="foundation">Foundation Personnel</option>
           <option value="scp">SCP Entry</option>
           <option value="unaffiliated">Unaffiliated</option>
+          <option value="equipment">Equipment</option>
         </select>
       </div>
-      <div class="field"><label>Character Name <span class="req">*</span></label>
+      <div class="field"><label id="wk-name-label">Character Name <span class="req">*</span></label>
         <input type="text" id="wk-name" placeholder="e.g. Dr. Jane Doe, or SCP-XXXX">
-        <span class="field-hint">For SCP entries, use the item number (e.g. SCP-4821).</span>
+        <span class="field-hint" id="wk-name-hint">For SCP entries, use the item number (e.g. SCP-4821).</span>
       </div>
       <div class="field" id="wk-dept-field" style="display:none;"><label>Department <span class="req">*</span></label>
         <div class="opt-grid" id="wk-dept-grid"></div>
@@ -1402,6 +1436,12 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
       <div class="field" id="wk-status-field" style="display:none;"><label>Containment Status <span class="req">*</span></label>
         <div class="opt-grid scp-status" id="wk-status-grid"></div>
         <input type="hidden" id="wk-status">
+      </div>
+      <!-- Equipment-only: generation class -->
+      <div class="field" id="wk-gen-field" style="display:none;"><label>Generation Class <span class="req">*</span></label>
+        <div class="opt-grid equip-gen" id="wk-gen-grid"></div>
+        <input type="hidden" id="wk-gen">
+        <span class="field-hint" id="wk-gen-hint">Select the technological generation — hover any option for details.</span>
       </div>
     </div>
     <div class="form-section">
@@ -1550,6 +1590,21 @@ const SCP_STATUSES = [
   { id:'goi_item',    name:'GOI Item',    icon:'img/GOIItem.png',     accent:'#7ab4ea', desc:'Anomaly held, used, or associated with another Group of Interest.' },
 ];
 
+/* Equipment generation classes (used by the "Equipment" submission type).
+   Gen0-TanGenT share the TanGenT black/white family; EigenWeapon is black/red. */
+const EQUIP_GEN = [
+  { id:'gen0',        name:'Gen0',        full:'Current Gen',           icon:'img/Gen0.png',        accent:'#8a8a8a',
+    desc:'Also known as Current Gen or Gen0. Readily available at the current level of technological advancement. The majority of equipment issued by the Foundation is Current Gen; loss is of minimal concern.' },
+  { id:'gen1',        name:'Gen+',        full:'Gen+ / +1Gen',          icon:'img/Gen1.png',        accent:'#c0c0c0',
+    desc:'Cutting-edge or advanced technology that could conceivably exist as a prototype. Loss may necessitate action to minimize Veil concerns, but is generally not cause for undue alarm.' },
+  { id:'gen2',        name:'Gen++',       full:'Gen++ / +2Gen',         icon:'img/Gen2.png',        accent:'#eaeaea',
+    desc:'Technology clearly beyond the current level of advancement to produce. All Gen+2 technology issued to Operatives must include a readily accessible self-destruct device.' },
+  { id:'tangent',     name:'TanGenT',     full:'Tangential Technology', icon:'img/TanGenT.png',     accent:'#b4b4b4',
+    desc:'Tangential Technology — relies on principles other than science, such as magic or faith. Loss results in O4 Command action to prevent public discovery.' },
+  { id:'eigenweapon', name:'EigenWeapon', full:'Superweapon / WMD',     icon:'img/EigenWeapon.png', accent:'#c03a3a',
+    desc:'A weapon of anomalous origin, incorporating occult paratechnology, or intended for mass destruction. Classified as a WMD.' },
+];
+
 /* Helpers to look up by id */
 function getDeptById(id)    { return DEPT_OPTIONS.find(d => d.id === id); }
 function getSubById(deptId, subId) {
@@ -1598,6 +1653,10 @@ function populateLinkFormSelects() {
     const statusGrid   = document.getElementById(prefix + '-status-grid');
     const statusHidden = document.getElementById(prefix + '-status');
     if (statusGrid && statusHidden) buildOptGrid(statusGrid, statusHidden, SCP_STATUSES);
+
+    const genGrid   = document.getElementById(prefix + '-gen-grid');
+    const genHidden = document.getElementById(prefix + '-gen');
+    if (genGrid && genHidden) buildOptGrid(genGrid, genHidden, EQUIP_GEN);
   });
 }
 
@@ -1623,6 +1682,28 @@ function onTypeChange(prefix) {
   show(prefix + '-isd-url-field', false);
   show(prefix + '-class-field',  type === 'scp');
   show(prefix + '-status-field', type === 'scp');
+  show(prefix + '-gen-field',    type === 'equipment');
+
+  // Swap the Name field's label + placeholder + hint depending on type
+  const nameLabel = document.getElementById(prefix + '-name-label');
+  const nameInput = document.getElementById(prefix + '-name');
+  const nameHint  = document.getElementById(prefix + '-name-hint');
+  if (nameLabel && nameInput && nameHint) {
+    if (type === 'equipment') {
+      nameLabel.innerHTML = 'Equipment Name <span class="req">*</span>';
+      nameInput.placeholder = 'e.g. MTF-Issue Thaumic Suppressor Mk.III';
+      nameHint.textContent = 'Use the designation or catalogue name for the item.';
+    } else if (type === 'scp') {
+      nameLabel.innerHTML = 'Character Name <span class="req">*</span>';
+      nameInput.placeholder = 'e.g. Dr. Jane Doe, or SCP-XXXX';
+      nameHint.textContent = 'For SCP entries, use the item number (e.g. SCP-4821).';
+    } else {
+      nameLabel.innerHTML = 'Character Name <span class="req">*</span>';
+      nameInput.placeholder = 'e.g. Dr. Jane Doe, or SCP-XXXX';
+      nameHint.textContent = 'For SCP entries, use the item number (e.g. SCP-4821).';
+    }
+  }
+
   // reset values so stale data from a previous type doesn't leak through
   if (type !== 'foundation') {
     clearOptGrid(prefix, 'dept');
@@ -1637,6 +1718,9 @@ function onTypeChange(prefix) {
   if (type !== 'scp') {
     clearOptGrid(prefix, 'class');
     clearOptGrid(prefix, 'status');
+  }
+  if (type !== 'equipment') {
+    clearOptGrid(prefix, 'gen');
   }
 }
 
@@ -1895,7 +1979,9 @@ async function submitGDoc() {
   if (!url.includes('docs.google.com')) { setMsg(msg,'error','Please enter a valid Google Docs link.'); return; }
 
   const charData = {};
-  if (type === 'scp') charData.item_number = name; else charData.full_name = name;
+  if (type === 'scp') charData.item_number = name;
+  else if (type === 'equipment') charData.equipment_name = name;
+  else charData.full_name = name;
 
   if (type === 'foundation') {
     const deptId = g('gd-dept');
@@ -1940,6 +2026,17 @@ async function submitGDoc() {
     charData.containment_status = status.name;
   }
 
+  if (type === 'equipment') {
+    const genId = g('gd-gen');
+    if (!genId) { setMsg(msg,'error','Please select a generation class.'); return; }
+    const gen = EQUIP_GEN.find(x => x.id === genId);
+    if (!gen) { setMsg(msg,'error','Invalid generation class.'); return; }
+    charData.gen_class_id   = gen.id;
+    charData.gen_class      = gen.name;
+    charData.gen_class_full = gen.full;
+    charData.gen_class_icon = gen.icon;
+  }
+
   setMsg(msg,'loading','Submitting...');
   const {data:result,error} = await submitCharacter(type,'googledoc',discord,charData,url);
   if (error) { setMsg(msg,'error','Submission failed: '+error.message); return; }
@@ -1957,7 +2054,9 @@ async function submitWikidot() {
   if (!url.includes('wikidot.com')) { setMsg(msg,'error','Please enter a valid Wikidot link.'); return; }
 
   const charData = {};
-  if (type === 'scp') charData.item_number = name; else charData.full_name = name;
+  if (type === 'scp') charData.item_number = name;
+  else if (type === 'equipment') charData.equipment_name = name;
+  else charData.full_name = name;
 
   if (type === 'foundation') {
     const deptId = g('wk-dept');
@@ -2000,6 +2099,17 @@ async function submitWikidot() {
     charData.containment_class  = cls.name;
     charData.status_id          = status.id;
     charData.containment_status = status.name;
+  }
+
+  if (type === 'equipment') {
+    const genId = g('wk-gen');
+    if (!genId) { setMsg(msg,'error','Please select a generation class.'); return; }
+    const gen = EQUIP_GEN.find(x => x.id === genId);
+    if (!gen) { setMsg(msg,'error','Invalid generation class.'); return; }
+    charData.gen_class_id   = gen.id;
+    charData.gen_class      = gen.name;
+    charData.gen_class_full = gen.full;
+    charData.gen_class_icon = gen.icon;
   }
 
   setMsg(msg,'loading','Submitting...');

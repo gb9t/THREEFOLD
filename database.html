@@ -72,12 +72,13 @@ nav ul a:hover{color:var(--white);}
 .cover-right{display:flex;flex-direction:column;gap:.75rem;align-items:flex-end;}
 .cover-fileno{font-family:var(--mono);font-size:9.5px;letter-spacing:0.2em;color:var(--muted);text-align:right;}
 .cover-fileno strong{color:var(--pale);display:block;font-size:12px;margin-top:.25rem;letter-spacing:0.25em;}
-.cover-meta{display:grid;grid-template-columns:repeat(3,auto);gap:1.3rem;padding-top:.9rem;border-top:1px dashed var(--border);min-width:260px;}
+.cover-meta{display:grid;grid-template-columns:repeat(4,auto);gap:1.1rem;padding-top:.9rem;border-top:1px dashed var(--border);min-width:320px;}
 .cover-meta .k{font-family:var(--mono);font-size:8.5px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-bottom:.2rem;}
 .cover-meta .v{font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:0.04em;color:var(--white);line-height:1;}
 .cover-meta .item.red .v{color:var(--red-bright);}
 .cover-meta .item.gold .v{color:var(--gold);}
 .cover-meta .item.blue .v{color:var(--blue-bright);}
+.cover-meta .item.grey .v{color:#cfcfcf;}
 
 .wrap{max-width:1280px;margin:0 auto;padding:3rem 3rem 5rem;}
 
@@ -236,6 +237,29 @@ nav ul a:hover{color:var(--white);}
 .scp-card-accent.cc-pending{background:#1a3a8a;}
 .scp-card-accent.cc-explained{background:#4a1a8a;}
 .scp-card-accent.cc-esoteric{background:#5a1a5a;}
+
+/* Equipment gen-class variants (reuse scp-card markup) */
+.scp-card-accent.gen-gen0{background:#6a6a6a;}
+.scp-card-accent.gen-gen1{background:#8a8a8a;}
+.scp-card-accent.gen-gen2{background:#b4b4b4;}
+.scp-card-accent.gen-tangent{background:#9a9a9a;}
+.scp-card-accent.gen-eigenweapon{background:#8a1a1a;}
+.scp-class-block.gen-gen0{background:#2a2a2a;color:#cfcfcf;}
+.scp-class-block.gen-gen1{background:#3a3a3a;color:#e0e0e0;}
+.scp-class-block.gen-gen2{background:#4a4a4a;color:#f0f0f0;}
+.scp-class-block.gen-tangent{background:#3a3a3a;color:#dcdcdc;}
+.scp-class-block.gen-eigenweapon{background:#4a0d0d;color:#ea6a5a;}
+/* Gen filter chips */
+.rchip.gen-gen0{border-color:#555;color:#aaa;}
+.rchip.gen-gen0.active{background:rgba(120,120,120,.15);color:#cfcfcf;}
+.rchip.gen-gen1{border-color:#6a6a6a;color:#bcbcbc;}
+.rchip.gen-gen1.active{background:rgba(140,140,140,.18);color:#e0e0e0;}
+.rchip.gen-gen2{border-color:#8a8a8a;color:#d0d0d0;}
+.rchip.gen-gen2.active{background:rgba(180,180,180,.2);color:#f0f0f0;}
+.rchip.gen-tangent{border-color:#707070;color:#c0c0c0;}
+.rchip.gen-tangent.active{background:rgba(150,150,150,.18);color:#dcdcdc;}
+.rchip.gen-eigenweapon{border-color:#8a1a1a;color:#ba3a3a;}
+.rchip.gen-eigenweapon.active{background:rgba(138,26,26,.15);color:#ea5a4a;}
 
 /* UNALIGNED CARD */
 .runaff-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.75rem;}
@@ -420,6 +444,7 @@ footer{border-top:1px solid var(--border);padding:2rem 3rem;display:flex;justify
           <div class="item red"><div class="k">Foundation</div><div class="v" id="cm-fnd-count">0</div></div>
           <div class="item gold"><div class="k">SCPs</div><div class="v" id="cm-scp-count">0</div></div>
           <div class="item blue"><div class="k">Unaligned</div><div class="v" id="cm-ua-count">0</div></div>
+          <div class="item grey"><div class="k">Equipment</div><div class="v" id="cm-eq-count">0</div></div>
         </div>
       </div>
     </div>
@@ -435,6 +460,9 @@ footer{border-top:1px solid var(--border);padding:2rem 3rem;display:flex;justify
       </button>
       <button class="rtab" onclick="switchTab('unaffiliated',this)">
         <span class="rtab-num">03</span><span class="rtab-ico"></span> Unaligned
+      </button>
+      <button class="rtab" onclick="switchTab('equipment',this)">
+        <span class="rtab-num">04</span><span class="rtab-ico"></span> Equipment
       </button>
     </div>
 
@@ -478,6 +506,17 @@ footer{border-top:1px solid var(--border);padding:2rem 3rem;display:flex;justify
       <div class="runaff-grid" id="unaff-content"></div>
       <div class="empty-state" id="unaff-empty" style="display:none;">No approved unaligned characters yet.</div>
     </div>
+
+    <div class="rtab-panel" id="rtab-equipment">
+      <div class="roster-filters" id="eq-filters" style="display:none;">
+        <div class="rfilter-row">
+          <span class="rfilter-label">Gen Class</span>
+          <div id="gen-pills" style="display:flex;gap:.45rem;flex-wrap:wrap;"></div>
+        </div>
+      </div>
+      <div class="scp-grid" id="equipment-content"></div>
+      <div class="empty-state" id="equipment-empty" style="display:none;">No approved equipment yet.</div>
+    </div>
   </div>
 
   <footer><span>THREEFOLD / Public Database</span><span>Approved Characters Only</span></footer>
@@ -496,6 +535,7 @@ let _allChars = [];
 let _fnDeptFilter = 'all', _fnSubFilter = 'all';
 let _scpClassFilter = 'all', _scpStatusFilter = 'all';
 let _uaAffFilter = 'all';
+let _eqGenFilter = 'all';
 
 function showPage(id){
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -557,15 +597,18 @@ async function loadDatabase(){
   const { data } = await getCharacters({ status:'approved' });
   _allChars = data || [];
 
-  const counts = { foundation:0, scp:0, unaffiliated:0 };
+  const counts = { foundation:0, scp:0, unaffiliated:0, equipment:0 };
   _allChars.forEach(c => { if (counts[c.type] !== undefined) counts[c.type]++; });
   document.getElementById('cm-fnd-count').textContent = counts.foundation;
   document.getElementById('cm-scp-count').textContent = counts.scp;
   document.getElementById('cm-ua-count').textContent = counts.unaffiliated;
+  const eqEl = document.getElementById('cm-eq-count');
+  if (eqEl) eqEl.textContent = counts.equipment;
 
   renderFoundationTab();
   renderScpTab();
   renderUaTab();
+  renderEquipmentTab();
 }
 
 /* FOUNDATION */
@@ -894,6 +937,95 @@ function renderUaCards(chars){
         <div class="runaff-name">${escHtml(d.full_name || 'Unknown')}</div>
         ${aff ? `<div class="runaff-affil">${escHtml(aff)}</div>` : ''}
         ${d.age ? `<div class="runaff-age">Age / ${escHtml(d.age)}</div>` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+/* EQUIPMENT
+   Equipment entries reuse the scp-grid card layout for a consistent "catalog"
+   feel. The accent bar color is driven by gen_class_id so the grid scans
+   visually at a glance (Gen0 neutral grey, EigenWeapon red, etc.). */
+const GEN_ORDER = ['gen0','gen1','gen2','tangent','eigenweapon'];
+const GEN_LABELS = {
+  gen0:        'Gen0',
+  gen1:        'Gen+',
+  gen2:        'Gen++',
+  tangent:     'TanGenT',
+  eigenweapon: 'EigenWeapon',
+};
+
+function renderEquipmentTab(){
+  const chars = _allChars.filter(c => c.type === 'equipment');
+  const filtersEl = document.getElementById('eq-filters');
+  const emptyEl = document.getElementById('equipment-empty');
+  const gridEl = document.getElementById('equipment-content');
+  if (!chars.length) {
+    filtersEl.style.display = 'none';
+    emptyEl.style.display = 'block';
+    gridEl.innerHTML = '';
+    return;
+  }
+
+  // Build gen-class pill counts
+  const genCounts = {};
+  chars.forEach(c => {
+    const id = (c.character_data?.gen_class_id || '').toLowerCase() || 'unknown';
+    genCounts[id] = (genCounts[id] || 0) + 1;
+  });
+  const presentGens = GEN_ORDER.filter(g => genCounts[g]);
+  if (presentGens.length > 1) {
+    filtersEl.style.display = '';
+    emptyEl.style.display = 'none';
+    const pills = document.getElementById('gen-pills');
+    pills.innerHTML = `<button class="rchip ${_eqGenFilter==='all'?'active':''}" onclick="setEqGenFilter('all',this)">All<span class="count">${chars.length}</span></button>` +
+      presentGens.map(g => `<button class="rchip gen-${g} ${_eqGenFilter===g?'active':''}" onclick="setEqGenFilter('${g}',this)">${escHtml(GEN_LABELS[g] || g)}<span class="count">${genCounts[g]}</span></button>`).join('');
+  } else {
+    filtersEl.style.display = 'none';
+    emptyEl.style.display = 'none';
+  }
+
+  renderEquipmentCards(chars);
+}
+
+function setEqGenFilter(g, btn){
+  _eqGenFilter = g;
+  document.querySelectorAll('#gen-pills .rchip').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderEquipmentCards(_allChars.filter(c => c.type === 'equipment'));
+}
+
+function renderEquipmentCards(chars){
+  let filtered = chars.slice();
+  if (_eqGenFilter !== 'all') {
+    filtered = filtered.filter(c => (c.character_data?.gen_class_id || '').toLowerCase() === _eqGenFilter);
+  }
+  const gridEl = document.getElementById('equipment-content');
+  if (!filtered.length) {
+    gridEl.innerHTML = '<div class="empty-state">No records match the current filter.</div>';
+    return;
+  }
+  gridEl.innerHTML = filtered.map(c => {
+    const d = c.character_data || {};
+    const genId = (d.gen_class_id || '').toLowerCase();
+    const genLabel = GEN_LABELS[genId] || d.gen_class || 'Unknown';
+    const name = d.equipment_name || d.full_name || 'Unlabeled';
+    const shortRef = name.replace(/[^a-z0-9]/gi,'').toUpperCase().slice(0,10) || 'EQUIP';
+    const fileRef = 'TF / EQP / ' + escHtml(shortRef);
+    const click = c.method === 'googledoc' ? `window.open('${escAttr(c.gdoc_url||'')}','_blank')` : `viewChar('${escAttr(c.id)}')`;
+    const fullLabel = d.gen_class_full ? escHtml(d.gen_class_full) : '';
+    return `
+      <div class="scp-card" onclick="${click}">
+        <div class="scp-card-accent gen-${genId}"></div>
+        <div class="scp-acs-top">
+          <span class="scp-item-num">${fileRef}</span>
+          <span class="scp-class-block gen-${genId}">${escHtml(genLabel)}</span>
+        </div>
+        <div class="scp-card-body">
+          <div class="scp-card-sec">Asset Record</div>
+          <div style="font-family:var(--display);font-size:15px;letter-spacing:0.04em;color:var(--white);line-height:1.25;">${escHtml(name)}</div>
+          ${fullLabel ? `<div class="scp-card-status">Class / <strong>${fullLabel}</strong></div>` : ''}
+        </div>
       </div>
     `;
   }).join('');

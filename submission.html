@@ -3286,7 +3286,7 @@ async function doTrack() {
         : 'No expiry on record';
       const countdownAttr = expiresMs ? ` data-expires="${expiresMs}"` : '';
       const descText = isLive
-        ? `Address the staff note above, then click Re-Submit. You can paste an updated document link, or re-use the existing one. The record returns as file #${c.seq || '—'} — the same slot it already holds. If this window elapses without action, the record is auto-deleted from our database.`
+        ? `Address the staff note above, then click Re-Submit.`
         : 'This submission will be auto-deleted shortly. If you still want to resubmit, please start a new submission from the home screen.';
       const buttonAttr = isLive
         ? `onclick="openResubmit('${escAttr(c.id)}','${escAttr(c.method||'')}','${escAttr(c.gdoc_url||'')}', ${expiresMs || 'null'})"`

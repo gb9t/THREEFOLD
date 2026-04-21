@@ -197,8 +197,8 @@ async function handleCharacterInsert(row) {
 
   // Ping line pinned to the message so the submitter gets notified
   const pingContent = row.discord_user_id
-    ? `<@${row.discord_user_id}> — your submission has been received and is now under review.`
-    : `**${row.discord_username}** — your submission has been received and is now under review.`;
+    ? `<@${row.discord_user_id}> ︲ your submission has been received and is now under review.`
+    : `**${row.discord_username}** ︲ your submission has been received and is now under review.`;
 
   const appliedTags = TAG_IDS.under_review ? [TAG_IDS.under_review] : [];
 

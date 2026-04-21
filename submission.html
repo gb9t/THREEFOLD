@@ -1374,7 +1374,6 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
     <div class="form-section" style="margin-top:0;border-top:none;">
       <div class="form-section-label">Your Details</div>
       <div class="field"><label>Discord Username <span class="req">*</span></label><input type="text" id="gd-discord" placeholder="yourname or yourname#0000"></div>
-      <div class="field"><label>Discord User ID <span class="req">*</span></label><input type="text" id="gd-userid" placeholder="e.g. 123456789012345678 (enable Developer Mode, right-click your name, Copy User ID)"></div>
       <div class="field"><label>Character Type <span class="req">*</span></label>
         <select id="gd-type" onchange="onTypeChange('gd')">
           <option value="">Select type...</option>
@@ -1467,7 +1466,6 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
     <div class="form-section" style="margin-top:0;border-top:none;">
       <div class="form-section-label">Your Details</div>
       <div class="field"><label>Discord Username <span class="req">*</span></label><input type="text" id="wk-discord" placeholder="yourname or yourname#0000"></div>
-      <div class="field"><label>Discord User ID <span class="req">*</span></label><input type="text" id="wk-userid" placeholder="e.g. 123456789012345678 (enable Developer Mode, right-click your name, Copy User ID)"></div>
       <div class="field"><label>Character Type <span class="req">*</span></label>
         <select id="wk-type" onchange="onTypeChange('wk')">
           <option value="">Select type...</option>
@@ -2083,12 +2081,10 @@ function toggleSecondaryCustom() {
 async function submitGDoc() {
   const msg = document.getElementById('gd-msg');
   const discord = g('gd-discord');
-  const userid = g('gd-userid');
   const type = g('gd-type');
   const name = g('gd-name');
   const url = g('gd-url');
-  if (!discord || !userid || !type || !name || !url) { setMsg(msg,'error','All fields are required (including Discord User ID).'); return; }
-  if (!/^\d{17,20}$/.test(userid)) { setMsg(msg,'error','Discord User ID must be 17-20 digits. Right-click your name in Discord with Developer Mode on to copy it.'); return; }
+  if (!discord || !type || !name || !url) { setMsg(msg,'error','All fields are required.'); return; }
   if (!url.includes('docs.google.com')) { setMsg(msg,'error','Please enter a valid Google Docs link.'); return; }
 
   const charData = {};
@@ -2151,7 +2147,7 @@ async function submitGDoc() {
   }
 
   setMsg(msg,'loading','Submitting...');
-  const {data:result,error} = await submitCharacter(type,'googledoc',discord,userid,charData,url);
+  const {data:result,error} = await submitCharacter(type,'googledoc',discord,charData,url);
   if (error) { setMsg(msg,'error','Submission failed: '+error.message); return; }
   document.getElementById('success-num').textContent = result.seq || '?';
   showView('v-success');
@@ -2160,12 +2156,10 @@ async function submitGDoc() {
 async function submitWikidot() {
   const msg = document.getElementById('wk-msg');
   const discord = g('wk-discord');
-  const userid = g('wk-userid');
   const type = g('wk-type');
   const name = g('wk-name');
   const url = g('wk-url');
-  if (!discord || !userid || !type || !name || !url) { setMsg(msg,'error','All fields are required (including Discord User ID).'); return; }
-  if (!/^\d{17,20}$/.test(userid)) { setMsg(msg,'error','Discord User ID must be 17-20 digits. Right-click your name in Discord with Developer Mode on to copy it.'); return; }
+  if (!discord || !type || !name || !url) { setMsg(msg,'error','All fields are required.'); return; }
   if (!url.includes('wikidot.com')) { setMsg(msg,'error','Please enter a valid Wikidot link.'); return; }
 
   const charData = {};
@@ -2228,7 +2222,7 @@ async function submitWikidot() {
   }
 
   setMsg(msg,'loading','Submitting...');
-  const {data:result,error} = await submitCharacter(type,'wikidot',discord,userid,charData,url);
+  const {data:result,error} = await submitCharacter(type,'wikidot',discord,charData,url);
   if (error) { setMsg(msg,'error','Submission failed: '+error.message); return; }
   document.getElementById('success-num').textContent = result.seq || '?';
   showView('v-success');
@@ -3130,7 +3124,7 @@ async function submitFoundation() {
     rp_sample: document.getElementById('fn-rp-sample')?.innerHTML || '',
   };
   setMsg(msg,'loading','Submitting...');
-  const {data:result,error} = await submitCharacter('foundation','website',discord,'',data,null);
+  const {data:result,error} = await submitCharacter('foundation','website',discord,data,null);
   if (error) { setMsg(msg,'error','Submission failed: '+error.message); return; }
   document.getElementById('success-num').textContent = result.seq || '?';
   showView('v-success');
@@ -3157,7 +3151,7 @@ async function submitSCP() {
     addenda: getAddenda('scp-addendum-list'),
   };
   setMsg(msg,'loading','Submitting...');
-  const {data:result,error} = await submitCharacter('scp','website',discord,'',data,null);
+  const {data:result,error} = await submitCharacter('scp','website',discord,data,null);
   if (error) { setMsg(msg,'error','Submission failed: '+error.message); return; }
   document.getElementById('success-num').textContent = result.seq || '?';
   showView('v-success');
@@ -3179,7 +3173,7 @@ async function submitUnaff() {
     notes: document.getElementById('ua-notes').innerHTML,
   };
   setMsg(msg,'loading','Submitting...');
-  const {data:result,error} = await submitCharacter('unaffiliated','website',discord,'',data,null);
+  const {data:result,error} = await submitCharacter('unaffiliated','website',discord,data,null);
   if (error) { setMsg(msg,'error','Submission failed: '+error.message); return; }
   document.getElementById('success-num').textContent = result.seq || '?';
   showView('v-success');
@@ -3401,8 +3395,8 @@ function setMsg(el,type,text) { el.className='form-msg '+(type==='loading'?'load
    If you add a helper in supabase.js that the tracker or submit flows rely
    on, mirror it here too or the stale version will be used at runtime.
 ══════════════════════════════════════════════ */
-async function submitCharacter(type,method,discord,userid,data,gdocUrl) {
-  const {data:r,error} = await db.from('characters').insert([{type,method,discord_username:discord,discord_user_id:userid,character_data:data||{},gdoc_url:gdocUrl||null,status:'pending'}]).select().single();
+async function submitCharacter(type,method,discord,data,gdocUrl) {
+  const {data:r,error} = await db.from('characters').insert([{type,method,discord_username:discord,character_data:data||{},gdoc_url:gdocUrl||null,status:'pending'}]).select().single();
   return {data:r,error};
 }
 // Resubmit a denied character. Flips status back to 'pending' on the same

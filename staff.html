@@ -150,6 +150,12 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .btn-del-app{font-family:var(--mono);font-size:8.5px;letter-spacing:0.1em;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--muted);padding:4px 12px;cursor:pointer;transition:all .2s;}
 .btn-del-app:hover{border-color:var(--danger);color:var(--danger);}
 
+/* Recycle bin row-type tag (distinguishes Character vs Application entries). */
+.recycle-type-tag{font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;padding:2px 8px;border:1px solid;display:inline-block;}
+.recycle-type-tag.rt-character{border-color:#3a6a8a;color:#6aa0c8;background:rgba(26,74,138,.08);}
+.recycle-type-tag.rt-application{border-color:#8a7a1a;color:#c8981a;background:rgba(138,122,26,.08);}
+.recycle-remaining{font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:var(--muted);}
+
 .empty-state{text-align:center;padding:4rem 2rem;font-family:var(--mono);font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--border);}
 .empty-state.err{color:var(--danger);border:1px dashed var(--danger);}
 
@@ -328,6 +334,7 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
     <ul class="sidebar-nav">
       <li><button onclick="showPanel('positions')" id="nav-positions">Positions</button></li>
       <li><button onclick="showPanel('staff-mgmt')" id="nav-staff-mgmt">Staff Members</button></li>
+      <li id="nav-recycle-wrap" style="display:none;"><button onclick="showPanel('recycle')" id="nav-recycle">Recycle Bin <span class="nav-badge" id="recycle-badge" style="display:none;">0</span></button></li>
     </ul>
 
     <span class="sidebar-section">World State</span>
@@ -547,6 +554,32 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
       <div class="empty-state" id="staff-empty" style="display:none;">No staff members found.</div>
     </div>
 
+    <!-- ═══════ RECYCLE BIN ═══════ -->
+    <div class="panel" id="panel-recycle">
+      <div class="panel-header">
+        <h1>Recycle Bin</h1>
+        <p>Soft-deleted submissions and applications. Items are kept for 14 days from the moment of deletion, then permanently purged. During that window anyone with management access can restore an item back to its original list.</p>
+      </div>
+      <div class="callout">
+        <span class="callout-ico">&mdash;</span>
+        <p><strong>Restore behaviour:</strong> restoring re-creates the item in its original slot whenever possible. If another submission has since taken that slot number, a new one is assigned and the original is shown alongside for reference.</p>
+      </div>
+      <div class="callout" id="recycle-owner-note" style="display:none;border-color:#5a1a1a;background:rgba(138,26,26,.08);">
+        <span class="callout-ico" style="color:#ea5a4a;">&#9632;</span>
+        <p><strong style="color:#ea8a7a;">Owner-only action.</strong> The <em>Purge Now</em> button force-deletes an item immediately without waiting for the 14-day expiry. Only the Owner role can use this.</p>
+      </div>
+      <div class="filter-bar" id="filter-recycle">
+        <button class="filter-btn active" onclick="filterRecycle('all',this)">All</button>
+        <button class="filter-btn" onclick="filterRecycle('character',this)">Characters</button>
+        <button class="filter-btn" onclick="filterRecycle('application',this)">Applications</button>
+      </div>
+      <table class="app-table">
+        <thead><tr><th>Type</th><th>Original #</th><th>Label</th><th>Deleted By</th><th>Deleted</th><th>Auto-Purge</th><th>Actions</th></tr></thead>
+        <tbody id="recycle-body"></tbody>
+      </table>
+      <div class="empty-state" id="recycle-empty" style="display:none;">Recycle bin is empty.</div>
+    </div>
+
     <!-- ═══════ WORLD NEWS ═══════ -->
     <div class="panel" id="panel-ws-news">
       <div class="panel-header"><h1>World News</h1><p>Add, edit, and remove news dispatches.</p></div>
@@ -722,6 +755,22 @@ async function initShell() {
     isdNav.style.display = '';
   }
 
+  // Reveal the Recycle Bin sidebar link for management roles (Owner / Admin /
+  // Head of Lore). Also unlock the owner-only "Purge Now" note in the panel.
+  const recycleNav = document.getElementById('nav-recycle-wrap');
+  if (recycleNav && CAN_MANAGE.includes(currentProfile.role)) {
+    recycleNav.style.display = '';
+  }
+  const ownerNote = document.getElementById('recycle-owner-note');
+  if (ownerNote && currentProfile.role === ROLES.OWNER) {
+    ownerNote.style.display = '';
+  }
+
+  // Fire-and-forget: ask the DB to run the expiration purges. This is a
+  // fallback in case pg_cron isn't scheduled — it's cheap and idempotent.
+  // We don't await it because the result doesn't block rendering.
+  runExpirationPurges().catch(() => {});
+
   // Load everything — each loader updates the system status strip
   await Promise.all([
     loadAllApps(),
@@ -729,6 +778,7 @@ async function initShell() {
     loadStaffMembers(),
     loadPositions(),
     loadWSData(),
+    CAN_MANAGE.includes(currentProfile.role) ? loadRecycleBin() : Promise.resolve(),
   ]);
   updateDashboard();
   renderSysStatus();
@@ -776,6 +826,10 @@ function showPanel(id) {
   if (id === 'chars-isd' && !CAN_REVIEW_CHARS.includes(currentProfile?.role)) {
     id = 'dash';
   }
+  // Recycle Bin is management-only (Owner / Admin / Head of Lore).
+  if (id === 'recycle' && !CAN_MANAGE.includes(currentProfile?.role)) {
+    id = 'dash';
+  }
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.sidebar-nav button').forEach(b => b.classList.remove('active'));
   const panel = document.getElementById('panel-' + id);
@@ -787,7 +841,7 @@ function showPanel(id) {
     'apps-lore':'Lore Team','apps-staff':'Staff / Mod','apps-gm':'Gamemaster',
     'chars-all':'All Characters','chars-foundation':'Foundation','chars-scp':'SCP','chars-unaff':'Unaffiliated',
     'chars-isd':'ISD Roster — Classified',
-    'positions':'Positions','staff-mgmt':'Staff Members',
+    'positions':'Positions','staff-mgmt':'Staff Members','recycle':'Recycle Bin',
     'ws-news':'World News','ws-tensions':'Global Tensions','ws-goi':'GOI Relations',
   };
   document.getElementById('topbar-title').textContent = titles[id] || 'Panel';
@@ -1025,11 +1079,12 @@ async function saveAppReview(id) {
 
 async function deleteApp(id, fromModal = false) {
   if (!CAN_MANAGE.includes(currentProfile?.role)) return;
-  if (!confirm('Delete this application? This cannot be undone.')) return;
-  const { error } = await deleteApplication(id);
+  if (!confirm('Send this application to the Recycle Bin?\n\nIt will be kept for 14 days, during which it can be restored. After 14 days it is permanently deleted.')) return;
+  const { error } = await deleteApplication(id, currentProfile?.display_name || null);
   if (error) { alert('Failed: ' + error.message); return; }
   if (fromModal) closeModal();
   await loadAllApps();
+  if (typeof loadRecycleBin === 'function') loadRecycleBin();
   updateDashboard();
 }
 
@@ -1284,12 +1339,13 @@ async function saveCharReview(id) {
 
 async function deleteChar(id, fromModal = false) {
   if (!CAN_MANAGE.includes(currentProfile?.role)) return;
-  if (!confirm('Delete this character submission? This cannot be undone.')) return;
-  const { error } = await deleteCharacter(id);
+  if (!confirm('Send this character submission to the Recycle Bin?\n\nIt will be kept for 14 days, during which it can be restored. After 14 days it is permanently deleted.')) return;
+  const { error } = await deleteCharacter(id, currentProfile?.display_name || null);
   if (error) { alert('Failed: ' + error.message); return; }
   allCharacters = allCharacters.filter(c => c.id !== id);
   if (fromModal) closeModal();
   ['all','foundation','scp','unaffiliated','isd'].forEach(t => renderCharTable(t));
+  if (typeof loadRecycleBin === 'function') loadRecycleBin();
   updateDashboard();
 }
 
@@ -1369,6 +1425,166 @@ async function changeRole(userId, role) {
   const { error } = await updateStaffRole(userId, role);
   if (error) { alert('Failed: ' + error.message); return; }
   await loadStaffMembers();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RECYCLE BIN
+   Soft-deleted characters and applications live here for 14 days.
+   Management staff can restore or purge; only the Owner can purge
+   immediately before the 14-day auto-expiry.
+═══════════════════════════════════════════════════════════════ */
+let allDeleted = [];
+let recycleFilter = 'all';
+let _recycleTimerHandle = null;
+
+async function loadRecycleBin() {
+  if (!CAN_MANAGE.includes(currentProfile?.role)) return;
+  const { data, error } = await getDeletedItems();
+  if (error) {
+    // Table might not exist yet (migration not run). Fail soft — just show
+    // an empty bin rather than breaking the whole panel.
+    allDeleted = [];
+  } else {
+    allDeleted = data || [];
+  }
+  renderRecycleBin();
+}
+
+function filterRecycle(kind, btn) {
+  recycleFilter = kind;
+  document.querySelectorAll('#filter-recycle .filter-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderRecycleBin();
+}
+
+function renderRecycleBin() {
+  const body = document.getElementById('recycle-body');
+  const empty = document.getElementById('recycle-empty');
+  const badge = document.getElementById('recycle-badge');
+  if (!body) return;
+
+  // Badge on the sidebar reflects total, not filtered.
+  if (badge) {
+    if (allDeleted.length) {
+      badge.style.display = '';
+      badge.textContent = allDeleted.length;
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+
+  const rows = recycleFilter === 'all'
+    ? allDeleted
+    : allDeleted.filter(d => d.item_type === recycleFilter);
+
+  if (!rows.length) {
+    empty.style.display = 'block';
+    body.innerHTML = '';
+  } else {
+    empty.style.display = 'none';
+    const isOwner = currentProfile?.role === ROLES.OWNER;
+    body.innerHTML = rows.map(r => {
+      const label = deletedItemLabel(r);
+      const deleted = r.deleted_at ? new Date(r.deleted_at).toLocaleString('en-GB', {day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'}) : '---';
+      const expiresMs = r.expires_at ? new Date(r.expires_at).getTime() : null;
+      const remaining = expiresMs ? formatRemaining(expiresMs - Date.now()) : '—';
+      const purgeBtn = isOwner
+        ? `<button class="btn btn-sm btn-danger" onclick="purgeDeletedUI('${r.id}')">Purge Now</button>`
+        : '';
+      return `<tr data-recycle-id="${r.id}" data-expires="${expiresMs || ''}">
+        <td><span class="recycle-type-tag rt-${r.item_type}">${r.item_type === 'character' ? 'Character' : 'Application'}</span></td>
+        <td>#${escHtml(String(r.original_seq ?? '—'))}</td>
+        <td>${escHtml(label)}</td>
+        <td>${escHtml(r.deleted_by || '—')}</td>
+        <td>${deleted}</td>
+        <td><span class="recycle-remaining">${remaining}</span></td>
+        <td>
+          <button class="btn btn-sm" onclick="restoreDeletedUI('${r.id}')">Restore</button>
+          ${purgeBtn}
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  // Start the live countdown refresh if not already running.
+  if (_recycleTimerHandle == null && rows.length) {
+    _recycleTimerHandle = setInterval(tickRecycleCountdowns, 60 * 1000);
+  } else if (!rows.length && _recycleTimerHandle != null) {
+    clearInterval(_recycleTimerHandle);
+    _recycleTimerHandle = null;
+  }
+}
+
+// Update the "time remaining" cell for each row without a full re-render.
+function tickRecycleCountdowns() {
+  const rows = document.querySelectorAll('#recycle-body tr[data-expires]');
+  const now = Date.now();
+  rows.forEach(tr => {
+    const expires = parseInt(tr.getAttribute('data-expires'), 10);
+    const cell = tr.querySelector('.recycle-remaining');
+    if (!expires || !cell) return;
+    cell.textContent = formatRemaining(expires - now);
+  });
+}
+
+// Build a short human label from a recycle-bin row's payload so staff can
+// identify what they're restoring without opening anything.
+function deletedItemLabel(r) {
+  const p = r.payload || {};
+  if (r.item_type === 'character') {
+    const d = p.character_data || {};
+    if (p.type === 'scp')       return d.item_number || 'SCP-???';
+    if (p.type === 'equipment') return d.equipment_name || d.full_name || 'Unnamed equipment';
+    return d.full_name || 'Unnamed';
+  }
+  // applications
+  const fd = p.form_data || {};
+  const typeLabel = p.type ? p.type.replace(/^./, c => c.toUpperCase()) : 'Application';
+  const who = fd.discord_username || fd.discord || fd.username || 'Applicant';
+  return `${typeLabel} — ${who}`;
+}
+
+// Pretty-print a remaining-time window in coarse units. Under an hour we
+// switch to minutes so it doesn't go stale between ticks.
+function formatRemaining(ms) {
+  if (ms == null || isNaN(ms)) return '—';
+  if (ms <= 0) return 'expired';
+  const mins = Math.floor(ms / 60000);
+  if (mins < 60)   return `${mins}m`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 48)    return `${hrs}h ${mins % 60}m`;
+  const days = Math.floor(hrs / 24);
+  return `${days}d ${hrs % 24}h`;
+}
+
+async function restoreDeletedUI(id) {
+  if (!CAN_MANAGE.includes(currentProfile?.role)) return;
+  if (!confirm('Restore this item to its original list?')) return;
+  const { data, error } = await restoreDeletedItem(id);
+  if (error) { alert('Failed to restore: ' + (error.message || error)); return; }
+  if (data?.usedFallback) {
+    alert(`Restored as #${data.restoredSeq} (originally #${data.originalSeq}).\n\nThe original slot was taken by another submission, so a new number was assigned.`);
+  }
+  // Refresh both the bin and whichever source list the item belongs to.
+  await loadRecycleBin();
+  if (data?.itemType === 'character') {
+    await loadAllChars();
+    ['all','foundation','scp','unaffiliated','isd'].forEach(t => renderCharTable(t));
+  } else if (data?.itemType === 'application') {
+    await loadAllApps();
+  }
+  updateDashboard();
+}
+
+async function purgeDeletedUI(id) {
+  if (currentProfile?.role !== ROLES.OWNER) {
+    alert('Only the Owner can permanently purge items before their 14-day expiry.');
+    return;
+  }
+  if (!confirm('Permanently purge this item? This cannot be undone — it will NOT be recoverable.')) return;
+  const { error } = await purgeDeletedItem(id);
+  if (error) { alert('Failed: ' + error.message); return; }
+  await loadRecycleBin();
 }
 
 /* ═══════════════════════════════════════════════════════════════

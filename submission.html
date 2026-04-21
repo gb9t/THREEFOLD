@@ -942,6 +942,40 @@ nav{
   background:var(--deep);font-family:var(--mono);font-size:7.5px;letter-spacing:0.28em;color:var(--red);
 }
 
+/* Resubmit panel — appears on denied cards inside the 48h window. Amber palette
+   to separate it visually from the red STAFF FEEDBACK block above and to signal
+   a time-sensitive action. Expired state desaturates everything and disables
+   the button. */
+.trk-resubmit{
+  margin-top:.9rem;padding:.95rem 1rem 1rem;
+  border:1px solid #b08020;background:rgba(176,128,32,.05);
+  position:relative;transition:border-color .3s,background .3s,opacity .3s;
+}
+.trk-resubmit.expired{
+  border-color:var(--border);background:rgba(60,60,60,.05);opacity:.65;
+}
+.trk-resubmit-head{
+  display:flex;align-items:center;justify-content:space-between;gap:.75rem;
+  flex-wrap:wrap;margin-bottom:.55rem;padding-bottom:.5rem;border-bottom:1px dashed #6a501a;
+}
+.trk-resubmit.expired .trk-resubmit-head{border-bottom-color:var(--border);}
+.trk-resubmit-label{
+  font-family:var(--mono);font-size:8.5px;letter-spacing:0.28em;text-transform:uppercase;color:#c8981a;
+}
+.trk-resubmit.expired .trk-resubmit-label{color:var(--muted);}
+.trk-resubmit-countdown{
+  font-family:var(--mono);font-size:10px;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--pale);padding:2px 8px;border:1px solid #6a501a;background:rgba(176,128,32,.08);
+}
+.trk-resubmit.expired .trk-resubmit-countdown{
+  border-color:var(--border);color:var(--muted);background:transparent;
+}
+.trk-resubmit-desc{
+  font-family:var(--body);font-size:13px;color:var(--pale);line-height:1.7;
+  margin:0 0 .85rem;
+}
+.trk-resubmit-btn{width:100%;}
+
 .trk-empty{
   border:1px dashed var(--border);padding:3rem 2rem;text-align:center;
   font-family:var(--mono);font-size:10px;letter-spacing:0.25em;color:var(--border);
@@ -1340,6 +1374,7 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
     <div class="form-section" style="margin-top:0;border-top:none;">
       <div class="form-section-label">Your Details</div>
       <div class="field"><label>Discord Username <span class="req">*</span></label><input type="text" id="gd-discord" placeholder="yourname or yourname#0000"></div>
+      <div class="field"><label>Discord User ID <span class="req">*</span></label><input type="text" id="gd-userid" placeholder="e.g. 123456789012345678 (enable Developer Mode, right-click your name, Copy User ID)"></div>
       <div class="field"><label>Character Type <span class="req">*</span></label>
         <select id="gd-type" onchange="onTypeChange('gd')">
           <option value="">Select type...</option>
@@ -1432,6 +1467,7 @@ footer{border-top:1px solid var(--dark);padding:1.75rem 3rem;display:flex;justif
     <div class="form-section" style="margin-top:0;border-top:none;">
       <div class="form-section-label">Your Details</div>
       <div class="field"><label>Discord Username <span class="req">*</span></label><input type="text" id="wk-discord" placeholder="yourname or yourname#0000"></div>
+      <div class="field"><label>Discord User ID <span class="req">*</span></label><input type="text" id="wk-userid" placeholder="e.g. 123456789012345678 (enable Developer Mode, right-click your name, Copy User ID)"></div>
       <div class="field"><label>Character Type <span class="req">*</span></label>
         <select id="wk-type" onchange="onTypeChange('wk')">
           <option value="">Select type...</option>
@@ -2047,10 +2083,12 @@ function toggleSecondaryCustom() {
 async function submitGDoc() {
   const msg = document.getElementById('gd-msg');
   const discord = g('gd-discord');
+  const userid = g('gd-userid');
   const type = g('gd-type');
   const name = g('gd-name');
   const url = g('gd-url');
-  if (!discord || !type || !name || !url) { setMsg(msg,'error','All fields are required.'); return; }
+  if (!discord || !userid || !type || !name || !url) { setMsg(msg,'error','All fields are required (including Discord User ID).'); return; }
+  if (!/^\d{17,20}$/.test(userid)) { setMsg(msg,'error','Discord User ID must be 17-20 digits. Right-click your name in Discord with Developer Mode on to copy it.'); return; }
   if (!url.includes('docs.google.com')) { setMsg(msg,'error','Please enter a valid Google Docs link.'); return; }
 
   const charData = {};
@@ -2113,7 +2151,7 @@ async function submitGDoc() {
   }
 
   setMsg(msg,'loading','Submitting...');
-  const {data:result,error} = await submitCharacter(type,'googledoc',discord,charData,url);
+  const {data:result,error} = await submitCharacter(type,'googledoc',discord,userid,charData,url);
   if (error) { setMsg(msg,'error','Submission failed: '+error.message); return; }
   document.getElementById('success-num').textContent = result.seq || '?';
   showView('v-success');
@@ -2122,10 +2160,12 @@ async function submitGDoc() {
 async function submitWikidot() {
   const msg = document.getElementById('wk-msg');
   const discord = g('wk-discord');
+  const userid = g('wk-userid');
   const type = g('wk-type');
   const name = g('wk-name');
   const url = g('wk-url');
-  if (!discord || !type || !name || !url) { setMsg(msg,'error','All fields are required.'); return; }
+  if (!discord || !userid || !type || !name || !url) { setMsg(msg,'error','All fields are required (including Discord User ID).'); return; }
+  if (!/^\d{17,20}$/.test(userid)) { setMsg(msg,'error','Discord User ID must be 17-20 digits. Right-click your name in Discord with Developer Mode on to copy it.'); return; }
   if (!url.includes('wikidot.com')) { setMsg(msg,'error','Please enter a valid Wikidot link.'); return; }
 
   const charData = {};
@@ -2188,7 +2228,7 @@ async function submitWikidot() {
   }
 
   setMsg(msg,'loading','Submitting...');
-  const {data:result,error} = await submitCharacter(type,'wikidot',discord,charData,url);
+  const {data:result,error} = await submitCharacter(type,'wikidot',discord,userid,charData,url);
   if (error) { setMsg(msg,'error','Submission failed: '+error.message); return; }
   document.getElementById('success-num').textContent = result.seq || '?';
   showView('v-success');
@@ -3090,7 +3130,7 @@ async function submitFoundation() {
     rp_sample: document.getElementById('fn-rp-sample')?.innerHTML || '',
   };
   setMsg(msg,'loading','Submitting...');
-  const {data:result,error} = await submitCharacter('foundation','website',discord,data,null);
+  const {data:result,error} = await submitCharacter('foundation','website',discord,'',data,null);
   if (error) { setMsg(msg,'error','Submission failed: '+error.message); return; }
   document.getElementById('success-num').textContent = result.seq || '?';
   showView('v-success');
@@ -3117,7 +3157,7 @@ async function submitSCP() {
     addenda: getAddenda('scp-addendum-list'),
   };
   setMsg(msg,'loading','Submitting...');
-  const {data:result,error} = await submitCharacter('scp','website',discord,data,null);
+  const {data:result,error} = await submitCharacter('scp','website',discord,'',data,null);
   if (error) { setMsg(msg,'error','Submission failed: '+error.message); return; }
   document.getElementById('success-num').textContent = result.seq || '?';
   showView('v-success');
@@ -3139,7 +3179,7 @@ async function submitUnaff() {
     notes: document.getElementById('ua-notes').innerHTML,
   };
   setMsg(msg,'loading','Submitting...');
-  const {data:result,error} = await submitCharacter('unaffiliated','website',discord,data,null);
+  const {data:result,error} = await submitCharacter('unaffiliated','website',discord,'',data,null);
   if (error) { setMsg(msg,'error','Submission failed: '+error.message); return; }
   document.getElementById('success-num').textContent = result.seq || '?';
   showView('v-success');
@@ -3148,14 +3188,56 @@ async function submitUnaff() {
 /* ═══════════════════════════════════════════
    TRACKER
 ══════════════════════════════════════════════ */
+
+/* Clicking Re-Submit on a denied card opens this flow. The user can optionally
+   paste an updated document URL — if they leave it as the original or cancel
+   the prompt, the existing URL is reused. After submission the row flips
+   denied -> pending on the same seq, clearing denied_at so the 48h window
+   stops counting. */
+async function openResubmit(id, method, currentUrl, expiresAt) {
+  // 48h guard — normally the tracker's purge-on-load has already swept these
+  // out, but if someone has the page open from before we still stop them.
+  if (expiresAt && Date.now() > expiresAt) {
+    alert('The 48-hour resubmit window has already closed for this submission. If you still want to try, please start a fresh submission from the home screen.');
+    return;
+  }
+
+  const methodLabel = method === 'googledoc' ? 'Google Docs' : method === 'wikidot' ? 'Wikidot' : 'document';
+  const host = method === 'googledoc' ? 'docs.google.com' : method === 'wikidot' ? 'wikidot.com' : null;
+  const promptText =
+    `Re-submit using the same ${methodLabel} link, or paste an updated one.\n\n` +
+    `Tip: if you've fixed the document in place, just press OK to re-use it. ` +
+    `To swap to a new link, paste it in. Make sure sharing is set so staff can view it.`;
+
+  let url = window.prompt(promptText, currentUrl || '');
+  if (url === null) return;                 // user cancelled entirely
+  url = url.trim();
+  if (!url) url = currentUrl || '';         // blank -> keep existing
+  if (!url) { alert('A document link is required to re-submit.'); return; }
+  if (host && !url.includes(host)) { alert(`Please enter a valid ${methodLabel} link.`); return; }
+
+  const {error} = await resubmitCharacter(id, url);
+  if (error) { alert('Re-submit failed: ' + error.message); return; }
+  alert('Re-submitted. Staff will review the updated document.');
+  doTrack();
+}
+
 async function doTrack() {
   const username = document.getElementById('tracker-input').value.trim();
   const el = document.getElementById('tracker-results');
   if (!username) { el.innerHTML = '<div class="trk-empty">Enter your Discord username above.</div>'; return; }
   el.innerHTML = '<div class="trk-empty">Querying records...</div>';
+
+  // Opportunistic server-side cleanup — sweeps denials past 48h and recycle-bin
+  // items past 14 days before we read. Fail-soft if the RPC isn't installed.
+  if (typeof runExpirationPurges === 'function') {
+    try { await runExpirationPurges(); } catch (_) {}
+  }
+
   const {data,error} = await getCharactersByDiscord(username);
   if (error || !data || !data.length) {
     el.innerHTML = '<div class="trk-empty">No submissions found for that username.</div>';
+    stopTrackerTicker();
     return;
   }
 
@@ -3175,12 +3257,51 @@ async function doTrack() {
   const sorted = [...data].sort((a,b) => new Date(b.created_at||0) - new Date(a.created_at||0));
   const cards = sorted.map(c => {
     const d = c.character_data || {};
-    const name = c.type === 'scp' ? (d.item_number || 'SCP-???') : (d.full_name || 'Unnamed Submission');
-    const typeLabel = c.type === 'foundation' ? 'Foundation' : c.type === 'scp' ? 'SCP Entry' : 'Unaligned';
+    // Name: SCP uses item_number, Equipment uses equipment_name, everything else full_name.
+    let name;
+    if (c.type === 'scp')            name = d.item_number || 'SCP-???';
+    else if (c.type === 'equipment') name = d.equipment_name || d.full_name || 'Unnamed equipment';
+    else                             name = d.full_name || 'Unnamed Submission';
+    const typeLabel =
+        c.type === 'foundation' ? 'Foundation'
+      : c.type === 'scp'        ? 'SCP Entry'
+      : c.type === 'equipment'  ? 'Equipment'
+      :                           'Unaligned';
     const created = c.created_at ? new Date(c.created_at).toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'}) : '---';
     const methodLabel = c.method === 'googledoc' ? 'Google Doc' : c.method === 'wikidot' ? 'Wikidot' : 'Website Form';
     const reason = c.staff_reason
       ? `<div class="trk-card-reason">${escHtml(c.staff_reason)}</div>` : '';
+
+    // Denied cards get the 48h resubmit window panel. The expiry is 48 hours
+    // after denied_at. If denied_at is missing (older row, or migration not
+    // run), we fall back to showing the Re-Submit button without a timer.
+    let resubmitBlock = '';
+    if (c.status === 'denied') {
+      const deniedAtMs = c.denied_at ? new Date(c.denied_at).getTime() : null;
+      const expiresMs = deniedAtMs ? deniedAtMs + 48 * 3600 * 1000 : null;
+      const remainingMs = expiresMs ? expiresMs - Date.now() : null;
+      const isLive = remainingMs == null || remainingMs > 0;
+      const countdownText = expiresMs
+        ? (isLive ? formatTrackerRemaining(remainingMs) + ' remaining' : 'Window closed')
+        : 'No expiry on record';
+      const countdownAttr = expiresMs ? ` data-expires="${expiresMs}"` : '';
+      const descText = isLive
+        ? `Address the staff note above, then click Re-Submit. You can paste an updated document link, or re-use the existing one. The record returns as file #${c.seq || '—'} — the same slot it already holds. If this window elapses without action, the record is auto-deleted from our database.`
+        : 'This submission will be auto-deleted shortly. If you still want to resubmit, please start a new submission from the home screen.';
+      const buttonAttr = isLive
+        ? `onclick="openResubmit('${escAttr(c.id)}','${escAttr(c.method||'')}','${escAttr(c.gdoc_url||'')}', ${expiresMs || 'null'})"`
+        : 'disabled style="opacity:.4;cursor:not-allowed;"';
+      resubmitBlock = `
+        <div class="trk-resubmit ${isLive ? '' : 'expired'}">
+          <div class="trk-resubmit-head">
+            <span class="trk-resubmit-label">Resubmit Window</span>
+            <span class="trk-resubmit-countdown"${countdownAttr}>${countdownText}</span>
+          </div>
+          <p class="trk-resubmit-desc">${descText}</p>
+          <button class="btn btn-fill trk-resubmit-btn" ${buttonAttr}>Re-Submit for Review</button>
+        </div>`;
+    }
+
     return `
       <div class="trk-card s-${c.status}">
         <div class="trk-card-top">
@@ -3196,11 +3317,72 @@ async function doTrack() {
           <span>Method / ${methodLabel}</span>
         </div>
         ${reason}
+        ${resubmitBlock}
       </div>
     `;
   }).join('');
 
   el.innerHTML = summary + `<div class="trk-results">${cards}</div>`;
+  startTrackerTicker();
+}
+
+/* ───── Live countdown on denied-card resubmit blocks ─────
+   One interval updates every .trk-resubmit-countdown on the page without a
+   full re-render. Started by doTrack when there are countdowns to tick,
+   stopped when the results clear or no denied cards remain. */
+let _trackerTickerHandle = null;
+
+function startTrackerTicker() {
+  if (!document.querySelector('.trk-resubmit-countdown[data-expires]')) {
+    stopTrackerTicker();
+    return;
+  }
+  if (_trackerTickerHandle != null) return;
+  tickTrackerCountdowns();
+  _trackerTickerHandle = setInterval(tickTrackerCountdowns, 30 * 1000);
+}
+
+function stopTrackerTicker() {
+  if (_trackerTickerHandle != null) {
+    clearInterval(_trackerTickerHandle);
+    _trackerTickerHandle = null;
+  }
+}
+
+function tickTrackerCountdowns() {
+  const nodes = document.querySelectorAll('.trk-resubmit-countdown[data-expires]');
+  if (!nodes.length) { stopTrackerTicker(); return; }
+  const now = Date.now();
+  nodes.forEach(node => {
+    const exp = parseInt(node.getAttribute('data-expires'), 10);
+    if (!exp) return;
+    const rem = exp - now;
+    if (rem <= 0) {
+      node.textContent = 'Window closed';
+      const card = node.closest('.trk-resubmit');
+      if (card) {
+        card.classList.add('expired');
+        const btn = card.querySelector('.trk-resubmit-btn');
+        if (btn) { btn.disabled = true; btn.style.opacity = '.4'; btn.style.cursor = 'not-allowed'; btn.onclick = null; }
+        const desc = card.querySelector('.trk-resubmit-desc');
+        if (desc) desc.textContent = 'This submission will be auto-deleted shortly. If you still want to resubmit, please start a new submission from the home screen.';
+      }
+    } else {
+      node.textContent = formatTrackerRemaining(rem) + ' remaining';
+    }
+  });
+}
+
+/* Pretty-print "Xd Yh Zm" / "Yh Zm" / "Zm" depending on how much is left. */
+function formatTrackerRemaining(ms) {
+  if (ms == null || isNaN(ms) || ms <= 0) return '0m';
+  const totalMins = Math.floor(ms / 60000);
+  const days = Math.floor(totalMins / 1440);
+  const hrs  = Math.floor((totalMins % 1440) / 60);
+  const mins = totalMins % 60;
+  if (days > 0) return `${days}d ${hrs}h ${mins}m`;
+  if (hrs > 0)  return `${hrs}h ${mins}m`;
+  return `${mins}m`;
 }
 
 
@@ -3215,19 +3397,51 @@ function setMsg(el,type,text) { el.className='form-msg '+(type==='loading'?'load
 
 /* ═══════════════════════════════════════════
    SUPABASE WRAPPERS
+   NB: These shadow the global helpers in supabase.js via function-hoisting.
+   If you add a helper in supabase.js that the tracker or submit flows rely
+   on, mirror it here too or the stale version will be used at runtime.
 ══════════════════════════════════════════════ */
-async function submitCharacter(type,method,discord,data,gdocUrl) {
-  const {data:r,error} = await db.from('characters').insert([{type,method,discord_username:discord,character_data:data||{},gdoc_url:gdocUrl||null,status:'pending'}]).select().single();
+async function submitCharacter(type,method,discord,userid,data,gdocUrl) {
+  const {data:r,error} = await db.from('characters').insert([{type,method,discord_username:discord,discord_user_id:userid,character_data:data||{},gdoc_url:gdocUrl||null,status:'pending'}]).select().single();
   return {data:r,error};
 }
+// Resubmit a denied character. Flips status back to 'pending' on the same
+// row (same seq, same #) and clears denied_at / staff_reason. The caller
+// may optionally pass an updated gdoc_url — if omitted, we leave the column
+// alone so the existing link is preserved.
+async function resubmitCharacter(id, gdocUrl) {
+  const patch = {
+    status: 'pending',
+    denied_at: null,
+    staff_reason: null,
+    reviewed_by: null,
+    updated_at: new Date().toISOString(),
+  };
+  if (gdocUrl) patch.gdoc_url = gdocUrl;
+  const {data:r,error} = await db.from('characters').update(patch).eq('id', id).select().single();
+  return {data:r, error};
+}
 async function getCharacters(filters={}) {
-  let q = db.from('characters').select('id,seq,type,method,discord_username,status,staff_reason,created_at,character_data,gdoc_url').order('seq',{ascending:true});
+  let q = db.from('characters').select('id,seq,type,method,discord_username,status,staff_reason,created_at,character_data,gdoc_url,denied_at').order('seq',{ascending:true});
   if (filters.status) q=q.eq('status',filters.status);
   if (filters.type) q=q.eq('type',filters.type);
   const {data,error}=await q; return {data,error};
 }
 async function getCharacterById(id) { const {data,error}=await db.from('characters').select('*').eq('id',id).single(); return {data,error}; }
-async function getCharactersByDiscord(username) { const {data,error}=await db.from('characters').select('id,seq,type,method,discord_username,status,staff_reason,created_at,character_data,gdoc_url').eq('discord_username',username).order('seq'); return {data,error}; }
+async function getCharactersByDiscord(username) { const {data,error}=await db.from('characters').select('id,seq,type,method,discord_username,status,staff_reason,created_at,character_data,gdoc_url,denied_at').eq('discord_username',username).order('seq'); return {data,error}; }
+// Opportunistic cleanup. Sweeps expired denials (48h) and recycle-bin items
+// (14d). Called from doTrack before reading. Fails soft if the RPC isn't
+// installed yet — the page still works, it just won't auto-clean.
+async function runExpirationPurges() {
+  try {
+    const { data, error } = await db.rpc('run_all_purges');
+    if (error) { console.warn('[tracker] runExpirationPurges:', error.message||error); return { data:null, error }; }
+    return { data, error:null };
+  } catch (e) {
+    console.warn('[tracker] runExpirationPurges threw:', e?.message||e);
+    return { data:null, error:e };
+  }
+}
 async function uploadCharacterImage(file) {
   const ext=file.name.split('.').pop().toLowerCase();
   const name=`${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;

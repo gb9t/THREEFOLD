@@ -222,25 +222,97 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .tpick-num{font-family:var(--display);font-size:26px;font-weight:700;}
 .tpick-lbl{font-family:var(--mono);font-size:7px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);}
 
-/* ========== GOI ========== */
-.goi-bubble-wrap{position:relative;width:100%;background:var(--deep);border:1px solid var(--border);overflow:hidden;margin-top:1.5rem;}
-#goi-canvas-staff{display:block;width:100%;cursor:grab;}
-#goi-canvas-staff:active{cursor:grabbing;}
-.goi-tooltip-staff{position:absolute;pointer-events:none;background:rgba(10,10,10,0.97);border:1px solid var(--border);padding:.6rem 1rem;font-family:var(--mono);font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--pale);white-space:nowrap;z-index:50;opacity:0;transition:opacity .15s;}
-.goi-tooltip-staff .tt-name{font-family:var(--display);font-size:14px;font-weight:600;letter-spacing:0.1em;color:var(--white);display:block;margin-bottom:.3rem;}
-.goi-tooltip-staff .tt-rel{display:flex;align-items:center;gap:.5rem;margin-top:.25rem;}
-.goi-tooltip-staff .tt-dot{width:8px;height:8px;border:1px solid;flex-shrink:0;}
-.goi-legend-staff{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin-top:1.25rem;}
-.goi-legend-staff .gli{display:flex;align-items:center;gap:.4rem;font-family:var(--mono);font-size:8.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);}
-.goi-legend-staff .gli-dot{width:10px;height:10px;border:1px solid;flex-shrink:0;}
-.goi-legend-staff .gli-dot.enemy{border-color:#7a1a1a;background:rgba(120,20,20,.35);}
-.goi-legend-staff .gli-dot.hostile{border-color:#7a4a1a;background:rgba(100,50,10,.35);}
-.goi-legend-staff .gli-dot.neutral{border-color:#3a3a3a;background:rgba(40,40,40,.6);}
-.goi-legend-staff .gli-dot.indiff{border-color:#2a2a4a;background:rgba(25,25,50,.6);}
-.goi-legend-staff .gli-dot.friendly{border-color:#1a5a1a;background:rgba(15,65,20,.4);}
-.goi-legend-staff .gli-dot.allied{border-color:#1a3a6a;background:rgba(10,50,80,.4);}
-.goi-reset-btn{margin-left:auto;font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--muted);padding:6px 12px;cursor:pointer;transition:all .2s;}
-.goi-reset-btn:hover{border-color:var(--pale);color:var(--pale);}
+/* ========== GOI — DIRECTORY + DOSSIER PREVIEW (mirrors worldstate.html) ========== */
+/* Local bright-variant colors so this panel matches worldstate's look without
+   polluting the staff palette. */
+.goi-preview{--p-red:#8a2a2a;--p-red-b:#bb3a3a;--p-amber:#9a7a2a;--p-amber-b:#d4a52c;--p-blue:#2a4a7a;--p-blue-b:#3a6aaa;--p-green:#2a6a2a;--p-green-b:#3a8a3a;margin-top:1.5rem;}
+.goi-preview .goi-layout{display:grid;grid-template-columns:260px 1fr;gap:1rem;align-items:start;}
+@media(max-width:900px){.goi-preview .goi-layout{grid-template-columns:1fr;}}
+
+/* Directory (left column) */
+.goi-preview .goi-dir{border:1px solid var(--border);background:var(--deep);}
+.goi-preview .goi-dir-hdr{padding:.75rem 1rem;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;letter-spacing:0.28em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:.5rem;}
+.goi-preview .goi-dir-hdr::before{content:'';width:6px;height:6px;background:var(--p-red-b);flex-shrink:0;}
+.goi-preview .goi-dir-list{display:flex;flex-direction:column;max-height:540px;overflow-y:auto;}
+.goi-preview .goi-dir-list::-webkit-scrollbar{width:6px;}
+.goi-preview .goi-dir-list::-webkit-scrollbar-track{background:var(--black);}
+.goi-preview .goi-dir-list::-webkit-scrollbar-thumb{background:var(--border);}
+.goi-preview .goi-dir-btn{position:relative;display:grid;grid-template-columns:38px 1fr auto;gap:.75rem;align-items:center;padding:.75rem .9rem;border:none;background:transparent;border-bottom:1px solid var(--dark);color:inherit;cursor:pointer;text-align:left;transition:background .2s;}
+.goi-preview .goi-dir-btn:last-child{border-bottom:none;}
+.goi-preview .goi-dir-btn::before{content:'';position:absolute;left:0;top:0;bottom:0;width:0;background:var(--p-red-b);transition:width .22s;}
+.goi-preview .goi-dir-btn:hover{background:rgba(255,255,255,.02);}
+.goi-preview .goi-dir-btn.is-active{background:linear-gradient(90deg,rgba(138,42,42,0.10),transparent 70%);}
+.goi-preview .goi-dir-btn.is-active::before{width:3px;}
+.goi-preview .goi-dir-logo{width:38px;height:38px;background:rgba(0,0,0,.35);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;}
+.goi-preview .goi-dir-logo img{width:30px;height:30px;object-fit:contain;mix-blend-mode:screen;opacity:.85;transition:opacity .2s;}
+.goi-preview .goi-dir-btn.is-active .goi-dir-logo img,.goi-preview .goi-dir-btn:hover .goi-dir-logo img{opacity:1;}
+.goi-preview .goi-dir-body{min-width:0;}
+.goi-preview .goi-dir-abbr{font-family:var(--display);font-size:15px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--pale);line-height:1;margin-bottom:.2rem;}
+.goi-preview .goi-dir-btn.is-active .goi-dir-abbr{color:var(--white);}
+.goi-preview .goi-dir-name{font-family:var(--mono);font-size:8.5px;letter-spacing:0.1em;color:var(--muted);line-height:1.3;text-transform:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.goi-preview .goi-dir-arrow{font-family:var(--mono);font-size:13px;color:var(--border);transition:color .2s,transform .2s;}
+.goi-preview .goi-dir-btn:hover .goi-dir-arrow,.goi-preview .goi-dir-btn.is-active .goi-dir-arrow{color:var(--p-red-b);transform:translateX(3px);}
+
+/* Dossier (right column) */
+.goi-preview .goi-doss{border:1px solid var(--border);background:var(--deep);min-height:540px;position:relative;}
+.goi-preview .goi-doss-hdr{padding:1.5rem 1.75rem 1.25rem;border-bottom:1px solid var(--border);display:grid;grid-template-columns:74px 1fr;gap:1.25rem;align-items:center;position:relative;}
+.goi-preview .goi-doss-hdr::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--p-red-b);}
+.goi-preview .goi-doss-logo{width:74px;height:74px;background:var(--dark);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.goi-preview .goi-doss-logo img{width:60px;height:60px;object-fit:contain;mix-blend-mode:screen;}
+.goi-preview .goi-doss-ident{min-width:0;}
+.goi-preview .goi-doss-fileref{font-family:var(--mono);font-size:8.5px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);margin-bottom:.25rem;}
+.goi-preview .goi-doss-name{font-family:var(--display);font-weight:800;font-size:clamp(20px,2.5vw,28px);letter-spacing:0.04em;text-transform:uppercase;color:var(--white);line-height:.95;margin-bottom:.3rem;}
+.goi-preview .goi-doss-abbr{font-family:var(--mono);font-size:9.5px;letter-spacing:0.25em;color:var(--pale);}
+
+/* Summary strip */
+.goi-preview .goi-doss-summary{display:flex;gap:0;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.goi-preview .goi-sum-item{flex:1;min-width:80px;padding:.85rem 1rem;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:.2rem;}
+.goi-preview .goi-sum-item:last-child{border-right:none;}
+.goi-preview .goi-sum-k{font-family:var(--mono);font-size:7.5px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);}
+.goi-preview .goi-sum-v{font-family:var(--display);font-size:20px;font-weight:700;line-height:1;color:var(--white);}
+.goi-preview .goi-sum-item.rel-allied   .goi-sum-v{color:var(--p-blue-b);}
+.goi-preview .goi-sum-item.rel-friendly .goi-sum-v{color:var(--p-green-b);}
+.goi-preview .goi-sum-item.rel-neutral  .goi-sum-v{color:var(--light);}
+.goi-preview .goi-sum-item.rel-hostile  .goi-sum-v{color:var(--p-amber-b);}
+.goi-preview .goi-sum-item.rel-enemy    .goi-sum-v{color:var(--p-red-b);}
+
+/* Sections + relation rows */
+.goi-preview .goi-doss-section{padding:1.25rem 1.75rem;}
+.goi-preview .goi-doss-section-hdr{font-family:var(--mono);font-size:8.5px;letter-spacing:0.28em;text-transform:uppercase;color:var(--muted);padding-bottom:.6rem;border-bottom:1px solid var(--border);margin-bottom:.9rem;display:flex;align-items:center;gap:.6rem;}
+.goi-preview .goi-doss-section-hdr::before{content:'';width:6px;height:6px;background:var(--p-red-b);flex-shrink:0;}
+.goi-preview .goi-rel-list{display:flex;flex-direction:column;gap:.45rem;}
+.goi-preview .goi-rel-row{display:grid;grid-template-columns:40px 1fr 110px auto;gap:.85rem;align-items:center;padding:.7rem .9rem;background:rgba(0,0,0,.2);border:1px solid var(--border);border-left:3px solid;}
+.goi-preview .goi-rel-row.rel-allied   {border-left-color:var(--p-blue-b);}
+.goi-preview .goi-rel-row.rel-friendly {border-left-color:var(--p-green-b);}
+.goi-preview .goi-rel-row.rel-neutral  {border-left-color:var(--muted);}
+.goi-preview .goi-rel-row.rel-indiff   {border-left-color:#6a6a8a;}
+.goi-preview .goi-rel-row.rel-hostile  {border-left-color:var(--p-amber-b);}
+.goi-preview .goi-rel-row.rel-enemy    {border-left-color:var(--p-red-b);}
+.goi-preview .goi-rel-logo{width:40px;height:40px;background:rgba(0,0,0,.4);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.goi-preview .goi-rel-logo img{width:32px;height:32px;object-fit:contain;mix-blend-mode:screen;opacity:.85;}
+.goi-preview .goi-rel-info{min-width:0;}
+.goi-preview .goi-rel-name{font-family:var(--display);font-size:14px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--white);line-height:1.1;margin-bottom:.15rem;}
+.goi-preview .goi-rel-sub{font-family:var(--mono);font-size:8.5px;letter-spacing:0.14em;color:var(--muted);}
+.goi-preview .goi-rel-scale{display:grid;grid-template-columns:repeat(6,1fr);gap:2px;align-items:end;height:18px;}
+.goi-preview .goi-rel-scale-cell{height:100%;background:var(--dark);border:1px solid var(--border);}
+.goi-preview .goi-rel-scale-cell.on.pos-0{background:var(--p-blue-b);border-color:var(--p-blue);}
+.goi-preview .goi-rel-scale-cell.on.pos-1{background:var(--p-green-b);border-color:var(--p-green);}
+.goi-preview .goi-rel-scale-cell.on.pos-2{background:var(--muted);border-color:var(--border);}
+.goi-preview .goi-rel-scale-cell.on.pos-3{background:#6a6a8a;border-color:#4a4a6a;}
+.goi-preview .goi-rel-scale-cell.on.pos-4{background:var(--p-amber-b);border-color:var(--p-amber);}
+.goi-preview .goi-rel-scale-cell.on.pos-5{background:var(--p-red-b);border-color:var(--p-red);}
+.goi-preview .goi-rel-badge{font-family:var(--mono);font-size:8.5px;letter-spacing:0.2em;text-transform:uppercase;padding:3px 10px;border:1px solid;white-space:nowrap;}
+.goi-preview .goi-rel-badge.rel-allied   {border-color:var(--p-blue);color:var(--p-blue-b);background:rgba(42,74,122,.08);}
+.goi-preview .goi-rel-badge.rel-friendly {border-color:var(--p-green);color:var(--p-green-b);background:rgba(42,106,42,.08);}
+.goi-preview .goi-rel-badge.rel-neutral  {border-color:var(--border);color:var(--light);background:rgba(60,60,60,.2);}
+.goi-preview .goi-rel-badge.rel-indiff   {border-color:#4a4a6a;color:#8a8aba;background:rgba(60,60,100,.12);}
+.goi-preview .goi-rel-badge.rel-hostile  {border-color:var(--p-amber);color:var(--p-amber-b);background:rgba(154,122,42,.08);}
+.goi-preview .goi-rel-badge.rel-enemy    {border-color:var(--p-red);color:var(--p-red-b);background:rgba(138,42,42,.08);}
+.goi-preview .goi-rel-empty{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:0.1em;text-align:center;padding:2rem;border:1px dashed var(--border);}
+@media(max-width:720px){
+  .goi-preview .goi-rel-row{grid-template-columns:40px 1fr auto;gap:.6rem;}
+  .goi-preview .goi-rel-scale{display:none;}
+}
 .rel-matrix{display:flex;flex-direction:column;gap:.3rem;max-height:480px;overflow-y:auto;padding-right:.25rem;}
 .rel-matrix::-webkit-scrollbar{width:6px;}
 .rel-matrix::-webkit-scrollbar-track{background:var(--dark);}
@@ -649,19 +721,15 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 
       <div id="goi-list-wrap"><div style="font-family:var(--mono);font-size:10px;color:var(--border);letter-spacing:0.1em;">Loading...</div></div>
 
-      <div class="sdiv">Live Relation Preview</div>
-      <div class="goi-bubble-wrap" id="goi-bubble-wrap-staff">
-        <canvas id="goi-canvas-staff"></canvas>
-        <div class="goi-tooltip-staff" id="goi-tooltip-staff"><span class="tt-name"></span><div id="tt-rels-staff"></div></div>
-      </div>
-      <div class="goi-legend-staff">
-        <div class="gli"><div class="gli-dot allied"></div>Allied</div>
-        <div class="gli"><div class="gli-dot friendly"></div>Friendly</div>
-        <div class="gli"><div class="gli-dot neutral"></div>Neutral</div>
-        <div class="gli"><div class="gli-dot indiff"></div>Indifferent</div>
-        <div class="gli"><div class="gli-dot hostile"></div>Hostile</div>
-        <div class="gli"><div class="gli-dot enemy"></div>Enemy</div>
-        <button type="button" onclick="resetStaffLayout()" class="goi-reset-btn">Reset Layout</button>
+      <div class="sdiv">Live Relation Preview <span style="margin-left:auto;font-family:var(--mono);font-size:8.5px;color:var(--muted);letter-spacing:0.12em;">Shown exactly as it appears on the public World State page.</span></div>
+      <div class="goi-preview" id="goi-preview-wrap">
+        <div class="goi-layout">
+          <div class="goi-dir">
+            <div class="goi-dir-hdr">Directory</div>
+            <div class="goi-dir-list" id="goi-preview-dir-list"></div>
+          </div>
+          <div class="goi-doss" id="goi-preview-doss"></div>
+        </div>
       </div>
 
       <div class="ws-card" style="margin-top:2rem;">
@@ -1777,7 +1845,7 @@ function renderGOIAdmin() {
       </div>`).join('')}
     </div>`;
   renderRelMatrix();
-  setTimeout(() => initStaffBubble(_wsGOIs, _wsRels), 50);
+  renderGoiPreview(_wsGOIs, _wsRels);
 }
 
 const REL_STATUS_OPTIONS = [
@@ -1825,16 +1893,24 @@ async function onRelChange(fromId, toId, selectEl) {
   _wsRels.push({ from: fromId, to: toId, status });
   selectEl.closest('.rel-row')?.classList.remove('unset');
   msg.textContent = 'Saving...';
-  const { error } = await db.from('world_state').upsert({
-    key:'goi_relations', value:{ list: _wsRels },
-    updated_at: new Date().toISOString(), updated_by: currentProfile?.display_name
-  });
+
+  // IMPORTANT: worldstate.html only reads our relations when BOTH `gois` and
+  // `goi_relations` exist in the world_state table. On a fresh DB `gois` is
+  // undefined (staff panel just uses DEFAULT_WS_GOIS in memory), so saving
+  // only relations silently fails to propagate. Save both together.
+  const now = new Date().toISOString();
+  const by  = currentProfile?.display_name;
+  const [goisRes, relsRes] = await Promise.all([
+    db.from('world_state').upsert({ key:'gois',           value:{ list: _wsGOIs }, updated_at: now, updated_by: by }),
+    db.from('world_state').upsert({ key:'goi_relations',  value:{ list: _wsRels }, updated_at: now, updated_by: by }),
+  ]);
+  const error = goisRes.error || relsRes.error;
   if (error) { msg.textContent = 'Error: ' + error.message; }
   else {
     msg.textContent = `Saved: ${fromId.toUpperCase()} ↔ ${toId.toUpperCase()} = ${status.toUpperCase()}`;
     setTimeout(()=>{ if(msg.textContent.startsWith('Saved')) msg.textContent=''; }, 2500);
   }
-  initStaffBubble(_wsGOIs, _wsRels);
+  renderGoiPreview(_wsGOIs, _wsRels);
 }
 
 async function addGOI() {
@@ -1889,159 +1965,135 @@ async function saveRelations() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   GOI BUBBLE CHART (staff preview)
+   GOI PREVIEW — directory + dossier
+   Mirrors the public World State page (worldstate.html) so staff see
+   the same layout the community does. Stay in sync with that file.
 ═══════════════════════════════════════════════════════════════ */
-const STAFF_REL_COLORS = {
-  allied:  {stroke:'#3a6aaa',fill:'rgba(10,50,80,0.55)',label:'#3a6aaa'},
-  friendly:{stroke:'#3a9a3a',fill:'rgba(15,65,20,0.55)',label:'#3a9a3a'},
-  neutral: {stroke:'#555',   fill:'rgba(40,40,40,0.55)',label:'#666'},
-  indiff:  {stroke:'#4a4a7a',fill:'rgba(25,25,50,0.55)',label:'#5a5a8a'},
-  hostile: {stroke:'#aa6a3a',fill:'rgba(100,50,10,0.55)',label:'#aa6a3a'},
-  enemy:   {stroke:'#aa3a3a',fill:'rgba(120,20,20,0.55)',label:'#aa3a3a'},
+const PREVIEW_REL_META = {
+  allied:   {label:'Allied',      pos:0, severity:0, note:'Formal cooperation. Shared intelligence and, where possible, shared operations.'},
+  friendly: {label:'Friendly',    pos:1, severity:1, note:'Positive relations. Occasional coordination. No standing treaty.'},
+  neutral:  {label:'Neutral',     pos:2, severity:2, note:'No active cooperation or hostility. Professional interactions only.'},
+  indiff:   {label:'Indifferent', pos:3, severity:3, note:'Limited contact. Neither side considers the other a priority.'},
+  hostile:  {label:'Hostile',     pos:4, severity:4, note:'Active opposition short of open conflict. Proxy actions common.'},
+  enemy:    {label:'Enemy',       pos:5, severity:5, note:'Open hostility. Lethal engagement authorised when encountered.'},
 };
-let _sNodes=[], _sEdges=[], _sHov=null, _sDrag=null, _sDragOX=0, _sDragOY=0;
-let _sAnimFrame=null, _sLogoCache={};
+let _previewSelected = null;
 
-function initStaffBubble(gois, rels) {
-  const wrap=document.getElementById('goi-bubble-wrap-staff');
-  const canvas=document.getElementById('goi-canvas-staff');
-  if(!wrap||!canvas) return;
-  const W=wrap.clientWidth||700, H=Math.max(480, W*0.62);
-  canvas.width=W; canvas.height=H; wrap.style.height=H+'px';
-  const n=Math.max(gois.length,1);
-  const ringR=Math.min(W,H)*(n>9?0.38:n>6?0.35:0.33);
-  const nodeR=Math.max(26, Math.min(46, 140/Math.sqrt(n)));
-  const cx=W/2, cy=H/2;
-  _sNodes=gois.map((g,i)=>{
-    const a=(2*Math.PI*i/n)-Math.PI/2;
-    return {id:g.id,name:g.name,abbr:g.abbr,logo:g.logo,x:cx+ringR*Math.cos(a),y:cy+ringR*Math.sin(a),vx:0,vy:0,radius:nodeR};
+// Main entry: render both columns for the given GOIs/rels.
+function renderGoiPreview(gois, rels) {
+  const list = document.getElementById('goi-preview-dir-list');
+  const doss = document.getElementById('goi-preview-doss');
+  if (!list || !doss) return;
+
+  if (!gois || !gois.length) {
+    list.innerHTML = '<div class="goi-rel-empty" style="margin:1rem;">No GOIs on record.</div>';
+    doss.innerHTML = '<div class="goi-rel-empty" style="margin:1.5rem;">Add a GOI to see its dossier.</div>';
+    return;
+  }
+
+  // Preserve current selection if still valid; otherwise default to first.
+  if (!_previewSelected || !gois.find(g => g.id === _previewSelected)) {
+    _previewSelected = gois[0].id;
+  }
+
+  // Left column — directory list.
+  list.innerHTML = gois.map(g => `
+    <button type="button" class="goi-dir-btn${g.id === _previewSelected ? ' is-active' : ''}" data-id="${escHtml(g.id)}" onclick="selectPreviewGoi('${escHtml(g.id)}')">
+      <div class="goi-dir-logo">
+        <img src="${escHtml(g.logo || 'img/Base.png')}" alt="${escHtml(g.abbr || g.name || '')}" onerror="this.style.display='none'">
+      </div>
+      <div class="goi-dir-body">
+        <div class="goi-dir-abbr">${escHtml(g.abbr || '---')}</div>
+        <div class="goi-dir-name">${escHtml(g.name || '')}</div>
+      </div>
+      <span class="goi-dir-arrow">&#8250;</span>
+    </button>
+  `).join('');
+
+  // Right column — dossier for the selected GOI.
+  renderPreviewDossier(_previewSelected, gois, rels);
+}
+
+function selectPreviewGoi(id) {
+  _previewSelected = id;
+  document.querySelectorAll('#goi-preview-dir-list .goi-dir-btn').forEach(btn => {
+    btn.classList.toggle('is-active', btn.dataset.id === id);
   });
-  _sEdges=rels.map(r=>({from:r.from,to:r.to,status:r.status||'neutral'}));
-  _sLogoCache={};
-  gois.forEach(g=>{ if(!g.logo) return; const img=new Image(); img.src=g.logo; img.onload=()=>{ _sLogoCache[g.id]=img; }; });
-  canvas.onmousedown=sDown; canvas.onmousemove=sMove; canvas.onmouseup=sUp; canvas.onmouseleave=sLeave;
-  canvas.ontouchstart=e=>{e.preventDefault();const t=e.touches[0];sDown({currentTarget:e.currentTarget,clientX:t.clientX,clientY:t.clientY});};
-  canvas.ontouchmove=e=>{e.preventDefault();const t=e.touches[0];sMove({currentTarget:e.currentTarget,clientX:t.clientX,clientY:t.clientY});};
-  canvas.ontouchend=sUp;
-  if(_sAnimFrame) cancelAnimationFrame(_sAnimFrame);
-  sTick();
+  renderPreviewDossier(id, _wsGOIs, _wsRels);
 }
 
-function resetStaffLayout(){
-  if(!_sNodes.length) return;
-  const canvas=document.getElementById('goi-canvas-staff');
-  if(!canvas) return;
-  const W=canvas.width, H=canvas.height, n=_sNodes.length;
-  const ringR=Math.min(W,H)*(n>9?0.38:n>6?0.35:0.33);
-  const cx=W/2, cy=H/2;
-  _sNodes.forEach((node,i)=>{
-    const a=(2*Math.PI*i/n)-Math.PI/2;
-    node.x=cx+ringR*Math.cos(a); node.y=cy+ringR*Math.sin(a); node.vx=0; node.vy=0;
-  });
-}
+function renderPreviewDossier(id, gois, rels) {
+  const doss = document.getElementById('goi-preview-doss');
+  if (!doss) return;
+  const goi = (gois || []).find(g => g.id === id);
+  if (!goi) { doss.innerHTML = '<div class="goi-rel-empty" style="margin:1.5rem;">Select a GOI.</div>'; return; }
 
-function sTick(){
-  const canvas=document.getElementById('goi-canvas-staff');
-  if(!canvas) return;
-  sSimulate(); sDraw(canvas);
-  _sAnimFrame=requestAnimationFrame(sTick);
-}
-
-function sSimulate(){
-  const canvas=document.getElementById('goi-canvas-staff');
-  if(!canvas) return;
-  const W=canvas.width, H=canvas.height;
-  _sNodes.forEach(n=>{
-    n.x=Math.max(n.radius+4,Math.min(W-n.radius-4,n.x));
-    n.y=Math.max(n.radius+4,Math.min(H-n.radius-4,n.y));
-  });
-}
-
-function sDraw(canvas){
-  const ctx=canvas.getContext('2d');
-  const W=canvas.width,H=canvas.height;
-  ctx.clearRect(0,0,W,H);
-  ctx.strokeStyle='rgba(255,255,255,0.025)'; ctx.lineWidth=1;
-  for(let x=0;x<W;x+=60){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
-  for(let y=0;y<H;y+=60){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
-  const nm={}; _sNodes.forEach(n=>nm[n.id]=n);
-  _sEdges.forEach(e=>{
-    const a=nm[e.from], b=nm[e.to]; if(!a||!b) return;
-    const col=STAFF_REL_COLORS[e.status]||STAFF_REL_COLORS.neutral;
-    const isH=_sHov&&(e.from===_sHov.id||e.to===_sHov.id);
-    const alpha=_sHov?(isH?1:0.08):(e.status==='neutral'?0.18:0.45);
-    ctx.save(); ctx.globalAlpha=alpha; ctx.strokeStyle=col.stroke; ctx.lineWidth=isH?2.5:1.5;
-    if(e.status==='enemy') ctx.setLineDash([6,4]);
-    else if(e.status==='hostile') ctx.setLineDash([10,4]);
-    else ctx.setLineDash([]);
-    ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
-    ctx.setLineDash([]);
-    if(isH){
-      const mx=(a.x+b.x)/2,my=(a.y+b.y)/2;
-      ctx.globalAlpha=0.95; ctx.font='bold 8px "Share Tech Mono",monospace';
-      const tw=ctx.measureText(e.status).width+10;
-      ctx.fillStyle='rgba(10,10,10,0.85)'; ctx.fillRect(mx-tw/2,my-8,tw,16);
-      ctx.strokeStyle=col.stroke; ctx.lineWidth=1; ctx.strokeRect(mx-tw/2,my-8,tw,16);
-      ctx.fillStyle=col.label; ctx.textAlign='center'; ctx.textBaseline='middle';
-      ctx.fillText(e.status.toUpperCase(),mx,my);
+  // Collect relations involving this GOI.
+  const myRels = [];
+  (rels || []).forEach(r => {
+    let otherId = null;
+    if (r.from === id) otherId = r.to;
+    else if (r.to === id) otherId = r.from;
+    if (otherId) {
+      const other = gois.find(g => g.id === otherId);
+      if (other) myRels.push({ other, status: r.status || 'neutral', note: r.note || null });
     }
-    ctx.restore();
   });
-  _sNodes.forEach(node=>{
-    const isH=node===_sHov; const r=node.radius; ctx.save();
-    if(isH){ctx.shadowBlur=24;ctx.shadowColor='rgba(240,240,240,0.3)';}
-    ctx.beginPath(); ctx.arc(node.x,node.y,r,0,Math.PI*2); ctx.fillStyle='#111'; ctx.fill();
-    ctx.strokeStyle=isH?'rgba(240,240,240,0.7)':'rgba(60,60,60,0.9)'; ctx.lineWidth=isH?2:1.5; ctx.stroke();
-    if(_sLogoCache[node.id]){
-      ctx.save(); ctx.beginPath(); ctx.arc(node.x,node.y,r-3,0,Math.PI*2); ctx.clip();
-      ctx.globalAlpha=0.9; const sz=(r-3)*2;
-      ctx.drawImage(_sLogoCache[node.id],node.x-r+3,node.y-r+3,sz,sz); ctx.restore();
-    } else {
-      ctx.fillStyle=isH?'#f0f0f0':'#999';
-      ctx.font=`bold ${Math.floor(r*0.38)}px "Barlow Condensed",sans-serif`;
-      ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(node.abbr,node.x,node.y);
-    }
-    ctx.shadowBlur=0; ctx.font='bold 9px "Share Tech Mono",monospace';
-    const lw=ctx.measureText(node.abbr).width+14;
-    ctx.fillStyle='rgba(10,10,10,0.75)'; ctx.fillRect(node.x-lw/2,node.y+r+3,lw,14);
-    ctx.fillStyle=isH?'#f0f0f0':'#888'; ctx.textAlign='center'; ctx.textBaseline='top';
-    ctx.fillText(node.abbr,node.x,node.y+r+5); ctx.restore();
-  });
-}
 
-function sCanvasPos(canvas,e){const rect=canvas.getBoundingClientRect();return {x:(e.clientX-rect.left)*(canvas.width/rect.width),y:(e.clientY-rect.top)*(canvas.height/rect.height)};}
-function sNodeAt(x,y){return _sNodes.find(n=>Math.hypot(n.x-x,n.y-y)<n.radius+4)||null;}
-function sDown(e){const {x,y}=sCanvasPos(e.currentTarget,e);const n=sNodeAt(x,y);if(n){_sDrag=n;_sDragOX=x-n.x;_sDragOY=y-n.y;}}
-function sMove(e){
-  const canvas=e.currentTarget;const {x,y}=sCanvasPos(canvas,e);
-  if(_sDrag){_sDrag.x=x-_sDragOX;_sDrag.y=y-_sDragOY;_sDrag.vx=0;_sDrag.vy=0;}
-  const hov=sNodeAt(x,y);
-  if(hov!==_sHov){_sHov=hov;sShowTooltip(canvas,hov,x,y);}
-  else if(hov) sMoveTooltip(canvas,x,y);
-}
-function sUp(){_sDrag=null;}
-function sLeave(){_sDrag=null;_sHov=null;const tt=document.getElementById('goi-tooltip-staff');if(tt)tt.style.opacity='0';}
+  // Severity-descending (most concerning first), matches worldstate.
+  myRels.sort((a, b) => (PREVIEW_REL_META[b.status]?.severity ?? 2) - (PREVIEW_REL_META[a.status]?.severity ?? 2));
 
-function sShowTooltip(canvas,node,x,y){
-  const tt=document.getElementById('goi-tooltip-staff');
-  if(!node){tt.style.opacity='0';return;}
-  tt.querySelector('.tt-name').textContent=node.name;
-  const relsHtml=_sEdges.filter(e=>e.from===node.id||e.to===node.id).map(e=>{
-    const oid=e.from===node.id?e.to:e.from;
-    const other=_wsGOIs.find(g=>g.id===oid)||DEFAULT_WS_GOIS.find(g=>g.id===oid);
-    const col=STAFF_REL_COLORS[e.status]||STAFF_REL_COLORS.neutral;
-    return `<div class="tt-rel"><div class="tt-dot" style="border-color:${col.stroke};background:${col.fill}"></div><span style="color:${col.label}">${e.status.toUpperCase()}</span><span style="color:#666"> — </span><span style="color:#ccc">${other?other.abbr:oid}</span></div>`;
-  }).join('');
-  document.getElementById('tt-rels-staff').innerHTML=relsHtml||'<span style="color:#666">No relations</span>';
-  sMoveTooltip(canvas,x,y); tt.style.opacity='1';
-}
-function sMoveTooltip(canvas,x,y){
-  const tt=document.getElementById('goi-tooltip-staff');
-  const cR=canvas.getBoundingClientRect();
-  const sx=canvas.width/cR.width,sy=canvas.height/cR.height;
-  let lx=x/sx+16,ly=y/sy+16;
-  if(lx+200>cR.width) lx=x/sx-220;
-  tt.style.left=lx+'px'; tt.style.top=ly+'px';
+  const counts = { allied:0, friendly:0, neutral:0, indiff:0, hostile:0, enemy:0 };
+  myRels.forEach(r => { counts[r.status] = (counts[r.status] || 0) + 1; });
+
+  const summaryHtml = `
+    <div class="goi-doss-summary">
+      <div class="goi-sum-item rel-allied"><div class="goi-sum-k">Allied</div><div class="goi-sum-v">${counts.allied}</div></div>
+      <div class="goi-sum-item rel-friendly"><div class="goi-sum-k">Friendly</div><div class="goi-sum-v">${counts.friendly}</div></div>
+      <div class="goi-sum-item rel-neutral"><div class="goi-sum-k">Neutral</div><div class="goi-sum-v">${counts.neutral + counts.indiff}</div></div>
+      <div class="goi-sum-item rel-hostile"><div class="goi-sum-k">Hostile</div><div class="goi-sum-v">${counts.hostile}</div></div>
+      <div class="goi-sum-item rel-enemy"><div class="goi-sum-k">Enemy</div><div class="goi-sum-v">${counts.enemy}</div></div>
+    </div>`;
+
+  const relsHtml = myRels.length
+    ? myRels.map(r => {
+        const meta = PREVIEW_REL_META[r.status] || PREVIEW_REL_META.neutral;
+        const scaleCells = Array.from({length:6}, (_, i) => {
+          const isOn = i === meta.pos;
+          return `<div class="goi-rel-scale-cell${isOn ? ' on pos-' + meta.pos : ''}"></div>`;
+        }).join('');
+        const noteText = r.note || meta.note;
+        return `
+          <div class="goi-rel-row rel-${r.status}">
+            <div class="goi-rel-logo">
+              <img src="${escHtml(r.other.logo || 'img/Base.png')}" alt="${escHtml(r.other.abbr || r.other.name || '')}" onerror="this.style.display='none'">
+            </div>
+            <div class="goi-rel-info">
+              <div class="goi-rel-name">${escHtml(r.other.name || r.other.abbr || '')}</div>
+              <div class="goi-rel-sub">${escHtml(r.other.abbr || '')}${noteText ? ' / ' + escHtml(noteText) : ''}</div>
+            </div>
+            <div class="goi-rel-scale" title="Position on the Allied → Enemy scale">${scaleCells}</div>
+            <div class="goi-rel-badge rel-${r.status}">${meta.label}</div>
+          </div>`;
+      }).join('')
+    : '<div class="goi-rel-empty">No relations on record for this GOI.</div>';
+
+  doss.innerHTML = `
+    <div class="goi-doss-hdr">
+      <div class="goi-doss-logo">
+        <img src="${escHtml(goi.logo || 'img/Base.png')}" alt="${escHtml(goi.abbr || goi.name || '')}" onerror="this.style.display='none'">
+      </div>
+      <div class="goi-doss-ident">
+        <div class="goi-doss-fileref">TF / GOI / ${escHtml((goi.abbr || goi.id).toUpperCase())}</div>
+        <div class="goi-doss-name">${escHtml(goi.name || goi.abbr || '')}</div>
+        <div class="goi-doss-abbr">${escHtml(goi.abbr || '')}${goi.name && goi.abbr ? ' &middot; ' : ''}${myRels.length} Relations on Record</div>
+      </div>
+    </div>
+    ${summaryHtml}
+    <div class="goi-doss-section">
+      <div class="goi-doss-section-hdr">Relations / Sorted by Threat Descending</div>
+      <div class="goi-rel-list">${relsHtml}</div>
+    </div>`;
 }
 
 /* ═══════════════════════════════════════════════════════════════

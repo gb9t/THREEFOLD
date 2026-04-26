@@ -924,6 +924,33 @@ footer {
 .dp-file-id { color: var(--red-bright); }
 .dp-file-name { color: var(--pale); text-transform: uppercase; letter-spacing: 0.15em; }
 
+/* Sites viz (operational sites) */
+.dp-viz-sites { display: flex; flex-direction: column; gap: .55rem; }
+.dp-site-row {
+  display: grid; grid-template-columns: 44px 1fr auto;
+  align-items: center; gap: .8rem;
+  padding: .6rem .85rem; background: rgba(0,0,0,.3);
+  border-left: 2px solid var(--amber);
+}
+.dp-site-num {
+  font-family: var(--display); font-size: 22px; font-weight: 800;
+  color: var(--amber-bright); line-height: 1; letter-spacing: 0;
+}
+.dp-site-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.dp-site-name {
+  font-family: var(--display); font-size: 14px; font-weight: 700;
+  letter-spacing: 0.05em; color: var(--white); text-transform: uppercase;
+}
+.dp-site-loc {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.18em;
+  color: var(--muted); text-transform: uppercase;
+}
+.dp-site-tag {
+  font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.22em;
+  color: var(--light); text-transform: uppercase;
+  border: 1px solid var(--border); padding: 3px 7px;
+}
+
 /* Form viz (submission) */
 .dp-viz-form { display: flex; flex-direction: column; gap: .65rem; }
 .dp-field { display: flex; align-items: center; gap: .75rem; }
@@ -1062,7 +1089,7 @@ footer {
           <span class="dir-head-txt">Directory Index</span>
         </div>
         <h2 class="dir-title">Explore the <em>Server</em></h2>
-        <p class="dir-sub">Seven destinations. Hover a row to preview, click to enter.</p>
+        <p class="dir-sub">Eight destinations. Hover a row to preview, click to enter.</p>
       </div>
 
       <div class="dir-grid">
@@ -1117,9 +1144,21 @@ footer {
             </a>
           </li>
 
+          <li class="dir-row" data-key="sites">
+            <a href="sites.html" class="dir-row-link">
+              <span class="dir-row-num">05</span>
+              <span class="dir-row-body">
+                <span class="dir-row-title">Operational Sites</span>
+                <span class="dir-row-sub">Active duty stations, deployment registry</span>
+              </span>
+              <span class="dir-row-tag">Posting</span>
+              <span class="dir-row-arrow">&rarr;</span>
+            </a>
+          </li>
+
           <li class="dir-row" data-key="database">
             <a href="database.html" class="dir-row-link">
-              <span class="dir-row-num">05</span>
+              <span class="dir-row-num">06</span>
               <span class="dir-row-body">
                 <span class="dir-row-title">Character Database</span>
                 <span class="dir-row-sub">Approved personnel files, on record</span>
@@ -1131,7 +1170,7 @@ footer {
 
           <li class="dir-row" data-key="submission">
             <a href="submission.html" class="dir-row-link">
-              <span class="dir-row-num">06</span>
+              <span class="dir-row-num">07</span>
               <span class="dir-row-body">
                 <span class="dir-row-title">Character Submission</span>
                 <span class="dir-row-sub">File your personnel record for review</span>
@@ -1143,7 +1182,7 @@ footer {
 
           <li class="dir-row" data-key="apply">
             <a href="#" onclick="showPage('applications');return false;" class="dir-row-link">
-              <span class="dir-row-num">07</span>
+              <span class="dir-row-num">08</span>
               <span class="dir-row-body">
                 <span class="dir-row-title">Applications</span>
                 <span class="dir-row-sub">Lore Team, Moderation, Gamemasters</span>
@@ -1223,6 +1262,32 @@ footer {
                 <div class="dp-tier dp-tier-3"><span></span><span></span><span></span><span></span><span></span><span></span></div>
               </div>
               <a href="departments.html" class="dp-cta">View Structure &rarr;</a>
+            </div>
+
+            <div class="dp-card" data-key="sites">
+              <div class="dp-stamp">TF / OPS / SITES / 002</div>
+              <div class="dp-tag">Posting</div>
+              <h3 class="dp-title">Operational <em>Sites</em></h3>
+              <p class="dp-body">Two active duty stations cleared for incoming character postings, with full dossiers.</p>
+              <div class="dp-viz dp-viz-sites">
+                <div class="dp-site-row">
+                  <span class="dp-site-num">07</span>
+                  <span class="dp-site-body">
+                    <span class="dp-site-name">Norton Bay</span>
+                    <span class="dp-site-loc">Norton Sound &middot; AK</span>
+                  </span>
+                  <span class="dp-site-tag">RAISA</span>
+                </div>
+                <div class="dp-site-row">
+                  <span class="dp-site-num">19</span>
+                  <span class="dp-site-body">
+                    <span class="dp-site-name">Edgewood</span>
+                    <span class="dp-site-loc">Aberdeen PG &middot; MD</span>
+                  </span>
+                  <span class="dp-site-tag">Containment</span>
+                </div>
+              </div>
+              <a href="sites.html" class="dp-cta">View Postings &rarr;</a>
             </div>
 
             <div class="dp-card" data-key="database">

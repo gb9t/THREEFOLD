@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THREEFOLD / Operational Sites</title>
+
+<!-- Discord / social embed -->
+<meta property="og:site_name" content="THREEFOLD">
+<meta property="og:title" content="THREEFOLD ︲ Operational Sites">
+<meta property="og:description" content="Active Foundation installations available for character deployment. Review sites, pick your starting assignment.">
+<meta property="og:url" content="https://gb9t.github.io/THREEFOLD/sites.html">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://gb9t.github.io/THREEFOLD/img/Base.png">
+<meta name="theme-color" content="#8a2a2a">
+
+<link rel="icon" type="image/png" href="img/Base.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;800&family=Barlow:wght@300;400;500&family=Special+Elite&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="supabase.js"></script>
+
+<style>
+:root{
+  --black:#0a0a0a; --deep:#111; --dark:#1a1a1a; --mid:#2e2e2e;
+  --border:#3a3a3a; --muted:#666; --light:#999; --pale:#ccc; --white:#f0f0f0;
+  --red:#8a2a2a; --red-bright:#bb3a3a;
+  --amber:#9a7a2a; --amber-bright:#d4a52c;
+  --blue:#2a4a7a; --blue-bright:#3a6aaa;
+  --green:#2a6a2a; --green-bright:#3a8a3a;
+  --ice:#5e7d8c; --moss:#5a6b3a;
+  --mono:'Share Tech Mono', monospace;
+  --display:'Barlow Condensed', sans-serif;
+  --body:'Barlow', sans-serif;
+  --typewriter:'Special Elite', monospace;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--black); color:var(--pale);
+  font-family:var(--body); font-weight:300; font-size:16px; line-height:1.7;
+  min-height:100vh; overflow-x:hidden;
+}
+body::before{
+  content:''; position:fixed; inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.08) 2px,rgba(0,0,0,0.08) 4px);
+  pointer-events:none; z-index:9999;
+}
+body::after{
+  content:''; position:fixed; inset:0;
+  background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,0.7) 100%);
+  pointer-events:none; z-index:9998;
+}
+
+/* ============================
+   NAV (matches sibling pages)
+============================ */
+nav{
+  position:fixed; top:0; left:0; right:0; z-index:500;
+  height:56px; background:rgba(10,10,10,0.97);
+  border-bottom:1px solid var(--border);
+  padding:0 2rem;
+  display:flex; align-items:center; justify-content:space-between;
+  backdrop-filter:blur(6px);
+}
+nav a.logo{display:flex; align-items:center; gap:10px; text-decoration:none;}
+nav a.logo img{width:30px; height:30px; object-fit:contain; mix-blend-mode:screen;}
+nav a.logo .n{font-family:var(--display); font-size:22px; font-weight:700; letter-spacing:.3em; color:var(--white); text-transform:uppercase; display:block; line-height:1.1;}
+nav a.logo .s{font-family:var(--mono); font-size:9px; letter-spacing:.2em; color:var(--muted); text-transform:uppercase; display:block;}
+nav ul{display:flex; list-style:none; align-items:center; flex-wrap:wrap;}
+nav ul a{font-family:var(--mono); font-size:9.5px; letter-spacing:.15em; text-transform:uppercase; color:var(--light); text-decoration:none; padding:8px 11px; display:block; transition:color .2s;}
+nav ul a:hover{color:var(--white);}
+nav ul a.current{color:var(--white);}
+nav ul a.current::after{
+  content:''; display:block; height:1px; margin-top:4px;
+  background:var(--red-bright); opacity:.8;
+}
+
+.page-pad{padding-top:56px;}
+
+/* ============================
+   COVER SHEET
+============================ */
+.cover{
+  position:relative; overflow:hidden;
+  border-bottom:1px solid var(--border);
+  background:
+    radial-gradient(ellipse 80% 60% at 18% 30%, rgba(138,42,42,0.09), transparent 60%),
+    radial-gradient(ellipse 70% 50% at 82% 70%, rgba(42,74,122,0.07), transparent 60%),
+    linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px),
+    var(--black);
+  background-size:auto, auto, 48px 48px, 48px 48px, auto;
+  padding:5rem 3rem 4.5rem;
+}
+.cover-grid{max-width:1240px; margin:0 auto; display:grid; grid-template-columns:1fr auto; gap:3rem; align-items:end;}
+.cover-left{min-width:0;}
+.cover-stamps{display:flex; gap:.5rem; flex-wrap:wrap; margin-bottom:1.5rem;}
+.stamp{font-family:var(--mono); font-size:8.5px; letter-spacing:.25em; text-transform:uppercase; padding:4px 10px; border:1px solid;}
+.stamp.red{border-color:var(--red); color:var(--red-bright); background:rgba(138,42,42,0.08);}
+.stamp.amber{border-color:var(--amber); color:var(--amber-bright); background:rgba(154,122,42,0.06);}
+.stamp.blue{border-color:var(--blue); color:var(--blue-bright); background:rgba(42,74,122,0.08);}
+.stamp.border{border-color:var(--border); color:var(--muted);}
+.cover-tag{font-family:var(--mono); font-size:10px; letter-spacing:.3em; text-transform:uppercase; color:var(--muted); margin-bottom:1rem;}
+.cover h1{
+  font-family:var(--display); font-weight:800;
+  font-size:clamp(56px, 9vw, 132px);
+  letter-spacing:.02em; text-transform:uppercase;
+  color:var(--white); line-height:.85; margin-bottom:1.4rem;
+}
+.cover h1 em{font-style:normal; color:var(--red-bright); font-weight:800;}
+.cover-desc{max-width:560px; color:var(--light); font-size:15.5px; line-height:1.75;}
+.cover-meta{display:flex; gap:2rem; flex-wrap:wrap; margin-top:2rem; padding-top:1.5rem; border-top:1px solid var(--border);}
+.cover-meta-item .k{font-family:var(--mono); font-size:9px; letter-spacing:.25em; text-transform:uppercase; color:var(--muted); margin-bottom:6px;}
+.cover-meta-item .v{font-family:var(--display); font-size:18px; font-weight:600; color:var(--white); letter-spacing:.05em; text-transform:uppercase;}
+.cover-meta-item.amber .v{color:var(--amber-bright);}
+.cover-meta-item.red .v{color:var(--red-bright);}
+.cover-meta-item.blue .v{color:var(--blue-bright);}
+.cover-right{position:relative; display:flex; flex-direction:column; align-items:flex-end; gap:1.5rem;}
+.cover-fileno{
+  font-family:var(--mono); font-size:9px; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--muted); text-align:right;
+  border:1px solid var(--border); padding:.75rem 1rem;
+  background:rgba(0,0,0,.4);
+}
+.cover-fileno strong{display:block; color:var(--pale); font-size:13px; letter-spacing:.18em; margin-top:6px; font-weight:400;}
+
+/* ============================
+   WRAP
+============================ */
+.wrap{max-width:1240px; margin:0 auto; padding:3.5rem 3rem 5rem;}
+
+/* ============================
+   BRIEFING
+============================ */
+.briefing{
+  background:linear-gradient(180deg, rgba(20,20,20,.6), rgba(10,10,10,.4));
+  border:1px solid var(--border); border-left:3px solid var(--red);
+  padding:1.4rem 1.6rem; margin-bottom:2.5rem; position:relative;
+}
+.briefing-head{
+  display:flex; gap:1rem; align-items:baseline; flex-wrap:wrap;
+  margin-bottom:.6rem; padding-bottom:.6rem; border-bottom:1px dashed var(--mid);
+}
+.briefing-head .lbl{font-family:var(--mono); font-size:9.5px; letter-spacing:.3em; color:var(--red-bright); text-transform:uppercase;}
+.briefing-head .num{font-family:var(--mono); font-size:9.5px; letter-spacing:.18em; color:var(--muted);}
+.briefing-body{font-family:var(--typewriter); font-size:14.5px; color:var(--pale); line-height:1.8;}
+.briefing-body em{font-style:normal; color:var(--amber-bright);}
+
+/* ============================
+   SITE SELECTOR
+============================ */
+.selector{
+  display:grid; grid-template-columns:1fr 1fr; gap:14px;
+  margin-bottom:2.5rem;
+}
+.sel-btn{
+  position:relative;
+  display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:1rem;
+  padding:1.2rem 1.4rem;
+  background:linear-gradient(180deg, rgba(26,26,26,.6), rgba(10,10,10,.4));
+  border:1px solid var(--border);
+  cursor:pointer; text-align:left; color:var(--pale);
+  font-family:var(--body); transition:all .25s;
+  overflow:hidden;
+}
+.sel-btn::before{
+  content:''; position:absolute; left:0; top:0; bottom:0; width:3px;
+  background:var(--mid); transition:background .25s;
+}
+.sel-btn:hover{border-color:var(--light); background:linear-gradient(180deg, rgba(34,34,34,.7), rgba(15,15,15,.5));}
+.sel-btn.active{border-color:var(--white); background:linear-gradient(180deg, rgba(40,40,40,.85), rgba(20,20,20,.6));}
+.sel-btn.active::before{background:var(--red-bright);}
+.sel-btn .num-block{
+  font-family:var(--display); font-weight:800; font-size:54px;
+  letter-spacing:0; line-height:.85; color:var(--white);
+}
+.sel-btn .num-block .pre{display:block; font-size:9px; letter-spacing:.3em; color:var(--muted); margin-bottom:4px; font-weight:400;}
+.sel-btn .site-img{
+  width:72px; height:72px; object-fit:contain;
+  flex-shrink:0; mix-blend-mode:screen;
+  filter:drop-shadow(0 2px 6px rgba(0,0,0,.5));
+}
+.sel-btn .info .t{font-family:var(--display); font-size:20px; letter-spacing:.06em; text-transform:uppercase; color:var(--white); font-weight:600; line-height:1.1;}
+.sel-btn .info .s{font-family:var(--mono); font-size:9.5px; letter-spacing:.2em; color:var(--light); text-transform:uppercase; margin-top:6px;}
+.sel-btn .stat-pill{
+  display:flex; flex-direction:column; align-items:flex-end; gap:6px;
+}
+.sel-btn .stat-pill .lbl{font-family:var(--mono); font-size:8px; letter-spacing:.25em; color:var(--muted); text-transform:uppercase;}
+.sel-btn .stat-pill .val{font-family:var(--mono); font-size:11px; letter-spacing:.15em; color:var(--green-bright); text-transform:uppercase;}
+.sel-btn .stat-pill .val.amber{color:var(--amber-bright);}
+.sel-btn .blip{
+  display:inline-block; width:8px; height:8px; border-radius:50%;
+  background:var(--green-bright); margin-right:6px;
+  box-shadow:0 0 8px var(--green-bright);
+  animation:blip 2s ease-in-out infinite;
+}
+.sel-btn .blip.amber{background:var(--amber-bright); box-shadow:0 0 8px var(--amber-bright);}
+@keyframes blip{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+/* ============================
+   DOSSIER
+============================ */
+.dossier{display:none;}
+.dossier.active{display:block; animation:dossierIn .45s ease both;}
+@keyframes dossierIn{
+  from{opacity:0; transform:translateY(8px);}
+  to{opacity:1; transform:translateY(0);}
+}
+
+/* HERO BAND */
+.dh{
+  position:relative; overflow:hidden;
+  border:1px solid var(--border);
+  margin-bottom:2rem;
+  background:#000;
+  min-height:420px;
+}
+.dh-img{
+  position:absolute; inset:0;
+  background-size:cover; background-position:center;
+  filter:grayscale(.55) contrast(1.1) brightness(.6);
+}
+.dh-img::after{
+  content:''; position:absolute; inset:0;
+  background:
+    linear-gradient(180deg, rgba(10,10,10,.2) 0%, rgba(10,10,10,.55) 60%, rgba(10,10,10,.95) 100%),
+    repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.18) 3px, rgba(0,0,0,0.18) 4px);
+}
+.dh-grain{
+  position:absolute; inset:0; opacity:.18; mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence baseFrequency='.9' numOctaves='2' seed='4'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .8 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+.dh-corner{
+  position:absolute; font-family:var(--mono); font-size:9px;
+  letter-spacing:.25em; color:var(--pale); text-transform:uppercase;
+  padding:.4rem .65rem; background:rgba(0,0,0,.6); border:1px solid var(--border);
+}
+.dh-corner.tl{top:14px; left:14px;}
+.dh-corner.tr{top:14px; right:14px; color:var(--red-bright); border-color:var(--red);}
+.dh-corner.bl{bottom:14px; left:14px;}
+.dh-corner.br{bottom:14px; right:14px;}
+.dh-content{
+  position:absolute; left:0; right:0; bottom:0;
+  padding:2.5rem 2rem 1.6rem;
+}
+.dh-tag{font-family:var(--mono); font-size:10px; letter-spacing:.35em; color:var(--red-bright); text-transform:uppercase; margin-bottom:.6rem;}
+.dh-name{
+  font-family:var(--display); font-weight:800;
+  font-size:clamp(40px, 6vw, 72px);
+  letter-spacing:.04em; text-transform:uppercase;
+  color:var(--white); line-height:.95; margin-bottom:.4rem;
+  text-shadow:0 2px 12px rgba(0,0,0,.8);
+}
+.dh-name .codename{color:var(--amber-bright); font-style:italic;}
+.dh-loc{font-family:var(--mono); font-size:11px; letter-spacing:.2em; color:var(--pale); text-transform:uppercase;}
+.dh-loc strong{color:var(--white); font-weight:400;}
+
+/* SCAN LINE on hero */
+.dh-scan{
+  position:absolute; left:0; right:0;
+  height:2px;
+  background:linear-gradient(90deg, transparent, rgba(212,165,44,.7), transparent);
+  animation:scanY 7s linear infinite;
+  pointer-events:none;
+}
+@keyframes scanY{
+  0%{top:-2%; opacity:0;}
+  10%{opacity:.7;}
+  90%{opacity:.7;}
+  100%{top:102%; opacity:0;}
+}
+
+/* ============================
+   VITALS GRID
+============================ */
+.vitals{
+  display:grid; grid-template-columns:repeat(4, 1fr); gap:0;
+  border:1px solid var(--border); margin-bottom:2.5rem;
+  background:rgba(15,15,15,.6);
+}
+.vital{
+  padding:1.1rem 1.3rem;
+  border-right:1px solid var(--border);
+  position:relative; overflow:hidden;
+}
+.vital:last-child{border-right:none;}
+.vital .k{font-family:var(--mono); font-size:9px; letter-spacing:.25em; color:var(--muted); text-transform:uppercase; margin-bottom:8px;}
+.vital .v{font-family:var(--display); font-size:18px; font-weight:600; color:var(--white); letter-spacing:.04em; text-transform:uppercase;}
+.vital .v.mono{font-family:var(--mono); font-size:13px; letter-spacing:.12em;}
+.vital .sub{font-family:var(--mono); font-size:9px; letter-spacing:.18em; color:var(--light); margin-top:6px; text-transform:uppercase;}
+.vital.live .v{color:var(--green-bright);}
+.vital.warn .v{color:var(--amber-bright);}
+
+/* ============================
+   TWO COL LAYOUT
+============================ */
+.body-grid{display:grid; grid-template-columns:1fr 360px; gap:2rem; margin-bottom:2.5rem;}
+
+/* PROSE BLOCK */
+.prose{
+  background:rgba(15,15,15,.45); border:1px solid var(--border);
+  padding:1.6rem 1.8rem; position:relative;
+}
+.prose-hd{
+  display:flex; align-items:baseline; gap:1rem;
+  font-family:var(--mono); font-size:10px; letter-spacing:.3em; color:var(--muted);
+  text-transform:uppercase; padding-bottom:.7rem;
+  border-bottom:1px solid var(--border); margin-bottom:1rem;
+}
+.prose-hd .num{color:var(--red-bright);}
+.prose p{margin-bottom:1rem; color:var(--pale); font-size:15px; line-height:1.8;}
+.prose p:last-child{margin-bottom:0;}
+.prose strong{color:var(--white); font-weight:500;}
+.prose em{color:var(--amber-bright); font-style:normal;}
+
+.expand{
+  margin-top:1.4rem; border-top:1px dashed var(--mid); padding-top:1rem;
+}
+.expand-toggle{
+  display:flex; gap:.6rem; align-items:center; cursor:pointer;
+  font-family:var(--mono); font-size:10px; letter-spacing:.22em;
+  color:var(--amber-bright); text-transform:uppercase;
+  background:none; border:none; padding:0;
+}
+.expand-toggle .arr{display:inline-block; transition:transform .25s;}
+.expand-toggle.open .arr{transform:rotate(90deg);}
+.expand-body{
+  max-height:0; overflow:hidden; transition:max-height .4s ease;
+  font-family:var(--typewriter); font-size:14px; color:var(--light); line-height:1.85;
+}
+.expand-body.open{max-height:900px; padding-top:1rem;}
+.expand-body a{color:var(--blue-bright); text-decoration:none; border-bottom:1px dotted var(--blue);}
+.expand-body a:hover{color:var(--white); border-color:var(--white);}
+
+/* SIDE PANEL */
+.side{display:flex; flex-direction:column; gap:1rem;}
+.side-card{
+  background:rgba(15,15,15,.55); border:1px solid var(--border);
+  padding:1.1rem 1.2rem; position:relative;
+}
+.side-card::before{
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:var(--red);
+}
+.side-card.amber::before{background:var(--amber);}
+.side-card.blue::before{background:var(--blue);}
+.side-card.green::before{background:var(--green);}
+.side-card .ttl{
+  font-family:var(--mono); font-size:9.5px; letter-spacing:.28em;
+  color:var(--muted); text-transform:uppercase; margin-bottom:.7rem;
+}
+.side-card .row{
+  display:flex; justify-content:space-between; align-items:baseline;
+  padding:.45rem 0; border-bottom:1px dashed rgba(60,60,60,.5);
+  font-size:13px;
+}
+.side-card .row:last-child{border-bottom:none;}
+.side-card .row .k{font-family:var(--mono); font-size:9.5px; letter-spacing:.18em; color:var(--light); text-transform:uppercase;}
+.side-card .row .v{font-family:var(--mono); font-size:11px; letter-spacing:.1em; color:var(--white); text-align:right;}
+
+/* CLOCK */
+.clock-disp{
+  font-family:var(--mono); font-size:26px; letter-spacing:.18em;
+  color:var(--white); text-align:center; padding:.4rem 0;
+  text-shadow:0 0 12px rgba(212,165,44,.3);
+}
+.clock-sub{
+  font-family:var(--mono); font-size:9px; letter-spacing:.25em;
+  color:var(--muted); text-align:center; text-transform:uppercase;
+}
+
+/* ENV READOUT */
+.env-bar{
+  display:grid; grid-template-columns:1fr; gap:.4rem;
+  margin-top:.6rem;
+}
+.env-line{
+  display:flex; align-items:center; gap:.6rem;
+  font-family:var(--mono); font-size:10px; letter-spacing:.12em;
+  color:var(--pale);
+}
+.env-line .ico{
+  width:14px; height:14px; flex-shrink:0;
+}
+.env-line .val{margin-left:auto; color:var(--white);}
+
+/* ============================
+   FEATURES BAND
+============================ */
+.feat-band{margin-bottom:2.5rem;}
+.feat-head{
+  display:flex; align-items:baseline; gap:1rem; flex-wrap:wrap;
+  border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+  padding:.85rem 0; margin-bottom:1.4rem;
+}
+.feat-head .num{font-family:var(--mono); font-size:9px; letter-spacing:.25em; color:var(--red-bright);}
+.feat-head .ttl{font-family:var(--display); font-size:22px; letter-spacing:.07em; color:var(--white); text-transform:uppercase; font-weight:600;}
+.feat-head .sub{margin-left:auto; font-family:var(--mono); font-size:9.5px; letter-spacing:.22em; color:var(--muted); text-transform:uppercase;}
+
+.feat-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:14px;}
+.feat{
+  position:relative;
+  background:rgba(15,15,15,.5); border:1px solid var(--border);
+  padding:1.2rem 1.3rem;
+  transition:all .2s;
+}
+.feat:hover{border-color:var(--light); transform:translateY(-2px);}
+.feat .feat-tag{
+  display:inline-block; font-family:var(--mono); font-size:8px;
+  letter-spacing:.28em; color:var(--amber-bright); text-transform:uppercase;
+  border:1px solid var(--amber); padding:2px 7px; margin-bottom:.7rem;
+  background:rgba(154,122,42,.08);
+}
+.feat .feat-tag.red{color:var(--red-bright); border-color:var(--red); background:rgba(138,42,42,.08);}
+.feat .feat-tag.blue{color:var(--blue-bright); border-color:var(--blue); background:rgba(42,74,122,.08);}
+.feat .feat-tag.green{color:var(--green-bright); border-color:var(--green); background:rgba(42,106,42,.08);}
+.feat h4{
+  font-family:var(--display); font-size:18px; letter-spacing:.04em;
+  color:var(--white); text-transform:uppercase; font-weight:600; margin-bottom:.5rem;
+}
+.feat p{font-size:13.5px; line-height:1.65; color:var(--light);}
+
+/* ============================
+   SCHEMATIC
+============================ */
+.schem-wrap{
+  border:1px solid var(--border); padding:1.6rem;
+  background:
+    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px),
+    rgba(10,10,10,.6);
+  background-size:24px 24px, 24px 24px, auto;
+  margin-bottom:2.5rem; position:relative;
+}
+.schem-head{
+  display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:1rem;
+  font-family:var(--mono); font-size:9.5px; letter-spacing:.25em;
+  color:var(--muted); text-transform:uppercase; margin-bottom:1.1rem;
+  padding-bottom:.7rem; border-bottom:1px dashed var(--mid);
+}
+.schem-head .ttl{color:var(--pale); letter-spacing:.28em;}
+.schem-head .meta{color:var(--amber-bright);}
+.schem-svg{width:100%; height:auto; display:block;}
+.schem-legend{
+  display:flex; flex-wrap:wrap; gap:1rem; margin-top:1rem;
+  padding-top:.9rem; border-top:1px dashed var(--mid);
+}
+.schem-legend .li{
+  display:flex; align-items:center; gap:.45rem;
+  font-family:var(--mono); font-size:9.5px; letter-spacing:.18em;
+  color:var(--light); text-transform:uppercase;
+}
+.schem-legend .li .dot{width:10px; height:10px; flex-shrink:0;}
+
+/* SCHEMATIC ELEMENT styles */
+.schem-svg .platform{fill:#1a1a1a; stroke:var(--border); stroke-width:1;}
+.schem-svg .platform.classified{fill:#1a0e0e; stroke:var(--red); stroke-dasharray:3 2;}
+.schem-svg .platform.satellite{fill:#0e1318; stroke:var(--blue);}
+.schem-svg .label{font-family:var(--mono); font-size:8px; fill:var(--pale); letter-spacing:.15em;}
+.schem-svg .lbl-num{font-family:var(--display); font-size:14px; font-weight:700; fill:var(--white);}
+.schem-svg .conn{stroke:var(--mid); stroke-width:.6; fill:none;}
+.schem-svg .conn.live{stroke:var(--amber); stroke-width:.8;}
+.schem-svg .conn.power{stroke:var(--red-bright); stroke-width:.6; stroke-dasharray:3 2;}
+.schem-svg .water{fill:rgba(42,74,122,.05);}
+.schem-svg .core-pulse{animation:corePulse 2.4s ease-in-out infinite;}
+@keyframes corePulse{0%,100%{opacity:1;}50%{opacity:.45;}}
+.schem-svg .compass{fill:var(--muted); font-family:var(--mono); font-size:9px; letter-spacing:.2em;}
+
+/* Network-style schematic (Site-07 platforms) */
+.schem-svg .net-line{
+  stroke:var(--amber-bright); stroke-width:2.2; fill:none;
+}
+.schem-svg .node-hex{
+  fill:#15110b; stroke:var(--amber-bright);
+  stroke-width:2.6; stroke-linejoin:round;
+}
+.schem-svg .node-hex.classified{
+  fill:#1a0e0e; stroke:var(--red-bright);
+  stroke-dasharray:5 3; animation:hexPulse 2.6s ease-in-out infinite;
+}
+@keyframes hexPulse{0%,100%{opacity:1;}50%{opacity:.55;}}
+.schem-svg .node-num{
+  font-family:var(--display); font-size:28px; font-weight:800;
+  fill:var(--white); text-anchor:middle; letter-spacing:0;
+}
+.schem-svg .node-num.classified{fill:var(--red-bright);}
+.schem-svg .label-box{
+  fill:#15110b; stroke:var(--amber-bright); stroke-width:1.8;
+}
+.schem-svg .label-box.classified{
+  stroke:var(--red-bright); stroke-dasharray:4 3;
+}
+.schem-svg .label-name{
+  font-family:var(--display); font-size:13px; font-weight:700;
+  fill:var(--white); letter-spacing:.05em; text-transform:uppercase;
+}
+.schem-svg .label-fn{
+  font-family:var(--mono); font-size:8.5px;
+  fill:var(--pale); letter-spacing:.14em; text-transform:uppercase;
+}
+.schem-svg .label-fn.classified{fill:#cc8888;}
+
+/* Mainland annex (Site-7B) on Site-07 schematic */
+.schem-svg .annex-box{
+  fill:#0e1318; stroke:var(--blue-bright); stroke-width:2;
+}
+.schem-svg .annex-line{
+  stroke:var(--blue-bright); stroke-width:1.4;
+  stroke-dasharray:5 4; fill:none; opacity:.85;
+}
+.schem-svg .annex-name{
+  font-family:var(--display); font-size:14px; font-weight:700;
+  fill:var(--white); letter-spacing:.06em; text-transform:uppercase;
+}
+.schem-svg .annex-fn{
+  font-family:var(--mono); font-size:9px;
+  fill:#7894c2; letter-spacing:.18em; text-transform:uppercase;
+}
+.schem-svg .annex-dist{
+  font-family:var(--mono); font-size:8.5px;
+  fill:#5d7da6; letter-spacing:.2em; text-transform:uppercase;
+}
+
+/* ============================
+   FOOTER
+============================ */
+footer{
+  border-top:1px solid var(--border); padding:1.4rem 3rem;
+  display:flex; justify-content:space-between; align-items:center;
+  font-family:var(--mono); font-size:9px; letter-spacing:.22em;
+  color:var(--muted); text-transform:uppercase;
+}
+
+/* ============================
+   RESPONSIVE
+============================ */
+@media (max-width:1100px){
+  .body-grid{grid-template-columns:1fr;}
+  .feat-grid{grid-template-columns:repeat(2, 1fr);}
+}
+@media (max-width:780px){
+  .selector{grid-template-columns:1fr;}
+  .vitals{grid-template-columns:repeat(2, 1fr);}
+  .vital{border-right:none; border-bottom:1px solid var(--border);}
+  .vital:nth-child(odd){border-right:1px solid var(--border);}
+  .vital:nth-last-child(-n+2){border-bottom:none;}
+  .feat-grid{grid-template-columns:1fr;}
+  .cover-grid{grid-template-columns:1fr;}
+  footer{flex-direction:column; gap:.6rem; text-align:center;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">
+    <img src="img/Base.png" alt="">
+    <div><span class="n">THREEFOLD</span><span class="s">SCP Foundation RP</span></div>
+  </a>
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="departments.html">Departments</a></li>
+    <li><a href="sites.html" class="current">Sites</a></li>
+    <li><a href="worldstate.html">World State</a></li>
+    <li><a href="lore.html">Lore</a></li>
+    <li><a href="worldmap.html">World Map</a></li>
+    <li><a href="submission.html">Submission</a></li>
+    <li><a href="database.html">Database</a></li>
+    <li><a href="staff.html" target="_blank">Staff Login</a></li>
+  </ul>
+</nav>
+
+<div class="page-pad">
+
+  <!-- ==================== COVER ==================== -->
+  <section class="cover">
+    <div class="cover-grid">
+      <div class="cover-left">
+        <div class="cover-stamps">
+          <span class="stamp red">Personnel Use Only</span>
+          <span class="stamp amber">Deployment Active</span>
+          <span class="stamp border">Rev. 04 / 2026</span>
+        </div>
+        <div class="cover-tag">RAISA Personnel Assignment Registry</div>
+        <h1>Operational<br><em>Sites</em></h1>
+        <p class="cover-desc">
+          Active Foundation installations cleared for general personnel posting. Review duty stations, environmental conditions, and operational profiles before nominating your starting assignment on the character submission form.
+        </p>
+        <div class="cover-meta">
+          <div class="cover-meta-item"><div class="k">Total Sites</div><div class="v">2</div></div>
+          <div class="cover-meta-item"><div class="k">Onboarding</div><div class="v">Open</div></div>
+          <div class="cover-meta-item amber"><div class="k">Status</div><div class="v">Operational</div></div>
+        </div>
+      </div>
+
+      <div class="cover-right">
+        <div class="cover-fileno">
+          File Reference
+          <strong>TF / OPS / SITES / 002</strong>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap">
+
+    <!-- ==================== BRIEFING ==================== -->
+    <div class="briefing">
+      <div class="briefing-head">
+        <span class="lbl">Briefing</span>
+        <span class="num">RAISA / HRO / 2026.04</span>
+      </div>
+      <div class="briefing-body">
+        Two duty stations are presently cleared for incoming character postings. Each runs on its own operational tempo, and the cultures at the sites differ as wildly as the climates. Choose carefully. <em>Reassignment after onboarding is not guaranteed.</em>
+      </div>
+    </div>
+
+    <!-- ==================== SITE SELECTOR ==================== -->
+    <div class="selector" id="selector">
+      <button class="sel-btn active" data-site="07">
+        <img class="site-img" src="img/Site-7.png" alt="Site-07">
+        <div class="info">
+          <div class="t">Norton Bay RAISA Command</div>
+          <div class="s">Norton Sound, Alaska, USA</div>
+        </div>
+        <div class="stat-pill">
+          <span class="lbl">Status</span>
+          <span class="val"><span class="blip"></span>Open</span>
+        </div>
+      </button>
+      <button class="sel-btn" data-site="19">
+        <img class="site-img" src="img/Site-19.png" alt="Site-19">
+        <div class="info">
+          <div class="t">Edgewood Containment Complex</div>
+          <div class="s">Aberdeen Proving Ground, MD, USA</div>
+        </div>
+        <div class="stat-pill">
+          <span class="lbl">Status</span>
+          <span class="val"><span class="blip"></span>Open</span>
+        </div>
+      </button>
+    </div>
+
+    <!-- ============================================================
+         SITE-07 DOSSIER
+    ============================================================ -->
+    <article class="dossier active" data-site="07">
+
+      <!-- HERO BAND -->
+      <div class="dh">
+        <div class="dh-img" style="background-image:url('https://images.unsplash.com/photo-1518176258769-f227c798150e?auto=format&fit=crop&w=1600&q=80');"></div>
+        <div class="dh-grain"></div>
+        <div class="dh-scan"></div>
+        <div class="dh-corner tl">REC // 64.7&deg;N 162.4&deg;W</div>
+        <div class="dh-corner tr">CLEARANCE 3 / RAISA</div>
+        <div class="dh-corner br">DRONE PASS &middot; 04:18Z</div>
+        <div class="dh-content">
+          <div class="dh-tag">Foundation Protected Site</div>
+          <div class="dh-name"><span class="codename">Norton Bay</span> &middot; Site-07</div>
+          <div class="dh-loc">Norton Sound &middot; <strong>81 km offshore Western Alaska</strong></div>
+        </div>
+      </div>
+
+      <!-- VITALS -->
+      <div class="vitals">
+        <div class="vital live">
+          <div class="k">Operational Status</div>
+          <div class="v">Online</div>
+          <div class="sub">All Platforms Nominal</div>
+        </div>
+        <div class="vital">
+          <div class="k">Personnel</div>
+          <div class="v">389</div>
+          <div class="sub">90% RAISA Technical</div>
+        </div>
+        <div class="vital">
+          <div class="k">Established</div>
+          <div class="v">03 Jan 1970</div>
+          <div class="sub">O5 Edict #10243</div>
+        </div>
+        <div class="vital warn">
+          <div class="k">Climate</div>
+          <div class="v">-9 &deg;C</div>
+          <div class="sub">Subarctic / Maritime</div>
+        </div>
+      </div>
+
+      <!-- BODY GRID -->
+      <div class="body-grid">
+
+        <!-- PROSE -->
+        <div>
+          <div class="prose">
+            <div class="prose-hd">
+              <span class="num">SECTION I</span>
+              <span>Briefing &middot; Site Function</span>
+            </div>
+            <p>
+              Protected <strong>Site-07</strong> is the centralized command center for the <em>Records, Archival, and Information Security Administration</em> (RAISA), which handles almost every aspect of the Foundation's technical and infosec concerns. The highly classified facility consists of nine offshore oil platforms that have been extensively retrofitted to support nearly four hundred RAISA personnel and their workstations.
+            </p>
+            <p>
+              Site-07 hosts the AIAD <strong>AI Farm</strong>, the <strong>PANOPTICON</strong> global surveillance network, and the primary servers for the SCiPnet database. Personnel describe it, with no small amount of pride, as <em>"the site at the end of the world."</em>
+            </p>
+            <p>
+              Due to its Protected status, no non-Thaumiel anomalies are permitted aboard, and no SCPs are contained here. Cybersecurity research, anomalous programming, and machine-learning operations dominate daily activity.
+            </p>
+
+            <div class="expand">
+              <button class="expand-toggle" onclick="toggleExpand(this)">
+                <span class="arr">&#9654;</span>
+                <span>Expand &middot; Satellite Facility Site-7B (RAISA Vault)</span>
+              </button>
+              <div class="expand-body">
+                <p>Site-07 maintains a satellite installation on the Alaskan mainland, designated <strong>Site-7B</strong> and known internally as the <em>RAISA Vault</em>. This facility is constructed inside <a href="https://scp-wiki.wikidot.com/scp-6781" target="_blank" rel="noopener">SCP-6781</a> (the Deep Well Cave system), hermetically and ontologically sealed using prototype DEEPWELL technologies.</p>
+                <p>The Vault holds microfilm and digital tape backups alongside the original paper records of millions of Foundation documents that have since been digitized into SCiPnet. The discovery of pre-existing anomalous architecture inside the cave during 1985 construction (Incident SYRACUSE) has been classified at Vault management discretion.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SIDE -->
+        <div class="side">
+          <!-- LOCAL TIME -->
+          <div class="side-card amber">
+            <div class="ttl">Local Time &middot; AKDT</div>
+            <div class="clock-disp" id="clock-07">--:--:--</div>
+            <div class="clock-sub" id="clock-07-date">--</div>
+          </div>
+
+          <!-- ENV -->
+          <div class="side-card blue">
+            <div class="ttl">Environmental Readout</div>
+            <div class="env-bar">
+              <div class="env-line">
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="#5e7d8c" stroke-width="2"><path d="M12 3v18M3 12h18"/></svg>
+                <span>Sea Temperature</span><span class="val">2.1 &deg;C</span>
+              </div>
+              <div class="env-line">
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="#5e7d8c" stroke-width="2"><path d="M3 12h6l3-9 3 18 3-9h3"/></svg>
+                <span>Wind</span><span class="val">38 kt NW</span>
+              </div>
+              <div class="env-line">
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="#5e7d8c" stroke-width="2"><path d="M3 18h18M5 14l3-3 3 3M13 14l3-3 3 3M11 6l1-1 1 1"/></svg>
+                <span>Visibility</span><span class="val">220 m</span>
+              </div>
+              <div class="env-line">
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="#9a7a2a" stroke-width="2"><path d="M12 2v6M12 16v6M2 12h6M16 12h6"/></svg>
+                <span>Storm Cell</span><span class="val">Active</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- TRANSPORT -->
+          <div class="side-card">
+            <div class="ttl">Transport &middot; Inbound</div>
+            <div class="row"><span class="k">Anchorage</span><span class="v">3 daily</span></div>
+            <div class="row"><span class="k">Nome (Quad)</span><span class="v">As needed</span></div>
+            <div class="row"><span class="k">Supply Ship</span><span class="v">Bi-weekly</span></div>
+            <div class="row"><span class="k">Condor Lift</span><span class="v">On-call</span></div>
+          </div>
+
+          <!-- COVER -->
+          <div class="side-card green">
+            <div class="ttl">Cover Story</div>
+            <div class="row"><span class="k">Cover</span><span class="v">SEP Field</span></div>
+            <div class="row"><span class="k">Footprint</span><span class="v">100,000 m&sup2;</span></div>
+            <div class="row"><span class="k">Cover Tier</span><span class="v">N / A</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FEATURES -->
+      <div class="feat-band">
+        <div class="feat-head">
+          <span class="num">SECTION II</span>
+          <span class="ttl">Notable Implementations</span>
+          <span class="sub">5 of 11 declassified</span>
+        </div>
+        <div class="feat-grid">
+          <div class="feat">
+            <span class="feat-tag red">Thaumiel</span>
+            <h4>Y-66 Acaster-Crow Runereactor</h4>
+            <p>Alchemical-thaumaturgic reactor producing the entirety of Site-07's monthly power draw. A hot rune dissolves in alkahest; vapor spins the turbine.</p>
+          </div>
+          <div class="feat">
+            <span class="feat-tag blue">AIAD</span>
+            <h4>Artificial Intelligence Farm</h4>
+            <p>Origin facility for every shackled AIC in Foundation service. AICs are bred, trained, reset, and shipped to host sites worldwide.</p>
+          </div>
+          <div class="feat">
+            <span class="feat-tag">Surveillance</span>
+            <h4>PANOPTICON &middot; Atreus Array</h4>
+            <p>29 satellites and over a million patched endpoints. Hardened with noospheric anchoring to make outage events conceptually improbable.</p>
+          </div>
+          <div class="feat">
+            <span class="feat-tag green">Sustainment</span>
+            <h4>PARTHENON TOOTH Cluster</h4>
+            <p>Ancillary servers blessed by Tactical Theology Division. Platform lowers into the sea on catastrophic meltdown; boards print runic.</p>
+          </div>
+          <div class="feat">
+            <span class="feat-tag red">Classified</span>
+            <h4>WARHOL Supercomputer</h4>
+            <p>[REDACTED]. Access requires Level 5 / Site-07 plus standing O5 endorsement. Personnel are advised not to ask after it.</p>
+          </div>
+          <div class="feat">
+            <span class="feat-tag blue">STAG</span>
+            <h4>Mount August Skunkworks</h4>
+            <p>Restricted Platform 9. No walkways lead in. Aerial transport requires written authorization. Officially, you have not been told it exists.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCHEMATIC -->
+      <div class="schem-wrap">
+        <div class="schem-head">
+          <span class="ttl">Schematic &middot; Platform Network</span>
+          <span class="meta">Topology View &middot; Functional Links</span>
+        </div>
+        <svg class="schem-svg" viewBox="0 0 960 640" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <!-- Pointy-top hexagon, radius 32 -->
+            <polygon id="hex-shape" points="0,-32 27.7,-16 27.7,16 0,32 -27.7,16 -27.7,-16"/>
+          </defs>
+
+          <!-- ===== CONNECTION LINES (drawn first; nodes paint over endpoints) ===== -->
+          <g>
+            <line class="net-line" x1="220" y1="130" x2="350" y2="130"/>
+            <line class="net-line" x1="350" y1="130" x2="350" y2="280"/>
+            <line class="net-line" x1="350" y1="280" x2="480" y2="280"/>
+            <line class="net-line" x1="480" y1="280" x2="610" y2="280"/>
+            <line class="net-line" x1="610" y1="280" x2="760" y2="130"/>
+            <line class="net-line" x1="610" y1="280" x2="760" y2="430"/>
+            <line class="net-line" x1="350" y1="280" x2="415" y2="430"/>
+            <line class="net-line" x1="480" y1="280" x2="415" y2="430"/>
+          </g>
+
+          <!-- ===== HEX NODES ===== -->
+          <!-- 1 ZHU DEEP -->
+          <g transform="translate(220,130)">
+            <use href="#hex-shape" class="node-hex"/>
+            <text class="node-num" y="10">1</text>
+          </g>
+          <!-- 2 FJORD -->
+          <g transform="translate(350,130)">
+            <use href="#hex-shape" class="node-hex"/>
+            <text class="node-num" y="10">2</text>
+          </g>
+          <!-- 8 PARTHENON TOOTH -->
+          <g transform="translate(760,130)">
+            <use href="#hex-shape" class="node-hex"/>
+            <text class="node-num" y="10">8</text>
+          </g>
+          <!-- 3 STARSEEKER -->
+          <g transform="translate(350,280)">
+            <use href="#hex-shape" class="node-hex"/>
+            <text class="node-num" y="10">3</text>
+          </g>
+          <!-- 5 PLAINGAZER -->
+          <g transform="translate(480,280)">
+            <use href="#hex-shape" class="node-hex"/>
+            <text class="node-num" y="10">5</text>
+          </g>
+          <!-- 6 BLUEFIN SHEAR -->
+          <g transform="translate(610,280)">
+            <use href="#hex-shape" class="node-hex"/>
+            <text class="node-num" y="10">6</text>
+          </g>
+          <!-- 4 DEEPWATCHER -->
+          <g transform="translate(415,430)">
+            <use href="#hex-shape" class="node-hex"/>
+            <text class="node-num" y="10">4</text>
+          </g>
+          <!-- 7 REDEYE -->
+          <g transform="translate(760,430)">
+            <use href="#hex-shape" class="node-hex"/>
+            <text class="node-num" y="10">7</text>
+          </g>
+          <!-- 9 MOUNT AUGUST (classified, isolated) -->
+          <g transform="translate(220,430)">
+            <use href="#hex-shape" class="node-hex classified"/>
+            <text class="node-num classified" y="10">9</text>
+          </g>
+
+          <!-- ===== LABEL BOXES ===== -->
+          <!-- 1 ZHU DEEP - left of node 1 -->
+          <g transform="translate(20, 110)">
+            <rect class="label-box" x="0" y="0" width="156" height="40" rx="6"/>
+            <text class="label-name" x="10" y="17">1. ZHU DEEP</text>
+            <text class="label-fn" x="10" y="32">SHIPPING / RECEIVING</text>
+          </g>
+          <!-- 2 FJORD - above node 2 -->
+          <g transform="translate(258, 38)">
+            <rect class="label-box" x="0" y="0" width="180" height="40" rx="6"/>
+            <text class="label-name" x="10" y="17">2. FJORD</text>
+            <text class="label-fn" x="10" y="32">MECHANICAL ENGINEERING</text>
+          </g>
+          <!-- 8 PARTHENON TOOTH - above node 8 -->
+          <g transform="translate(660, 38)">
+            <rect class="label-box" x="0" y="0" width="200" height="40" rx="6"/>
+            <text class="label-name" x="10" y="17">8. PARTHENON TOOTH</text>
+            <text class="label-fn" x="10" y="32">ANCILLARY SERVER</text>
+          </g>
+          <!-- 3 STARSEEKER - left of node 3 -->
+          <g transform="translate(20, 260)">
+            <rect class="label-box" x="0" y="0" width="156" height="40" rx="6"/>
+            <text class="label-name" x="10" y="17">3. STARSEEKER</text>
+            <text class="label-fn" x="10" y="32">SCiPNET</text>
+          </g>
+          <!-- 5 PLAINGAZER - above node 5, between 2 and 8 horizontally -->
+          <g transform="translate(390, 200)">
+            <rect class="label-box" x="0" y="0" width="190" height="40" rx="6"/>
+            <text class="label-name" x="10" y="17">5. PLAINGAZER</text>
+            <text class="label-fn" x="10" y="32">PANOPTICON SERVICE</text>
+          </g>
+          <!-- 6 BLUEFIN SHEAR - right of node 6 -->
+          <g transform="translate(660, 260)">
+            <rect class="label-box" x="0" y="0" width="180" height="40" rx="6"/>
+            <text class="label-name" x="10" y="17">6. BLUEFIN SHEAR</text>
+            <text class="label-fn" x="10" y="32">LIVING / DORMITORIES</text>
+          </g>
+          <!-- 4 DEEPWATCHER - below node 4 -->
+          <g transform="translate(325, 478)">
+            <rect class="label-box" x="0" y="0" width="180" height="40" rx="6"/>
+            <text class="label-name" x="10" y="17">4. DEEPWATCHER</text>
+            <text class="label-fn" x="10" y="32">AI FARM</text>
+          </g>
+          <!-- 7 REDEYE - below node 7 -->
+          <g transform="translate(660, 478)">
+            <rect class="label-box" x="0" y="0" width="200" height="40" rx="6"/>
+            <text class="label-name" x="10" y="17">7. REDEYE</text>
+            <text class="label-fn" x="10" y="32">SITE COMMAND / SECURITY</text>
+          </g>
+          <!-- 9 MOUNT AUGUST - below node 9 (classified) -->
+          <g transform="translate(120, 478)">
+            <rect class="label-box classified" x="0" y="0" width="180" height="40" rx="6"/>
+            <text class="label-name" x="10" y="17">9. MOUNT AUGUST</text>
+            <text class="label-fn classified" x="10" y="32">RESTRICTED SECTOR</text>
+          </g>
+
+          <!-- ============= SITE-7B MAINLAND ANNEX ============= -->
+          <!-- Dashed supply link from ZHU DEEP (1) down to Site-7B -->
+          <path class="annex-line" d="M 220 162 C 220 320, 320 540, 460 580"/>
+          <text class="annex-dist" x="480" y="548" text-anchor="middle">~ 80 KM TO ALASKAN MAINLAND</text>
+          <!-- Annex box centered at bottom -->
+          <g transform="translate(360, 555)">
+            <rect class="annex-box" x="0" y="0" width="240" height="56" rx="6"/>
+            <text class="annex-name" x="14" y="22">Site-7B</text>
+            <text class="annex-fn" x="14" y="38">RAISA Vault &middot; Mainland</text>
+            <text class="annex-fn" x="14" y="50" style="font-size:8px;opacity:.75;">DEEP WELL CAVE &middot; SCP-6781</text>
+          </g>
+        </svg>
+        <div class="schem-legend">
+          <div class="li"><span class="dot" style="background:#15110b;border:1.5px solid #d4a52c;"></span>Platform Node</div>
+          <div class="li"><span class="dot" style="background:#1a0e0e;border:1.5px dashed #bb3a3a;"></span>Restricted</div>
+          <div class="li"><span class="dot" style="background:#0e1318;border:1.5px solid #3a6aaa;"></span>Mainland Annex</div>
+          <div class="li"><span class="dot" style="background:#d4a52c;height:2px;width:14px;"></span>Functional Link</div>
+          <div class="li"><span class="dot" style="background:#3a6aaa;height:2px;width:14px;"></span>Supply Link</div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ============================================================
+         SITE-19 DOSSIER
+    ============================================================ -->
+    <article class="dossier" data-site="19">
+
+      <!-- HERO BAND -->
+      <div class="dh">
+        <div class="dh-img" style="background-image:url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1600&q=80');"></div>
+        <div class="dh-grain"></div>
+        <div class="dh-scan"></div>
+        <div class="dh-corner tl">REC // 39.4&deg;N 76.3&deg;W</div>
+        <div class="dh-corner tr">CLEARANCE 3 / SITE-19</div>
+        <div class="dh-corner br">DRONE PASS &middot; 11:42Z</div>
+        <div class="dh-content">
+          <div class="dh-tag">Foundation Primary Containment Site</div>
+          <div class="dh-name"><span class="codename">Gunpowder Neck</span> &middot; Site-19</div>
+          <div class="dh-loc">Aberdeen Proving Ground &middot; <strong>Harford County, Maryland</strong></div>
+        </div>
+      </div>
+
+      <!-- VITALS -->
+      <div class="vitals">
+        <div class="vital live">
+          <div class="k">Operational Status</div>
+          <div class="v">Online</div>
+          <div class="sub">All Sub-Levels Nominal</div>
+        </div>
+        <div class="vital">
+          <div class="k">Personnel</div>
+          <div class="v">1,217</div>
+          <div class="sub">Largest Single Site</div>
+        </div>
+        <div class="vital">
+          <div class="k">Established</div>
+          <div class="v">11 Sep 1948</div>
+          <div class="sub">Repurposed Arsenal Grounds</div>
+        </div>
+        <div class="vital warn">
+          <div class="k">Climate</div>
+          <div class="v">13 &deg;C</div>
+          <div class="sub">Humid Subtropical / Coastal</div>
+        </div>
+      </div>
+
+      <!-- BODY GRID -->
+      <div class="body-grid">
+
+        <!-- PROSE -->
+        <div>
+          <div class="prose">
+            <div class="prose-hd">
+              <span class="num">SECTION I</span>
+              <span>Briefing &middot; Site Function</span>
+            </div>
+            <p>
+              <strong>Site-19</strong> is the principal containment and administrative installation for the Foundation's Eastern Seaboard sector, and the largest single facility in active service. The complex was established in 1948 on the <em>Gunpowder Neck Peninsula</em>, occupying the eastern half of the Edgewood Area of Aberdeen Proving Ground, and incorporates more than ten kilometers of legacy Army magazine bunkers, igloos, and underground storage tunnels into its containment matrix.
+            </p>
+            <p>
+              The site operates beneath the cover of the U.S. Army <em>Edgewood Chemical Biological Center, Foreign Materiel Exploitation Annex</em>, a real DoD billet that has fronted classified work on Gunpowder Neck since the First World War. Civilians passing the gates of Aberdeen and Edgewood, Maryland see only another segment of the Army's largest weapons R&amp;D installation; restricted airspace R-4001 already covers the peninsula, and decades of declassified Edgewood Arsenal experimentation provide a near-perfect deflection for any anomalous activity that does leak. Beneath the cover, six engineered sub-levels descend into Cretaceous bedrock, the upper two interfacing directly with the existing Army igloo complex to allow plausible deniability for surface deliveries.
+            </p>
+            <p>
+              Site-19 holds <strong>hundreds of Safe and Euclid-class anomalies</strong> alongside a smaller roster of high-priority Keter objects, distributed across the main complex and a constellation of dedicated annexes. The site is widely regarded as <em>the largest and most important active Foundation installation in the world</em>, and the sheer concentration of objects under one roof has driven on-site security protocols past anything seen at peer facilities.
+            </p>
+            <p>
+              Site-19 also serves as a primary muster station for rotating Mobile Task Forces operating across the Eastern Seaboard. The peninsular geography, the surrounding tidal marshes, the existing Army outer cordon, and a single causeway approach controlled by APG MPs make it the closest the Foundation comes to a fortress hidden in plain sight.
+            </p>
+
+            <div class="expand">
+              <button class="expand-toggle" onclick="toggleExpand(this)">
+                <span class="arr">&#9654;</span>
+                <span>Expand &middot; Site Culture &amp; Daily Life</span>
+              </button>
+              <div class="expand-body">
+                <p>Personnel describe Site-19 as a small city built sideways into a peninsula. The sub-levels each have their own informal personality (the cafeterias on Sub-2 are infamous; Sub-4 is where you go to be left alone), and most staff measure their tenure by which sub-level they're cleared for that month.</p>
+                <p>Surface life is rotated through a half-dozen renovated 1940s officer quarters and BOQ blocks behind two layered checkpoints. Summers on Gunpowder Neck are humid, mosquito-thick, and punctuated by hurricane evacuation drills; in winter the Chesapeake hauls dense sea fog over the magazine rows for days at a time. Senior staff with surface clearance can walk the old shoreline batteries on the eastern bluff, where the Bay opens up far enough that on a clear night you can see the lights of the bridge and pretend, briefly, that you work somewhere ordinary.</p>
+                <p>Despite (or perhaps because of) the heightened security posture, Site-19 staff are notorious throughout the Foundation for their famously casual approach to low-risk anomalies. <a href="https://scp-wiki.wikidot.com/scp-294" target="_blank" rel="noopener">SCP-294</a> has its own dedicated Sub-2 break-room corner; <a href="https://scp-wiki.wikidot.com/scp-261" target="_blank" rel="noopener">SCP-261</a> is regularly raided for snacks; <a href="https://scp-wiki.wikidot.com/scp-131" target="_blank" rel="noopener">SCP-131</a> routinely accompany junior researchers on rounds; and the <a href="https://scp-wiki.wikidot.com/scp-529" target="_blank" rel="noopener">SCP-529</a> incident report is required reading for new transfers. Personnel learn quickly that a Site-19 lab coat means knowing exactly which curiosities can be petted and which absolutely cannot.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SIDE -->
+        <div class="side">
+          <!-- LOCAL TIME -->
+          <div class="side-card amber">
+            <div class="ttl">Local Time &middot; EST</div>
+            <div class="clock-disp" id="clock-19">--:--:--</div>
+            <div class="clock-sub" id="clock-19-date">--</div>
+          </div>
+
+          <!-- ENV -->
+          <div class="side-card blue">
+            <div class="ttl">Environmental Readout</div>
+            <div class="env-bar">
+              <div class="env-line">
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="#5a6b3a" stroke-width="2"><path d="M3 21h18M5 21V10l7-5 7 5v11"/></svg>
+                <span>Elevation</span><span class="val">12 m AMSL</span>
+              </div>
+              <div class="env-line">
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="#5e7d8c" stroke-width="2"><path d="M3 12c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2M3 18c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2"/></svg>
+                <span>Tide State</span><span class="val">Ebbing &middot; Mid</span>
+              </div>
+              <div class="env-line">
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="#5a6b3a" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 4v2M12 18v2M4 12h2M18 12h2"/></svg>
+                <span>Humidity</span><span class="val">78%</span>
+              </div>
+              <div class="env-line">
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="#9a7a2a" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg>
+                <span>Bunker Temp</span><span class="val">16 &deg;C const.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- TRANSPORT -->
+          <div class="side-card">
+            <div class="ttl">Transport &middot; Inbound</div>
+            <div class="row"><span class="k">BWI Airport</span><span class="v">12 daily</span></div>
+            <div class="row"><span class="k">I-95 / MD-24</span><span class="v">24 / 7</span></div>
+            <div class="row"><span class="k">Rotor (LZ-3)</span><span class="v">Cleared</span></div>
+            <div class="row"><span class="k">Bush River Wharf</span><span class="v">Tide Gated</span></div>
+          </div>
+
+          <!-- COVER -->
+          <div class="side-card green">
+            <div class="ttl">Cover Story</div>
+            <div class="row"><span class="k">Surface</span><span class="v">DoD CBRN Annex</span></div>
+            <div class="row"><span class="k">Tier</span><span class="v">I &middot; Federal</span></div>
+            <div class="row"><span class="k">Airspace</span><span class="v">R-4001 (real)</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FEATURES -->
+      <div class="feat-band">
+        <div class="feat-head">
+          <span class="num">SECTION II</span>
+          <span class="ttl">Notable Implementations</span>
+          <span class="sub">6 of 22 declassified</span>
+        </div>
+        <div class="feat-grid">
+          <div class="feat">
+            <span class="feat-tag red">Containment</span>
+            <h4>Sub-Level 4 Wing</h4>
+            <p>Forty-six high-value object cells set inside a reinforced caisson sunk into Cretaceous bedrock. Independent ventilation; faraday-shielded; cold-rooted to the water table for thermal stability.</p>
+          </div>
+          <div class="feat">
+            <span class="feat-tag">MTF</span>
+            <h4>Task Force Barracks</h4>
+            <p>Standing billets for two rotating Mobile Task Forces and an organic security platoon. Armory connects directly to the upper helipad and rail spur for rapid deployment.</p>
+          </div>
+          <div class="feat">
+            <span class="feat-tag green">Logistics</span>
+            <h4>Magazine Row</h4>
+            <p>Three-kilometer corridor of WWI and WWII era Army earth-covered ammunition igloos, repurposed as the bulk transport line, supply marshaling yard, and long-haul fiber trunks into Baltimore and DC.</p>
+          </div>
+          <div class="feat">
+            <span class="feat-tag blue">Research</span>
+            <h4>Shared Wet Lab</h4>
+            <p>Chemical and biological analysis suite co-located with the legitimate Army CBRN research wing. The shared building lets Foundation researchers requisition mundane lab equipment through Army supply channels without raising Defense Logistics Agency flags.</p>
+          </div>
+          <div class="feat">
+            <span class="feat-tag red">Restricted</span>
+            <h4>Sub-Level 6 Vault</h4>
+            <p>One of three sites cleared to hold a single Apollyon-class object. Exact contents need-to-know. The sub-level itself does not appear on the standard floor index.</p>
+          </div>
+          <div class="feat">
+            <span class="feat-tag">Surface</span>
+            <h4>Edgewood Officer Quarters</h4>
+            <p>Renovated 1940s Army officer housing serving as senior staff billets. Listed on the National Register; cover-of-record permits discreet exterior maintenance and authorized civilian visits during the annual APG open day.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCHEMATIC -->
+      <div class="schem-wrap">
+        <div class="schem-head">
+          <span class="ttl">Schematic &middot; Vertical Section</span>
+          <span class="meta">Cross-Section &middot; Looking East</span>
+        </div>
+        <svg class="schem-svg" viewBox="0 0 800 480" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="sky19" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#0e0e12"/>
+              <stop offset="100%" stop-color="#0a0a0a"/>
+            </linearGradient>
+            <linearGradient id="rock19" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#15110d"/>
+              <stop offset="100%" stop-color="#0a0807"/>
+            </linearGradient>
+          </defs>
+
+          <!-- sky -->
+          <rect x="0" y="0" width="800" height="120" fill="url(#sky19)"/>
+          <!-- coastal horizon (flat Maryland tidewater) -->
+          <path d="M 0 118 L 100 116 L 180 117 L 260 114 L 340 115 L 420 113 L 500 116 L 600 115 L 700 117 L 800 116 L 800 120 L 0 120 Z" fill="#11140e" stroke="#1e1e1e" stroke-width=".6"/>
+          <!-- distant Army arsenal silhouettes (water tower, smokestack, antenna, low buildings) -->
+          <g fill="#15170f" stroke="#1a1a1a" stroke-width=".4">
+            <rect x="60" y="108" width="40" height="10"/>
+            <circle cx="121.5" cy="98" r="5"/>
+            <rect x="120" y="100" width="3" height="18"/>
+            <rect x="240" y="92" width="3" height="26"/>
+            <rect x="460" y="110" width="50" height="8"/>
+            <rect x="640" y="106" width="55" height="12"/>
+          </g>
+          <line x1="538" y1="118" x2="540" y2="86" stroke="#2a2a2a" stroke-width=".7"/>
+          <line x1="538" y1="116" x2="540" y2="104" stroke="#2a2a2a" stroke-width=".4"/>
+          <line x1="542" y1="116" x2="540" y2="104" stroke="#2a2a2a" stroke-width=".4"/>
+
+          <!-- bedrock -->
+          <rect x="0" y="120" width="800" height="360" fill="url(#rock19)"/>
+
+          <!-- ground crackle texture -->
+          <g stroke="#1a1612" stroke-width=".4" fill="none" opacity=".7">
+            <path d="M 40 160 L 90 175 L 140 165 L 200 185"/>
+            <path d="M 250 200 L 310 220 L 380 210 L 450 230"/>
+            <path d="M 500 200 L 560 215 L 620 205 L 690 225"/>
+            <path d="M 80 250 L 160 270 L 240 255 L 320 275"/>
+            <path d="M 380 270 L 460 285 L 540 270 L 620 290"/>
+          </g>
+
+          <!-- Surface buildings (Edgewood arsenal cluster) -->
+          <g transform="translate(360, 90)">
+            <rect class="platform" x="-50" y="0" width="20" height="14"/>
+            <rect class="platform" x="-25" y="2" width="22" height="12"/>
+            <rect class="platform" x="3" y="0" width="18" height="14"/>
+            <rect class="platform" x="26" y="3" width="22" height="11"/>
+            <text class="label" x="-2" y="-6" text-anchor="middle" fill="#999">SURFACE &middot; EDGEWOOD AREA</text>
+            <line x1="-55" y1="14" x2="55" y2="14" stroke="#3a3a3a" stroke-width=".6"/>
+          </g>
+
+          <!-- Helipad -->
+          <g transform="translate(580,100)">
+            <circle cx="0" cy="6" r="9" fill="none" stroke="#9a7a2a" stroke-width=".8" stroke-dasharray="3 2"/>
+            <text x="0" y="9" text-anchor="middle" font-family="Share Tech Mono" font-size="8" fill="#d4a52c">H</text>
+            <text class="label" x="0" y="-4" text-anchor="middle" fill="#d4a52c">LZ-3</text>
+          </g>
+
+          <!-- Vertical shaft -->
+          <g>
+            <rect x="395" y="120" width="10" height="320" fill="#0a0a0a" stroke="#3a3a3a" stroke-width=".4"/>
+            <line x1="400" y1="120" x2="400" y2="440" stroke="#9a7a2a" stroke-width=".4" stroke-dasharray="4 2"/>
+          </g>
+
+          <!-- SUB LEVELS -->
+          <g font-family="Share Tech Mono" font-size="9" letter-spacing="2" fill="#cccccc">
+            <!-- L1 -->
+            <rect class="platform" x="120" y="160" width="560" height="34" rx="1"/>
+            <text class="label" x="140" y="180">SUB-1 &middot; ADMIN, ARCHIVES, CAFETERIA</text>
+            <text class="lbl-num" x="660" y="184" text-anchor="end">L-1</text>
+
+            <!-- L2 -->
+            <rect class="platform" x="120" y="204" width="560" height="34" rx="1"/>
+            <text class="label" x="140" y="224">SUB-2 &middot; SAFE-CLASS CONTAINMENT</text>
+            <text class="lbl-num" x="660" y="228" text-anchor="end">L-2</text>
+
+            <!-- L3 -->
+            <rect class="platform" x="120" y="248" width="560" height="34" rx="1"/>
+            <text class="label" x="140" y="268">SUB-3 &middot; RESEARCH, MEDICAL, MTF MUSTER</text>
+            <text class="lbl-num" x="660" y="272" text-anchor="end">L-3</text>
+
+            <!-- L4 -->
+            <rect class="platform" x="120" y="292" width="560" height="34" rx="1"/>
+            <text class="label" x="140" y="312">SUB-4 &middot; EUCLID HIGH-VALUE WING</text>
+            <text class="lbl-num" x="660" y="316" text-anchor="end">L-4</text>
+
+            <!-- L5 - mining drift -->
+            <path d="M 60 336 Q 200 340 400 338 Q 600 336 740 340 L 740 360 Q 600 358 400 360 Q 200 362 60 360 Z" class="platform"/>
+            <text class="label" x="140" y="354">SUB-5 &middot; MAGAZINE ROW &middot; LOGISTICS</text>
+            <text class="lbl-num" x="660" y="358" text-anchor="end">L-5</text>
+
+            <!-- L6 (classified) -->
+            <rect class="platform classified" x="280" y="380" width="240" height="40" rx="1"/>
+            <text class="label" x="300" y="402" fill="#bb3a3a">SUB-6 &middot; [REDACTED]</text>
+            <text class="lbl-num" x="500" y="406" text-anchor="end" fill="#bb3a3a">L-6</text>
+          </g>
+
+          <!-- Bush River on left -->
+          <g transform="translate(0, 190)">
+            <path d="M 0 0 Q 30 -8 60 0 Q 100 8 100 25 Q 80 34 40 30 Q 0 26 0 0 Z" fill="rgba(42,74,122,.18)" stroke="#2a4a7a" stroke-width=".6"/>
+            <text class="label" x="48" y="50" fill="#3a6aaa">BUSH RIVER</text>
+            <line x1="100" y1="14" x2="120" y2="248" stroke="#2a4a7a" stroke-width=".5" stroke-dasharray="2 2"/>
+          </g>
+          <text class="label" x="118" y="246" fill="#3a6aaa">EMERGENCY OUTFLOW</text>
+
+          <!-- Chesapeake Bay on right -->
+          <g transform="translate(700, 200)">
+            <path d="M 0 0 Q 30 -6 60 0 Q 100 6 100 22 Q 70 30 40 28 Q 0 24 0 0 Z" fill="rgba(42,74,122,.22)" stroke="#2a4a7a" stroke-width=".6"/>
+            <text class="label" x="50" y="46" text-anchor="middle" fill="#3a6aaa">CHESAPEAKE BAY</text>
+          </g>
+
+          <!-- Rail Spur on right -->
+          <g transform="translate(680, 100)">
+            <path d="M 0 0 L 60 8 L 80 18" fill="none" stroke="#3a3a3a" stroke-width="1"/>
+            <path d="M 0 4 L 60 12 L 80 22" fill="none" stroke="#3a3a3a" stroke-width="1"/>
+            <text class="label" x="20" y="-4">RAIL SPUR</text>
+            <line x1="80" y1="22" x2="120" y2="340" stroke="#9a7a2a" stroke-width=".5" stroke-dasharray="3 2"/>
+          </g>
+
+          <!-- depth markers -->
+          <g font-family="Share Tech Mono" font-size="8" fill="#666">
+            <text x="50" y="180" text-anchor="end">0 m</text>
+            <text x="50" y="224" text-anchor="end">-30</text>
+            <text x="50" y="268" text-anchor="end">-65</text>
+            <text x="50" y="312" text-anchor="end">-110</text>
+            <text x="50" y="354" text-anchor="end">-180</text>
+            <text x="50" y="402" text-anchor="end">-260</text>
+          </g>
+          <line x1="55" y1="160" x2="55" y2="420" stroke="#3a3a3a" stroke-width=".4"/>
+          <text class="label" x="55" y="438" text-anchor="middle" fill="#666">DEPTH (m)</text>
+
+          <!-- compass -->
+          <g transform="translate(400, 30)" class="compass">
+            <text x="0" y="0" text-anchor="middle" fill="#666">W &larr; BUSH RIVER &middot; GUNPOWDER NECK &middot; CHESAPEAKE &rarr; E</text>
+          </g>
+        </svg>
+        <div class="schem-legend">
+          <div class="li"><span class="dot" style="background:#1a1a1a;border:1px solid #3a3a3a;"></span>Operational Sub-Level</div>
+          <div class="li"><span class="dot" style="background:#1a0e0e;border:1px solid #8a2a2a;"></span>Restricted / Classified</div>
+          <div class="li"><span class="dot" style="background:rgba(42,74,122,.4);border:1px solid #2a4a7a;"></span>Surface Water</div>
+          <div class="li"><span class="dot" style="background:#9a7a2a;"></span>Service Conduit</div>
+          <div class="li"><span class="dot" style="background:#0a0a0a;border:1px solid #3a3a3a;"></span>Vertical Shaft</div>
+        </div>
+      </div>
+    </article>
+
+  </div>
+
+  <footer>
+    <span>THREEFOLD &middot; Operational Sites Registry</span>
+    <span>Maintained by RAISA Personnel Records</span>
+  </footer>
+</div>
+
+<script>
+/* ============================
+   SITE TOGGLE
+============================ */
+const selBtns = document.querySelectorAll('.sel-btn');
+const dossiers = document.querySelectorAll('.dossier');
+
+selBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = btn.dataset.site;
+    selBtns.forEach(b => b.classList.toggle('active', b === btn));
+    dossiers.forEach(d => d.classList.toggle('active', d.dataset.site === target));
+    // Smooth scroll up on switch so user sees the new hero
+    const dossierTop = document.querySelector('.selector').getBoundingClientRect().top + window.scrollY - 80;
+    if (window.scrollY > dossierTop + 200) {
+      window.scrollTo({ top: dossierTop, behavior: 'smooth' });
+    }
+  });
+});
+
+/* ============================
+   EXPAND TOGGLES
+============================ */
+function toggleExpand(btn){
+  btn.classList.toggle('open');
+  const body = btn.parentElement.querySelector('.expand-body');
+  body.classList.toggle('open');
+}
+
+/* ============================
+   LIVE CLOCKS
+   Site-07 -> Alaska AKDT (UTC-8 in summer)
+   Site-19 -> NY EST (UTC-5 / EDT UTC-4)
+   Use simple offset based on UTC hours.
+============================ */
+function pad(n){ return String(n).padStart(2,'0'); }
+
+function fmtTime(utcDate, offsetHours){
+  const t = new Date(utcDate.getTime() + offsetHours*3600*1000);
+  return {
+    time: pad(t.getUTCHours())+':'+pad(t.getUTCMinutes())+':'+pad(t.getUTCSeconds()),
+    date: t.toLocaleDateString('en-US', { timeZone:'UTC', weekday:'short', month:'short', day:'numeric' }).toUpperCase()
+  };
+}
+
+function tickClocks(){
+  const now = new Date();
+  // Determine US DST roughly: 2nd Sun of Mar through 1st Sun of Nov
+  const yr = now.getUTCFullYear();
+  const dstStart = new Date(Date.UTC(yr, 2, 8)); dstStart.setUTCDate(8 + (7 - dstStart.getUTCDay())%7); // 2nd Sun Mar
+  const dstEnd   = new Date(Date.UTC(yr, 10, 1)); dstEnd.setUTCDate(1 + (7 - dstEnd.getUTCDay())%7);     // 1st Sun Nov
+  const isDST = now >= dstStart && now < dstEnd;
+  const ak = isDST ? -8 : -9;   // AKDT / AKST
+  const ny = isDST ? -4 : -5;   // EDT / EST
+
+  const a = fmtTime(now, ak);
+  const n = fmtTime(now, ny);
+  const c07 = document.getElementById('clock-07');
+  const c07d = document.getElementById('clock-07-date');
+  const c19 = document.getElementById('clock-19');
+  const c19d = document.getElementById('clock-19-date');
+  if(c07){ c07.textContent = a.time; c07d.textContent = a.date + ' / ' + (isDST?'AKDT':'AKST'); }
+  if(c19){ c19.textContent = n.time; c19d.textContent = n.date + ' / ' + (isDST?'EDT':'EST'); }
+}
+tickClocks();
+setInterval(tickClocks, 1000);
+
+/* ============================
+   Subtle hover-illuminate effect on hero images
+============================ */
+document.querySelectorAll('.dh').forEach(dh => {
+  const img = dh.querySelector('.dh-img');
+  if(!img) return;
+  dh.addEventListener('mousemove', e => {
+    const rect = dh.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    img.style.transformOrigin = x+'% '+y+'%';
+    img.style.transform = 'scale(1.03)';
+  });
+  dh.addEventListener('mouseleave', () => {
+    img.style.transform = 'scale(1)';
+  });
+});
+</script>
+
+</body>
+</html>
